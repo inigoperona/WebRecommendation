@@ -107,7 +107,7 @@ public class LogReaderBidasoaTurismo extends LogReader {
 					req.setUrlIDusage(WebAccessSequences.m_url2idHT.get(formatedurlname).intValue());
 					
 					// save the valid requests
-					WebAccessSequences.m_filterlog.add(req);
+					WebAccessSequences.addRequest(req);
 				}
 			}
 		} catch(IOException ex){

@@ -2,11 +2,12 @@ package ehupatras.webrecommendation.structures;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.io.Serializable;
 
-public class Request {
+public class Request implements Serializable{
 
 	// log file information
-		// Detec IP address 
+		// Detect IP address 
 	private String m_ip = "-";
 	private int m_userID = -1;
 		// other log information

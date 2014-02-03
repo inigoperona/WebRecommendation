@@ -12,8 +12,8 @@ public abstract class LogReader {
 	public void identifyFrequentURLs(int minimunFrequency){
 		// compute the maximum URL-index value
 		int maxurlid = Integer.MIN_VALUE;
-		for(int i=0; i<WebAccessSequences.m_filterlog.size(); i++){
-			Request req = WebAccessSequences.m_filterlog.get(i);
+		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			Request req = WebAccessSequences.getRequest(i);
 			int urlid = req.getUrlIDusage();
 			if(maxurlid<urlid){
 				maxurlid = urlid;
@@ -22,16 +22,16 @@ public abstract class LogReader {
 		
 		// compute the frequencies of URLs
 		int[] urlfrequenciesA = new int[maxurlid+1];
-		for(int i=0; i<WebAccessSequences.m_filterlog.size(); i++){
-			Request req = WebAccessSequences.m_filterlog.get(i);
+		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			Request req = WebAccessSequences.getRequest(i);
 			int urlid = req.getUrlIDusage();
 			urlfrequenciesA[urlid]++;
 		}
 		
 		// Identify frequent URLs
 		int nFrequent = 0;
-		for(int i=0; i<WebAccessSequences.m_filterlog.size(); i++){
-			Request req = WebAccessSequences.m_filterlog.remove(i);
+		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			Request req = WebAccessSequences.getRequest(i);
 			int urlid = req.getUrlIDusage();
 			int freq = urlfrequenciesA[urlid];
 			if(freq>=minimunFrequency){
@@ -40,9 +40,9 @@ public abstract class LogReader {
 			} else {
 				req.setIsFrequent(false);
 			}
-			WebAccessSequences.m_filterlog.add(i, req);
+			WebAccessSequences.replaceRequest(i, req);
 		}
-		System.out.println("  " + nFrequent + "/" + WebAccessSequences.m_filterlog.size() + 
+		System.out.println("  " + nFrequent + "/" + WebAccessSequences.filteredlogsize() + 
 				" requests have an URL that appears at least " + minimunFrequency + " times.");
 	}
 	
@@ -53,8 +53,8 @@ public abstract class LogReader {
 	public void identifyStaticURLs(int days, int times, float minimunPeriodFrequencyProportion){
 		// compute the maximum URL-index value
 		int maxurlid = Integer.MIN_VALUE;
-		for(int i=0; i<WebAccessSequences.m_filterlog.size(); i++){
-			Request req = WebAccessSequences.m_filterlog.get(i);
+		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			Request req = WebAccessSequences.getRequest(i);
 			int urlid = req.getUrlIDusage();
 			if(maxurlid<urlid){
 				maxurlid = urlid;
@@ -67,8 +67,8 @@ public abstract class LogReader {
 		long endtime = Long.MAX_VALUE;
 		int[] urlfrequenciesi = new int[maxurlid+1];
 		int[] urlInPeriods = new int[maxurlid+1];
-		for(int i=0; i<WebAccessSequences.m_filterlog.size(); i++){
-			Request req = WebAccessSequences.m_filterlog.get(i);
+		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			Request req = WebAccessSequences.getRequest(i);
 			// define the new period of time
 			long actualtime = req.getTimeInMillis();
 			if(starttime==0 || actualtime>=endtime){
@@ -102,8 +102,8 @@ public abstract class LogReader {
 		// so, the nature of the URL would be static
 		int nstatics = 0;
 		int minimunperiods = Math.round((float)nperiods*minimunPeriodFrequencyProportion);
-		for(int i=0; i<WebAccessSequences.m_filterlog.size(); i++){
-			Request req = WebAccessSequences.m_filterlog.remove(i);
+		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			Request req = WebAccessSequences.getRequest(i);
 			int urlid = req.getUrlIDusage();
 			int freqInPeriods = urlInPeriods[urlid];
 			if(freqInPeriods>=minimunperiods){
@@ -112,9 +112,9 @@ public abstract class LogReader {
 			} else {
 				req.setIsStatic(false);
 			}
-			WebAccessSequences.m_filterlog.add(i, req);
+			WebAccessSequences.replaceRequest(i, req);
 		}
-		System.out.println("  " + nstatics + "/" + WebAccessSequences.m_filterlog.size() + 
+		System.out.println("  " + nstatics + "/" + WebAccessSequences.filteredlogsize() + 
 				" requests have an URL that appears (at least " + times + " times) in " + 
 				minimunperiods + "-" + nperiods + 
 				" periods of " + days + " days.");
