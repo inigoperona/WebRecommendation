@@ -24,7 +24,8 @@ public class WebAccessSequences {
 	
 	// The filtered/good requests from the log
 	private static ArrayList<Request> m_filterlog = new ArrayList<Request>();
-	private static int m_actualloadedrequets = 0;
+	private static int m_actualloadedrequest = 0;
+	private static int m_lastloadedrequest = 0;
 	private static int m_maxloadrequests = 100000;
 	private static int m_writedmodulus = 0;
 	private static int m_actualloadedmodulus = 0;
@@ -45,7 +46,7 @@ public class WebAccessSequences {
 			System.out.println("  [" + endtime + "] End swaping modulus. " + 
 					(endtime-starttime)/1000 + " seconds. [addRequest]");
 		}
-		if(m_actualloadedrequets>=m_maxloadrequests){
+		if(m_actualloadedrequest>=m_maxloadrequests){
 			// dump: save the requests we have loaded until now
 			long starttime = System.currentTimeMillis();
 			savemodulus(m_writedmodulus);
@@ -57,12 +58,14 @@ public class WebAccessSequences {
 			m_writedmodulus++;
 			m_actualloadedmodulus++;
 			// initialize parameters
-			m_actualloadedrequets = 0;
+			m_actualloadedrequest = 0;
 			m_filterlog = new ArrayList<Request>();
 			System.gc();
 		}
 		m_filterlog.add(req);
-		m_actualloadedrequets++;
+		m_actualloadedrequest++;
+		// save the last modulus last index
+		m_lastloadedrequest = m_actualloadedrequest;
 	}
 	
 	public static Request getRequest(int i) {
@@ -169,7 +172,7 @@ public class WebAccessSequences {
 	}
 	
 	public static int filteredlogsize() {
-		return m_writedmodulus*m_maxloadrequests + m_filterlog.size();
+		return m_writedmodulus*m_maxloadrequests + m_lastloadedrequest;
 	}
 	
 	public static void writeFilteredLog(String outfilename){

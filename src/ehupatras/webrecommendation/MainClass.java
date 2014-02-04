@@ -33,7 +33,7 @@ public class MainClass {
 		System.out.println("[" + starttime + "] Start reading the log files and analyzing the URLs.");
 		String[] logfilesA = new String[1];
 		logfilesA[0] = basedirectory + filename1;
-		//logfilesA[1] = basedirectory + "/kk2.log";
+	//	logfilesA[1] = basedirectory + "/201202.log";
 /*
 		logfilesA[2] = basedirectory + "/201203.log";
 		logfilesA[3] = basedirectory + "/201204.log";
@@ -47,7 +47,7 @@ public class MainClass {
 */
 		logreader.readLogFile(logfilesA);
 		long endtime = System.currentTimeMillis();
-		System.out.println("[" + endtime + "] Ends. Elapsed time: " 
+		System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 		
 		// ensure a minimum amount of apparitions of URLs.
@@ -55,7 +55,7 @@ public class MainClass {
 		System.out.println("[" + starttime + "] Start identifying frequent URLs.");
 		logreader.identifyFrequentURLs(10);
 		endtime = System.currentTimeMillis();
-		System.out.println("[" + endtime + "] Ends. Elapsed time: " 
+		System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 		
 		// ensure that the URLs are static or it keeps interest during the time
@@ -63,7 +63,7 @@ public class MainClass {
 		System.out.println("[" + starttime + "] Start identifying static URLs.");
 		logreader.identifyStaticURLs(10, 5, (float)0.75);
 		endtime = System.currentTimeMillis();
-		System.out.println("[" + endtime + "] Ends. Elapsed time: " 
+		System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 		
 		
@@ -75,14 +75,14 @@ public class MainClass {
 		System.out.println("[" + starttime + "] Start spliting up into sessions.");
 		ses.createSessions(10); // maximum period of inactivity
 		endtime = System.currentTimeMillis();
-		System.out.println("[" + endtime + "] Ends. Elapsed time: "
+		System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 
 		// join consecutive same URLs
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] Start joining consecutive same URLs.");
 		ses.joinConsecutiveSameUrls();
-		System.out.println("[" + endtime + "] Ends. Elapsed time: "
+		System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		
 		
@@ -91,7 +91,7 @@ public class MainClass {
 		System.out.println("[" + starttime + "] Start writing processed logs.");
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
 		endtime = System.currentTimeMillis();
-		System.out.println("[" + endtime + "] Ends. Elapsed time: "
+		System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		
 		// ending the program

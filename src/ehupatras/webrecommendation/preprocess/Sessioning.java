@@ -15,6 +15,10 @@ public class Sessioning {
 	public void createSessions(int expireSessionsInMin){
 		Hashtable<Integer,Object[]> oldrequests = new Hashtable<Integer,Object[]>();
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			if(i%100000==0){
+				System.out.println("  " + i + "/" + WebAccessSequences.filteredlogsize() +
+						" analyzed [createSessions]");
+			}
 			Request actualreq = WebAccessSequences.getRequest(i);
 			int actualuser = actualreq.getUserID();
 			long actualtime = actualreq.getTimeInMillis();
@@ -95,6 +99,10 @@ public class Sessioning {
 	public void joinConsecutiveSameUrls(){
 		Hashtable<Integer,Object[]> oldrequests = new Hashtable<Integer,Object[]>();
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			if(i%100000==0){
+				System.out.println("  " + i + "/" + WebAccessSequences.filteredlogsize() +
+						" analyzed [joinConsecutiveSameUrls]");
+			}
 			Request actualreq = WebAccessSequences.getRequest(i);
 			int actualsessionid = actualreq.getSessionID();
 			int actualUrl = actualreq.getUrlIDusage();
