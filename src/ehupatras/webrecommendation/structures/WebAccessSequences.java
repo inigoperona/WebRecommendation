@@ -42,7 +42,7 @@ public class WebAccessSequences {
 			savemodulus(m_actualloadedmodulus);
 			loadmodulus(m_writedmodulus);
 			long endtime = System.currentTimeMillis();
-			System.out.println("  [" + endtime + "] Ends swaping modulus. " + 
+			System.out.println("  [" + endtime + "] End swaping modulus. " + 
 					(endtime-starttime)/1000 + " seconds. [addRequest]");
 		}
 		if(m_actualloadedrequets>=m_maxloadrequests){
@@ -51,7 +51,7 @@ public class WebAccessSequences {
 			savemodulus(m_writedmodulus);
 			// verbose
 			long endtime = System.currentTimeMillis();
-			System.out.println("  [" + endtime + "] Ends dump the modulus " + m_writedmodulus +
+			System.out.println("  [" + endtime + "] End dump the modulus " + m_writedmodulus +
 					" to the hard drive. " + (endtime-starttime)/1000 + " seconds.");
 			// update counters
 			m_writedmodulus++;
@@ -74,7 +74,7 @@ public class WebAccessSequences {
 			savemodulus(m_actualloadedmodulus);
 			loadmodulus(imodulus);
 			long endtime = System.currentTimeMillis();
-			System.out.println("  [" + endtime + "] Ends swaping modulus. " +
+			System.out.println("  [" + endtime + "] End swaping modulus. " +
 					oldmod + " <-> " + m_actualloadedmodulus + ". " +
 					(endtime-starttime)/1000 + " seconds. [getRequest]");
 		}
@@ -90,7 +90,7 @@ public class WebAccessSequences {
 			savemodulus(m_actualloadedmodulus);
 			loadmodulus(imodulus);
 			long endtime = System.currentTimeMillis();
-			System.out.println("  [" + endtime + "] Ends swaping modulus. " + 
+			System.out.println("  [" + endtime + "] End swaping modulus. " + 
 					oldmod + " <-> " + m_actualloadedmodulus + ". " +
 					(endtime-starttime)/1000 + " seconds. [replaceRequest]");
 		}

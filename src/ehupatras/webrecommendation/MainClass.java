@@ -18,7 +18,6 @@ public class MainClass {
 		//String basedirectory = args[0];
 		//String filename1 = args[1];
 		
-		
 		// initialize the data structure
 		WebAccessSequences.setWorkDirectory(basedirectory);
 		
@@ -31,7 +30,7 @@ public class MainClass {
 		
 		// It reads the log file and store the valid requests in [ehupatras.webrecommendation.structures.WebAccessSequences]
 		long starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] Starts reading the log files and analyzing the URLs.");
+		System.out.println("[" + starttime + "] Start reading the log files and analyzing the URLs.");
 		String[] logfilesA = new String[1];
 		logfilesA[0] = basedirectory + filename1;
 		//logfilesA[1] = basedirectory + "/kk2.log";
@@ -53,7 +52,7 @@ public class MainClass {
 		
 		// ensure a minimum amount of apparitions of URLs.
 		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] Starts identifying frequent URLs.");
+		System.out.println("[" + starttime + "] Start identifying frequent URLs.");
 		logreader.identifyFrequentURLs(10);
 		endtime = System.currentTimeMillis();
 		System.out.println("[" + endtime + "] Ends. Elapsed time: " 
@@ -61,7 +60,7 @@ public class MainClass {
 		
 		// ensure that the URLs are static or it keeps interest during the time
 		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] Starts identifying static URLs.");
+		System.out.println("[" + starttime + "] Start identifying static URLs.");
 		logreader.identifyStaticURLs(10, 5, (float)0.75);
 		endtime = System.currentTimeMillis();
 		System.out.println("[" + endtime + "] Ends. Elapsed time: " 
@@ -69,18 +68,27 @@ public class MainClass {
 		
 		
 		// SESSIONING
-		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] Starts spliting up into sessions.");
 		Sessioning ses = new Sessioning();
+		
+		// create sessions
+		starttime = System.currentTimeMillis();
+		System.out.println("[" + starttime + "] Start spliting up into sessions.");
 		ses.createSessions(10); // maximum period of inactivity
 		endtime = System.currentTimeMillis();
+		System.out.println("[" + endtime + "] Ends. Elapsed time: "
+				+ (endtime-starttime)/1000 + " seconds.");
+
+		// join consecutive same URLs
+		starttime = System.currentTimeMillis();
+		System.out.println("[" + starttime + "] Start joining consecutive same URLs.");
+		ses.joinConsecutiveSameUrls();
 		System.out.println("[" + endtime + "] Ends. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		
 		
 		// WRITE PROCESSED LOGS
 		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] Starts writing processed logs.");
+		System.out.println("[" + starttime + "] Start writing processed logs.");
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
 		endtime = System.currentTimeMillis();
 		System.out.println("[" + endtime + "] Ends. Elapsed time: "

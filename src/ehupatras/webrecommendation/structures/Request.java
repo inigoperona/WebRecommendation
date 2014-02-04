@@ -298,6 +298,10 @@ public class Request implements Serializable{
 		return m_elapsedtime;
 	}
 	
+	public int getSessionID(){
+		return m_sessionID;
+	}
+	
 	public String toString(){
 		return 	m_userID + " " + 
 				m_time.getTimeInMillis() + " " +
