@@ -78,8 +78,22 @@ public class Sessioning {
 		}
 		// close the sessions that there are in the hashtable
 		Enumeration<Integer> keys = oldrequests.keys();
+		// order the keys to optimized the access to each module.
+		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
 		while(keys.hasMoreElements()){
 			int userid = keys.nextElement().intValue();
+			int i;
+			for(i=0; i<keysOrd.size(); i++){
+				int userid2 = keysOrd.get(i);
+				if(userid<=userid2){
+					break;
+				}
+			}
+			keysOrd.add(i, userid);
+		}
+		// close the sessions
+		for(int i=0; i<keysOrd.size(); i++){
+			int userid = keysOrd.get(i).intValue();
 			Object[] objA = oldrequests.get(userid);
 			int oldsessioni = ((Integer)objA[0]).intValue();
 			long oldtime = ((Long)objA[1]).longValue();
@@ -145,8 +159,22 @@ public class Sessioning {
 		}
 		// close the join actions that remain in the hashtable
 		Enumeration<Integer> keys = oldrequests.keys();
+		// order the keys to optimized the access to each module.
+		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
 		while(keys.hasMoreElements()){
-			int sessionID = keys.nextElement().intValue();
+			int userid = keys.nextElement().intValue();
+			int i;
+			for(i=0; i<keysOrd.size(); i++){
+				int userid2 = keysOrd.get(i);
+				if(userid<=userid2){
+					break;
+				}
+			}
+			keysOrd.add(i, userid);
+		}
+		// close the join actions
+		for(int i=0; i<keysOrd.size(); i++){
+			int sessionID = keysOrd.get(i).intValue();
 			Object[] objA = oldrequests.get(sessionID);
 			int oldindex = ((Integer)objA[0]).intValue();
 			int oldUrl = ((Integer)objA[1]).intValue();
