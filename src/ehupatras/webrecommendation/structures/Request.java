@@ -244,6 +244,12 @@ public class Request implements Serializable{
 		} else {
 			m_formatedurlname = urlname2;
 		}
+		
+		// label the index URL
+		if(	m_formatedurlname.equals("/") || 
+			m_formatedurlname.equals("/index.php")){
+			m_labelByHand = "index";
+		}
 	}
 	
 	public boolean getIsValid(){
