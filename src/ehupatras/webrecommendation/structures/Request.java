@@ -37,7 +37,7 @@ public class Request implements Serializable{
 	private boolean m_ishtml = false;
 	
 	// this information is related to a sessioning phase
-	private String m_sesssionID = "-";
+	private int m_sessionID = -1;
 	private int m_urlIDusage = -1;
 	private int m_urlIDcontent = -1;
 	
@@ -282,6 +282,22 @@ public class Request implements Serializable{
 		m_isStatic = isStatic;
 	}
 	
+	public int getUserID(){
+		return m_userID;
+	}
+	
+	public void setSessionID(int sessionID){
+		m_sessionID = sessionID;
+	}
+	
+	public void setElapsedTime(float elapsedtime){
+		m_elapsedtime = elapsedtime;
+	}
+	
+	public float getElapsedTime(){
+		return m_elapsedtime;
+	}
+	
 	public String toString(){
 		return 	m_userID + " " + 
 				m_time.getTimeInMillis() + " " +
@@ -335,7 +351,7 @@ public class Request implements Serializable{
 				m_isFrequent + " " +
 				m_labelByHand + " " +
 				m_ishtml + " " +
-				m_sesssionID + " " +
+				m_sessionID + " " +
 				m_urlIDusage + " " +
 				m_urlIDcontent + " " +
 				m_elapsedtime + " " +

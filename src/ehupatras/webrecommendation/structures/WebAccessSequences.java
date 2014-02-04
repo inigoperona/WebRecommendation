@@ -187,8 +187,8 @@ public class WebAccessSequences {
 		// Write in a file line by line
 		try{
 			writer.write(Request.toStringLongHeader() + "\n");
-			for(int i=0; i<m_filterlog.size(); i++){
-				Request req = WebAccessSequences.m_filterlog.get(i);
+			for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+				Request req = WebAccessSequences.getRequest(i);
 				writer.write(req.toStringLong() + "\n");
 			}
 		} catch(IOException ex){
@@ -211,6 +211,10 @@ public class WebAccessSequences {
 	
 	public static void setWorkDirectory(String workdirectory){
 		m_workdirectory = workdirectory;
+	}
+	
+	public static void loadStructure(){
+		
 	}
 	
 }
