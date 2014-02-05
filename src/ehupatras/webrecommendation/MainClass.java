@@ -81,6 +81,7 @@ public class MainClass {
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start creating sequences.");
 		ses.createSequences();
+			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		
@@ -88,6 +89,7 @@ public class MainClass {
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start ensuring a minimun activity in each sequence.");
 		ses.ensureMinimumActivityInEachSequence(3);
+			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		
@@ -95,6 +97,7 @@ public class MainClass {
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start removing long sequences.");
 		ses.removeLongSequences((float)98);
+			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
 			
