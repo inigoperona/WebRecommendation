@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation.structures;
 
-import ehupatras.webrecommendation.structures.Request;
+import ehupatras.webrecommendation.structures.RequestBidasoaTurismo;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -23,7 +23,7 @@ public class WebAccessSequences {
 	public static Hashtable<String,Integer> m_url2idHT = new Hashtable<String,Integer>();	
 	
 	// The filtered/good requests from the log
-	private static ArrayList<Request> m_filterlog = new ArrayList<Request>();
+	private static ArrayList<RequestBidasoaTurismo> m_filterlog = new ArrayList<RequestBidasoaTurismo>();
 	private static int m_actualloadedrequest = 0;
 	private static int m_lastloadedrequest = 0;
 	private static int m_maxloadrequests = 100000;
@@ -31,12 +31,15 @@ public class WebAccessSequences {
 	private static int m_actualloadedmodulus = 0;
 	private static String m_basenamejavadata = "requests.javaData";
 	
+	// The sequences we are going to use to link prediction
+	public static Hashtable<Integer,ArrayList<Integer>> m_sequences = new Hashtable<Integer,ArrayList<Integer>>();
+	
 	// private constructor
 	private WebAccessSequences(){
 		
 	}
 	
-	public static void addRequest(Request req) {
+	public static void addRequest(RequestBidasoaTurismo req) {
 		// load the last modulus to add if we do not have already loaded
 		if(m_writedmodulus>m_actualloadedmodulus){
 			long starttime = System.currentTimeMillis();
@@ -59,7 +62,7 @@ public class WebAccessSequences {
 			m_actualloadedmodulus++;
 			// initialize parameters
 			m_actualloadedrequest = 0;
-			m_filterlog = new ArrayList<Request>();
+			m_filterlog = new ArrayList<RequestBidasoaTurismo>();
 			System.gc();
 		}
 		m_filterlog.add(req);
@@ -68,7 +71,7 @@ public class WebAccessSequences {
 		m_lastloadedrequest = m_actualloadedrequest;
 	}
 	
-	public static Request getRequest(int i) {
+	public static RequestBidasoaTurismo getRequest(int i) {
 		int imodulus = i / m_maxloadrequests;
 		int iindex = i % m_maxloadrequests;
 		if(m_actualloadedmodulus!=imodulus){
@@ -84,7 +87,7 @@ public class WebAccessSequences {
 		return m_filterlog.get(iindex);
 	}
 	
-	public static void replaceRequest(int i, Request req){
+	public static void replaceRequest(int i, RequestBidasoaTurismo req){
 		int imodulus = i / m_maxloadrequests;
 		int iindex = i % m_maxloadrequests;
 		if(m_actualloadedmodulus!=imodulus){
@@ -115,7 +118,7 @@ public class WebAccessSequences {
 		ObjectInputStream ois = null;
 		try{
 			ois = new ObjectInputStream(fis);
-			m_filterlog = (ArrayList<Request>)ois.readObject();
+			m_filterlog = (ArrayList<RequestBidasoaTurismo>)ois.readObject();
 		} catch(IOException ex){
 			
 		} catch(ClassNotFoundException ex){
@@ -189,11 +192,12 @@ public class WebAccessSequences {
 		
 		// Write in a file line by line
 		try{
-			writer.write(Request.toStringLongHeader() + "\n");
+			writer.write(RequestBidasoaTurismo.toStringLongHeader() + "\n");
 			for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
-				Request req = WebAccessSequences.getRequest(i);
+				RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
 				writer.write(req.toStringLong() + "\n");
 			}
+			System.out.println("  " + filteredlogsize() + " lines have been written.");
 		} catch(IOException ex){
 			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeFilteredLog] " +
 					"Problems writing to the file: " + outfilename);
@@ -210,6 +214,66 @@ public class WebAccessSequences {
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
+	}
+	
+	public static void writeSequences(String outfilename){
+		Enumeration<Integer> keys = m_sequences.keys();
+		
+		// order the keys
+		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement().intValue();
+			int i;
+			for(i=0; i<keysOrd.size(); i++){
+				int sessionID2 = keysOrd.get(i);
+				if(sessionID<=sessionID2){
+					break;
+				}
+			}
+			keysOrd.add(i, sessionID);
+		}
+		
+		// Open the given file
+		BufferedWriter writer = null;
+		try{
+			writer = new BufferedWriter(new FileWriter(outfilename));
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
+					"Not possible to open the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// Write the sequences in a file line by line
+		try{
+			for(int i=0; i<keysOrd.size(); i++){
+				int sessionID = keysOrd.get(i).intValue();
+				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+				writer.write(String.valueOf(sessionID)); // write the session identification
+				for(int j=0; j<sequence.size(); j++){
+					int urlindex = sequence.get(j);
+					writer.write("," + urlindex);
+				}
+				writer.write("\n");
+			}
+			System.out.println("  " + keysOrd.size() + " lines have been written.");
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeFilteredLog] " +
+					"Problems writing to the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// close the file
+		try{
+			writer.close();
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
+					"Problems at closing the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
 	}
 	
 	public static void setWorkDirectory(String workdirectory){

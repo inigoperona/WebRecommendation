@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation.preprocess.log;
 
-import ehupatras.webrecommendation.structures.Request;
+import ehupatras.webrecommendation.structures.RequestBidasoaTurismo;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -93,10 +93,10 @@ public class LogReaderBidasoaTurismo extends LogReader {
 				}	
 				
 				// Create a request object
-				Request req = new Request(ip, ipID, time, urlrequest, status, 
+				RequestBidasoaTurismo req = new RequestBidasoaTurismo(ip, ipID, time, urlrequest, status, 
 						reqsize, reference, useragent);
 				
-				// if it is valid request store it
+				// if it is valid request, store it
 				if(req.getIsValid()){
 					// Give ID number to each URL
 					String formatedurlname = req.getFormatedUrlName();

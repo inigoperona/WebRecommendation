@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation.preprocess;
 
-import ehupatras.webrecommendation.structures.Request;
+import ehupatras.webrecommendation.structures.RequestBidasoaTurismo;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import java.util.*;
 
@@ -19,7 +19,7 @@ public class Sessioning {
 				System.out.println("  " + i + "/" + WebAccessSequences.filteredlogsize() +
 						" analyzed [createSessions]");
 			}
-			Request actualreq = WebAccessSequences.getRequest(i);
+			RequestBidasoaTurismo actualreq = WebAccessSequences.getRequest(i);
 			int actualuser = actualreq.getUserID();
 			long actualtime = actualreq.getTimeInMillis();
 			if(oldrequests.containsKey(actualuser)){
@@ -35,7 +35,7 @@ public class Sessioning {
 					sum = sum + oldelapssedtime;
 					nreq++;
 					// we now know the elapsed time, so, update the old requests
-					Request oldreq = WebAccessSequences.getRequest(oldindex);
+					RequestBidasoaTurismo oldreq = WebAccessSequences.getRequest(oldindex);
 					oldreq.setElapsedTime(oldelapssedtime);
 					int oldsessionint = actualuser*10000+oldsessioni;
 					oldreq.setSessionID(oldsessionint);
@@ -50,7 +50,7 @@ public class Sessioning {
 					oldrequests.put(actualuser, objAr);
 				} else {
 					// update the last request of the previous session
-					Request oldreq = WebAccessSequences.getRequest(oldindex);
+					RequestBidasoaTurismo oldreq = WebAccessSequences.getRequest(oldindex);
 					float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
 					oldreq.setElapsedTime(oldelapssedtime);
 					int oldsessionint = actualuser*10000+oldsessioni;
@@ -96,11 +96,11 @@ public class Sessioning {
 			int userid = keysOrd.get(i).intValue();
 			Object[] objA = oldrequests.get(userid);
 			int oldsessioni = ((Integer)objA[0]).intValue();
-			long oldtime = ((Long)objA[1]).longValue();
+			//long oldtime = ((Long)objA[1]).longValue();
 			int oldindex = ((Integer)objA[2]).intValue();
 			float sum = ((Float)objA[3]).floatValue();
 			int nreq = ((Integer)objA[4]).intValue();
-			Request oldreq = WebAccessSequences.getRequest(oldindex);
+			RequestBidasoaTurismo oldreq = WebAccessSequences.getRequest(oldindex);
 			float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
 			oldreq.setElapsedTime(oldelapssedtime);
 			int oldsessionint = userid*10000+oldsessioni;
@@ -117,7 +117,7 @@ public class Sessioning {
 				System.out.println("  " + i + "/" + WebAccessSequences.filteredlogsize() +
 						" analyzed [joinConsecutiveSameUrls]");
 			}
-			Request actualreq = WebAccessSequences.getRequest(i);
+			RequestBidasoaTurismo actualreq = WebAccessSequences.getRequest(i);
 			int actualsessionid = actualreq.getSessionID();
 			int actualUrl = actualreq.getUrlIDusage();
 			float actualelapsedtime = actualreq.getElapsedTime();
@@ -138,7 +138,7 @@ public class Sessioning {
 					WebAccessSequences.replaceRequest(i, actualreq);
 				} else {
 					// write the last URLs information
-					Request oldreq = WebAccessSequences.getRequest(oldindex);
+					RequestBidasoaTurismo oldreq = WebAccessSequences.getRequest(oldindex);
 					oldreq.setElapsedTime(sum);
 					WebAccessSequences.replaceRequest(oldindex, oldreq);
 					
@@ -162,27 +162,107 @@ public class Sessioning {
 		// order the keys to optimized the access to each module.
 		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
 		while(keys.hasMoreElements()){
-			int userid = keys.nextElement().intValue();
+			int sessionID = keys.nextElement().intValue();
 			int i;
 			for(i=0; i<keysOrd.size(); i++){
-				int userid2 = keysOrd.get(i);
-				if(userid<=userid2){
+				int sessionID2 = keysOrd.get(i);
+				if(sessionID<=sessionID2){
 					break;
 				}
 			}
-			keysOrd.add(i, userid);
+			keysOrd.add(i, sessionID);
 		}
 		// close the join actions
 		for(int i=0; i<keysOrd.size(); i++){
 			int sessionID = keysOrd.get(i).intValue();
 			Object[] objA = oldrequests.get(sessionID);
 			int oldindex = ((Integer)objA[0]).intValue();
-			int oldUrl = ((Integer)objA[1]).intValue();
+			//int oldUrl = ((Integer)objA[1]).intValue();
 			float sum = ((Float)objA[2]).floatValue();
-			Request oldreq = WebAccessSequences.getRequest(oldindex);
+			RequestBidasoaTurismo oldreq = WebAccessSequences.getRequest(oldindex);
 			oldreq.setElapsedTime(sum);
 			WebAccessSequences.replaceRequest(oldindex, oldreq);
 		}
+	}
+	
+	
+	public void createSequences(){
+		int sequencecounter = 0;
+		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
+			int sessionID = req.getSessionID();
+			if(	req.getIsSuitableToLinkPrediction() ){
+				if( WebAccessSequences.m_sequences.containsKey(sessionID) ){
+					ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+					sequence.add(i);
+					WebAccessSequences.m_sequences.put(sessionID,sequence);
+				} else{
+					ArrayList<Integer> sequence = new ArrayList<Integer>();
+					sequence.add(i);
+					WebAccessSequences.m_sequences.put(sessionID,sequence);
+					sequencecounter++;
+				}
+			}
+		}
+		System.out.println("  " + sequencecounter + " sequences created.");
+	}
+	
+	public void ensureMinimumActivityInEachSequence(int nclicks){
+		Enumeration<Integer> keys = WebAccessSequences.m_sequences.keys();
+		int removecounter = 0;
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement().intValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+			if(sequence.size()<nclicks){
+				WebAccessSequences.m_sequences.remove(sessionID);
+				removecounter++;
+			}
+		}
+		System.out.println("  " + removecounter + " sequences removed.");
+	}
+	
+	// we assume that this long activity were generated by web robots.
+	public void removeLongSequences(float lengthpercentile){
+		Enumeration<Integer> keys = WebAccessSequences.m_sequences.keys();
+		
+		// order the sequences' lengths
+		ArrayList<Integer> lengthsInOrder = new ArrayList<Integer>();
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement().intValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+			int seqlength = sequence.size();
+			int i;
+			for(i=0; i<lengthsInOrder.size(); i++){
+				int iseqlength = lengthsInOrder.get(i);
+				if(seqlength<iseqlength){
+					break;
+				}
+			}
+			lengthsInOrder.add(i, seqlength);
+		}
+		
+		// compute the given percentile's position
+		int nseqs = lengthsInOrder.size();
+		int position = Math.round((float)nseqs*(lengthpercentile/(float)100));
+		int value = lengthsInOrder.get(position);
+		System.out.println("  " + value + " is the sequence length of the " +
+			"percentile " + lengthpercentile + "%.");
+		removeLongSequences(value);
+	}
+	
+	// we assume that this long activity were generated by web robots.
+	public void removeLongSequences(int nclicks){
+		Enumeration<Integer> keys = WebAccessSequences.m_sequences.keys();
+		int removecounter = 0;
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement().intValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+			if(sequence.size()>=nclicks){
+				WebAccessSequences.m_sequences.remove(sessionID);
+				removecounter++;
+			}
+		}
+		System.out.println("  " + removecounter + " sequences removed.");
 	}
 	
 }

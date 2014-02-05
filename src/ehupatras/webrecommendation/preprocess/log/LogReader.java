@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation.preprocess.log;
 
-import ehupatras.webrecommendation.structures.Request;
+import ehupatras.webrecommendation.structures.RequestBidasoaTurismo;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 
 public abstract class LogReader {
@@ -13,7 +13,7 @@ public abstract class LogReader {
 		// compute the maximum URL-index value
 		int maxurlid = Integer.MIN_VALUE;
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
-			Request req = WebAccessSequences.getRequest(i);
+			RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
 			int urlid = req.getUrlIDusage();
 			if(maxurlid<urlid){
 				maxurlid = urlid;
@@ -23,7 +23,7 @@ public abstract class LogReader {
 		// compute the frequencies of URLs
 		int[] urlfrequenciesA = new int[maxurlid+1];
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
-			Request req = WebAccessSequences.getRequest(i);
+			RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
 			int urlid = req.getUrlIDusage();
 			urlfrequenciesA[urlid]++;
 		}
@@ -31,7 +31,7 @@ public abstract class LogReader {
 		// Identify frequent URLs
 		int nFrequent = 0;
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
-			Request req = WebAccessSequences.getRequest(i);
+			RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
 			int urlid = req.getUrlIDusage();
 			int freq = urlfrequenciesA[urlid];
 			if(freq>=minimunFrequency){
@@ -54,7 +54,7 @@ public abstract class LogReader {
 		// compute the maximum URL-index value
 		int maxurlid = Integer.MIN_VALUE;
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
-			Request req = WebAccessSequences.getRequest(i);
+			RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
 			int urlid = req.getUrlIDusage();
 			if(maxurlid<urlid){
 				maxurlid = urlid;
@@ -68,7 +68,7 @@ public abstract class LogReader {
 		int[] urlfrequenciesi = new int[maxurlid+1];
 		int[] urlInPeriods = new int[maxurlid+1];
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
-			Request req = WebAccessSequences.getRequest(i);
+			RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
 			// define the new period of time
 			long actualtime = req.getTimeInMillis();
 			if(starttime==0 || actualtime>=endtime){
@@ -103,7 +103,7 @@ public abstract class LogReader {
 		int nstatics = 0;
 		int minimunperiods = Math.round((float)nperiods*minimunPeriodFrequencyProportion);
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
-			Request req = WebAccessSequences.getRequest(i);
+			RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
 			int urlid = req.getUrlIDusage();
 			int freqInPeriods = urlInPeriods[urlid];
 			if(freqInPeriods>=minimunperiods){
