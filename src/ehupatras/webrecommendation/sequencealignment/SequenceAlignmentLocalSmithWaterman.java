@@ -9,7 +9,7 @@ public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
     private String mAlignmentSeqB = "";
     private String m_gap = "-";
    
-    public int getScore(String[] seqA, String[] seqB){
+    public float getScore(String[] seqA, String[] seqB){
     	// create the gap String
     	int gaplen = seqA[0].length();
     	for(int i=1; i<gaplen; i++){ m_gap = m_gap + "-"; }
@@ -18,7 +18,7 @@ public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
         init(seqA, seqB);            
         process();
         backtrack();
-        return mScore;
+        return (float)mScore;
     }
     
     private void init(String[] seqA, String[] seqB) {
@@ -66,29 +66,29 @@ public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
            
             while (k > i) {
                     mAlignmentSeqB += m_gap;
-                    mAlignmentSeqA += mSeqA[k - 1];
+                    mAlignmentSeqA += (new StringBuffer(mSeqA[k - 1])).reverse().toString();
                     k--;
             }
             while (l > j) {
                     mAlignmentSeqA += m_gap;
-                    mAlignmentSeqB += mSeqB[l - 1];
+                    mAlignmentSeqB += (new StringBuffer(mSeqB[l - 1])).reverse().toString();
                     l--;
             }
            
             while (mD[i][j] != 0) {                
                     if (mD[i][j] == mD[i-1][j-1] + weight(i, j)) {                          
-                            mAlignmentSeqA += mSeqA[i-1];
-                            mAlignmentSeqB += mSeqB[j-1];
+                            mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
+                            mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
                             i--;
                             j--;                            
                             continue;
                     } else if (mD[i][j] == mD[i][j-1] - 1) {
                             mAlignmentSeqA += m_gap;
-                            mAlignmentSeqB += mSeqB[j-1];
+                            mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
                             j--;
                             continue;
                     } else {
-                            mAlignmentSeqA += mSeqA[i-1];
+                            mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
                             mAlignmentSeqB += m_gap;
                             i--;
                             continue;
@@ -97,12 +97,12 @@ public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
            
             while (i > 0) {
                     mAlignmentSeqB += m_gap;
-                    mAlignmentSeqA += mSeqA[i - 1];
+                    mAlignmentSeqA += (new StringBuffer(mSeqA[i - 1])).reverse().toString();
                     i--;
             }
             while (j > 0) {
                     mAlignmentSeqA += m_gap;
-                    mAlignmentSeqB += mSeqB[j - 1];
+                    mAlignmentSeqB += (new StringBuffer(mSeqB[j - 1])).reverse().toString();
                     j--;
             }
            
