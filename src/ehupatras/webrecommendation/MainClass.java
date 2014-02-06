@@ -65,7 +65,7 @@ public class MainClass {
 		// create sessions
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
-		ses.createSessions(10); // maximum period of inactivity
+		ses.createSessions(30); // maximum period of inactivity
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
@@ -93,14 +93,22 @@ public class MainClass {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		
-		// remove the activity web robots generate
+		// remove long sequences, the activity web robots generate
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start removing long sequences.");
 		ses.removeLongSequences((float)98);
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
-			
+		
+		// compute the each web page role
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Start computing pages' role.");
+		ses.computePageRoleUHC_time(10, 10, 20);
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. Elapsed time: "
+				+ (endtime-starttime)/1000 + " seconds.");
+		
 		
 		// WRITE PROCESSED DATA //
 			
@@ -115,11 +123,20 @@ public class MainClass {
 		// write the sequences we have created
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start writing created sequences.");
-		WebAccessSequences.writeSequences(basedirectory + "/sequences.txt");
+		WebAccessSequences.writeSequences(basedirectory + "/sequences_requestIndexes.txt");
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
 		
+		// write the sequence instantiation1: 
+		// sequence of urlID with each role: Unimportant (U), Hub (H), Content (C)
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Start writing created sequences.");
+		WebAccessSequences.writeSequences_URLwithUHC(basedirectory + "/sequences_urlIDurlRole.txt");
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. Elapsed time: "
+				+ (endtime-starttime)/1000 + " seconds.");
+			
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

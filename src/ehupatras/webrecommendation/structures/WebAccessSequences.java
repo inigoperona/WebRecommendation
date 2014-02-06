@@ -192,10 +192,10 @@ public class WebAccessSequences {
 		
 		// Write in a file line by line
 		try{
-			writer.write(RequestBidasoaTurismo.toStringLongHeader() + "\n");
 			for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
 				RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
-				writer.write(req.toStringLong() + "\n");
+				if(i==0){ writer.write("requestOrder " + req.toStringLongHeader() + "\n"); }
+				writer.write(i + " " + req.toStringLong() + "\n");
 			}
 			System.out.println("  " + filteredlogsize() + " lines have been written.");
 		} catch(IOException ex){
@@ -217,21 +217,8 @@ public class WebAccessSequences {
 	}
 	
 	public static void writeSequences(String outfilename){
-		Enumeration<Integer> keys = m_sequences.keys();
-		
 		// order the keys
-		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
-		while(keys.hasMoreElements()){
-			int sessionID = keys.nextElement().intValue();
-			int i;
-			for(i=0; i<keysOrd.size(); i++){
-				int sessionID2 = keysOrd.get(i);
-				if(sessionID<=sessionID2){
-					break;
-				}
-			}
-			keysOrd.add(i, sessionID);
-		}
+		ArrayList<Integer> keysOrd = orderHashtableKeys(m_sequences.keys());
 		
 		// Open the given file
 		BufferedWriter writer = null;
@@ -274,6 +261,73 @@ public class WebAccessSequences {
 			System.exit(1);
 		}
 		
+	}
+	
+	public static void writeSequences_URLwithUHC(String outfilename){
+		// order the keys
+		ArrayList<Integer> keysOrd = orderHashtableKeys(m_sequences.keys());
+		
+		// Open the given file
+		BufferedWriter writer = null;
+		try{
+			writer = new BufferedWriter(new FileWriter(outfilename));
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
+					"Not possible to open the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// Write the sequences in a file line by line
+		try{
+			for(int i=0; i<keysOrd.size(); i++){
+				int sessionID = keysOrd.get(i).intValue();
+				writer.write(String.valueOf(sessionID));
+				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+				for(int j=0; j<sequence.size(); j++){
+					int reqind = sequence.get(j).intValue();
+					RequestBidasoaTurismo req = WebAccessSequences.getRequest(reqind);
+					int urlid = req.getUrlIDusage();
+					String pagrole = req.getPageRoleUHC();
+					String seqelem = String.format("%06d%s", urlid, pagrole);
+					writer.write("," + seqelem);
+				}
+				writer.write("\n");
+			}
+			System.out.println("  " + keysOrd.size() + " lines have been written.");
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
+					"Problems writing to the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// close the file
+		try{
+			writer.close();
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
+					"Problems at closing the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+	}
+	
+	public static ArrayList<Integer> orderHashtableKeys(Enumeration<Integer> keys){
+		// order the keys
+		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement().intValue();
+			int i;
+			for(i=0; i<keysOrd.size(); i++){
+				int sessionID2 = keysOrd.get(i);
+				if(sessionID<=sessionID2){
+					break;
+				}
+			}
+			keysOrd.add(i, sessionID);
+		}
+		return keysOrd;
 	}
 	
 	public static void setWorkDirectory(String workdirectory){

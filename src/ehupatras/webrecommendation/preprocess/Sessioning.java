@@ -77,20 +77,8 @@ public class Sessioning {
 			}
 		}
 		// close the sessions that there are in the hashtable
-		Enumeration<Integer> keys = oldrequests.keys();
 		// order the keys to optimized the access to each module.
-		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
-		while(keys.hasMoreElements()){
-			int userid = keys.nextElement().intValue();
-			int i;
-			for(i=0; i<keysOrd.size(); i++){
-				int userid2 = keysOrd.get(i);
-				if(userid<=userid2){
-					break;
-				}
-			}
-			keysOrd.add(i, userid);
-		}
+		ArrayList<Integer> keysOrd = WebAccessSequences.orderHashtableKeys(oldrequests.keys());
 		// close the sessions
 		for(int i=0; i<keysOrd.size(); i++){
 			int userid = keysOrd.get(i).intValue();
@@ -158,20 +146,8 @@ public class Sessioning {
 			}
 		}
 		// close the join actions that remain in the hashtable
-		Enumeration<Integer> keys = oldrequests.keys();
 		// order the keys to optimized the access to each module.
-		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
-		while(keys.hasMoreElements()){
-			int sessionID = keys.nextElement().intValue();
-			int i;
-			for(i=0; i<keysOrd.size(); i++){
-				int sessionID2 = keysOrd.get(i);
-				if(sessionID<=sessionID2){
-					break;
-				}
-			}
-			keysOrd.add(i, sessionID);
-		}
+		ArrayList<Integer> keysOrd = WebAccessSequences.orderHashtableKeys(oldrequests.keys());
 		// close the join actions
 		for(int i=0; i<keysOrd.size(); i++){
 			int sessionID = keysOrd.get(i).intValue();
@@ -184,8 +160,7 @@ public class Sessioning {
 			WebAccessSequences.replaceRequest(oldindex, oldreq);
 		}
 	}
-	
-	
+		
 	public void createSequences(){
 		int sequencecounter = 0;
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
@@ -263,6 +238,43 @@ public class Sessioning {
 			}
 		}
 		System.out.println("  " + removecounter + " sequences removed.");
+	}
+	
+	public void computePageRoleUHC_time(int shortTimeSeconds, int hubMaxTimeMinutes, int contentMaxTimeMinutes){
+		// order the keys
+		ArrayList<Integer> keysOrd = WebAccessSequences.orderHashtableKeys(WebAccessSequences.m_sequences.keys());
+		
+		// compute the each page's role
+		for(int i=0; i<keysOrd.size(); i++){
+			int sessionID = keysOrd.get(i).intValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+			for(int j=0; j<sequence.size(); j++){
+				int reqind = sequence.get(j).intValue();
+				RequestBidasoaTurismo req = WebAccessSequences.getRequest(reqind);
+				float elapsedtime = req.getElapsedTime()/(float)1000;
+				if(elapsedtime<=shortTimeSeconds){ // Unimportant
+					req.setPageRoleUHC("U");
+				} else{
+					if(elapsedtime<=hubMaxTimeMinutes*60){ // Hub
+						req.setPageRoleUHC("H");
+					} else {
+						if(elapsedtime<=contentMaxTimeMinutes*60){ // Content
+							req.setPageRoleUHC("C");
+						} else { // long time in a URL also Unimportant
+							req.setPageRoleUHC("U");
+						}
+					}
+				}
+				
+				// index type pages are unimportant
+				if(req.getIsIndex()){
+					req.setPageRoleUHC("U");
+				}
+				
+				// Update the request with the page role
+				WebAccessSequences.replaceRequest(i, req);
+			}	
+		}
 	}
 	
 }

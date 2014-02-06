@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.io.Serializable;
 
-public class RequestBidasoaTurismo implements Serializable{
+public class RequestBidasoaTurismo implements Serializable {
 
 	// The Serializable classes nedds it 
 	private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class RequestBidasoaTurismo implements Serializable{
 	private int m_urlIDcontent = -1;
 	
 	// time in each URL and its related attributes
-	private float m_elapsedtime = -1;
+	private float m_elapsedtime = -1;  // in milliseconds.
 		// U: Unimportant (<=10sec. & >=25-30min); H: Hub (5-6min.); C: Content (25-30min.);
 	private String m_pageRoleUHC = "-"; 
 	
@@ -274,14 +274,6 @@ public class RequestBidasoaTurismo implements Serializable{
 		return m_isvalid;
 	}
 	
-	public boolean getIsHTML(){
-		return m_ishtml;
-	}
-	
-	public boolean getIsRobot(){
-		return m_isbot;
-	}
-	
 	public String getFormatedUrlName(){
 		return m_formatedurlname;
 	}
@@ -326,20 +318,16 @@ public class RequestBidasoaTurismo implements Serializable{
 		return m_sessionID;
 	}
 	
-	public boolean getIsStatic(){
-		return m_isStatic;
+	public String getPageRoleUHC(){
+		return m_pageRoleUHC;
 	}
 	
-	public boolean getIsFrequent(){
-		return m_isFrequent;
+	public void setPageRoleUHC(String rolestr){
+		m_pageRoleUHC = rolestr;
 	}
 	
-	public String getLabelByHand(){
-		return m_labelByHand;
-	}
-	
-	public boolean getIsBot(){
-		return m_isbot;
+	public boolean getIsIndex(){
+		return m_labelByHand.equals("index");
 	}
 	
 	public String toString(){
@@ -351,7 +339,7 @@ public class RequestBidasoaTurismo implements Serializable{
 				m_isFrequent + " " + m_isStatic;
 	}
 	
-	public static String toStringLongHeader(){
+	public String toStringLongHeader(){
 		return "ip " +
 				"userID " +
 				"time " +
