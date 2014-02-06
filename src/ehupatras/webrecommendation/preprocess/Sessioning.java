@@ -290,7 +290,7 @@ public class Sessioning {
 			}
 				
 			// Update the request with the page role
-			WebAccessSequences.replaceRequest(i, req);
+			WebAccessSequences.replaceRequest(reqind, req);
 		}
 	}
 	
