@@ -143,13 +143,10 @@ public class MainClass {
 		
 		// SAMPLING //
 		Sampling samp = new Sampling();
-		ArrayList<Integer> sampleSessionIDs = samp.getSample(10000, (long)0);
+		ArrayList<Integer> sampleSessionIDs = samp.getSample(10000, (long)0, false);
 			
-		/*
-		for(int i=0; i<sampleSessionIDs.size(); i++){
-			System.out.println(sampleSessionIDs.get(i).intValue());
-		}
-		*/
+		// Model Validation //
+		
 			
 			
 		// ending the program
