@@ -3,6 +3,8 @@ package ehupatras.webrecommendation;
 import ehupatras.webrecommendation.preprocess.*;
 import ehupatras.webrecommendation.preprocess.log.*;
 import ehupatras.webrecommendation.structures.*;
+import ehupatras.webrecommendation.sampling.*;
+import java.util.*;
 
 public class MainClass {
 
@@ -26,7 +28,7 @@ public class MainClass {
 		
 		
 		
-		// READ THE LOG FILE //
+		// READ THE LOG FILE(S) //
 		
 		LogReader logreader = new LogReaderBidasoaTurismo();
 		
@@ -136,8 +138,20 @@ public class MainClass {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-			
 		
+		
+		
+		// SAMPLING //
+		Sampling samp = new Sampling();
+		ArrayList<Integer> sampleSessionIDs = samp.getSample(10000, (long)0);
+			
+		/*
+		for(int i=0; i<sampleSessionIDs.size(); i++){
+			System.out.println(sampleSessionIDs.get(i).intValue());
+		}
+		*/
+			
+			
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");

@@ -218,7 +218,7 @@ public class WebAccessSequences {
 	
 	public static void writeSequences(String outfilename){
 		// order the keys
-		ArrayList<Integer> keysOrd = orderHashtableKeys(m_sequences.keys());
+		ArrayList<Integer> keysOrd = getSequencesIDs();
 		
 		// Open the given file
 		BufferedWriter writer = null;
@@ -265,7 +265,7 @@ public class WebAccessSequences {
 	
 	public static void writeSequences_URLwithUHC(String outfilename){
 		// order the keys
-		ArrayList<Integer> keysOrd = orderHashtableKeys(m_sequences.keys());
+		ArrayList<Integer> keysOrd = getSequencesIDs();
 		
 		// Open the given file
 		BufferedWriter writer = null;
@@ -327,6 +327,11 @@ public class WebAccessSequences {
 			}
 			keysOrd.add(i, sessionID);
 		}
+		return keysOrd;
+	}
+	
+	public static ArrayList<Integer> getSequencesIDs(){
+		ArrayList<Integer> keysOrd = orderHashtableKeys(m_sequences.keys());
 		return keysOrd;
 	}
 	

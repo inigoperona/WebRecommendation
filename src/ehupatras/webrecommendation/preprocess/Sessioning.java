@@ -241,39 +241,56 @@ public class Sessioning {
 	}
 	
 	public void computePageRoleUHC_time(int shortTimeSeconds, int hubMaxTimeMinutes, int contentMaxTimeMinutes){
-		// order the keys
-		ArrayList<Integer> keysOrd = WebAccessSequences.orderHashtableKeys(WebAccessSequences.m_sequences.keys());
+		// get ordered sessionIDs
+		ArrayList<Integer> keysOrd = WebAccessSequences.getSequencesIDs();
 		
-		// compute the each page's role
+		// take all request indexes and order them.
+		ArrayList<Integer> reqIndexes = new ArrayList<Integer>(); 
 		for(int i=0; i<keysOrd.size(); i++){
 			int sessionID = keysOrd.get(i).intValue();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 			for(int j=0; j<sequence.size(); j++){
 				int reqind = sequence.get(j).intValue();
-				RequestBidasoaTurismo req = WebAccessSequences.getRequest(reqind);
-				float elapsedtime = req.getElapsedTime()/(float)1000;
-				if(elapsedtime<=shortTimeSeconds){ // Unimportant
-					req.setPageRoleUHC("U");
-				} else{
-					if(elapsedtime<=hubMaxTimeMinutes*60){ // Hub
-						req.setPageRoleUHC("H");
-					} else {
-						if(elapsedtime<=contentMaxTimeMinutes*60){ // Content
-							req.setPageRoleUHC("C");
-						} else { // long time in a URL also Unimportant
-							req.setPageRoleUHC("U");
-						}
+				// add the request-index to a reqIndexes array ordered
+				int k;
+				for(k=0; k<reqIndexes.size(); k++){
+					int kreqind = reqIndexes.get(k).intValue();
+					if(reqind<kreqind){
+						break;
 					}
 				}
-				
-				// index type pages are unimportant
-				if(req.getIsIndex()){
-					req.setPageRoleUHC("U");
+				reqIndexes.add(k, reqind);
+			}
+		}
+		
+		// compute the each request's page's role
+		for(int i=0; i<reqIndexes.size(); i++){
+			int reqind = reqIndexes.get(i).intValue();
+			RequestBidasoaTurismo req = WebAccessSequences.getRequest(reqind);
+			
+			// time based role
+			float elapsedtime = req.getElapsedTime()/(float)1000;
+			if(elapsedtime<=shortTimeSeconds){ // Unimportant
+				req.setPageRoleUHC("U");
+			} else{
+				if(elapsedtime<=hubMaxTimeMinutes*60){ // Hub
+					req.setPageRoleUHC("H");
+				} else {
+					if(elapsedtime<=contentMaxTimeMinutes*60){ // Content
+						req.setPageRoleUHC("C");
+					} else { // long time in a URL also Unimportant
+						req.setPageRoleUHC("U");
+					}
 				}
+			}
 				
-				// Update the request with the page role
-				WebAccessSequences.replaceRequest(i, req);
-			}	
+			// index type pages are unimportant
+			if(req.getIsIndex()){
+				req.setPageRoleUHC("U");
+			}
+				
+			// Update the request with the page role
+			WebAccessSequences.replaceRequest(i, req);
 		}
 	}
 	
