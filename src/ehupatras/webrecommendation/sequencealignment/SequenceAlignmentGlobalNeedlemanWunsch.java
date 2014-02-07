@@ -53,6 +53,7 @@ public class SequenceAlignmentGlobalNeedlemanWunsch implements SequenceAlignment
             int i = mSeqA.length;
             int j = mSeqB.length;
             mScore = mD[i][j];
+            /*
             while (i > 0 && j > 0) {                        
                     if (mD[i][j] == mD[i-1][j-1] + weight(i, j)) {                          
                             mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
@@ -74,6 +75,7 @@ public class SequenceAlignmentGlobalNeedlemanWunsch implements SequenceAlignment
             }
             mAlignmentSeqA = new StringBuffer(mAlignmentSeqA).reverse().toString();
             mAlignmentSeqB = new StringBuffer(mAlignmentSeqB).reverse().toString();
+             */
     }
    
     private int weight(int i, int j) {

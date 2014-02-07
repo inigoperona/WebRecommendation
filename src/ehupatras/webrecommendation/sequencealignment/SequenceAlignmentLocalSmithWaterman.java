@@ -61,6 +61,7 @@ public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
            
             mScore = mD[i][j];
            
+            /*
             int k = mSeqA.length;
             int l = mSeqB.length;
            
@@ -108,6 +109,7 @@ public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
            
             mAlignmentSeqA = new StringBuffer(mAlignmentSeqA).reverse().toString();
             mAlignmentSeqB = new StringBuffer(mAlignmentSeqB).reverse().toString();
+    		*/
     }
    
     private int weight(int i, int j) {

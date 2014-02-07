@@ -147,7 +147,7 @@ public class MainClass {
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start sampling.");
 		Sampling samp = new Sampling();
-		ArrayList<Integer> sampleSessionIDs = samp.getSample(10000, (long)0, false);
+		ArrayList<Integer> sampleSessionIDs = samp.getSample(100, (long)0, false);
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
