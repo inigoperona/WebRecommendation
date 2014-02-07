@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation.preprocess;
 
-import ehupatras.webrecommendation.structures.RequestBidasoaTurismo;
+import ehupatras.webrecommendation.structures.Request;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import java.util.*;
 
@@ -19,7 +19,7 @@ public class Sessioning {
 				System.out.println("  " + i + "/" + WebAccessSequences.filteredlogsize() +
 						" analyzed [createSessions]");
 			}
-			RequestBidasoaTurismo actualreq = WebAccessSequences.getRequest(i);
+			Request actualreq = WebAccessSequences.getRequest(i);
 			int actualuser = actualreq.getUserID();
 			long actualtime = actualreq.getTimeInMillis();
 			if(oldrequests.containsKey(actualuser)){
@@ -35,7 +35,7 @@ public class Sessioning {
 					sum = sum + oldelapssedtime;
 					nreq++;
 					// we now know the elapsed time, so, update the old requests
-					RequestBidasoaTurismo oldreq = WebAccessSequences.getRequest(oldindex);
+					Request oldreq = WebAccessSequences.getRequest(oldindex);
 					oldreq.setElapsedTime(oldelapssedtime);
 					int oldsessionint = actualuser*10000+oldsessioni;
 					oldreq.setSessionID(oldsessionint);
@@ -50,7 +50,7 @@ public class Sessioning {
 					oldrequests.put(actualuser, objAr);
 				} else {
 					// update the last request of the previous session
-					RequestBidasoaTurismo oldreq = WebAccessSequences.getRequest(oldindex);
+					Request oldreq = WebAccessSequences.getRequest(oldindex);
 					float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
 					oldreq.setElapsedTime(oldelapssedtime);
 					int oldsessionint = actualuser*10000+oldsessioni;
@@ -88,7 +88,7 @@ public class Sessioning {
 			int oldindex = ((Integer)objA[2]).intValue();
 			float sum = ((Float)objA[3]).floatValue();
 			int nreq = ((Integer)objA[4]).intValue();
-			RequestBidasoaTurismo oldreq = WebAccessSequences.getRequest(oldindex);
+			Request oldreq = WebAccessSequences.getRequest(oldindex);
 			float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
 			oldreq.setElapsedTime(oldelapssedtime);
 			int oldsessionint = userid*10000+oldsessioni;
@@ -105,7 +105,7 @@ public class Sessioning {
 				System.out.println("  " + i + "/" + WebAccessSequences.filteredlogsize() +
 						" analyzed [joinConsecutiveSameUrls]");
 			}
-			RequestBidasoaTurismo actualreq = WebAccessSequences.getRequest(i);
+			Request actualreq = WebAccessSequences.getRequest(i);
 			int actualsessionid = actualreq.getSessionID();
 			int actualUrl = actualreq.getUrlIDusage();
 			float actualelapsedtime = actualreq.getElapsedTime();
@@ -126,7 +126,7 @@ public class Sessioning {
 					WebAccessSequences.replaceRequest(i, actualreq);
 				} else {
 					// write the last URLs information
-					RequestBidasoaTurismo oldreq = WebAccessSequences.getRequest(oldindex);
+					Request oldreq = WebAccessSequences.getRequest(oldindex);
 					oldreq.setElapsedTime(sum);
 					WebAccessSequences.replaceRequest(oldindex, oldreq);
 					
@@ -155,7 +155,7 @@ public class Sessioning {
 			int oldindex = ((Integer)objA[0]).intValue();
 			//int oldUrl = ((Integer)objA[1]).intValue();
 			float sum = ((Float)objA[2]).floatValue();
-			RequestBidasoaTurismo oldreq = WebAccessSequences.getRequest(oldindex);
+			Request oldreq = WebAccessSequences.getRequest(oldindex);
 			oldreq.setElapsedTime(sum);
 			WebAccessSequences.replaceRequest(oldindex, oldreq);
 		}
@@ -164,7 +164,7 @@ public class Sessioning {
 	public void createSequences(){
 		int sequencecounter = 0;
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
-			RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
+			Request req = WebAccessSequences.getRequest(i);
 			int sessionID = req.getSessionID();
 			if(	req.getIsSuitableToLinkPrediction() ){
 				if( WebAccessSequences.m_sequences.containsKey(sessionID) ){
@@ -240,7 +240,7 @@ public class Sessioning {
 		System.out.println("  " + removecounter + " sequences removed.");
 	}
 	
-	public void computePageRoleUHC_time(int shortTimeSeconds, int hubMaxTimeMinutes, int contentMaxTimeMinutes){
+	public void computePageRoleUHC_time(int shortTimeSeconds, int hubMaxTimeSeconds, int contentMaxTimeSeconds){
 		// get ordered sessionIDs
 		ArrayList<Integer> keysOrd = WebAccessSequences.getSequencesIDs();
 		
@@ -266,17 +266,17 @@ public class Sessioning {
 		// compute the each request's page's role
 		for(int i=0; i<reqIndexes.size(); i++){
 			int reqind = reqIndexes.get(i).intValue();
-			RequestBidasoaTurismo req = WebAccessSequences.getRequest(reqind);
+			Request req = WebAccessSequences.getRequest(reqind);
 			
 			// time based role
 			float elapsedtime = req.getElapsedTime()/(float)1000;
 			if(elapsedtime<=shortTimeSeconds){ // Unimportant
 				req.setPageRoleUHC("U");
 			} else{
-				if(elapsedtime<=hubMaxTimeMinutes*60){ // Hub
+				if(elapsedtime<=hubMaxTimeSeconds){ // Hub
 					req.setPageRoleUHC("H");
 				} else {
-					if(elapsedtime<=contentMaxTimeMinutes*60){ // Content
+					if(elapsedtime<=contentMaxTimeSeconds){ // Content
 						req.setPageRoleUHC("C");
 					} else { // long time in a URL also Unimportant
 						req.setPageRoleUHC("U");

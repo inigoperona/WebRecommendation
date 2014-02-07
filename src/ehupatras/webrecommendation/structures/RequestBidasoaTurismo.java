@@ -4,7 +4,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.io.Serializable;
 
-public class RequestBidasoaTurismo implements Serializable {
+public class RequestBidasoaTurismo 
+				extends Request
+				implements Serializable {
 
 	// The Serializable classes nedds it 
 	private static final long serialVersionUID = 1L;
@@ -328,15 +330,6 @@ public class RequestBidasoaTurismo implements Serializable {
 	
 	public boolean getIsIndex(){
 		return m_labelByHand.equals("index");
-	}
-	
-	public String toString(){
-		return 	m_userID + " " + 
-				m_time.getTimeInMillis() + " " +
-				m_urlIDusage + " " + m_formatedurlname + " " + 
-				m_labelByHand + " " + m_language + " " + 
-				m_ishtml + " " + m_isbot + " " +
-				m_isFrequent + " " + m_isStatic;
 	}
 	
 	public String toStringLongHeader(){

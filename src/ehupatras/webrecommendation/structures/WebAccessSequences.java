@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation.structures;
 
-import ehupatras.webrecommendation.structures.RequestBidasoaTurismo;
+import ehupatras.webrecommendation.structures.Request;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -23,7 +23,7 @@ public class WebAccessSequences {
 	public static Hashtable<String,Integer> m_url2idHT = new Hashtable<String,Integer>();	
 	
 	// The filtered/good requests from the log
-	private static ArrayList<RequestBidasoaTurismo> m_filterlog = new ArrayList<RequestBidasoaTurismo>();
+	private static ArrayList<Request> m_filterlog = new ArrayList<Request>();
 	private static int m_actualloadedrequest = 0;
 	private static int m_lastloadedrequest = 0;
 	private static int m_maxloadrequests = 100000;
@@ -39,7 +39,7 @@ public class WebAccessSequences {
 		
 	}
 	
-	public static void addRequest(RequestBidasoaTurismo req) {
+	public static void addRequest(Request req) {
 		// load the last modulus to add if we do not have already loaded
 		if(m_writedmodulus>m_actualloadedmodulus){
 			long starttime = System.currentTimeMillis();
@@ -62,7 +62,7 @@ public class WebAccessSequences {
 			m_actualloadedmodulus++;
 			// initialize parameters
 			m_actualloadedrequest = 0;
-			m_filterlog = new ArrayList<RequestBidasoaTurismo>();
+			m_filterlog = new ArrayList<Request>();
 			System.gc();
 		}
 		m_filterlog.add(req);
@@ -71,7 +71,7 @@ public class WebAccessSequences {
 		m_lastloadedrequest = m_actualloadedrequest;
 	}
 	
-	public static RequestBidasoaTurismo getRequest(int i) {
+	public static Request getRequest(int i) {
 		int imodulus = i / m_maxloadrequests;
 		int iindex = i % m_maxloadrequests;
 		if(m_actualloadedmodulus!=imodulus){
@@ -87,7 +87,7 @@ public class WebAccessSequences {
 		return m_filterlog.get(iindex);
 	}
 	
-	public static void replaceRequest(int i, RequestBidasoaTurismo req){
+	public static void replaceRequest(int i, Request req){
 		int imodulus = i / m_maxloadrequests;
 		int iindex = i % m_maxloadrequests;
 		if(m_actualloadedmodulus!=imodulus){
@@ -118,7 +118,7 @@ public class WebAccessSequences {
 		ObjectInputStream ois = null;
 		try{
 			ois = new ObjectInputStream(fis);
-			m_filterlog = (ArrayList<RequestBidasoaTurismo>)ois.readObject();
+			m_filterlog = (ArrayList<Request>)ois.readObject();
 		} catch(IOException ex){
 			
 		} catch(ClassNotFoundException ex){
@@ -193,7 +193,7 @@ public class WebAccessSequences {
 		// Write in a file line by line
 		try{
 			for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
-				RequestBidasoaTurismo req = WebAccessSequences.getRequest(i);
+				Request req = WebAccessSequences.getRequest(i);
 				if(i==0){ writer.write("requestOrder " + req.toStringLongHeader() + "\n"); }
 				writer.write(i + " " + req.toStringLong() + "\n");
 			}
@@ -286,7 +286,7 @@ public class WebAccessSequences {
 				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 				for(int j=0; j<sequence.size(); j++){
 					int reqind = sequence.get(j).intValue();
-					RequestBidasoaTurismo req = WebAccessSequences.getRequest(reqind);
+					Request req = WebAccessSequences.getRequest(reqind);
 					int urlid = req.getUrlIDusage();
 					String pagrole = req.getPageRoleUHC();
 					String seqelem = String.format("%06d%s", urlid, pagrole);
@@ -336,7 +336,7 @@ public class WebAccessSequences {
 		Hashtable<Integer,String> requestsInfo = new Hashtable<Integer,String>();
 		for(int i=0; i<requestIDs.size(); i++){
 			int reqind = requestIDs.get(i);
-			RequestBidasoaTurismo req = WebAccessSequences.getRequest(reqind);
+			Request req = WebAccessSequences.getRequest(reqind);
 			int urlid = req.getUrlIDusage();
 			String pagrole = req.getPageRoleUHC();
 			String seqelem = String.format("%06d%s", urlid, pagrole);

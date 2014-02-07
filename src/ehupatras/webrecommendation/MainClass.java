@@ -108,7 +108,7 @@ public class MainClass {
 		// compute the each web page role
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start computing pages' role.");
-		ses.computePageRoleUHC_time(10, 10, 20);
+		ses.computePageRoleUHC_time(5, 20, 10*60);
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");

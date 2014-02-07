@@ -1,5 +1,6 @@
 package ehupatras.webrecommendation.preprocess.log;
 
+import ehupatras.webrecommendation.structures.Request;
 import ehupatras.webrecommendation.structures.RequestBidasoaTurismo;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import java.io.BufferedReader;
@@ -93,7 +94,7 @@ public class LogReaderBidasoaTurismo extends LogReader {
 				}	
 				
 				// Create a request object
-				RequestBidasoaTurismo req = new RequestBidasoaTurismo(ip, ipID, time, urlrequest, status, 
+				Request req = new RequestBidasoaTurismo(ip, ipID, time, urlrequest, status, 
 						reqsize, reference, useragent);
 				
 				// if it is valid request, store it
