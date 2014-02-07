@@ -313,6 +313,51 @@ public class WebAccessSequences {
 		}
 	}
 	
+	public static ArrayList<String[]> getSequences_URLwithUHC(ArrayList<Integer> sessionIDs){
+		// First ordered all requests we need
+		ArrayList<Integer> requestIDs = new ArrayList<Integer>();
+		for(int i=0; i<sessionIDs.size(); i++){
+			int sessionID = sessionIDs.get(i).intValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+			for(int j=0; j<sequence.size(); j++){
+				int reqind = sequence.get(j).intValue();
+				int k;
+				for(k=0; k<requestIDs.size(); k++){
+					int ireqind = requestIDs.get(k);
+					if(reqind<ireqind){
+						break;
+					}
+				}
+				requestIDs.add(k, reqind);
+			}
+		}
+		
+		// Access to the information we need
+		Hashtable<Integer,String> requestsInfo = new Hashtable<Integer,String>();
+		for(int i=0; i<requestIDs.size(); i++){
+			int reqind = requestIDs.get(i);
+			RequestBidasoaTurismo req = WebAccessSequences.getRequest(reqind);
+			int urlid = req.getUrlIDusage();
+			String pagrole = req.getPageRoleUHC();
+			String seqelem = String.format("%06d%s", urlid, pagrole);
+			requestsInfo.put(reqind, seqelem);
+		}
+		
+		// create the structure of sequences to return
+		ArrayList<String[]> resultSequences = new ArrayList<String[]>();
+		for(int i=0; i<sessionIDs.size(); i++){
+			int sessionID = sessionIDs.get(i).intValue();
+			ArrayList<Integer> sequenceReqInd = WebAccessSequences.m_sequences.get(sessionID);
+			String[] sequenceUHC = new String[sequenceReqInd.size()];
+			for(int j=0; j<sequenceReqInd.size(); j++){
+				int reqind = sequenceReqInd.get(j).intValue();
+				sequenceUHC[j] = requestsInfo.get(reqind);
+			}
+			resultSequences.add(sequenceUHC);
+		}
+		return resultSequences;
+	}
+	
 	public static ArrayList<Integer> orderHashtableKeys(Enumeration<Integer> keys){
 		// order the keys
 		ArrayList<Integer> keysOrd = new ArrayList<Integer>();

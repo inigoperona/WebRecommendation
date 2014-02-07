@@ -4,6 +4,8 @@ import ehupatras.webrecommendation.preprocess.*;
 import ehupatras.webrecommendation.preprocess.log.*;
 import ehupatras.webrecommendation.structures.*;
 import ehupatras.webrecommendation.sampling.*;
+import ehupatras.webrecommendation.modelvalidation.*;
+import ehupatras.webrecommendation.similaritymatrix.*;
 import java.util.*;
 
 public class MainClass {
@@ -124,7 +126,7 @@ public class MainClass {
 			
 		// write the sequences we have created
 			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start writing created sequences.");
+			System.out.println("[" + starttime + "] Start writing created sequences of request indexes.");
 		WebAccessSequences.writeSequences(basedirectory + "/sequences_requestIndexes.txt");
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
@@ -133,7 +135,7 @@ public class MainClass {
 		// write the sequence instantiation1: 
 		// sequence of urlID with each role: Unimportant (U), Hub (H), Content (C)
 			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start writing created sequences.");
+			System.out.println("[" + starttime + "] Start writing created sequences of urlID+(U,H,C).");
 		WebAccessSequences.writeSequences_URLwithUHC(basedirectory + "/sequences_urlIDurlRole.txt");
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
@@ -142,13 +144,47 @@ public class MainClass {
 		
 		
 		// SAMPLING //
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Start sampling.");
 		Sampling samp = new Sampling();
 		ArrayList<Integer> sampleSessionIDs = samp.getSample(10000, (long)0, false);
-			
-		// Model Validation //
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. Elapsed time: "
+				+ (endtime-starttime)/1000 + " seconds.");
 		
-			
-			
+		
+		// MODEL VALIDATION //
+		// split up the database to the evaluation process
+		ModelValidationHoldOut modelval = new ModelValidationHoldOut();
+		Object[] parts = modelval.getTrainTest(sampleSessionIDs, 70, 0, 30);
+		ArrayList<Integer> train = (ArrayList<Integer>)parts[0];
+		ArrayList<Integer> val   = (ArrayList<Integer>)parts[1];
+		ArrayList<Integer> test  = (ArrayList<Integer>)parts[2];
+		
+		// get training sequences
+		ArrayList<String[]> sequencesUHC = WebAccessSequences.getSequences_URLwithUHC(train);
+
+		// create the similarity matrix
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Start computing the similarity matrix.");
+		SimilarityMatrix similaritymatrix = new SimilarityMatrix();
+		float[][] simmatrix = similaritymatrix.getSimilarityMatrix(sequencesUHC);
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. Elapsed time: "
+					+ (endtime-starttime)/1000 + " seconds.");
+		
+		/*
+		for(int i=0; i<sequencesUHC.size(); i++){
+			int sessionID = train.get(i).intValue();
+			System.out.print(sessionID);
+			String[] seqUHC = sequencesUHC.get(i);
+			for(int j=0; j<seqUHC.length; j++){
+				System.out.print("," + seqUHC[j]);
+			}
+			System.out.println();
+		}
+		*/
+		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");

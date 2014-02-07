@@ -9,7 +9,8 @@ public class Sampling {
 		// ordered sessionsIDs
 		ArrayList<Integer> keysOrd = WebAccessSequences.getSequencesIDs();
 		
-		// if 
+		// if more than database size is required
+		// then allow repetition of cases
 		if(keysOrd.size()<ncases){
 			allowrepetitions = true;
 		}
