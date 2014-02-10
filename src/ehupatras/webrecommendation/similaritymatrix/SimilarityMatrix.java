@@ -4,6 +4,7 @@ import ehupatras.webrecommendation.sequencealignment.*;
 import java.util.*;
 
 public class SimilarityMatrix {
+	
 	public float[][] getSimilarityMatrix(ArrayList<String[]> data){
 		float[][] similaritymatrix = new float[data.size()][data.size()];
 		for(int i=0; i<data.size(); i++){
@@ -16,4 +17,5 @@ public class SimilarityMatrix {
 		}
 		return similaritymatrix;
 	}
+	
 }

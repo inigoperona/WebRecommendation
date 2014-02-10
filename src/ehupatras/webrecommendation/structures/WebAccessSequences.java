@@ -264,9 +264,6 @@ public class WebAccessSequences {
 	}
 	
 	public static void writeSequences_URLwithUHC(String outfilename){
-		// order the keys
-		ArrayList<Integer> keysOrd = getSequencesIDs();
-		
 		// Open the given file
 		BufferedWriter writer = null;
 		try{
@@ -280,17 +277,16 @@ public class WebAccessSequences {
 		
 		// Write the sequences in a file line by line
 		try{
-			for(int i=0; i<keysOrd.size(); i++){
+			// order the keys
+			ArrayList<Integer> keysOrd = getSequencesIDs();			
+			ArrayList<String[]> sequences = getSequences_URLwithUHC(keysOrd);
+			
+			for(int i=0; i<sequences.size(); i++){
 				int sessionID = keysOrd.get(i).intValue();
 				writer.write(String.valueOf(sessionID));
-				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
-				for(int j=0; j<sequence.size(); j++){
-					int reqind = sequence.get(j).intValue();
-					Request req = WebAccessSequences.getRequest(reqind);
-					int urlid = req.getUrlIDusage();
-					String pagrole = req.getPageRoleUHC();
-					String seqelem = String.format("%06d%s", urlid, pagrole);
-					writer.write("," + seqelem);
+				String[] sequence = sequences.get(i);
+				for(int j=0; j<sequence.length; j++){
+					writer.write("," + sequence[j]);
 				}
 				writer.write("\n");
 			}

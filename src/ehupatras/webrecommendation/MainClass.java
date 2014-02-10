@@ -1,11 +1,16 @@
 package ehupatras.webrecommendation;
 
-import ehupatras.webrecommendation.preprocess.*;
-import ehupatras.webrecommendation.preprocess.log.*;
 import ehupatras.webrecommendation.structures.*;
 import ehupatras.webrecommendation.sampling.*;
 import ehupatras.webrecommendation.modelvalidation.*;
 import ehupatras.webrecommendation.similaritymatrix.*;
+import ehupatras.webrecommendation.usage.preprocess.*;
+import ehupatras.webrecommendation.usage.preprocess.log.*;
+import ehupatras.clustering.sapehac.experiment.*;
+import ehupatras.clustering.sapehac.agglomeration.*;
+import ehupatras.clustering.sapehac.dendrogram.*;
+import ehupatras.clustering.sapehac.*;
+
 import java.util.*;
 
 public class MainClass {
@@ -69,7 +74,7 @@ public class MainClass {
 		// create sessions
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
-		ses.createSessions(30); // maximum period of inactivity
+		ses.createSessions(10); // maximum period of inactivity
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
@@ -142,7 +147,7 @@ public class MainClass {
 				+ (endtime-starttime)/1000 + " seconds.");
 		
 		
-		
+
 		// SAMPLING //
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start sampling.");
@@ -173,6 +178,21 @@ public class MainClass {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
 		
+		// hierarchical clustering: http://sape.inf.usi.ch/hac
+			System.out.println("[" + starttime + "] Start hierarchical clustering.");
+			starttime = System.currentTimeMillis();
+		Experiment experiment = new ExperimentEhuPatras(sequencesUHC.size());
+		DissimilarityMeasure dissimilarityMeasure = new DissimilarityMeasureEhupatras(simmatrix);
+		AgglomerationMethod agglomerationMethod = new SingleLinkage();
+		DendrogramBuilder dendrogramBuilder = new DendrogramBuilder(experiment.getNumberOfObservations());
+		HierarchicalAgglomerativeClusterer clusterer = new HierarchicalAgglomerativeClusterer(experiment, dissimilarityMeasure, agglomerationMethod);
+		clusterer.cluster(dendrogramBuilder);
+		Dendrogram dendrogram = dendrogramBuilder.getDendrogram();
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. Elapsed time: "
+				+ (endtime-starttime)/1000 + " seconds.");
+			
+			
 		/*
 		for(int i=0; i<sequencesUHC.size(); i++){
 			int sessionID = train.get(i).intValue();
@@ -184,6 +204,7 @@ public class MainClass {
 			System.out.println();
 		}
 		*/
+		
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
