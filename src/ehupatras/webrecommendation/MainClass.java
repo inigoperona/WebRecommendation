@@ -188,22 +188,38 @@ public class MainClass {
 		HierarchicalAgglomerativeClusterer clusterer = new HierarchicalAgglomerativeClusterer(experiment, dissimilarityMeasure, agglomerationMethod);
 		clusterer.cluster(dendrogramBuilder);
 		Dendrogram dendrogram = dendrogramBuilder.getDendrogram();
+		
+		System.out.println("------");
+		ArrayList<DendrogramNode> nodesList = new ArrayList<DendrogramNode>();
+		DendrogramNode root = dendrogram.getRoot();
+		nodesList.add(root);
+		for(int i=0; i<nodesList.size(); i++){
+			DendrogramNode node = nodesList.get(i);
+			String nodeClassStr = node.getClass().toString();
+			if(nodeClassStr.contains("MergeNode")){
+				MergeNode mnode = (MergeNode)node;
+				System.out.println(i + " : MergeNode (" 
+						+ mnode.getObservationCount() + ") : " 
+						+ mnode.getDissimilarity());
+				nodesList.add(mnode.getLeft());
+				nodesList.add(mnode.getRight());
+			}
+			if(nodeClassStr.contains("ObservationNode")){
+				ObservationNode onode = (ObservationNode)node;
+				System.out.println(i + " : ObservationNode (" 
+						+ onode.getObservationCount() + ") : " 
+						+ onode.getObservation());
+			}
+		}
+		
+		//System.out.println(node.toString());
+		System.out.println("------");
+		
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 			
 			
-		/*
-		for(int i=0; i<sequencesUHC.size(); i++){
-			int sessionID = train.get(i).intValue();
-			System.out.print(sessionID);
-			String[] seqUHC = sequencesUHC.get(i);
-			for(int j=0; j<seqUHC.length; j++){
-				System.out.print("," + seqUHC[j]);
-			}
-			System.out.println();
-		}
-		*/
 		
 		
 		// ending the program
