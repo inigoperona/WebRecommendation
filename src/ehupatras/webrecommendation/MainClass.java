@@ -22,6 +22,7 @@ public class MainClass {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
+		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
 		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String filename1 = "/kk1.log";
 		//String basedirectory = args[0];
@@ -29,6 +30,7 @@ public class MainClass {
 		
 		// initialize the data structure
 		WebAccessSequences.setWorkDirectory(basedirectory);
+		//WebAccessSequences.loadStructure();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -219,7 +221,7 @@ public class MainClass {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 			
-			
+		
 		
 		
 		// ending the program

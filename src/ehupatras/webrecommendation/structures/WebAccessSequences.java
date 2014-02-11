@@ -1,26 +1,16 @@
 package ehupatras.webrecommendation.structures;
 
 import ehupatras.webrecommendation.structures.Request;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.*;
 
 public class WebAccessSequences {
 
 	// The directory where we are working
 	private static String m_workdirectory = "-";
-	
-	// HashTable to compute userID from the IP address
-	public static Hashtable<String,Integer> m_ip2idHT = new Hashtable<String,Integer>();
-		
+			
 	// HashTable to compute urlID from formatedURLs
-	public static Hashtable<String,Integer> m_url2idHT = new Hashtable<String,Integer>();	
+	private static Hashtable<String,Page> m_url2idHT = new Hashtable<String,Page>();	
 	
 	// The filtered/good requests from the log
 	private static ArrayList<Request> m_filterlog = new ArrayList<Request>();
@@ -32,11 +22,11 @@ public class WebAccessSequences {
 	private static String m_basenamejavadata = "requests.javaData";
 	
 	// The sequences we are going to use to link prediction
+	// sessionID1: req1, req2, req3
 	public static Hashtable<Integer,ArrayList<Integer>> m_sequences = new Hashtable<Integer,ArrayList<Integer>>();
 	
 	// private constructor
 	private WebAccessSequences(){
-		
 	}
 	
 	public static void addRequest(Request req) {
@@ -381,7 +371,34 @@ public class WebAccessSequences {
 	}
 	
 	public static void loadStructure(){
-		
+		int i=0;
+		while(true){
+			String filename = m_workdirectory + "/" + 
+					"_" + i + "_" + m_basenamejavadata;
+			File ffile= new File(filename);
+			if(!ffile.exists()){break;}
+			// load the data
+			System.out.println("Loading: " + ffile.getName());
+			loadmodulus(i);
+			// update the next javaData file
+			i++;
+		}
+	}
+	
+	public static boolean containsURL(String urlname){
+		return m_url2idHT.containsKey(urlname);
+	}
+	
+	public static void putURL(String urlname, Page page){
+		m_url2idHT.put(urlname, page);
+	}
+	
+	public static int getURLID(String urlname){
+		return m_url2idHT.get(urlname).getUrlIDusage();
+	}
+	
+	public static Page getPage(String urlname){
+		return m_url2idHT.get(urlname);
 	}
 	
 }
