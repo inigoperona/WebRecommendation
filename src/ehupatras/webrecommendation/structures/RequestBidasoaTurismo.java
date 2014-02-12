@@ -240,7 +240,7 @@ public class RequestBidasoaTurismo
 				"sesssionID " +
 				"elapsedtime " +
 				"pageRoleUHC " +
-				"isbot" +
+				"isbot" + " " +
 				page.toStringLongHeader();
 	}
 	
@@ -259,7 +259,7 @@ public class RequestBidasoaTurismo
 				m_sessionID + " " +
 				m_elapsedtime + " " +
 				m_pageRoleUHC  + " " +
-				m_isbot +
+				m_isbot + " " +
 				page.toStringLong();
 	}
 	

@@ -10,12 +10,18 @@ public class GooglePageRank {
   public static void main(String[] args) {
  
 	GooglePageRank obj = new GooglePageRank();
-	System.out.println(obj.getPR("bidasoaturismo.com"));
+	System.out.println(obj.getPR(
+			"bidasoaturismo.com/index.php?option=com_content&view=article&id=308&Itemid=9&lang=en&ch=1", 
+			"bidasoaturismo.com/index.php?option=com_content&view=article&id=308&Itemid=9&lang=en&ch=1"
+			));
  
   }
  
-  public int getPR(String domain) {
+  public int getPR(String domain, String urlname) {
  
+	  System.out.println(domain);
+	  System.out.println(urlname);
+	  
 	String result = "";
  
 	JenkinsHash jenkinsHash = new JenkinsHash();

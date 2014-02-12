@@ -1,11 +1,22 @@
 package ehupatras.webrecommendation.sequencealignment;
 
 public class SequenceAlignmentCombineGlobalLocal implements SequenceAlignment{
+	
 	public float getScore(String[] seqA, String[] seqB){
 		SequenceAlignment nw = new SequenceAlignmentGlobalNeedlemanWunsch();
 		float scoreNW = nw.getScore(seqA, seqB);
 		SequenceAlignment sw = new SequenceAlignmentLocalSmithWaterman();
 		float scoreSW = sw.getScore(seqA, seqB);
+		float p = (float)seqA.length/(float)seqB.length;
+		float score = ((float)1-p)*scoreSW + p*scoreNW;
+		return score;
+	}
+	
+	public float getweakedScore(String[] seqA, String[] seqB){
+		SequenceAlignment nw = new SequenceAlignmentGlobalNeedlemanWunsch();
+		float scoreNW = nw.getweakedScore(seqA, seqB);
+		SequenceAlignment sw = new SequenceAlignmentLocalSmithWaterman();
+		float scoreSW = sw.getweakedScore(seqA, seqB);
 		float p = (float)seqA.length/(float)seqB.length;
 		float score = ((float)1-p)*scoreSW + p*scoreNW;
 		return score;
@@ -17,5 +28,6 @@ public class SequenceAlignmentCombineGlobalLocal implements SequenceAlignment{
 
         SequenceAlignment sa = new SequenceAlignmentCombineGlobalLocal();
         System.out.println(sa.getScore(seqA, seqB));
+        System.out.println(sa.getweakedScore(seqA, seqB));
     }
 }

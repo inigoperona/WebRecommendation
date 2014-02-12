@@ -21,6 +21,9 @@ public class PageBidasoaTurismo implements Page {
 		// if it is a avalid URL
 	private boolean m_isvalid = true;
 	
+		// Semantic information of the data
+	private int m_pagerankvalue = 0;
+	
 	public PageBidasoaTurismo(String urlname){
 		m_urlname = urlname;
 		isValid();
@@ -179,6 +182,18 @@ public class PageBidasoaTurismo implements Page {
 	
 	public boolean getIsIndex(){
 		return m_labelByHand.equals("index");
+	}
+	
+	public String getUrlName(){
+		String urlname2 = m_urlname.replace("lang=es", "lang=en");
+		String urlname3 = urlname2.replace("lang=eu", "lang=en");
+		String urlname4 = urlname3.replace("lang=fr", "lang=en");
+		String urlname5 = "bidasoaturismo.com" + urlname4; 
+		return urlname5;
+	}
+	
+	public void setPageRank(int pagerank){
+		m_pagerankvalue = pagerank;
 	}
 	
 	// Writing the Page information

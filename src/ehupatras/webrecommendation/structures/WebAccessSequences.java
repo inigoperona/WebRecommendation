@@ -1,5 +1,6 @@
 package ehupatras.webrecommendation.structures;
 
+import ehupatras.webrecommendation.content.preprocess.pagerank.GooglePageRank;
 import ehupatras.webrecommendation.structures.Request;
 import java.io.*;
 import java.util.*;
@@ -28,6 +29,9 @@ public class WebAccessSequences {
 	// private constructor
 	private WebAccessSequences(){
 	}
+	
+	
+	// Requests related functions
 	
 	public static void addRequest(Request req) {
 		// load the last modulus to add if we do not have already loaded
@@ -385,6 +389,9 @@ public class WebAccessSequences {
 		}
 	}
 	
+	
+	// The operations related to a set of URLs
+	
 	public static boolean containsURL(String urlname){
 		return m_url2idHT.containsKey(urlname);
 	}
@@ -399,6 +406,24 @@ public class WebAccessSequences {
 	
 	public static Page getPage(String urlname){
 		return m_url2idHT.get(urlname);
+	}
+	
+	public static void computePageRank(){
+		Enumeration<String> formatedURLsKeys = m_url2idHT.keys();
+		while(formatedURLsKeys.hasMoreElements()){
+			String key = formatedURLsKeys.nextElement();
+			Page page = m_url2idHT.get(key);
+			if(page.getIsSuitableToLinkPrediction()){
+				String urlname = page.getUrlName();
+				System.out.println(urlname);
+			}
+			
+			//GooglePageRank obj = new GooglePageRank();
+			//int pagerankvalue = obj.getPR(urlname);
+			//page.setPageRank(pagerankvalue);
+			
+			//System.out.println(pagerankvalue);
+		}
 	}
 	
 }

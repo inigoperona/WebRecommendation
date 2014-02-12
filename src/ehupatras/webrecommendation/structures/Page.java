@@ -9,6 +9,8 @@ public interface Page {
 	public void setIsFrequent(boolean isFrequent);
 	public void setIsStatic(boolean isStatic);
 	public boolean getIsIndex();
+	public String getUrlName();
+	public void setPageRank(int pagerank);
 	public String toStringLongHeader();
 	public String toStringLong();
 }

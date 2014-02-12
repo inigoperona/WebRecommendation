@@ -150,6 +150,9 @@ public class MainClass {
 		
 		
 
+//WebAccessSequences.computePageRank();
+			
+			
 		// SAMPLING //
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start sampling.");

@@ -9,7 +9,11 @@ public class SequenceAlignmentGlobalNeedlemanWunsch implements SequenceAlignment
     private String mAlignmentSeqB = "";
     private String m_gap = "-";
    
-    public float getScore(String[] seqA, String[] seqB){
+    private void computeAlignment(String[] seqA, String[] seqB){
+    	// initialize all class attributes
+    	mAlignmentSeqA = "";
+    	mAlignmentSeqB = "";
+    	m_gap = "-";
     	// create the gap String
     	int gaplen = seqA[0].length();
     	for(int i=1; i<gaplen; i++){ m_gap = m_gap + "-"; }
@@ -18,7 +22,93 @@ public class SequenceAlignmentGlobalNeedlemanWunsch implements SequenceAlignment
         init(seqA, seqB);
         process();
         backtrack();
+    }
+    
+    public float getScore(String[] seqA, String[] seqB){
+    	computeAlignment(seqA,seqB);
         return (float)mScore;
+    }
+    
+    public float getweakedScore(String[] seqA, String[] seqB){
+    	// constants
+    	float wm = (float)1;
+    	float wms = (float)1;
+    	float wg = (float)1;
+    	float ws = (float)5;
+    	
+    	// compute the score
+    	computeAlignment(seqA,seqB);
+    	String[] alignSeqA = getStringArrayRepresentation(mAlignmentSeqA);
+    	String[] alignSeqB = getStringArrayRepresentation(mAlignmentSeqB);
+    	int alignLen = alignSeqA.length;
+    	int nmatches = 0;
+    	int nmismatches = 0;
+    	int ngaps = 0;
+    	int nspaces = 0;
+    	String previousElemA = "";
+    	String previousElemB = "";
+    	for(int i=0; i<alignLen; i++){
+    		String elemA = alignSeqA[i];
+    		String elemB = alignSeqB[i];
+    		if(elemA.equals(elemB)){ 
+    			if(!elemA.equals(m_gap) && !elemB.equals(m_gap)){
+    				nmatches++;
+    			} else { // gaps
+    				boolean iscounted = false;
+    				if(elemA.equals(m_gap)){
+    					if(previousElemA.equals(m_gap)){
+    						nspaces++;
+    						iscounted = true;
+    					}
+    				}
+    				if(elemB.equals(m_gap)){
+    					if(previousElemB.equals(m_gap)){
+    						nspaces++;
+    						iscounted = true;
+    					}
+    				}
+    				if(!iscounted){
+    					ngaps++;
+    				}
+    			}
+    		} else {
+       			if(!elemA.equals(m_gap) && !elemB.equals(m_gap)){
+       				nmismatches++;
+       			} else { // gaps
+    				boolean iscounted = false;
+    				if(elemA.equals(m_gap)){
+    					if(previousElemA.equals(m_gap)){
+    						nspaces++;
+    						iscounted = true;
+    					}
+    				}
+    				if(elemB.equals(m_gap)){
+    					if(previousElemB.equals(m_gap)){
+    						nspaces++;
+    						iscounted = true;
+    					}
+    				}
+    				if(!iscounted){
+    					ngaps++;
+    				}
+    			}
+    		}
+    		previousElemA = elemA;
+    		previousElemB = elemB;
+    	}
+    	float score = wm*(float)nmatches 
+    			- wms*(float)nmismatches - wg*(float)ngaps - ws*(float)nspaces;
+    	return score;
+    }
+    
+    private String[] getStringArrayRepresentation(String str){
+    	int alignLen = str.length()/m_gap.length();
+    	String[] seq = new String[alignLen];
+    	for(int i=0; i<alignLen; i++){
+    		int startind = i*m_gap.length();
+    		seq[i] = str.substring(startind, startind+m_gap.length());
+    	}
+    	return seq;
     }
     
     private void init(String[] seqA, String[] seqB) {
@@ -53,21 +143,21 @@ public class SequenceAlignmentGlobalNeedlemanWunsch implements SequenceAlignment
             int i = mSeqA.length;
             int j = mSeqB.length;
             mScore = mD[i][j];
-            /*
+            
             while (i > 0 && j > 0) {                        
                     if (mD[i][j] == mD[i-1][j-1] + weight(i, j)) {                          
                             mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
-                            mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();;
+                            mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
                             i--;
                             j--;                            
                             continue;
                     } else if (mD[i][j] == mD[i][j-1] - 1) {
                             mAlignmentSeqA += m_gap;
-                            mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();;
+                            mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
                             j--;
                             continue;
                     } else {
-                            mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();;
+                            mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
                             mAlignmentSeqB += m_gap;
                             i--;
                             continue;
@@ -75,7 +165,6 @@ public class SequenceAlignmentGlobalNeedlemanWunsch implements SequenceAlignment
             }
             mAlignmentSeqA = new StringBuffer(mAlignmentSeqA).reverse().toString();
             mAlignmentSeqB = new StringBuffer(mAlignmentSeqB).reverse().toString();
-             */
     }
    
     private int weight(int i, int j) {
@@ -107,11 +196,12 @@ public class SequenceAlignmentGlobalNeedlemanWunsch implements SequenceAlignment
     public static void main(String [] args) {
         //String[] seqA = { "A", "C", "G", "T", "C" };
         //String[] seqB = { "A", "G", "T", "C" };
-    	String[] seqA = { "1H", "2C", "3U", "4H", "1C" };
-    	String[] seqB = { "1H", "3U", "4H", "1C" };
+    	String[] seqA = { "01H", "02C", "03U", "04H", "01C" };
+    	String[] seqB = { "01H", "03U", "04H", "01C" };
 
         SequenceAlignmentGlobalNeedlemanWunsch nw = new SequenceAlignmentGlobalNeedlemanWunsch();
         System.out.println(nw.getScore(seqA, seqB));
+        System.out.println(nw.getweakedScore(seqA, seqB));
 
         nw.printMatrix();
         nw.printScoreAndAlignments();

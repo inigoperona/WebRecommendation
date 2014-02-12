@@ -12,7 +12,7 @@ public class SimilarityMatrix {
 			for(int j=0; j<data.size(); j++){
 				String[] seqB = data.get(j);
 				SequenceAlignmentCombineGlobalLocal seqalign = new SequenceAlignmentCombineGlobalLocal();
-				similaritymatrix[i][j] = seqalign.getScore(seqA, seqB);
+				similaritymatrix[i][j] = seqalign.getweakedScore(seqA, seqB);
 			}
 		}
 		return similaritymatrix;
