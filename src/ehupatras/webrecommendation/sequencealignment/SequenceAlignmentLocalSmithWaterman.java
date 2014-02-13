@@ -1,117 +1,10 @@
 package ehupatras.webrecommendation.sequencealignment;
 
-public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
-    private String[] mSeqA;
-    private String[] mSeqB;
-    private int[][] mD;
-    private int mScore;
-    private String mAlignmentSeqA = "";
-    private String mAlignmentSeqB = "";
-    private String m_gap = "-";
-   
-    private void computeAlignment(String[] seqA, String[] seqB){
-    	// initialize all class attributes
-    	mAlignmentSeqA = "";
-    	mAlignmentSeqB = "";
-    	m_gap = "-";
-    	// create the gap String
-    	int gaplen = seqA[0].length();
-    	for(int i=1; i<gaplen; i++){ m_gap = m_gap + "-"; }
-    	
-    	// compute the score
-        init(seqA, seqB);
-        process();
-        backtrack();
-    }
+public class SequenceAlignmentLocalSmithWaterman
+				extends SequenceAlignment2
+				implements SequenceAlignment{
     
-    public float getScore(String[] seqA, String[] seqB){
-    	computeAlignment(seqA,seqB);
-        return (float)mScore;
-    }
-    
-    public float getweakedScore(String[] seqA, String[] seqB){
-    	// constants
-    	float wm = (float)1;
-    	float wms = (float)1;
-    	float wg = (float)1;
-    	float ws = (float)5;
-    	
-    	// compute the score
-    	computeAlignment(seqA,seqB);
-    	String[] alignSeqA = getStringArrayRepresentation(mAlignmentSeqA);
-    	String[] alignSeqB = getStringArrayRepresentation(mAlignmentSeqB);
-    	int alignLen = alignSeqA.length;
-    	int nmatches = 0;
-    	int nmismatches = 0;
-    	int ngaps = 0;
-    	int nspaces = 0;
-    	String previousElemA = "";
-    	String previousElemB = "";
-    	for(int i=0; i<alignLen; i++){
-    		String elemA = alignSeqA[i];
-    		String elemB = alignSeqB[i];
-    		if(elemA.equals(elemB)){ 
-    			if(!elemA.equals(m_gap) && !elemB.equals(m_gap)){
-    				nmatches++;
-    			} else { // gaps
-    				boolean iscounted = false;
-    				if(elemA.equals(m_gap)){
-    					if(previousElemA.equals(m_gap)){
-    						nspaces++;
-    						iscounted = true;
-    					}
-    				}
-    				if(elemB.equals(m_gap)){
-    					if(previousElemB.equals(m_gap)){
-    						nspaces++;
-    						iscounted = true;
-    					}
-    				}
-    				if(!iscounted){
-    					ngaps++;
-    				}
-    			}
-    		} else {
-       			if(!elemA.equals(m_gap) && !elemB.equals(m_gap)){
-       				nmismatches++;
-       			} else { // gaps
-    				boolean iscounted = false;
-    				if(elemA.equals(m_gap)){
-    					if(previousElemA.equals(m_gap)){
-    						nspaces++;
-    						iscounted = true;
-    					}
-    				}
-    				if(elemB.equals(m_gap)){
-    					if(previousElemB.equals(m_gap)){
-    						nspaces++;
-    						iscounted = true;
-    					}
-    				}
-    				if(!iscounted){
-    					ngaps++;
-    				}
-    			}
-    		}
-    		previousElemA = elemA;
-    		previousElemB = elemB;
-    	}
-    	float score = wm*(float)nmatches 
-    			- wms*(float)nmismatches - wg*(float)ngaps - ws*(float)nspaces;
-    	return score;
-    }
-    
-    private String[] getStringArrayRepresentation(String str){
-    	int alignLen = str.length()/m_gap.length();
-    	String[] seq = new String[alignLen];
-    	for(int i=0; i<alignLen; i++){
-    		int startind = i*m_gap.length();
-    		seq[i] = str.substring(startind, startind+m_gap.length());
-    	}
-    	return seq;
-    }
-    
-    private void init(String[] seqA, String[] seqB) {
+    protected void init(String[] seqA, String[] seqB) {
             mSeqA = seqA;
             mSeqB = seqB;
             mD = new int[mSeqA.length + 1][mSeqB.length + 1];
@@ -123,7 +16,7 @@ public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
             }
     }
    
-    private void process() {
+    protected void process() {
             for (int i = 1; i <= mSeqA.length; i++) {
                     for (int j = 1; j <= mSeqB.length; j++) {
                             int scoreDiag = mD[i-1][j-1] + weight(i, j);
@@ -134,7 +27,7 @@ public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
             }
     }
    
-    private void backtrack() {
+    protected void backtrack() {
             int i = 1;
             int j = 1;
             int max = mD[i][j];
@@ -208,33 +101,6 @@ public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
             }
     }
    
-    public void printMatrix() {
-            System.out.print("D =       ");
-            for (int i = 0; i < mSeqB.length; i++) {
-                    System.out.print(String.format("%4s ", mSeqB[i]));
-            }
-            System.out.println();
-            for (int i = 0; i < mSeqA.length + 1; i++) {
-                    if (i > 0) {
-                            System.out.print(String.format("%4s ", mSeqA[i-1]));
-                    } else {
-                            System.out.print("     ");
-                    }
-                    for (int j = 0; j < mSeqB.length + 1; j++) {
-                            System.out.print(String.format("%4d ", mD[i][j]));
-                    }
-                    System.out.println();
-            }
-            System.out.println();
-    }
-   
-    public void printScoreAndAlignments() {
-            System.out.println("Score: " + mScore);
-            System.out.println("Sequence A: " + mAlignmentSeqA);
-            System.out.println("Sequence B: " + mAlignmentSeqB);
-            System.out.println();
-    }
-   
     public static void main(String [] args) {              
             //String[] seqB = { "A", "C", "G", "A" };
             //String[] seqA = { "T", "C", "C", "G" };
@@ -243,7 +109,7 @@ public class SequenceAlignmentLocalSmithWaterman implements SequenceAlignment{
            
             SequenceAlignmentLocalSmithWaterman sw = new SequenceAlignmentLocalSmithWaterman();
             System.out.println(sw.getScore(seqA, seqB));
-            System.out.println(sw.getweakedScore(seqA, seqB));
+            System.out.println(sw.getTweakedScore(seqA, seqB));
            
             sw.printMatrix();
             sw.printScoreAndAlignments();

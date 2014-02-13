@@ -7,17 +7,42 @@ public class SequenceAlignmentCombineGlobalLocal implements SequenceAlignment{
 		float scoreNW = nw.getScore(seqA, seqB);
 		SequenceAlignment sw = new SequenceAlignmentLocalSmithWaterman();
 		float scoreSW = sw.getScore(seqA, seqB);
-		float p = (float)seqA.length/(float)seqB.length;
+		float p;
+		if(seqA.length > seqB.length){
+			p = (float)seqB.length/(float)seqA.length;
+		} else {
+			p = (float)seqA.length/(float)seqB.length;
+		}
 		float score = ((float)1-p)*scoreSW + p*scoreNW;
 		return score;
 	}
 	
-	public float getweakedScore(String[] seqA, String[] seqB){
+	public float getTweakedScore(String[] seqA, String[] seqB){
 		SequenceAlignment nw = new SequenceAlignmentGlobalNeedlemanWunsch();
-		float scoreNW = nw.getweakedScore(seqA, seqB);
+		float scoreNW = nw.getTweakedScore(seqA, seqB);
 		SequenceAlignment sw = new SequenceAlignmentLocalSmithWaterman();
-		float scoreSW = sw.getweakedScore(seqA, seqB);
-		float p = (float)seqA.length/(float)seqB.length;
+		float scoreSW = sw.getTweakedScore(seqA, seqB);
+		float p;
+		if(seqA.length > seqB.length){
+			p = (float)seqB.length/(float)seqA.length;
+		} else {
+			p = (float)seqA.length/(float)seqB.length;
+		}
+		float score = ((float)1-p)*scoreSW + p*scoreNW;
+		return score;
+	}
+	
+	public float getTweakedDistance(String[] seqA, String[] seqB){
+		SequenceAlignment nw = new SequenceAlignmentGlobalNeedlemanWunsch();
+		float scoreNW = nw.getTweakedDistance(seqA, seqB);
+		SequenceAlignment sw = new SequenceAlignmentLocalSmithWaterman();
+		float scoreSW = sw.getTweakedDistance(seqA, seqB);
+		float p;
+		if(seqA.length > seqB.length){
+			p = (float)seqB.length/(float)seqA.length;
+		} else {
+			p = (float)seqA.length/(float)seqB.length;
+		}
 		float score = ((float)1-p)*scoreSW + p*scoreNW;
 		return score;
 	}
@@ -28,6 +53,6 @@ public class SequenceAlignmentCombineGlobalLocal implements SequenceAlignment{
 
         SequenceAlignment sa = new SequenceAlignmentCombineGlobalLocal();
         System.out.println(sa.getScore(seqA, seqB));
-        System.out.println(sa.getweakedScore(seqA, seqB));
+        System.out.println(sa.getTweakedScore(seqA, seqB));
     }
 }

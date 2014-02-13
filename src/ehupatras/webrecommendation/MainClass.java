@@ -2,15 +2,11 @@ package ehupatras.webrecommendation;
 
 import ehupatras.webrecommendation.structures.*;
 import ehupatras.webrecommendation.sampling.*;
+import ehupatras.webrecommendation.distmatrix.*;
 import ehupatras.webrecommendation.modelvalidation.*;
-import ehupatras.webrecommendation.similaritymatrix.*;
 import ehupatras.webrecommendation.usage.preprocess.*;
 import ehupatras.webrecommendation.usage.preprocess.log.*;
-import ehupatras.clustering.sapehac.experiment.*;
-import ehupatras.clustering.sapehac.agglomeration.*;
-import ehupatras.clustering.sapehac.dendrogram.*;
-import ehupatras.clustering.sapehac.*;
-
+import ehupatras.clustering.*;
 import java.util.*;
 
 public class MainClass {
@@ -177,8 +173,12 @@ public class MainClass {
 		// create the similarity matrix
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start computing the similarity matrix.");
-		SimilarityMatrix similaritymatrix = new SimilarityMatrix();
-		float[][] simmatrix = similaritymatrix.getSimilarityMatrix(sequencesUHC);
+		Matrix matrix = new SimilarityMatrix();
+		float[][] simmatrix = matrix.getMatrix(sequencesUHC);
+		matrix.writeMatrix(basedirectory + "/similarity_matrix.txt");
+		matrix = new DistanceMatrix();
+		float[][] distmatrix = matrix.getMatrix(sequencesUHC);
+		matrix.writeMatrix(basedirectory + "/distance_matrix.txt");
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
@@ -186,39 +186,74 @@ public class MainClass {
 		// hierarchical clustering: http://sape.inf.usi.ch/hac
 			System.out.println("[" + starttime + "] Start hierarchical clustering.");
 			starttime = System.currentTimeMillis();
-		Experiment experiment = new ExperimentEhuPatras(sequencesUHC.size());
-		DissimilarityMeasure dissimilarityMeasure = new DissimilarityMeasureEhupatras(simmatrix);
-		AgglomerationMethod agglomerationMethod = new SingleLinkage();
-		DendrogramBuilder dendrogramBuilder = new DendrogramBuilder(experiment.getNumberOfObservations());
-		HierarchicalAgglomerativeClusterer clusterer = new HierarchicalAgglomerativeClusterer(experiment, dissimilarityMeasure, agglomerationMethod);
-		clusterer.cluster(dendrogramBuilder);
-		Dendrogram dendrogram = dendrogramBuilder.getDendrogram();
+		ClusteringHierarchical clustering = new ClusteringHierarchical(sequencesUHC.size(), distmatrix);
+		//clustering.writeDendrogram();
 		
-		System.out.println("------");
-		ArrayList<DendrogramNode> nodesList = new ArrayList<DendrogramNode>();
-		DendrogramNode root = dendrogram.getRoot();
-		nodesList.add(root);
-		for(int i=0; i<nodesList.size(); i++){
-			DendrogramNode node = nodesList.get(i);
-			String nodeClassStr = node.getClass().toString();
-			if(nodeClassStr.contains("MergeNode")){
-				MergeNode mnode = (MergeNode)node;
-				System.out.println(i + " : MergeNode (" 
-						+ mnode.getObservationCount() + ") : " 
-						+ mnode.getDissimilarity());
-				nodesList.add(mnode.getLeft());
-				nodesList.add(mnode.getRight());
-			}
-			if(nodeClassStr.contains("ObservationNode")){
-				ObservationNode onode = (ObservationNode)node;
-				System.out.println(i + " : ObservationNode (" 
-						+ onode.getObservationCount() + ") : " 
-						+ onode.getObservation());
+		/*
+		int[] clustersA = clustering.cutDendrogram((float)0);
+		int max= Integer.MIN_VALUE;
+		for(int i=0; i<clustersA.length; i++){
+			if(max<clustersA[i]){
+				max = clustersA[i];
 			}
 		}
+		System.out.println(max);	
+		clustersA = clustering.cutDendrogram((float)10);
+		 max= Integer.MIN_VALUE;
+		for(int i=0; i<clustersA.length; i++){
+			if(max<clustersA[i]){
+				max = clustersA[i];
+			}
+		}
+		System.out.println(max);	
+		clustersA = clustering.cutDendrogram((float)25);
+		 max= Integer.MIN_VALUE;
+		for(int i=0; i<clustersA.length; i++){
+			if(max<clustersA[i]){
+				max = clustersA[i];
+			}
+		}
+		System.out.println(max);	
+		clustersA = clustering.cutDendrogram((float)50);
+		 max= Integer.MIN_VALUE;
+		for(int i=0; i<clustersA.length; i++){
+			if(max<clustersA[i]){
+				max = clustersA[i];
+			}
+		}
+		System.out.println(max);	
+		clustersA = clustering.cutDendrogram((float)75);
+		 max= Integer.MIN_VALUE;
+		for(int i=0; i<clustersA.length; i++){
+			if(max<clustersA[i]){
+				max = clustersA[i];
+			}
+		}
+		System.out.println(max);	
+		clustersA = clustering.cutDendrogram((float)90);
+		 max= Integer.MIN_VALUE;
+		for(int i=0; i<clustersA.length; i++){
+			if(max<clustersA[i]){
+				max = clustersA[i];
+			}
+		}
+		System.out.println(max);	
+		clustersA = clustering.cutDendrogram((float)100);
+		 max= Integer.MIN_VALUE;
+		for(int i=0; i<clustersA.length; i++){
+			if(max<clustersA[i]){
+				max = clustersA[i];
+			}
+		}
+		System.out.println(max);	
+		*/
 		
-		//System.out.println(node.toString());
-		System.out.println("------");
+		/*
+		// write the results
+		for(int i=0; i<clustersA.length; i++){
+			System.out.println(i + " " + clustersA[i]);
+		}
+		*/
 		
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
