@@ -7,6 +7,7 @@ import ehupatras.webrecommendation.modelvalidation.*;
 import ehupatras.webrecommendation.usage.preprocess.*;
 import ehupatras.webrecommendation.usage.preprocess.log.*;
 import ehupatras.clustering.*;
+import ehupatras.suffixtree.experiment.*;
 import java.util.*;
 
 public class MainClass {
@@ -185,73 +186,25 @@ public class MainClass {
 			starttime = System.currentTimeMillis();
 		ClusteringHierarchical clustering = new ClusteringHierarchical(sequencesUHC.size(), distmatrix);
 		//clustering.writeDendrogram();
+		int[] clustersA = clustering.cutDendrogramByDissimilarity((float)50);
 		
-		/*
-		int[] clustersA = clustering.cutDendrogramByDissimilarity((float)0);
-		int max= Integer.MIN_VALUE;
+		// Suffix Tree
+		SuffixTreeAPI gst = new SuffixTreeAPI();
 		for(int i=0; i<clustersA.length; i++){
-			if(max<clustersA[i]){
-				max = clustersA[i];
-			}
+			//if(clustersA[i]==15){
+				
+				//System.out.print(i + " : " + train.get(i) + " : " + clustersA[i] + " ");
+				String[] seq = sequencesUHC.get(i);
+				String seqstr = "";
+				for(int j=0; j<seq.length; j++){
+					seqstr = seqstr + seq[j];
+				}
+				gst.putSequence(seqstr, i);
+				//System.out.println(seqstr);
+			//}
 		}
-		System.out.println(max);
+		gst.printSuffixTree();
 		
-		clustersA = clustering.cutDendrogramByDissimilarity((float)10);
-		 max= Integer.MIN_VALUE;
-		for(int i=0; i<clustersA.length; i++){
-			if(max<clustersA[i]){
-				max = clustersA[i];
-			}
-		}
-		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)25);
-		 max= Integer.MIN_VALUE;
-		for(int i=0; i<clustersA.length; i++){
-			if(max<clustersA[i]){
-				max = clustersA[i];
-			}
-		}
-		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)50);
-		 max= Integer.MIN_VALUE;
-		for(int i=0; i<clustersA.length; i++){
-			if(max<clustersA[i]){
-				max = clustersA[i];
-			}
-		}
-		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)75);
-		 max= Integer.MIN_VALUE;
-		for(int i=0; i<clustersA.length; i++){
-			if(max<clustersA[i]){
-				max = clustersA[i];
-			}
-		}
-		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)90);
-		 max= Integer.MIN_VALUE;
-		for(int i=0; i<clustersA.length; i++){
-			if(max<clustersA[i]){
-				max = clustersA[i];
-			}
-		}
-		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)100);
-		 max= Integer.MIN_VALUE;
-		for(int i=0; i<clustersA.length; i++){
-			if(max<clustersA[i]){
-				max = clustersA[i];
-			}
-		}
-		System.out.println(max);
-		*/
-		
-		/*
-		// write the results
-		for(int i=0; i<clustersA.length; i++){
-			System.out.println(i + " " + clustersA[i]);
-		}
-		*/
 		
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
