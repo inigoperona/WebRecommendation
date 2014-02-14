@@ -77,12 +77,10 @@ public class ClusteringHierarchical {
 				nodesList.add(mnode.getRight());
 				depthList.add(depth+1);
 			}
-			if(nodeClassStr.contains("ObservationNode")){
-				ObservationNode onode = (ObservationNode)node;
-			}
 		}
 		
-		// select the maximum value of depthList
+		// select the maximum value of depthList, the last element
+		// that is to say the maximum depth
 		return depthList.get(depthList.size()-1);
 	}
 	
@@ -92,7 +90,7 @@ public class ClusteringHierarchical {
 		return cutdepth;
 	}
 	
-	public int[] cutDendrogram(float pheight){
+	public int[] cutDendrogramByHeight(float pheight){
 		// convert from percentage to depth
 		int cutdepth = getCutDepth(pheight);
 		
@@ -149,6 +147,38 @@ public class ClusteringHierarchical {
 			}
 		}
 		return clustersA;
+	}
+	
+	private double getCutDissimilarity(){
+		/*
+		ArrayList<DendrogramNode> nodesList = new ArrayList<DendrogramNode>();
+		ArrayList<Integer> depthList = new ArrayList<Integer>();
+		DendrogramNode root = m_dendrogram.getRoot();
+		nodesList.add(root);
+		depthList.add(0);
+		for(int i=0; i<nodesList.size(); i++){
+			DendrogramNode node = nodesList.get(i);
+			int depth = depthList.get(i);
+			String nodeClassStr = node.getClass().toString();
+			if(nodeClassStr.contains("MergeNode")){
+				MergeNode mnode = (MergeNode)node;
+				nodesList.add(mnode.getLeft());
+				depthList.add(depth+1);
+				nodesList.add(mnode.getRight());
+				depthList.add(depth+1);
+			}
+		}
+		
+		// select the maximum value of depthList, the last element
+		// that is to say the maximum depth
+		return depthList.get(depthList.size()-1);
+		*/
+		
+		return 0.0;
+	}
+	
+	public int[] cutDendrogramByDissimilarity(float pDissimilarity){
+		return null;
 	}
 	
 }

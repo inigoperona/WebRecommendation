@@ -1,5 +1,7 @@
 package ehupatras.webrecommendation.sequencealignment;
 
+import java.util.ArrayList;
+
 public abstract class SequenceAlignment2 
 						implements SequenceAlignment {
     protected String[] mSeqA;
@@ -14,31 +16,14 @@ public abstract class SequenceAlignment2
     protected abstract void process();
     protected abstract void backtrack();
     
-    protected void computeAlignment(String[] seqA, String[] seqB){
-    	// initialize all class attributes
-    	mAlignmentSeqA = "";
-    	mAlignmentSeqB = "";
-    	m_gap = "-";
-    	// create the gap String
-    	int gaplen = seqA[0].length();
-    	for(int i=1; i<gaplen; i++){ m_gap = m_gap + "-"; }
-    	
-    	// compute the score
-        init(seqA, seqB);
-        process();
-        backtrack();
-    }
-    
-    public float getScore(String[] seqA, String[] seqB){
-    	computeAlignment(seqA,seqB);
-        return (float)mScore;
-    }
+    protected abstract ArrayList<String[]> getTrimedAlignedSequences(String str1, String str2);
     
     private Integer[] getAlignmentOperations(String[] seqA, String[] seqB){
     	// compute match / mismatch / gaps / spaces
     	computeAlignment(seqA,seqB);
-    	String[] alignSeqA = getStringArrayRepresentation(mAlignmentSeqA);
-    	String[] alignSeqB = getStringArrayRepresentation(mAlignmentSeqB);
+    	ArrayList<String[]> trimmedSeqs = getTrimedAlignedSequences(mAlignmentSeqA, mAlignmentSeqB);
+    	String[] alignSeqA = trimmedSeqs.get(0);
+    	String[] alignSeqB = trimmedSeqs.get(1);
     	int alignLen = alignSeqA.length;
     	int nmatches = 0;
     	int nmismatches = 0;
@@ -49,7 +34,7 @@ public abstract class SequenceAlignment2
     	for(int i=0; i<alignLen; i++){
     		String elemA = alignSeqA[i];
     		String elemB = alignSeqB[i];
-    		if(elemA.equals(elemB)){ 
+    		if(elemA.equals(elemB)){
     			if(!elemA.equals(m_gap) && !elemB.equals(m_gap)){
     				nmatches++;
     			} else { // gaps
@@ -105,6 +90,36 @@ public abstract class SequenceAlignment2
     	return counts;
     }
     
+    private void computeAlignment(String[] seqA, String[] seqB){
+    	// initialize all class attributes
+    	mAlignmentSeqA = "";
+    	mAlignmentSeqB = "";
+    	m_gap = "-";
+    	// create the gap String
+    	int gaplen = seqA[0].length();
+    	for(int i=1; i<gaplen; i++){ m_gap = m_gap + "-"; }
+    	
+    	// compute the score
+        init(seqA, seqB);
+        process();
+        backtrack();
+    }
+    
+    protected String[] getStringArrayRepresentation(String str){
+    	int alignLen = str.length()/m_gap.length();
+    	String[] seq = new String[alignLen];
+    	for(int i=0; i<alignLen; i++){
+    		int startind = i*m_gap.length();
+    		seq[i] = str.substring(startind, startind+m_gap.length());
+    	}
+    	return seq;
+    }
+    
+    public float getScore(String[] seqA, String[] seqB){
+    	computeAlignment(seqA,seqB);
+        return (float)mScore;
+    }
+    
     public float getTweakedScore(String[] seqA, String[] seqB){
     	// constants
     	float wm = (float)1;
@@ -118,7 +133,7 @@ public abstract class SequenceAlignment2
     	int nmismatches = counts[1];
     	int ngaps = counts[2];
     	int nspaces = counts[3];
-
+    	
     	// compute the score and return
     	float score = wm*(float)nmatches 
     			- wms*(float)nmismatches - wg*(float)ngaps - ws*(float)nspaces;
@@ -143,16 +158,6 @@ public abstract class SequenceAlignment2
     	float score = (wms*(float)nmismatches + wg*(float)ngaps + ws*(float)nspaces)
     			 * (float)nmatches/(float)seqA.length;
     	return score;
-    }
-    
-    private String[] getStringArrayRepresentation(String str){
-    	int alignLen = str.length()/m_gap.length();
-    	String[] seq = new String[alignLen];
-    	for(int i=0; i<alignLen; i++){
-    		int startind = i*m_gap.length();
-    		seq[i] = str.substring(startind, startind+m_gap.length());
-    	}
-    	return seq;
     }
     
     public void printMatrix() {

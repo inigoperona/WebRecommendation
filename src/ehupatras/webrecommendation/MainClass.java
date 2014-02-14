@@ -174,9 +174,6 @@ public class MainClass {
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start computing the similarity matrix.");
 		Matrix matrix = new SimilarityMatrix();
-		float[][] simmatrix = matrix.getMatrix(sequencesUHC);
-		matrix.writeMatrix(basedirectory + "/similarity_matrix.txt");
-		matrix = new DistanceMatrix();
 		float[][] distmatrix = matrix.getMatrix(sequencesUHC);
 		matrix.writeMatrix(basedirectory + "/distance_matrix.txt");
 			endtime = System.currentTimeMillis();
@@ -190,7 +187,7 @@ public class MainClass {
 		//clustering.writeDendrogram();
 		
 		/*
-		int[] clustersA = clustering.cutDendrogram((float)0);
+		int[] clustersA = clustering.cutDendrogramByHeight((float)0);
 		int max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -198,7 +195,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogram((float)10);
+		clustersA = clustering.cutDendrogramByHeight((float)10);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -206,7 +203,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogram((float)25);
+		clustersA = clustering.cutDendrogramByHeight((float)25);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -214,7 +211,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogram((float)50);
+		clustersA = clustering.cutDendrogramByHeight((float)50);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -222,7 +219,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogram((float)75);
+		clustersA = clustering.cutDendrogramByHeight((float)75);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -230,7 +227,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogram((float)90);
+		clustersA = clustering.cutDendrogramByHeight((float)90);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -238,15 +235,16 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogram((float)100);
+		clustersA = clustering.cutDendrogramByHeight((float)100);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
 				max = clustersA[i];
 			}
 		}
-		System.out.println(max);	
-		*/
+		System.out.println(max);
+		*/	
+		
 		
 		/*
 		// write the results

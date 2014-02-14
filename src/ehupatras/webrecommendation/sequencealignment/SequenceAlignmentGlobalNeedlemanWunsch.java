@@ -1,5 +1,7 @@
 package ehupatras.webrecommendation.sequencealignment;
 
+import java.util.ArrayList;
+
 public class SequenceAlignmentGlobalNeedlemanWunsch
 				extends SequenceAlignment2
 				implements SequenceAlignment{
@@ -68,6 +70,15 @@ public class SequenceAlignmentGlobalNeedlemanWunsch
             }
     }
    
+    protected ArrayList<String[]> getTrimedAlignedSequences(String str1, String str2){
+    	String[] seq1 = getStringArrayRepresentation(str1);
+    	String[] seq2 = getStringArrayRepresentation(str2);
+    	ArrayList<String[]> trimmedseqs = new ArrayList<String[]>();
+    	trimmedseqs.add(seq1);
+    	trimmedseqs.add(seq2);
+    	return trimmedseqs;
+    }
+    
     public static void main(String [] args) {
         //String[] seqA = { "A", "C", "G", "T", "C" };
         //String[] seqB = { "A", "G", "T", "C" };
