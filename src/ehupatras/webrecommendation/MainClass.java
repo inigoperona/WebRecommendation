@@ -187,15 +187,16 @@ public class MainClass {
 		//clustering.writeDendrogram();
 		
 		/*
-		int[] clustersA = clustering.cutDendrogramByHeight((float)0);
+		int[] clustersA = clustering.cutDendrogramByDissimilarity((float)0);
 		int max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
 				max = clustersA[i];
 			}
 		}
-		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByHeight((float)10);
+		System.out.println(max);
+		
+		clustersA = clustering.cutDendrogramByDissimilarity((float)10);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -203,7 +204,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByHeight((float)25);
+		clustersA = clustering.cutDendrogramByDissimilarity((float)25);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -211,7 +212,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByHeight((float)50);
+		clustersA = clustering.cutDendrogramByDissimilarity((float)50);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -219,7 +220,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByHeight((float)75);
+		clustersA = clustering.cutDendrogramByDissimilarity((float)75);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -227,7 +228,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByHeight((float)90);
+		clustersA = clustering.cutDendrogramByDissimilarity((float)90);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -235,7 +236,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);	
-		clustersA = clustering.cutDendrogramByHeight((float)100);
+		clustersA = clustering.cutDendrogramByDissimilarity((float)100);
 		 max= Integer.MIN_VALUE;
 		for(int i=0; i<clustersA.length; i++){
 			if(max<clustersA[i]){
@@ -243,8 +244,7 @@ public class MainClass {
 			}
 		}
 		System.out.println(max);
-		*/	
-		
+		*/
 		
 		/*
 		// write the results

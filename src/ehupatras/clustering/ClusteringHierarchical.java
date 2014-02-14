@@ -84,14 +84,14 @@ public class ClusteringHierarchical {
 		return depthList.get(depthList.size()-1);
 	}
 	
-	public int getCutDepth(float pheight){
+	private int getCutDepth(float pheight){
 		int maxdepth = getDendrogramDepth();
 		int cutdepth = Math.round((float)maxdepth*(pheight/(float)100));
 		return cutdepth;
 	}
 	
 	public int[] cutDendrogramByHeight(float pheight){
-		// convert from percentage to depth
+		// convert from percentage to depth to cut the dendrogram
 		int cutdepth = getCutDepth(pheight);
 		
 		// scan the dendrogram to find the the nodes we are interested in.
@@ -125,6 +125,12 @@ public class ClusteringHierarchical {
 			}
 		}
 		
+		// return the clustering
+		int[] clustersA = getClustersFromNodes(clusterList);
+		return clustersA;
+	}
+	
+	private int[] getClustersFromNodes(ArrayList<DendrogramNode> clusterList){
 		// See which cases are in the sub tree and assign the cluster
 		int[] clustersA = new int[m_ncases];
 		for(int i=0; i<clusterList.size(); i++){
@@ -149,36 +155,61 @@ public class ClusteringHierarchical {
 		return clustersA;
 	}
 	
-	private double getCutDissimilarity(){
-		/*
+	private double getCutDissimilarity(float pDissimilarity){
+		// take all dissimilarities of the dendrogram
 		ArrayList<DendrogramNode> nodesList = new ArrayList<DendrogramNode>();
-		ArrayList<Integer> depthList = new ArrayList<Integer>();
+		ArrayList<Double> dissimilarityList = new ArrayList<Double>();
 		DendrogramNode root = m_dendrogram.getRoot();
 		nodesList.add(root);
-		depthList.add(0);
 		for(int i=0; i<nodesList.size(); i++){
 			DendrogramNode node = nodesList.get(i);
-			int depth = depthList.get(i);
 			String nodeClassStr = node.getClass().toString();
 			if(nodeClassStr.contains("MergeNode")){
 				MergeNode mnode = (MergeNode)node;
+				dissimilarityList.add(mnode.getDissimilarity());
 				nodesList.add(mnode.getLeft());
-				depthList.add(depth+1);
 				nodesList.add(mnode.getRight());
-				depthList.add(depth+1);
 			}
 		}
 		
-		// select the maximum value of depthList, the last element
-		// that is to say the maximum depth
-		return depthList.get(depthList.size()-1);
-		*/
-		
-		return 0.0;
+		// Order the dissimilarityList 
+		// and take the element at pDissimilarity percentage position
+		int position = Math.round(((float)dissimilarityList.size()-1)*(1-pDissimilarity/100));
+		Collections.sort(dissimilarityList);
+		return dissimilarityList.get(position);
 	}
 	
 	public int[] cutDendrogramByDissimilarity(float pDissimilarity){
-		return null;
+		// get the dissimilarity threshold to cut the dendrogram
+		double dissimilarityThreshold = getCutDissimilarity(pDissimilarity);
+		
+		// scan the dendrogram to find the the nodes we are interested in
+		ArrayList<DendrogramNode> clusterList = new ArrayList<DendrogramNode>();
+		ArrayList<DendrogramNode> nodesList = new ArrayList<DendrogramNode>();
+		DendrogramNode root = m_dendrogram.getRoot();
+		nodesList.add(root);
+		for(int i=0; i<nodesList.size(); i++){
+			DendrogramNode node = nodesList.get(i);
+			String nodeClassStr = node.getClass().toString();
+			if(nodeClassStr.contains("MergeNode")){
+				MergeNode mnode = (MergeNode)node;
+				double dissim = mnode.getDissimilarity();
+				if(dissim>dissimilarityThreshold){
+					nodesList.add(mnode.getLeft());
+					nodesList.add(mnode.getRight());
+				} else {
+					clusterList.add(mnode);
+				}
+			}
+			if(nodeClassStr.contains("ObservationNode")){
+				ObservationNode onode = (ObservationNode)node;
+				clusterList.add(onode);
+			}
+		}
+		
+		// return the clustering
+		int[] clustersA = getClustersFromNodes(clusterList);
+		return clustersA;
 	}
-	
+
 }
