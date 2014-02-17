@@ -20,10 +20,10 @@ public class MainClass {
 		
 		// Parameter control
 		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
-		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String filename1 = "/kk1.log";
-		//String basedirectory = args[0];
-		//String filename1 = args[1];
+		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA";
+		//String filename1 = "/kk.log";
+		String basedirectory = args[0];
+		String filename1 = args[1];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(basedirectory);
@@ -75,15 +75,22 @@ public class MainClass {
 		WebAccessSequences.loadStructure();
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. " + "" +
-					WebAccessSequences.filteredlogsize() + " requests read. " +
-					"Elapsed time: " 
-					+ (endtime-starttime)/1000 + " seconds.");
+				WebAccessSequences.filteredlogsize() + " requests read. " +
+				"Elapsed time: " 
+				+ (endtime-starttime)/1000 + " seconds.");
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Start loading the WebSite.");			
 		Website.load();
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. " + "" +
+				Website.size() + " pages read. " +
+				"Elapsed time: " 
+				+ (endtime-starttime)/1000 + " seconds.");
 	}
 		
-			
+
 		// SESSIONING //
-			
+	if(true){	
 		Sessioning ses = new Sessioning();
 		
 		// create sessions
@@ -133,10 +140,15 @@ public class MainClass {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		
-		
-		// WRITE PROCESSED DATA //
+		// save the sessions structure we have created
+		WebAccessSequences.save();
+		WebAccessSequences.saveSequences();
+	} else {
+		WebAccessSequences.save();
+		WebAccessSequences.loadSequences();
+	}
 			
-			// write preprocessed logs
+		// write preprocessed logs
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start writing processed logs.");
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
@@ -163,6 +175,7 @@ public class MainClass {
 		
 		
 
+			/*
 //WebAccessSequences.computePageRank();
 			
 			

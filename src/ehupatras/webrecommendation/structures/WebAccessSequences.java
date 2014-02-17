@@ -21,6 +21,7 @@ public class WebAccessSequences {
 	// The sequences we are going to use to link prediction
 	// sessionID1: req1, req2, req3
 	public static Hashtable<Integer,ArrayList<Integer>> m_sequences = new Hashtable<Integer,ArrayList<Integer>>();
+	private static String m_seqfilename = "_sequences.javaData";
 	
 	// protected constructor
 	protected WebAccessSequences(){
@@ -283,7 +284,78 @@ public class WebAccessSequences {
 	}
 	
 	public static void saveSequences(){
+		String outfile = m_workdirectory + "/" + m_seqfilename;
 		
+		// Write to disk with FileOutputStream
+		FileOutputStream f_out = null;
+		try{
+			f_out = new FileOutputStream(outfile);
+		} catch (FileNotFoundException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.saveSequences] " +
+					"Problems at opening the file: " + outfile + " to write.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+			
+		// Write object with ObjectOutputStream
+		// Write object out to disk
+		ObjectOutputStream obj_out = null;
+		try{
+			obj_out = new ObjectOutputStream(f_out);
+			obj_out.writeObject( m_sequences );
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.saveSequences] " +
+					"Problems at writing the file: " + outfile);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+
+		// close
+		try{
+			obj_out.close();
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.saveSequences] " +
+					"Problems closing the file: " + outfile + " after writing.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+	}
+	
+	public static void loadSequences(){
+		String outputfilename = m_workdirectory + "/" + m_seqfilename;
+		
+		FileInputStream fis = null;
+		try{
+			fis = new FileInputStream(outputfilename);
+		} catch (FileNotFoundException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
+					"Problems at opening the file: " + outputfilename + " to read.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		ObjectInputStream ois = null;
+		try{
+			ois = new ObjectInputStream(fis);
+			m_sequences = (Hashtable<Integer,ArrayList<Integer>>)ois.readObject();
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
+					"Problems at reading the file: " + outputfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		} catch(ClassNotFoundException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
+					"Problems at casting to a specific object: " + outputfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		try{
+			ois.close();
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
+					"Problems closing the file: " + outputfilename + " after reading.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
 	}
 	
 	public static void loadStructure(){
@@ -299,7 +371,7 @@ public class WebAccessSequences {
 			loadmodulus(i);
 			// update the pointers
 			//m_actualloadedrequest = 0;
-			m_lastloadedrequest = m_filterlog.size();
+			m_lastloadedrequest = m_filterlog.size()-1;
 			m_writedmodulus = i;
 			// update the next javaData file
 			i++;
@@ -308,7 +380,19 @@ public class WebAccessSequences {
 	
 	public static void save(){
 		for(int i=0; i<=m_writedmodulus; i++){
+			String filename = m_workdirectory + "/" + 
+					"_" + i + "_" + m_basenamejavadata;
+			File ffile= new File(filename);
+			if(ffile.exists()){continue;}
+			if(m_actualloadedmodulus!=i){
+				savemodulus(m_actualloadedmodulus);
+				loadmodulus(i);
+				m_actualloadedmodulus = i;
+			}
 			savemodulus(i);
+			
+			// update pointers
+			m_lastloadedrequest = m_filterlog.size()-1;
 		}
 	}
 	
