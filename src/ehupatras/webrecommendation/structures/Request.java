@@ -16,9 +16,4 @@ public abstract class Request {
 	
 	// page related functions
 	public abstract String getFormatedUrlName();
-	public abstract int getUrlIDusage();
-	public abstract void setUrlIDusage(int urlIDusage);
-	public abstract void setIsFrequent(boolean isFrequent);
-	public abstract void setIsStatic(boolean isStatic);
-	public abstract boolean getIsIndex();
 }

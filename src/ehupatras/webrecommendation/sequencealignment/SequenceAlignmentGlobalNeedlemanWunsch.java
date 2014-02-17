@@ -6,6 +6,11 @@ public class SequenceAlignmentGlobalNeedlemanWunsch
 				extends SequenceAlignment2
 				implements SequenceAlignment{
     
+    public float getScore(String[] seqA, String[] seqB){
+    	computeAlignment(seqA,seqB);
+        return (float)mScore;
+    }
+	
     protected void init(String[] seqA, String[] seqB) {
             mSeqA = seqA;
             mSeqB = seqB;
@@ -69,7 +74,7 @@ public class SequenceAlignmentGlobalNeedlemanWunsch
                     return -1;
             }
     }
-   
+    
     protected ArrayList<String[]> getTrimedAlignedSequences(String str1, String str2){
     	String[] seq1 = getStringArrayRepresentation(str1);
     	String[] seq2 = getStringArrayRepresentation(str2);
@@ -87,7 +92,6 @@ public class SequenceAlignmentGlobalNeedlemanWunsch
 
         SequenceAlignmentGlobalNeedlemanWunsch nw = new SequenceAlignmentGlobalNeedlemanWunsch();
         System.out.println(nw.getScore(seqA, seqB));
-        System.out.println(nw.getTweakedScore(seqA, seqB));
 
         nw.printMatrix();
         nw.printScoreAndAlignments();

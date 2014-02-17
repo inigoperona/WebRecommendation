@@ -5,6 +5,7 @@ import ehupatras.webrecommendation.structures.PageBidasoaTurismo;
 import ehupatras.webrecommendation.structures.Request;
 import ehupatras.webrecommendation.structures.RequestBidasoaTurismo;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
+import ehupatras.webrecommendation.structures.Website;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -41,7 +42,6 @@ public class LogReaderBidasoaTurismo extends LogReader {
 		// Read the given file line by line
 		String line = null;
 		int ipID = 0;
-		int urlID = 0;
 		try{
 			while ((line = reader.readLine()) != null) {
 				// split the request line
@@ -116,13 +116,8 @@ public class LogReaderBidasoaTurismo extends LogReader {
 				
 				// if it is valid request, store it
 				if(req.getIsValid()){
-					// Give ID number to each URL
-					String formatedurlname = page.getFormatedUrlName();
-					if(!WebAccessSequences.containsURL(formatedurlname)){
-						urlID++;
-						page.setUrlIDusage(urlID);
-						WebAccessSequences.putURL(formatedurlname, page);
-					}					
+					// Store the page
+					Website.storeURL(page);
 					// save the valid requests
 					WebAccessSequences.addRequest(req);
 				}

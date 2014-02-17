@@ -1,4 +1,4 @@
- package ehupatras.suffixtree;
+package ehupatras.suffixtree.stringarray;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -37,20 +37,20 @@ import java.util.Collections;
  * This kind of "implicit path" is important in the testAndSplit method.
  *  
  */
-public class GeneralizedSuffixTree {
+public class GeneralizedSuffixTreeStringArray {
 
     /**
      * The index of the last item that was added to the GST
      */
-    private int last = 0;
+    protected int last = 0;
     /**
      * The root of the suffix tree
      */
-    private final Node root = new Node();
+    protected final Node root = new Node();
     /**
      * The last leaf that was added during the update operation
      */
-    private Node activeLeaf = root;
+    protected Node activeLeaf = root;
 
     /**
      * Searches for the given word within the GST.
@@ -61,7 +61,7 @@ public class GeneralizedSuffixTree {
      * @param word the key to search for
      * @return the collection of indexes associated with the input <tt>word</tt>
      */
-    public Collection<Integer> search(String word) {
+    public Collection<Integer> search(StringArray word) {
         return search(word, -1);
     }
 
@@ -72,7 +72,7 @@ public class GeneralizedSuffixTree {
      * @param results the max number of results to return
      * @return at most <tt>results</tt> values for the given word
      */
-    public Collection<Integer> search(String word, int results) {
+    public Collection<Integer> search(StringArray word, int results) {
         Node tmpNode = searchNode(word);
         if (tmpNode == null) {
             return null;
@@ -86,9 +86,9 @@ public class GeneralizedSuffixTree {
      * @param word the key to search for
      * @param to the max number of results to return
      * @return at most <tt>results</tt> values for the given word
-     * @see GeneralizedSuffixTree#ResultInfo
+     * @see GeneralizedSuffixTreeStringArray#ResultInfo
      */
-    public ResultInfo searchWithCount(String word, int to) {
+    public ResultInfo searchWithCount(StringArray word, int to) {
         Node tmpNode = searchNode(word);
         if (tmpNode == null) {
             return new ResultInfo(Collections.EMPTY_LIST, 0);
@@ -100,7 +100,7 @@ public class GeneralizedSuffixTree {
     /**
      * Returns the tree node (if present) that corresponds to the given string.
      */
-    private Node searchNode(String word) {
+    private Node searchNode(StringArray word) {
         /*
          * Verifies if exists a path from the root to a node such that the concatenation
          * of all the labels on the path is a superstring of the given word.
@@ -110,14 +110,14 @@ public class GeneralizedSuffixTree {
         Edge currentEdge;
 
         for (int i = 0; i < word.length(); ++i) {
-            char ch = word.charAt(i);
+            String ch = word.charAt(i);
             // follow the edge corresponding to this char
             currentEdge = currentNode.getEdge(ch);
             if (null == currentEdge) {
                 // there is no edge starting with this char
                 return null;
             } else {
-                String label = currentEdge.getLabel();
+                StringArray label = currentEdge.getLabel();
                 int lenToMatch = Math.min(word.length() - i, label.length());
                 if (!word.regionMatches(i, label, 0, lenToMatch)) {
                     // the label on the edge does not correspond to the one in the string to search
@@ -147,7 +147,7 @@ public class GeneralizedSuffixTree {
      * @param index the value that will be added to the index
      * @throws IllegalStateException if an invalid index is passed as input
      */
-    public void put(String key, int index) throws IllegalStateException {
+    public void put(StringArray key, int index) throws IllegalStateException {
         if (index < last) {
             throw new IllegalStateException("The input index must not be less than any of the previously inserted ones. Got " + index + ", expected at least " + last);
         } else {
@@ -157,21 +157,19 @@ public class GeneralizedSuffixTree {
         // reset activeLeaf
         activeLeaf = root;
 
-        String remainder = key;
+        StringArray remainder = key;
         Node s = root;
 
         // proceed with tree construction (closely related to procedure in
         // Ukkonen's paper)
-        String text = "";
+        StringArray text = new StringArray();
         // iterate over the string, one char at a time
-        for (int i = 0; i < remainder.length(); i++) {
+        for (int i = 0; i < remainder.length(); i++) {	
             // line 6
-            text += remainder.charAt(i);
-            // use intern to make sure the resulting string is in the pool.
-            text = text.intern();
+            text = text.concat(remainder.charAt(i));
 
             // line 7: update the tree with the new transitions due to this new char
-            Pair<Node, String> active = update(s, text, remainder.substring(i), index);
+            Pair<Node, StringArray> active = update(s, text, remainder.substring(i), index);
             // line 8: make sure the active pair is canonical
             active = canonize(active.getFirst(), active.getSecond());
             
@@ -184,6 +182,10 @@ public class GeneralizedSuffixTree {
             activeLeaf.setSuffix(s);
         }
 
+    }
+    public void put(String[] key, int index) throws IllegalStateException {
+    	StringArray keyarray = new StringArray(key);
+    	this.put(keyarray, index);
     }
 
     /**
@@ -206,22 +208,23 @@ public class GeneralizedSuffixTree {
      *                  the last node that can be reached by following the path denoted by stringPart starting from inputs
      *         
      */
-    private Pair<Boolean, Node> testAndSplit(final Node inputs, final String stringPart, final char t, final String remainder, final int value) {
+    private Pair<Boolean, Node> testAndSplit(final Node inputs, final StringArray stringPart, final String t, 
+    															final StringArray remainder, final int value) {
         // descend the tree as far as possible
-        Pair<Node, String> ret = canonize(inputs, stringPart);
+        Pair<Node, StringArray> ret = canonize(inputs, stringPart);
         Node s = ret.getFirst();
-        String str = ret.getSecond();
+        StringArray str = ret.getSecond();
 
-        if (!"".equals(str)) {
+        if (str.length()>0) {
             Edge g = s.getEdge(str.charAt(0));
-            
-            String label = g.getLabel();
+
+            StringArray label = g!=null ? g.getLabel() : (new StringArray());
             // must see whether "str" is substring of the label of an edge
-            if (label.length() > str.length() && label.charAt(str.length()) == t) {
+            if (label.length() > str.length() && label.charAt(str.length()).equals(t)) {
                 return new Pair<Boolean, Node>(true, s);
             } else {
                 // need to split the edge
-                String newlabel = label.substring(str.length());
+                StringArray newlabel = label.substring(str.length());
                 assert (label.startsWith(str));
 
                 // build a new node
@@ -279,13 +282,13 @@ public class GeneralizedSuffixTree {
      * a prefix of inputstr and remainder will be string that must be
      * appended to the concatenation of labels from s to n to get inpustr.
      */
-    private Pair<Node, String> canonize(final Node s, final String inputstr) {
+    protected Pair<Node, StringArray> canonize(final Node s, final StringArray inputstr) {
 
-        if ("".equals(inputstr)) {
-            return new Pair<Node, String>(s, inputstr);
+        if (inputstr.length()==0) {
+            return new Pair<Node, StringArray>(s, inputstr);
         } else {
             Node currentNode = s;
-            String str = inputstr;
+            StringArray str = inputstr;
             Edge g = s.getEdge(str.charAt(0));
             // descend the tree as long as a proper label is found
             while (g != null && str.startsWith(g.getLabel())) {
@@ -296,7 +299,7 @@ public class GeneralizedSuffixTree {
                 }
             }
 
-            return new Pair<Node, String>(currentNode, str);
+            return new Pair<Node, StringArray>(currentNode, str);
         }
     }
 
@@ -316,10 +319,10 @@ public class GeneralizedSuffixTree {
      * @param rest the rest of the string
      * @param value the value to add to the index
      */
-    private Pair<Node, String> update(final Node inputNode, final String stringPart, final String rest, final int value) {
+    protected Pair<Node, StringArray> update(final Node inputNode, final StringArray stringPart, final StringArray rest, final int value) {
         Node s = inputNode;
-        String tempstr = stringPart;
-        char newChar = stringPart.charAt(stringPart.length() - 1);
+        StringArray tempstr = stringPart;
+        String newChar = stringPart.charAt(stringPart.length() - 1);
 
         // line 1
         Node oldroot = root;
@@ -367,10 +370,11 @@ public class GeneralizedSuffixTree {
                 // this is a special case to handle what is referred to as node _|_ on the paper
                 tempstr = tempstr.substring(1);
             } else {
-                Pair<Node, String> canret = canonize(s.getSuffix(), safeCutLastChar(tempstr));
+                Pair<Node, StringArray> canret = canonize(s.getSuffix(), safeCutLastChar(tempstr));
                 s = canret.getFirst();
                 // use intern to ensure that tempstr is a reference from the string pool
-                tempstr = (canret.getSecond() + tempstr.charAt(tempstr.length() - 1)).intern();
+                StringArray temstr2 = (canret.getSecond()).concat( tempstr.charAt(tempstr.length()-1) );
+                tempstr = tempstr.concat(temstr2);
             }
 
             // line 7
@@ -386,16 +390,16 @@ public class GeneralizedSuffixTree {
         }
         oldroot = root;
 
-        return new Pair<Node, String>(s, tempstr);
+        return new Pair<Node, StringArray>(s, tempstr);
     }
 
     Node getRoot() {
         return root;
     }
 
-    private String safeCutLastChar(String seq) {
+    private StringArray safeCutLastChar(StringArray seq) {
         if (seq.length() == 0) {
-            return "";
+            return new StringArray();
         }
         return seq.substring(0, seq.length() - 1);
     }
@@ -407,7 +411,7 @@ public class GeneralizedSuffixTree {
     /**
      * An utility object, used to store the data returned by the GeneralizedSuffixTree GeneralizedSuffixTree.searchWithCount method.
      * It contains a collection of results and the total number of results present in the GST.
-     * @see GeneralizedSuffixTree#searchWithCount(java.lang.String, int) 
+     * @see GeneralizedSuffixTreeStringArray#searchWithCount(java.lang.String, int) 
      */
     public static class ResultInfo {
 
@@ -429,7 +433,7 @@ public class GeneralizedSuffixTree {
     /**
      * A private class used to return a tuples of two elements
      */
-    private class Pair<A, B> {
+    protected class Pair<A, B> {
 
         private final A first;
         private final B second;

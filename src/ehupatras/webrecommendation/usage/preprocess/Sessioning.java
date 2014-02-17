@@ -2,6 +2,9 @@ package ehupatras.webrecommendation.usage.preprocess;
 
 import ehupatras.webrecommendation.structures.Request;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
+import ehupatras.webrecommendation.structures.Website;
+import ehupatras.webrecommendation.structures.Page;
+
 import java.util.*;
 
 public class Sessioning {
@@ -107,7 +110,9 @@ public class Sessioning {
 			}
 			Request actualreq = WebAccessSequences.getRequest(i);
 			int actualsessionid = actualreq.getSessionID();
-			int actualUrl = actualreq.getUrlIDusage();
+			String urlname = actualreq.getFormatedUrlName();
+			Page pag = Website.getPage(urlname);
+			int actualUrl = pag.getUrlIDusage();
 			float actualelapsedtime = actualreq.getElapsedTime();
 			if(oldrequests.containsKey(actualsessionid)){
 				Object[] objA = oldrequests.get(actualsessionid);
@@ -285,7 +290,9 @@ public class Sessioning {
 			}
 				
 			// index type pages are unimportant
-			if(req.getIsIndex()){
+			String urlname = req.getFormatedUrlName();
+			Page pag = Website.getPage(urlname);
+			if(pag.getIsIndex()){
 				req.setPageRoleUHC("U");
 			}
 				

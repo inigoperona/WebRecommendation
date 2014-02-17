@@ -8,7 +8,7 @@ public class RequestBidasoaTurismo
 				extends Request
 				implements Serializable {
 
-	// The Serializable classes nedds it 
+	// The Serializable classes needs it 
 	private static final long serialVersionUID = 1L;
 	
 	// log file information
@@ -139,7 +139,7 @@ public class RequestBidasoaTurismo
 	public boolean getIsSuitableToLinkPrediction(){
 		// !m_labelByHand.equals("index") we want index URLs in the sequences
 		// because its alignment give us information.
-		Page page = WebAccessSequences.getPage(m_formatedURLname);
+		Page page = Website.getPage(m_formatedURLname);
 		return 	m_isvalid &&
 				!m_isbot &&
 				m_elapsedtime>=0 &&
@@ -185,48 +185,14 @@ public class RequestBidasoaTurismo
 		m_pageRoleUHC = rolestr;
 	}
 	
-	
-	
-	// Getting/Setting the information of the Page
-	
 	public String getFormatedUrlName(){
-		Page page = WebAccessSequences.getPage(m_formatedURLname);
-		return page.getFormatedUrlName();
+		return m_formatedURLname;
 	}
-	
-	public void setUrlIDusage(int urlIDusage){
-		Page page = WebAccessSequences.getPage(m_formatedURLname);
-		page.setUrlIDusage(urlIDusage);
-		WebAccessSequences.putURL(m_formatedURLname, page);
-	}
-	
-	public int getUrlIDusage(){
-		Page page = WebAccessSequences.getPage(m_formatedURLname);
-		return page.getUrlIDusage();
-	}
-	
-	public void setIsFrequent(boolean isFrequent){
-		Page page = WebAccessSequences.getPage(m_formatedURLname);
-		page.setIsFrequent(isFrequent);
-		WebAccessSequences.putURL(m_formatedURLname, page);
-	}
-	
-	public void setIsStatic(boolean isStatic){
-		Page page = WebAccessSequences.getPage(m_formatedURLname);
-		page.setIsStatic(isStatic);
-		WebAccessSequences.putURL(m_formatedURLname, page);
-	}
-	
-	public boolean getIsIndex(){
-		Page page = WebAccessSequences.getPage(m_formatedURLname);
-		return page.getIsIndex();
-	}
-	
 	
 	// writing the requests information
 	
 	public String toStringLongHeader(){
-		Page page = WebAccessSequences.getPage(m_formatedURLname);
+		Page page = Website.getPage(m_formatedURLname);
 		return 	"ip " +
 				"userID " +
 				"time " +
@@ -245,7 +211,7 @@ public class RequestBidasoaTurismo
 	}
 	
 	public String toStringLong(){
-		Page page = WebAccessSequences.getPage(m_formatedURLname);
+		Page page = Website.getPage(m_formatedURLname);
 		return 	m_ip + " " +
 				m_userID + " " +
 				m_time.getTimeInMillis() + " " +

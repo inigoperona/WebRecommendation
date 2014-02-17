@@ -1,6 +1,5 @@
 package ehupatras.webrecommendation.structures;
 
-import ehupatras.webrecommendation.content.preprocess.pagerank.GooglePageRank;
 import ehupatras.webrecommendation.structures.Request;
 import java.io.*;
 import java.util.*;
@@ -8,10 +7,7 @@ import java.util.*;
 public class WebAccessSequences {
 
 	// The directory where we are working
-	private static String m_workdirectory = "-";
-			
-	// HashTable to compute urlID from formatedURLs
-	private static Hashtable<String,Page> m_url2idHT = new Hashtable<String,Page>();	
+	private static String m_workdirectory = ".";
 	
 	// The filtered/good requests from the log
 	private static ArrayList<Request> m_filterlog = new ArrayList<Request>();
@@ -26,8 +22,8 @@ public class WebAccessSequences {
 	// sessionID1: req1, req2, req3
 	public static Hashtable<Integer,ArrayList<Integer>> m_sequences = new Hashtable<Integer,ArrayList<Integer>>();
 	
-	// private constructor
-	private WebAccessSequences(){
+	// protected constructor
+	protected WebAccessSequences(){
 	}
 	
 	
@@ -114,10 +110,13 @@ public class WebAccessSequences {
 			ois = new ObjectInputStream(fis);
 			m_filterlog = (ArrayList<Request>)ois.readObject();
 		} catch(IOException ex){
-			
-		} catch(ClassNotFoundException ex){
 			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.loadmodulus] " +
 					"Problems at reading the file: " + outputfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		} catch(ClassNotFoundException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.loadmodulus] " +
+					"Problems at casting to a specific object: " + outputfilename);
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
@@ -210,7 +209,7 @@ public class WebAccessSequences {
 		}
 	}
 	
-	public static void writeSequences(String outfilename){
+	public static void writeSequencesIndex(String outfilename){
 		// order the keys
 		ArrayList<Integer> keysOrd = getSequencesIDs();
 		
@@ -257,97 +256,6 @@ public class WebAccessSequences {
 		
 	}
 	
-	public static void writeSequences_URLwithUHC(String outfilename){
-		// Open the given file
-		BufferedWriter writer = null;
-		try{
-			writer = new BufferedWriter(new FileWriter(outfilename));
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
-					"Not possible to open the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// Write the sequences in a file line by line
-		try{
-			// order the keys
-			ArrayList<Integer> keysOrd = getSequencesIDs();			
-			ArrayList<String[]> sequences = getSequences_URLwithUHC(keysOrd);
-			
-			for(int i=0; i<sequences.size(); i++){
-				int sessionID = keysOrd.get(i).intValue();
-				writer.write(String.valueOf(sessionID));
-				String[] sequence = sequences.get(i);
-				for(int j=0; j<sequence.length; j++){
-					writer.write("," + sequence[j]);
-				}
-				writer.write("\n");
-			}
-			System.out.println("  " + keysOrd.size() + " lines have been written.");
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
-					"Problems writing to the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// close the file
-		try{
-			writer.close();
-		} catch (IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
-					"Problems at closing the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-	}
-	
-	public static ArrayList<String[]> getSequences_URLwithUHC(ArrayList<Integer> sessionIDs){
-		// First ordered all requests we need
-		ArrayList<Integer> requestIDs = new ArrayList<Integer>();
-		for(int i=0; i<sessionIDs.size(); i++){
-			int sessionID = sessionIDs.get(i).intValue();
-			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
-			for(int j=0; j<sequence.size(); j++){
-				int reqind = sequence.get(j).intValue();
-				int k;
-				for(k=0; k<requestIDs.size(); k++){
-					int ireqind = requestIDs.get(k);
-					if(reqind<ireqind){
-						break;
-					}
-				}
-				requestIDs.add(k, reqind);
-			}
-		}
-		
-		// Access to the information we need
-		Hashtable<Integer,String> requestsInfo = new Hashtable<Integer,String>();
-		for(int i=0; i<requestIDs.size(); i++){
-			int reqind = requestIDs.get(i);
-			Request req = WebAccessSequences.getRequest(reqind);
-			int urlid = req.getUrlIDusage();
-			String pagrole = req.getPageRoleUHC();
-			String seqelem = String.format("%06d%s", urlid, pagrole);
-			requestsInfo.put(reqind, seqelem);
-		}
-		
-		// create the structure of sequences to return
-		ArrayList<String[]> resultSequences = new ArrayList<String[]>();
-		for(int i=0; i<sessionIDs.size(); i++){
-			int sessionID = sessionIDs.get(i).intValue();
-			ArrayList<Integer> sequenceReqInd = WebAccessSequences.m_sequences.get(sessionID);
-			String[] sequenceUHC = new String[sequenceReqInd.size()];
-			for(int j=0; j<sequenceReqInd.size(); j++){
-				int reqind = sequenceReqInd.get(j).intValue();
-				sequenceUHC[j] = requestsInfo.get(reqind);
-			}
-			resultSequences.add(sequenceUHC);
-		}
-		return resultSequences;
-	}
-	
 	public static ArrayList<Integer> orderHashtableKeys(Enumeration<Integer> keys){
 		// order the keys
 		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
@@ -374,8 +282,13 @@ public class WebAccessSequences {
 		m_workdirectory = workdirectory;
 	}
 	
+	public static void saveSequences(){
+		
+	}
+	
 	public static void loadStructure(){
 		int i=0;
+		m_writedmodulus = 0;
 		while(true){
 			String filename = m_workdirectory + "/" + 
 					"_" + i + "_" + m_basenamejavadata;
@@ -384,45 +297,18 @@ public class WebAccessSequences {
 			// load the data
 			System.out.println("Loading: " + ffile.getName());
 			loadmodulus(i);
+			// update the pointers
+			//m_actualloadedrequest = 0;
+			m_lastloadedrequest = m_filterlog.size();
+			m_writedmodulus = i;
 			// update the next javaData file
 			i++;
 		}
 	}
 	
-	
-	// The operations related to a set of URLs
-	
-	public static boolean containsURL(String urlname){
-		return m_url2idHT.containsKey(urlname);
-	}
-	
-	public static void putURL(String urlname, Page page){
-		m_url2idHT.put(urlname, page);
-	}
-	
-	public static int getURLID(String urlname){
-		return m_url2idHT.get(urlname).getUrlIDusage();
-	}
-	
-	public static Page getPage(String urlname){
-		return m_url2idHT.get(urlname);
-	}
-	
-	public static void computePageRank(){
-		Enumeration<String> formatedURLsKeys = m_url2idHT.keys();
-		while(formatedURLsKeys.hasMoreElements()){
-			String key = formatedURLsKeys.nextElement();
-			Page page = m_url2idHT.get(key);
-			if(page.getIsSuitableToLinkPrediction()){
-				String urlname = page.getUrlName();
-				System.out.println(urlname);
-			}
-			
-			//GooglePageRank obj = new GooglePageRank();
-			//int pagerankvalue = obj.getPR(urlname);
-			//page.setPageRank(pagerankvalue);
-			
-			//System.out.println(pagerankvalue);
+	public static void save(){
+		for(int i=0; i<=m_writedmodulus; i++){
+			savemodulus(i);
 		}
 	}
 	

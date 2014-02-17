@@ -1,6 +1,12 @@
 package ehupatras.webrecommendation.structures;
 
-public class PageBidasoaTurismo implements Page {
+import java.io.Serializable;
+
+public class PageBidasoaTurismo
+				implements Page, Serializable {
+	
+	// To implement serializable needs this
+	private static final long serialVersionUID = 1L;
 	
 	// URL's information
 	private String m_urlname = "-";
@@ -11,8 +17,10 @@ public class PageBidasoaTurismo implements Page {
 		// in which language is the requested page: es (spanish), en (english), eu (basque, euskera), fr (french)
 	private String m_language = "-"; 
 		// for example, the URL appears every 10 days at least 10 times
+	private int m_numPeriod = 0;
 	private boolean m_isStatic = false;
 		// for example, the URL appears in the log files at least 10 times
+	private int m_frequency = 0;
 	private boolean m_isFrequent = false;
 		// some URL's nature labeled by hand
 	private String m_labelByHand = "-";
@@ -172,14 +180,6 @@ public class PageBidasoaTurismo implements Page {
 		return m_urlIDusage;
 	}
 	
-	public void setIsFrequent(boolean isFrequent){
-		m_isFrequent = isFrequent;
-	}
-	
-	public void setIsStatic(boolean isStatic){
-		m_isStatic = isStatic;
-	}
-	
 	public boolean getIsIndex(){
 		return m_labelByHand.equals("index");
 	}
@@ -192,11 +192,66 @@ public class PageBidasoaTurismo implements Page {
 		return urlname5;
 	}
 	
+	// frequency of the page in the Website
+	
+	public void setIsFrequent(boolean isFrequent){
+		m_isFrequent = isFrequent;
+	}
+	
+	public void incrementFrequency(){
+		m_frequency++;
+	}
+	
+	public int getFrequency(){
+		return m_frequency;
+	}
+	
+	public void setIsFrequent(int minimumFrequency){
+		if(m_frequency>=minimumFrequency){
+			m_isFrequent = true;
+		}
+	}
+	
+	public boolean getIsFrequent(){
+		return m_isFrequent;
+	}
+	
+	// Number of periods / staticness of the page in the website
+	
+	public void setIsStatic(boolean isStatic){
+		m_isStatic = isStatic;
+	}
+	
+	public void incrementNumPeriod(){
+		m_numPeriod++;
+	}
+	
+	public int getNumPeriod(){
+		return m_numPeriod;
+	}
+	
+	public void setIsStatic(int minimumNumPeriod){
+		if(m_numPeriod>=minimumNumPeriod){
+			m_isStatic = true;
+		}
+	}
+	
+	public boolean getIsStatic(){
+		return m_isStatic;
+	}
+	
+	public void setNumPeriod(int numPeriod){
+		m_numPeriod = numPeriod;
+	}
+	
+	// PageRank of the page
+	
 	public void setPageRank(int pagerank){
 		m_pagerankvalue = pagerank;
 	}
 	
 	// Writing the Page information
+	
 	public String toStringLongHeader(){
 		return 	"urlname " +
 				"formatedurlname " +

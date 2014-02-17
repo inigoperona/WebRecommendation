@@ -26,28 +26,30 @@ public class MainClass {
 		//String filename1 = args[1];
 		
 		// initialize the data structure
-		WebAccessSequences.setWorkDirectory(basedirectory);
-		//WebAccessSequences.loadStructure();
+		WebAccessSequencesUHC.setWorkDirectory(basedirectory);
+		Website.setWorkDirectory(basedirectory);
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
+		long starttime;
+		long endtime;
 		
 		
-		
+	if(false){ // do not read the logs, load them	
 		// READ THE LOG FILE(S) //
 		
 		LogReader logreader = new LogReaderBidasoaTurismo();
 		
 		// It reads the log file and store the valid requests in [ehupatras.webrecommendation.structures.WebAccessSequences]
-			long starttime = System.currentTimeMillis();
+			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start reading the log files and analyzing the URLs.");
 			String[] logfilesA = new String[1];
 			logfilesA[0] = basedirectory + filename1;
 		logreader.readLogFile(logfilesA);
-			long endtime = System.currentTimeMillis();
+			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
-		
+
 		// ensure a minimum amount of apparitions of URLs.
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start identifying frequent URLs.");
@@ -63,7 +65,21 @@ public class MainClass {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
-		
+			
+		// save the structures
+		WebAccessSequences.save();
+		Website.save();
+	} else {
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Start loading WebAccessSequences.");
+		WebAccessSequences.loadStructure();
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. " + "" +
+					WebAccessSequences.filteredlogsize() + " requests read. " +
+					"Elapsed time: " 
+					+ (endtime-starttime)/1000 + " seconds.");
+		Website.load();
+	}
 		
 			
 		// SESSIONING //
@@ -131,7 +147,7 @@ public class MainClass {
 		// write the sequences we have created
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start writing created sequences of request indexes.");
-		WebAccessSequences.writeSequences(basedirectory + "/sequences_requestIndexes.txt");
+		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
@@ -140,7 +156,7 @@ public class MainClass {
 		// sequence of urlID with each role: Unimportant (U), Hub (H), Content (C)
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start writing created sequences of urlID+(U,H,C).");
-		WebAccessSequences.writeSequences_URLwithUHC(basedirectory + "/sequences_urlIDurlRole.txt");
+		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
@@ -159,7 +175,7 @@ public class MainClass {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		
-		
+/*
 		// MODEL VALIDATION //
 		// split up the database to the evaluation process
 		ModelValidationHoldOut modelval = new ModelValidationHoldOut();
@@ -169,7 +185,7 @@ public class MainClass {
 		ArrayList<Integer> test  = (ArrayList<Integer>)parts[2];
 		
 		// get training sequences
-		ArrayList<String[]> sequencesUHC = WebAccessSequences.getSequences_URLwithUHC(train);
+		ArrayList<String[]> sequencesUHC = WebAccessSequencesUHC.getSequencesInstanciated(train);
 
 		// create the similarity matrix
 			starttime = System.currentTimeMillis();
@@ -189,22 +205,18 @@ public class MainClass {
 		int[] clustersA = clustering.cutDendrogramByDissimilarity((float)50);
 		
 		// Suffix Tree
-		SuffixTreeAPI gst = new SuffixTreeAPI();
+		SuffixTreeStringArray gst = new SuffixTreeStringArray();
 		for(int i=0; i<clustersA.length; i++){
 			//if(clustersA[i]==15){
 				
 				//System.out.print(i + " : " + train.get(i) + " : " + clustersA[i] + " ");
 				String[] seq = sequencesUHC.get(i);
-				String seqstr = "";
-				for(int j=0; j<seq.length; j++){
-					seqstr = seqstr + seq[j];
-				}
-				gst.putSequence(seqstr, i);
+				gst.putSequence(seq, i);
 				//System.out.println(seqstr);
 			//}
 		}
 		gst.printSuffixTree();
-		
+*/
 		
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "

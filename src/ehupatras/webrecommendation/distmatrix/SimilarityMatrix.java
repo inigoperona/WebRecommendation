@@ -17,8 +17,8 @@ public class SimilarityMatrix
 			float minsim = Float.POSITIVE_INFINITY;
 			for(int j=0; j<data.size(); j++){
 				String[] seqB = data.get(j);
-				SequenceAlignment seqalign = new SequenceAlignmentCombineGlobalLocal();
-				float sim = seqalign.getTweakedScore(seqA, seqB);
+				SequenceAlignment seqalign = new SequenceAlignmentCombineGlobalLocalDimopoulos2010();
+				float sim = seqalign.getScore(seqA, seqB);
 				if(sim>maxsim){ maxsim = sim; }
 				if(sim<minsim){ minsim = sim; }
 				similaritiesrow[j] = sim;
