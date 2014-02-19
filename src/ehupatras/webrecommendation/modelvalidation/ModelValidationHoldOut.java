@@ -1,10 +1,20 @@
 package ehupatras.webrecommendation.modelvalidation;
 
+import ehupatras.webrecommendation.utils.*;
 import java.util.*;
 
 public class ModelValidationHoldOut {
 
-	public Object[] getTrainTest(ArrayList<Integer> sessionsID, int ptrain, int pvalidation, int ptest){
+	private String m_workdirectory = ".";
+	private ArrayList<Integer> m_trainList = new ArrayList<Integer>();
+	private ArrayList<Integer> m_validationList = new ArrayList<Integer>();
+	private ArrayList<Integer> m_testList = new ArrayList<Integer>();
+	
+	public ModelValidationHoldOut(){
+		
+	}
+	
+	public void prepareData(ArrayList<Integer> sessionsID, int ptrain, int pvalidation, int ptest){
 		// number of cases we have in the database
 		int ncases = sessionsID.size();
 		
@@ -15,31 +25,55 @@ public class ModelValidationHoldOut {
 		
 		// create the parts we are interested with corresponding sessionIDs
 		int i = 0;
+		
 		// train
 		int until = i + positionTrainUntil;
-		ArrayList<Integer> trainlist = new ArrayList<Integer>();
+		m_trainList = new ArrayList<Integer>();
 		for(i=0; i<until; i++){
-			trainlist.add(sessionsID.get(i));
-		}
-		// parameters validation part
-		until = i + positionValUntil;
-		ArrayList<Integer> validationlist = new ArrayList<Integer>();
-		for( ; i<until; i++){
-			validationlist.add(sessionsID.get(i));
-		}
-		// test
-		until = i + positionTestUntil;
-		ArrayList<Integer> testlist = new ArrayList<Integer>();
-		for( ; i<until; i++){
-			testlist.add(sessionsID.get(i));
+			m_trainList.add(sessionsID.get(i));
 		}
 		
-		// return the parts we have created
-		Object[] parts = new Object[3];
-		parts[0] = trainlist;
-		parts[1] = validationlist;
-		parts[2] = testlist;
-		return parts;
+		// parameters validation part
+		until = i + positionValUntil;
+		m_validationList = new ArrayList<Integer>();
+		for( ; i<until; i++){
+			m_validationList.add(sessionsID.get(i));
+		}
+		
+		// test
+		until = i + positionTestUntil;
+		m_testList = new ArrayList<Integer>();
+		for( ; i<until; i++){
+			m_testList.add(sessionsID.get(i));
+		}
+	}
+	
+	public ArrayList<Integer> getTrain(){
+		return m_trainList;
+	}
+	
+	public ArrayList<Integer> getValidation(){
+		return m_validationList;
+	} 
+	
+	public ArrayList<Integer> getTest(){
+		return m_testList;
+	}
+	
+	public void save(String workdirectory){
+		m_workdirectory = workdirectory;
+		SaveLoadObjects slo = new SaveLoadObjects();
+		slo.save(m_trainList,      m_workdirectory + "/_holdoutTrain.javaData");
+		slo.save(m_validationList, m_workdirectory + "/_holdoutValidation.javaData");
+		slo.save(m_testList,       m_workdirectory + "/_holdoutTest.javaData");
+	}
+	
+	public void load(String workdirectory){
+		m_workdirectory = workdirectory;
+		SaveLoadObjects slo = new SaveLoadObjects();
+		m_trainList =      (ArrayList<Integer>)slo.load(m_workdirectory + "/_holdoutTrain.javaData");
+		m_validationList = (ArrayList<Integer>)slo.load(m_workdirectory + "/_holdoutValidation.javaData");
+		m_testList =       (ArrayList<Integer>)slo.load(m_workdirectory + "/_holdoutTest.javaData");
 	}
 	
 }

@@ -10,6 +10,7 @@
  */
 package ehupatras.clustering.sapehac.dendrogram;
 
+import java.io.Serializable;
 
 /**
  * A MergeNode represents an interior node in a Dendrogram.
@@ -17,7 +18,11 @@ package ehupatras.clustering.sapehac.dendrogram;
  * 
  * @author Matthias.Hauswirth@usi.ch
  */
-public final class MergeNode implements DendrogramNode {
+public final class MergeNode 
+					implements DendrogramNode, Serializable {
+	
+	// it requires to be serializable
+	private static final long serialVersionUID = 1L;
 	
 	private final DendrogramNode left;
 	private final DendrogramNode right;

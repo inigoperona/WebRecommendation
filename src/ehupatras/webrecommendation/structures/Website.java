@@ -1,9 +1,8 @@
 package ehupatras.webrecommendation.structures;
 
-import java.util.ArrayList;
+import ehupatras.webrecommendation.utils.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.io.*;
 
 public class Website {
 		
@@ -106,49 +105,15 @@ public class Website {
 	}
 	
 	public static void save(){
-		Website.saveObject(m_url2idHT, "_1_Website.javaData");
-		Website.saveObject(m_ID2urlname, "_2_Website.javaData");
-	}
-	
-	private static void saveObject(Object obj, String outfile){
-		// Write to disk with FileOutputStream
-		FileOutputStream f_out = null;
-		try{
-			f_out = new FileOutputStream(m_workdirectory + "/" + outfile);
-		} catch (FileNotFoundException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.Website.save] " +
-					"Problems at opening the file: " + outfile + " to write.");
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-			
-		// Write object with ObjectOutputStream
-		// Write object out to disk
-		ObjectOutputStream obj_out = null;
-		try{
-			obj_out = new ObjectOutputStream(f_out);
-			obj_out.writeObject( obj );
-		} catch (IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.Website.save] " +
-					"Problems at writing the file: " + outfile);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-
-		// close
-		try{
-			obj_out.close();
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.Website.save] " +
-					"Problems closing the file: " + outfile + " after writing.");
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
+		SaveLoadObjects slo = new SaveLoadObjects();
+		slo.save(m_url2idHT, m_workdirectory + "/_1_Website.javaData");
+		slo.save(m_ID2urlname, m_workdirectory + "/_2_Website.javaData");
 	}
 	
 	public static void load(){
-		m_url2idHT = (Hashtable<String,Page>)loadObject(m_workdirectory + "/_1_Website.javaData");
-		m_ID2urlname = (Hashtable<Integer,String>)loadObject(m_workdirectory + "/_2_Website.javaData");
+		SaveLoadObjects slo = new SaveLoadObjects();
+		m_url2idHT = (Hashtable<String,Page>)slo.load(m_workdirectory + "/_1_Website.javaData");
+		m_ID2urlname = (Hashtable<Integer,String>)slo.load(m_workdirectory + "/_2_Website.javaData");
 		
 		// update the maximum index
 		int maxindex = Integer.MIN_VALUE;
@@ -161,42 +126,6 @@ public class Website {
 		}
 		m_maxUrlID = maxindex;
 		m_urlID = maxindex;
-	}
-	
-	private static Object loadObject(String outputfilename){
-		Object obj = null;
-		
-		FileInputStream fis = null;
-		try{
-			fis = new FileInputStream(outputfilename);
-		} catch (FileNotFoundException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
-					"Problems at opening the file: " + outputfilename + " to read.");
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		ObjectInputStream ois = null;
-		try{
-			ois = new ObjectInputStream(fis);
-			obj = ois.readObject();
-		} catch(IOException ex){
-			
-		} catch(ClassNotFoundException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
-					"Problems at reading the file: " + outputfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		try{
-			ois.close();
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
-					"Problems closing the file: " + outputfilename + " after reading.");
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		return obj;
 	}
 	
 	public static void setWorkDirectory(String workdirectory){

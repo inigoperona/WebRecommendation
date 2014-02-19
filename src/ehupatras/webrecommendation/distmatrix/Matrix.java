@@ -1,5 +1,6 @@
 package ehupatras.webrecommendation.distmatrix;
 
+import ehupatras.webrecommendation.utils.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,8 +8,13 @@ import java.util.ArrayList;
 
 public abstract class Matrix {
 	protected float[][] m_matrix;
+	private String m_savefilename = "/_matrix.javaData";
 	
-	public abstract float[][] getMatrix(ArrayList<String[]> data);
+	public abstract void computeMatrix(ArrayList<String[]> data);
+	
+	public float[][] getMatrix(){
+		return m_matrix;
+	}
 	
 	public void writeMatrix(String outfilename){
 		// Open the given file
@@ -47,5 +53,15 @@ public abstract class Matrix {
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
+	}
+	
+	public void save(String wordirectory){
+		SaveLoadObjects slo = new SaveLoadObjects();
+		slo.save(m_matrix, wordirectory + m_savefilename);
+	}
+	
+	public void load(String wordirectory){
+		SaveLoadObjects slo = new SaveLoadObjects();
+		m_matrix = (float[][])slo.load(wordirectory + m_savefilename);
 	}
 }

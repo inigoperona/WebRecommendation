@@ -1,4 +1,4 @@
- package ehupatras.suffixtree;
+ package ehupatras.suffixtree.chararray;
 
 import java.util.HashSet;
 import java.util.Set;

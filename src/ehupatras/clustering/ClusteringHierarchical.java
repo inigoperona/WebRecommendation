@@ -8,16 +8,18 @@ import ehupatras.clustering.sapehac.experiment.DissimilarityMeasure;
 import ehupatras.clustering.sapehac.experiment.DissimilarityMeasureEhupatras;
 import ehupatras.clustering.sapehac.experiment.Experiment;
 import ehupatras.clustering.sapehac.experiment.ExperimentEhuPatras;
+import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import java.util.*;
 
 public class ClusteringHierarchical {
 
 	private Dendrogram m_dendrogram;
 	private int m_ncases;
+	private String m_savefilename = "/_dendrogram.javaData";
 	
-	public ClusteringHierarchical(int ncases, float[][] matrix){
-		m_ncases = ncases;
-		Experiment experiment = new ExperimentEhuPatras(ncases);
+	public void computeHierarchicalClustering(float[][] matrix){
+		m_ncases = matrix.length;
+		Experiment experiment = new ExperimentEhuPatras(m_ncases);
 		DissimilarityMeasure dissimilarityMeasure = new DissimilarityMeasureEhupatras(matrix);
 		//AgglomerationMethod agglomerationMethod = new SingleLinkage();
 		AgglomerationMethod agglomerationMethod = new AverageLinkage();
@@ -25,6 +27,22 @@ public class ClusteringHierarchical {
 		HierarchicalAgglomerativeClusterer clusterer = new HierarchicalAgglomerativeClusterer(experiment, dissimilarityMeasure, agglomerationMethod);
 		clusterer.cluster(dendrogramBuilder);
 		m_dendrogram = dendrogramBuilder.getDendrogram();
+	}
+	
+	public void save(String workdirectory){
+		Object[] obj = new Object[2];
+		obj[0] = m_dendrogram;
+		obj[1] =m_ncases;
+		SaveLoadObjects slo = new SaveLoadObjects();
+		slo.save(obj, workdirectory + m_savefilename);
+	}
+
+	public void load(String workdirectory){
+		SaveLoadObjects slo = new SaveLoadObjects();
+		slo.load(workdirectory + m_savefilename);
+		Object[] obj = (Object[])slo.load(workdirectory + m_savefilename);
+		m_dendrogram = (Dendrogram)obj[0];
+		m_ncases = (int)obj[1]; 
 	}
 	
 	public void writeDendrogram(){

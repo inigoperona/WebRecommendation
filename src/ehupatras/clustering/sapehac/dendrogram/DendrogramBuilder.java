@@ -12,19 +12,18 @@ package ehupatras.clustering.sapehac.dendrogram;
 
 import ehupatras.clustering.sapehac.ClusteringBuilder;
 
-
 /**
  * A DendrogramBuilder creates a Dendrogram consisting of ObservationNodes and
  * MergeNodes.
  * 
  * @author Matthias.Hauswirth@usi.ch
  */
-public final class DendrogramBuilder implements ClusteringBuilder {
+public final class DendrogramBuilder 
+						implements ClusteringBuilder {
 
     private final DendrogramNode[] nodes;
     private MergeNode lastMergeNode;
-
-
+    
     public DendrogramBuilder(final int nObservations) {
         nodes = new DendrogramNode[nObservations];
         for (int i = 0; i<nObservations; i++) {
@@ -45,5 +44,5 @@ public final class DendrogramBuilder implements ClusteringBuilder {
             return new Dendrogram(lastMergeNode);
         }
     }
-
+    
 }

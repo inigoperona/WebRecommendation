@@ -1,27 +1,21 @@
  
 package ehupatras.suffixtree.stringarray;
 
+import java.util.ArrayList;
+
 /**
  * Represents an Edge in the Suffix Tree.
  * It has a label and a destination Node
  */
 class Edge {
-    private StringArray label;
+    private ArrayList<String> label;
     private Node dest;
 
-    public StringArray getLabel() {
-    	return label;
+    public ArrayList<String> getLabel() {
+        return label;
     }
-    
-    public String getLabelString() {
-    	String labelstr = "";
-    	for(int i=0; i<label.length(); i++){
-    		labelstr = labelstr + label.charAt(i);
-    	}
-        return labelstr;
-    } 
 
-    public void setLabel(StringArray label) {
+    public void setLabel(ArrayList<String> label) {
         this.label = label;
     }
 
@@ -33,7 +27,7 @@ class Edge {
         this.dest = dest;
     }
 
-    public Edge(StringArray label, Node dest) {
+    public Edge(ArrayList<String> label, Node dest) {
         this.label = label;
         this.dest = dest;
     }

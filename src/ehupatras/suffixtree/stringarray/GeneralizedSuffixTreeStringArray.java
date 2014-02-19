@@ -1,7 +1,11 @@
-package ehupatras.suffixtree.stringarray;
+ package ehupatras.suffixtree.stringarray;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.ArrayList;
+
+import ehupatras.suffixtree.stringarray.Edge;
+import ehupatras.suffixtree.stringarray.EdgeBag;
 
 /**
  * A Generalized Suffix Tree, based on the Ukkonen's paper "On-line construction of suffix trees"
@@ -42,15 +46,15 @@ public class GeneralizedSuffixTreeStringArray {
     /**
      * The index of the last item that was added to the GST
      */
-    protected int last = 0;
+    private int last = 0;
     /**
      * The root of the suffix tree
      */
-    protected final Node root = new Node();
+    private final Node root = new Node();
     /**
      * The last leaf that was added during the update operation
      */
-    protected Node activeLeaf = root;
+    private Node activeLeaf = root;
 
     /**
      * Searches for the given word within the GST.
@@ -61,8 +65,8 @@ public class GeneralizedSuffixTreeStringArray {
      * @param word the key to search for
      * @return the collection of indexes associated with the input <tt>word</tt>
      */
-    public Collection<Integer> search(StringArray word) {
-        return search(word, -1);
+    public Collection<Integer> search(ArrayList<String> words) {
+        return search(words, -1);
     }
 
     /**
@@ -72,8 +76,8 @@ public class GeneralizedSuffixTreeStringArray {
      * @param results the max number of results to return
      * @return at most <tt>results</tt> values for the given word
      */
-    public Collection<Integer> search(StringArray word, int results) {
-        Node tmpNode = searchNode(word);
+    public Collection<Integer> search(ArrayList<String> words, int results) {
+        Node tmpNode = searchNode(words);
         if (tmpNode == null) {
             return null;
         }
@@ -88,8 +92,8 @@ public class GeneralizedSuffixTreeStringArray {
      * @return at most <tt>results</tt> values for the given word
      * @see GeneralizedSuffixTreeStringArray#ResultInfo
      */
-    public ResultInfo searchWithCount(StringArray word, int to) {
-        Node tmpNode = searchNode(word);
+    public ResultInfo searchWithCount(ArrayList<String> words, int to) {
+        Node tmpNode = searchNode(words);
         if (tmpNode == null) {
             return new ResultInfo(Collections.EMPTY_LIST, 0);
         }
@@ -100,7 +104,7 @@ public class GeneralizedSuffixTreeStringArray {
     /**
      * Returns the tree node (if present) that corresponds to the given string.
      */
-    private Node searchNode(StringArray word) {
+    private Node searchNode(ArrayList<String> words) {
         /*
          * Verifies if exists a path from the root to a node such that the concatenation
          * of all the labels on the path is a superstring of the given word.
@@ -109,22 +113,25 @@ public class GeneralizedSuffixTreeStringArray {
         Node currentNode = root;
         Edge currentEdge;
 
-        for (int i = 0; i < word.length(); ++i) {
-            String ch = word.charAt(i);
+        for (int i = 0; i < words.size(); ++i) {
+            String word = words.get(i);
             // follow the edge corresponding to this char
-            currentEdge = currentNode.getEdge(ch);
+            currentEdge = currentNode.getEdge(word);
             if (null == currentEdge) {
                 // there is no edge starting with this char
                 return null;
             } else {
-                StringArray label = currentEdge.getLabel();
-                int lenToMatch = Math.min(word.length() - i, label.length());
-                if (!word.regionMatches(i, label, 0, lenToMatch)) {
+                ArrayList<String> label = currentEdge.getLabel();
+                int lenToMatch = Math.min(words.size() - i, label.size());
+                
+                boolean regionMatches = true;
+                for(int k=0; k<lenToMatch; k++){ if(words.get(i+k).equals(label.get(k))){ regionMatches = false; break;} }
+                if (!regionMatches) {
                     // the label on the edge does not correspond to the one in the string to search
                     return null;
                 }
 
-                if (label.length() >= word.length() - i) {
+                if (label.size() >= words.size() - i) {
                     return currentEdge.getDest();
                 } else {
                     // advance to next node
@@ -147,7 +154,7 @@ public class GeneralizedSuffixTreeStringArray {
      * @param index the value that will be added to the index
      * @throws IllegalStateException if an invalid index is passed as input
      */
-    public void put(StringArray key, int index) throws IllegalStateException {
+    public void put(ArrayList<String> key, int index) throws IllegalStateException {
         if (index < last) {
             throw new IllegalStateException("The input index must not be less than any of the previously inserted ones. Got " + index + ", expected at least " + last);
         } else {
@@ -157,19 +164,24 @@ public class GeneralizedSuffixTreeStringArray {
         // reset activeLeaf
         activeLeaf = root;
 
-        StringArray remainder = key;
+        ArrayList<String> remainder = key;
         Node s = root;
 
         // proceed with tree construction (closely related to procedure in
         // Ukkonen's paper)
-        StringArray text = new StringArray();
+        ArrayList<String> text = new ArrayList<String>(0);
         // iterate over the string, one char at a time
-        for (int i = 0; i < remainder.length(); i++) {	
+        for (int i = 0; i < remainder.size(); i++) {
+        	
             // line 6
-            text = text.concat(remainder.charAt(i));
-
+        	text.add(remainder.get(i));
+        	
             // line 7: update the tree with the new transitions due to this new char
-            Pair<Node, StringArray> active = update(s, text, remainder.substring(i), index);
+        	// substring
+        	ArrayList<String> remainderSubList = new ArrayList<String>(); 
+        	for(int k=i; k<remainder.size(); k++){ remainderSubList.add(remainder.get(k)); }
+        	
+            Pair<Node, ArrayList<String>> active = update(s, text, remainderSubList, index);
             // line 8: make sure the active pair is canonical
             active = canonize(active.getFirst(), active.getSecond());
             
@@ -182,10 +194,6 @@ public class GeneralizedSuffixTreeStringArray {
             activeLeaf.setSuffix(s);
         }
 
-    }
-    public void put(String[] key, int index) throws IllegalStateException {
-    	StringArray keyarray = new StringArray(key);
-    	this.put(keyarray, index);
     }
 
     /**
@@ -208,24 +216,33 @@ public class GeneralizedSuffixTreeStringArray {
      *                  the last node that can be reached by following the path denoted by stringPart starting from inputs
      *         
      */
-    private Pair<Boolean, Node> testAndSplit(final Node inputs, final StringArray stringPart, final String t, 
-    															final StringArray remainder, final int value) {
+    private Pair<Boolean, Node> testAndSplit(final Node inputs, final ArrayList<String> stringPart, final String t, final ArrayList<String> remainder, final int value) {
         // descend the tree as far as possible
-        Pair<Node, StringArray> ret = canonize(inputs, stringPart);
+        Pair<Node, ArrayList<String>> ret = canonize(inputs, stringPart);
         Node s = ret.getFirst();
-        StringArray str = ret.getSecond();
+        ArrayList<String> str = ret.getSecond();
 
-        if (str.length()>0) {
-            Edge g = s.getEdge(str.charAt(0));
-
-            StringArray label = g!=null ? g.getLabel() : (new StringArray());
+        if (!str.isEmpty()) {
+            Edge g = s.getEdge(str.get(0));
+            
+            ArrayList<String> label = g.getLabel();
             // must see whether "str" is substring of the label of an edge
-            if (label.length() > str.length() && label.charAt(str.length()).equals(t)) {
+            if (label.size() > str.size() && label.get(str.size()).equals(t)) {
                 return new Pair<Boolean, Node>(true, s);
             } else {
                 // need to split the edge
-                StringArray newlabel = label.substring(str.length());
-                assert (label.startsWith(str));
+            	// substring
+            	ArrayList<String> newlabel = new ArrayList<String>();
+            	for(int k=str.size(); k<label.size(); k++){ newlabel.add(label.get(k)); };
+            	
+            	// startsWith
+            	boolean startsWith = true;
+            	if(str.size() <= label.size()){
+            		for(int k=0; k<str.size(); k++){ if(!label.get(k).equals(str.get(k))){ startsWith = false; break; } }
+            	} else {
+            		startsWith = false;
+            	}
+                assert (startsWith);
 
                 // build a new node
                 Node r = new Node();
@@ -235,8 +252,8 @@ public class GeneralizedSuffixTreeStringArray {
                 g.setLabel(newlabel);
 
                 // link s -> r
-                r.addEdge(newlabel.charAt(0), g);
-                s.addEdge(str.charAt(0), newedge);
+                r.addEdge(newlabel.get(0), g);
+                s.addEdge(str.get(0), newedge);
 
                 return new Pair<Boolean, Node>(false, r);
             }
@@ -251,25 +268,46 @@ public class GeneralizedSuffixTreeStringArray {
                     // update payload of destination node
                     e.getDest().addRef(value);
                     return new Pair<Boolean, Node>(true, s);
-                } else if (remainder.startsWith(e.getLabel())) {
-                    return new Pair<Boolean, Node>(true, s);
-                } else if (e.getLabel().startsWith(remainder)) {
-                    // need to split as above
-                    Node newNode = new Node();
-                    newNode.addRef(value);
-
-                    Edge newEdge = new Edge(remainder, newNode);
-
-                    e.setLabel(e.getLabel().substring(remainder.length()));
-
-                    newNode.addEdge(e.getLabel().charAt(0), e);
-
-                    s.addEdge(t, newEdge);
-
-                    return new Pair<Boolean, Node>(false, s);
                 } else {
-                    // they are different words. No prefix. but they may still share some common substr
-                    return new Pair<Boolean, Node>(true, s);
+                	// startsWith
+                	boolean startsWith = true;
+                	if(e.getLabel().size() <= remainder.size()){
+                		for(int k=0; k<e.getLabel().size(); k++){ if(!remainder.get(k).equals(e.getLabel().get(k))){ startsWith = false; break; } }
+                	} else {
+                		startsWith = false;
+                	}
+                	if (startsWith) {
+                		return new Pair<Boolean, Node>(true, s);
+                	} else {
+                		// startsWith
+                    	startsWith = true;
+                    	if(remainder.size() <= e.getLabel().size()){
+                    		for(int k=0; k<remainder.size(); k++){ if(!e.getLabel().get(k).equals(remainder.get(k))){ startsWith = false; break; } }
+                    	} else {
+                    		startsWith = false;
+                    	}
+                    	if (startsWith) {
+                			// need to split as above
+                			Node newNode = new Node();
+                			newNode.addRef(value);
+
+                			Edge newEdge = new Edge(remainder, newNode);
+
+                			// substring
+                			ArrayList<String> labelaux = new ArrayList<String>();
+                			for(int k=remainder.size(); k<e.getLabel().size(); k++){ labelaux.add(e.getLabel().get(k)); }
+                			e.setLabel(labelaux);
+
+                			newNode.addEdge(e.getLabel().get(0), e);
+
+                			s.addEdge(t, newEdge);
+
+                			return new Pair<Boolean, Node>(false, s);
+                		} else {
+                			// they are different words. No prefix. but they may still share some common substr
+                			return new Pair<Boolean, Node>(true, s);
+                		}
+                	}
                 }
             }
         }
@@ -282,24 +320,42 @@ public class GeneralizedSuffixTreeStringArray {
      * a prefix of inputstr and remainder will be string that must be
      * appended to the concatenation of labels from s to n to get inpustr.
      */
-    protected Pair<Node, StringArray> canonize(final Node s, final StringArray inputstr) {
+    private Pair<Node, ArrayList<String>> canonize(final Node s, final ArrayList<String> inputstr) {
 
-        if (inputstr.length()==0) {
-            return new Pair<Node, StringArray>(s, inputstr);
+        if (inputstr.isEmpty()) {
+            return new Pair<Node, ArrayList<String>>(s, inputstr);
         } else {
             Node currentNode = s;
-            StringArray str = inputstr;
-            Edge g = s.getEdge(str.charAt(0));
+            ArrayList<String> str = inputstr;
+            
+            Edge g = s.getEdge(str.get(0));
             // descend the tree as long as a proper label is found
-            while (g != null && str.startsWith(g.getLabel())) {
-                str = str.substring(g.getLabel().length());
+            // startsWith
+        	boolean startsWith = true;
+        	if(g.getLabel().size()<=str.size()){
+        		for(int k=0; k<g.getLabel().size(); k++){ if(!str.get(k).equals(g.getLabel().get(k))){ startsWith = false; break; } }
+        	} else {
+        		startsWith = false;
+        	}
+            while (g != null && startsWith) {
+            	// substring
+            	ArrayList<String> straux = new ArrayList<String>();
+            	for(int k=g.getLabel().size(); k<str.size(); k++){ straux.add(str.get(k)); }
+                str = straux;
                 currentNode = g.getDest();
-                if (str.length() > 0) {
-                    g = currentNode.getEdge(str.charAt(0));
+                if (str.size() > 0) {
+                    g = currentNode.getEdge(str.get(0));
                 }
+                // startsWith
+            	startsWith = true;
+            	if(g.getLabel().size()<=str.size()){
+            		for(int k=0; k<g.getLabel().size(); k++){ if(!str.get(k).equals(g.getLabel().get(k))){ startsWith = false; break; } }
+            	} else {
+            		startsWith = false;
+            	}
             }
 
-            return new Pair<Node, StringArray>(currentNode, str);
+            return new Pair<Node, ArrayList<String>>(currentNode, str);
         }
     }
 
@@ -319,16 +375,20 @@ public class GeneralizedSuffixTreeStringArray {
      * @param rest the rest of the string
      * @param value the value to add to the index
      */
-    protected Pair<Node, StringArray> update(final Node inputNode, final StringArray stringPart, final StringArray rest, final int value) {
+    private Pair<Node, ArrayList<String>> update(final Node inputNode, final ArrayList<String> stringPart, final ArrayList<String> rest, final int value) {
         Node s = inputNode;
-        StringArray tempstr = stringPart;
-        String newChar = stringPart.charAt(stringPart.length() - 1);
+        ArrayList<String> tempstr = stringPart;
+        String newChar = stringPart.get(stringPart.size() - 1);
 
         // line 1
         Node oldroot = root;
 
         // line 1b
-        Pair<Boolean, Node> ret = testAndSplit(s, tempstr.substring(0, tempstr.length() - 1), newChar, rest, value);
+        // substring
+        ArrayList<String> tempstraux = new ArrayList<String>();
+        for(int k=0; k<tempstr.size()-1; k++){ tempstraux.add(tempstr.get(k)); }
+        
+        Pair<Boolean, Node> ret = testAndSplit(s, tempstraux, newChar, rest, value);
 
         Node r = ret.getSecond();
         boolean endpoint = ret.getFirst();
@@ -368,13 +428,19 @@ public class GeneralizedSuffixTreeStringArray {
             if (null == s.getSuffix()) { // root node
                 assert (root == s);
                 // this is a special case to handle what is referred to as node _|_ on the paper
-                tempstr = tempstr.substring(1);
+                // substring
+                ArrayList<String> tempstraux2 = new ArrayList<String>();
+            	for(int k=1; k<tempstr.size(); k++){ tempstraux2.add(tempstr.get(k)); }
+                tempstr = tempstraux2;
             } else {
-                Pair<Node, StringArray> canret = canonize(s.getSuffix(), safeCutLastChar(tempstr));
+                Pair<Node, ArrayList<String>> canret = canonize(s.getSuffix(), safeCutLastChar(tempstr));
                 s = canret.getFirst();
                 // use intern to ensure that tempstr is a reference from the string pool
-                StringArray temstr2 = (canret.getSecond()).concat( tempstr.charAt(tempstr.length()-1) );
-                tempstr = tempstr.concat(temstr2);
+                // concat
+                tempstraux = new ArrayList<String>();
+                for(int k=0; k<canret.getSecond().size(); k++){ tempstraux.add(canret.getSecond().get(k)); }
+                tempstraux.add(tempstr.get(tempstr.size() - 1));
+                tempstr = tempstraux; 
             }
 
             // line 7
@@ -390,18 +456,21 @@ public class GeneralizedSuffixTreeStringArray {
         }
         oldroot = root;
 
-        return new Pair<Node, StringArray>(s, tempstr);
+        return new Pair<Node, ArrayList<String>>(s, tempstr);
     }
 
     Node getRoot() {
         return root;
     }
 
-    private StringArray safeCutLastChar(StringArray seq) {
-        if (seq.length() == 0) {
-            return new StringArray();
+    private ArrayList<String> safeCutLastChar(ArrayList<String> seq) {
+        if (seq.size() == 0) {
+            return (new ArrayList<String>());
         }
-        return seq.substring(0, seq.length() - 1);
+        // substring
+        ArrayList<String> seqaux = new ArrayList<String>();
+        for(int k=0; k<seq.size()-1; k++){ seqaux.add(seq.get(k)); }
+        return seqaux;
     }
 
     public int computeCount() {
@@ -433,7 +502,7 @@ public class GeneralizedSuffixTreeStringArray {
     /**
      * A private class used to return a tuples of two elements
      */
-    protected class Pair<A, B> {
+    private class Pair<A, B> {
 
         private final A first;
         private final B second;

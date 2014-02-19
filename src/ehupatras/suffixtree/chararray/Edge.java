@@ -1,5 +1,5 @@
  
-package ehupatras.suffixtree;
+package ehupatras.suffixtree.chararray;
 
 /**
  * Represents an Edge in the Suffix Tree.

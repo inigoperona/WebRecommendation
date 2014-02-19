@@ -10,6 +10,7 @@
  */
 package ehupatras.clustering.sapehac.dendrogram;
 
+import java.io.Serializable;
 
 /**
  * An ObservationNode represents a leaf node in a Dendrogram.
@@ -17,8 +18,12 @@ package ehupatras.clustering.sapehac.dendrogram;
  * 
  * @author Matthias.Hauswirth@usi.ch
  */
-public final class ObservationNode implements DendrogramNode {
+public final class ObservationNode 
+						implements DendrogramNode, Serializable {
 
+	// it requires to be serializable
+	private static final long serialVersionUID = 1L;
+	
 	private final int observation;
 
 	

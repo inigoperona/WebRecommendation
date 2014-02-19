@@ -6,7 +6,7 @@ import java.util.*;
 public class SimilarityMatrix 
 				extends Matrix {
 	
-	public float[][] getMatrix(ArrayList<String[]> data){
+	public void computeMatrix(ArrayList<String[]> data){
 		m_matrix = new float[data.size()][data.size()];
 		for(int i=0; i<data.size(); i++){
 			// compute each row similarities
@@ -29,7 +29,6 @@ public class SimilarityMatrix
 				m_matrix[i][j] = (sim-minsim) / Math.abs(maxsim-minsim);
 			}
 		}
-		return m_matrix;
 	}
 	
 }

@@ -1,4 +1,4 @@
- package ehupatras.suffixtree;
+ package ehupatras.suffixtree.chararray;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -169,7 +169,7 @@ public class GeneralizedSuffixTree {
             text += remainder.charAt(i);
             // use intern to make sure the resulting string is in the pool.
             text = text.intern();
-
+            
             // line 7: update the tree with the new transitions due to this new char
             Pair<Node, String> active = update(s, text, remainder.substring(i), index);
             // line 8: make sure the active pair is canonical
@@ -214,7 +214,7 @@ public class GeneralizedSuffixTree {
 
         if (!"".equals(str)) {
             Edge g = s.getEdge(str.charAt(0));
-            
+
             String label = g.getLabel();
             // must see whether "str" is substring of the label of an edge
             if (label.length() > str.length() && label.charAt(str.length()) == t) {
@@ -222,6 +222,7 @@ public class GeneralizedSuffixTree {
             } else {
                 // need to split the edge
                 String newlabel = label.substring(str.length());
+                
                 assert (label.startsWith(str));
 
                 // build a new node
@@ -286,6 +287,7 @@ public class GeneralizedSuffixTree {
         } else {
             Node currentNode = s;
             String str = inputstr;
+            
             Edge g = s.getEdge(str.charAt(0));
             // descend the tree as long as a proper label is found
             while (g != null && str.startsWith(g.getLabel())) {
@@ -325,8 +327,9 @@ public class GeneralizedSuffixTree {
         Node oldroot = root;
 
         // line 1b
-        Pair<Boolean, Node> ret = testAndSplit(s, tempstr.substring(0, tempstr.length() - 1), newChar, rest, value);
-
+        String tempstraux = tempstr.substring(0, tempstr.length() - 1);
+        Pair<Boolean, Node> ret = testAndSplit(s, tempstraux, newChar, rest, value);
+        
         Node r = ret.getSecond();
         boolean endpoint = ret.getFirst();
 

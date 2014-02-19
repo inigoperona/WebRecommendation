@@ -3,6 +3,7 @@
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.ArrayList;
 
 /**
  * Represents a node of the generalized suffix tree graph
@@ -201,12 +202,12 @@ class Node {
         return resultCount;
     }
 
-    void addEdge(String ch, Edge e) {
-        edges.put(ch, e);
+    void addEdge(String word, Edge e) {
+        edges.put(word, e);
     }
 
-    Edge getEdge(String ch) {
-        return edges.get(ch);
+    Edge getEdge(String word) {
+        return edges.get(word);
     }
 
     EdgeBag getEdges() {
@@ -236,7 +237,7 @@ class Node {
     	 
     	System.out.println(ident+"Node:"+Utils.shortenName(this.toString()));
     	for (Edge e : this.edges.values()){
-    		System.out.println(ident+"\t--"+e.getLabelString()+"-->"+Utils.shortenName(e.getDest().toString()));
+    		System.out.println(ident+"\t--"+e.getLabel()+"-->"+Utils.shortenName(e.getDest().toString()));
     		e.getDest().printNode(level+1);
     	}
     }

@@ -10,7 +10,6 @@
  */
 package ehupatras.clustering.sapehac.dendrogram;
 
-
 /**
  * A DendrogramNode is a node in a Dendrogram.
  * It represents a subtree of the dendrogram tree.

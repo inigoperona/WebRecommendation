@@ -1,63 +1,60 @@
-  
 package ehupatras.suffixtree.stringarray;
 
+import ehupatras.suffixtree.stringarray.Edge;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
 class EdgeBag {
-    private String[] chars;
-    private Edge[] values;
+    private ArrayList<String> words = null;
+    private ArrayList<Edge> values;
     private static final int BSEARCH_THRESHOLD = 6;
 
     void put(String c, Edge e) {        
-        if (chars == null) {
-            chars = new String[0];
-            values = new Edge[0];
+        if (words == null) {
+            words = new ArrayList<String>();
+            values = new ArrayList<Edge>();
         }
         int idx = search(c);
 
         if (idx < 0) {
-            int currsize = chars.length;
-            String[] copy = new String[currsize + 1];
-            System.arraycopy(chars, 0, copy, 0, currsize);
-            chars = copy;
-            Edge[] copy1 = new Edge[currsize + 1];
-            System.arraycopy(values, 0, copy1, 0, currsize);
-            values = copy1;
-            chars[currsize] = c;
-            values[currsize] = e;
-            currsize++;
+            words.add(c);
+            values.add(e);
+            int currsize = words.size();
             if (currsize > BSEARCH_THRESHOLD) {
                 sortArrays();
             }
         } else {
-            values[idx] = e;
+            values.set(idx, e);
         }
     }
 
-    Edge get(String c) {        
+    Edge get(String c) {
         int idx = search(c);
         if (idx < 0) {
             return null;
         }
-        return values[idx];
+        return values.get(idx);
     }
 
     private int search(String c) {
-        if (chars == null)
+        if (words == null)
             return -1;
         
-        if (chars.length > BSEARCH_THRESHOLD) {
-            return java.util.Arrays.binarySearch(chars, c);
+        if (words.size() > BSEARCH_THRESHOLD) {
+            return Collections.binarySearch(words, c);
         }
 
-        for (int i = 0; i < chars.length; i++) {
-            if (c.equals(chars[i])) {
+        for (int i = 0; i < words.size(); i++) {
+            if (c.equals(words.get(i))) {
                 return i;
             }
         }
         return -1;
     }
 
-    Edge[] values() {
-        return values == null ? new Edge[0] : values;
+    ArrayList<Edge> values() {
+        return values == null ? new ArrayList<Edge>() : values;
     }
     
     /**
@@ -66,16 +63,16 @@ class EdgeBag {
      * It was preferred to faster sorts (like qsort) because of the small sizes (<=36) of the collections involved.
      */
     private void sortArrays() {
-        for (int i = 0; i < chars.length; i++) {
+        for (int i = 0; i < words.size(); i++) {
          for (int j = i; j > 0; j--) {
-            if (chars[j-1].compareTo(chars[j])>0) {
-               String swap = chars[j];
-               chars[j] = chars[j-1];
-               chars[j-1] = swap;
+            if (words.get(j-1).compareTo(words.get(j)) > 0) {
+                String swap = words.get(j);
+                words.set(j, words.get(j-1));
+                words.set(j-1, swap);
 
-               Edge swapEdge = values[j];
-               values[j] = values[j-1];
-               values[j-1] = swapEdge;
+               Edge swapEdge = values.get(j);
+               values.set(j, values.get(j-1));
+               values.set(j-1, swapEdge);
             }
          }
       }

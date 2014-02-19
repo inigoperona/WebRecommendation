@@ -10,6 +10,7 @@
  */
 package ehupatras.clustering.sapehac.dendrogram;
 
+import java.io.Serializable;
 
 /**
  * A Dendrogram represents the results of hierachical agglomerative clustering.
@@ -17,9 +18,13 @@ package ehupatras.clustering.sapehac.dendrogram;
  * 
  * @author Matthias.Hauswirth@usi.ch
  */
-public final class Dendrogram {
+public final class Dendrogram 
+						implements Serializable {
 
-    private final DendrogramNode root;
+    // It is necessary to define this attribute to implements Serializable
+	private static final long serialVersionUID = 1L;
+	
+	private final DendrogramNode root;
 
 
     public Dendrogram(final DendrogramNode root) {

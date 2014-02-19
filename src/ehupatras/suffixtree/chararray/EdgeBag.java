@@ -1,5 +1,5 @@
   
-package ehupatras.suffixtree;
+package ehupatras.suffixtree.chararray;
 
 class EdgeBag {
     private byte[] chars;
