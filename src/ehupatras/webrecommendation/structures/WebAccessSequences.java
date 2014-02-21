@@ -378,12 +378,10 @@ public class WebAccessSequences {
 		}
 	}
 	
-	public static void save(){
+	public static void saveStructure(){
 		for(int i=0; i<=m_writedmodulus; i++){
 			String filename = m_workdirectory + "/" + 
 					"_" + i + "_" + m_basenamejavadata;
-			File ffile= new File(filename);
-			if(ffile.exists()){continue;}
 			if(m_actualloadedmodulus!=i){
 				savemodulus(m_actualloadedmodulus);
 				loadmodulus(i);

@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Represents a node of the generalized suffix tree graph
  * @see GeneralizedSuffixTreeStringArray
  */
-class Node {
+public class Node {
 
     /**
      * The payload array used to store the data (indexes) associated with this node.
@@ -163,7 +163,7 @@ class Node {
      * Performs the same operation on subnodes as well
      * @return the number of results
      */
-    protected int computeAndCacheCount() {
+    public int computeAndCacheCount() {
         computeAndCacheCountRecursive();
         return resultCount;
     }
@@ -210,7 +210,7 @@ class Node {
         return edges.get(word);
     }
 
-    EdgeBag getEdges() {
+    public EdgeBag getEdges() {
         return edges;
     }
 

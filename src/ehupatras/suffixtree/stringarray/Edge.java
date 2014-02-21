@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Represents an Edge in the Suffix Tree.
  * It has a label and a destination Node
  */
-class Edge {
+public class Edge {
     private ArrayList<String> label;
     private Node dest;
 

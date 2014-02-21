@@ -5,7 +5,7 @@ import ehupatras.suffixtree.stringarray.Edge;
 import java.util.ArrayList;
 import java.util.Collections;
 
-class EdgeBag {
+public class EdgeBag {
     private ArrayList<String> words = null;
     private ArrayList<Edge> values;
     private static final int BSEARCH_THRESHOLD = 6;
@@ -53,7 +53,7 @@ class EdgeBag {
         return -1;
     }
 
-    ArrayList<Edge> values() {
+    public ArrayList<Edge> values() {
         return values == null ? new ArrayList<Edge>() : values;
     }
     

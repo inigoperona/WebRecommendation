@@ -459,7 +459,7 @@ public class GeneralizedSuffixTreeStringArray {
         return new Pair<Node, ArrayList<String>>(s, tempstr);
     }
 
-    Node getRoot() {
+    public Node getRoot() {
         return root;
     }
 

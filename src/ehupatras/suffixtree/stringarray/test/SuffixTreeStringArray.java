@@ -1,7 +1,7 @@
 package ehupatras.suffixtree.stringarray.test;
 
 import ehupatras.suffixtree.stringarray.GeneralizedSuffixTreeStringArray;
-
+import ehupatras.suffixtree.stringarray.Node;
 import java.util.ArrayList;
 
 public class SuffixTreeStringArray {
@@ -24,14 +24,18 @@ public class SuffixTreeStringArray {
 		m_gST.print();
 	}
 	
+	public Node getRoot(){
+		return m_gST.getRoot();
+	}
+	
     public static void main(String[] args){
         SuffixTreeStringArray in = new SuffixTreeStringArray();
         String[] word1 = {"c", "a", "c", "a", "o"};
         String[] word2 = {"b", "a", "n", "a", "n", "a"};
         String[] word3 = {"m", "i", "l", "o"};
-        in.putSequence(word1, 0);
+        //in.putSequence(word1, 0);
         in.putSequence(word2, 1);
-        in.putSequence(word3, 2);
+        //in.putSequence(word3, 2);
         in.printSuffixTree();
     }
 }
