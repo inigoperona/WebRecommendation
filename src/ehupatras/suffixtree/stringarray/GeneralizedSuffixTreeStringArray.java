@@ -125,7 +125,7 @@ public class GeneralizedSuffixTreeStringArray {
                 int lenToMatch = Math.min(words.size() - i, label.size());
                 
                 boolean regionMatches = true;
-                for(int k=0; k<lenToMatch; k++){ if(words.get(i+k).equals(label.get(k))){ regionMatches = false; break;} }
+                for(int k=0; k<lenToMatch; k++){ if(!words.get(i+k).equals(label.get(k))){ regionMatches = false; break;} }
                 if (!regionMatches) {
                     // the label on the edge does not correspond to the one in the string to search
                     return null;
