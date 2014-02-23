@@ -13,13 +13,29 @@ public class SequenceEvaluator {
 	private int m_clicksoonscore = 0;
 	private float[] m_precision;
 	private float[] m_recall;
+	private float[] m_precisionModel;
+	private float[] m_recallModel;
 	
-	public SequenceEvaluator(ArrayList<String> sequence, SuffixTreeStringArray  suffixtree){
+	public SequenceEvaluator(String[] sequence, SuffixTreeStringArray suffixtree){
+		ArrayList<String> sequenceAL = new ArrayList<String>();
+		for(int i=0; i<sequence.length; i++){
+			sequenceAL.add(sequence[i]);
+		}
+		this.constructor(sequenceAL, suffixtree);
+	}
+	
+	public SequenceEvaluator(ArrayList<String> sequence, SuffixTreeStringArray suffixtree){
+		this.constructor(sequence, suffixtree);
+	}
+	
+	private void constructor(ArrayList<String> sequence, SuffixTreeStringArray suffixtree){
 		m_recommender = new Recommender(suffixtree);
 		m_sequence = sequence;
 		m_precision = new float[sequence.size()];
 		m_recall = new float[sequence.size()];
-		this.computeSequenceMetrics();
+		m_precisionModel = new float[sequence.size()];
+		m_recallModel = new float[sequence.size()];
+		this.computeSequenceMetrics();		
 	}
 	
 	private void computeSequenceMetrics(){
@@ -65,11 +81,17 @@ public class SequenceEvaluator {
 	}
 	
 	private void computeConfusionMatrix(int stepIndex, ArrayList<String> recommendatios){
-		this.computePrecision(stepIndex, recommendatios);
-		this.computeRecall(stepIndex, recommendatios);
+		float pr = this.computePrecision(stepIndex, recommendatios);
+		float re = this.computeRecall(stepIndex, recommendatios);
+		m_precision[stepIndex] = pr;
+		m_recall[stepIndex] = re;
+		float prModel = this.computePrecision(0, recommendatios);
+		float reModel = this.computeRecall(0, recommendatios);
+		m_precisionModel[stepIndex] = prModel;
+		m_recallModel[stepIndex] = reModel;
 	}
 	
-	private void computePrecision(int stepIndex, ArrayList<String> recommendatios){
+	private float computePrecision(int stepIndex, ArrayList<String> recommendatios){
 		int prTP = 0;
 		int prFP = 0;
 		// compute precision related variables
@@ -89,10 +111,10 @@ public class SequenceEvaluator {
 				prFP++;
 			}
 		}
-		m_precision[stepIndex] = (float)prTP/((float)prTP+(float)prFP);
+		return (float)prTP/((float)prTP+(float)prFP);
 	}
 	
-	private void computeRecall(int stepIndex, ArrayList<String> recommendatios){
+	private float computeRecall(int stepIndex, ArrayList<String> recommendatios){
 		int reTP = 0;
 		int reFN = 0;
 		// compute precision related variables
@@ -112,7 +134,7 @@ public class SequenceEvaluator {
 				reFN++;
 			}
 		}
-		m_recall[stepIndex] = (float)reTP/((float)reTP+(float)reFN);
+		return (float)reTP/((float)reTP+(float)reFN);
 	}
 	
 	public float getHitRatio(){
@@ -121,6 +143,44 @@ public class SequenceEvaluator {
 	
 	public float getClickSoonRatio(){
 		return (float)m_clicksoonscore/(float)m_sequence.size();
+	}
+	
+	public float[] getPrecissions(){
+		return m_precision;
+	}
+	
+	public float[] getRecalls(){
+		return m_recall;
+	}
+	
+	public float[] getPrecissionsModel(){
+		return m_precisionModel;
+	}
+	
+	public float[] getRecallsModel(){
+		return m_recallModel;
+	}
+	
+	public float[] getFmeasures(float beta){
+		float[] fmeasure = new float[m_precision.length];
+		for(int i=0; i<m_precision.length; i++){
+			float b2 = (float)Math.pow(beta, 2);
+			float pr = m_precision[i];
+			float re = m_recall[i];
+			fmeasure[i] = ((float)1+b2) * (pr*re) / ((b2*pr)+re);
+		}
+		return fmeasure;
+	}
+	
+	public float[] getFmeasuresModel(float beta){
+		float[] fmeasure = new float[m_precisionModel.length];
+		for(int i=0; i<m_precisionModel.length; i++){
+			float b2 = (float)Math.pow(beta, 2);
+			float pr = m_precisionModel[i];
+			float re = m_recallModel[i];
+			fmeasure[i] = ((float)1+b2) * (pr*re) / ((b2*pr)+re);
+		}
+		return fmeasure;
 	}
 	
 	private void printPrecision(){
@@ -139,6 +199,53 @@ public class SequenceEvaluator {
 		System.out.println();
 	}
 	
+	private void printFmeasure(float beta){
+		float fmeasure[] = this.getFmeasures(beta);
+		System.out.print("F" + beta + "-measure: ");
+		for(int i=0; i<fmeasure.length; i++){
+			System.out.print(fmeasure[i] + "; ");
+		}
+		System.out.println();
+	}
+	
+	public float getPrecisionAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_precision[index];
+	}
+	
+	public float getRecallAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_recall[index];
+	}
+	
+	public float getFmeasureAtPoint(float beta, float point){
+		float[] fmeasure = this.getFmeasures(beta);
+		int index = this.getPosition(point);
+		return fmeasure[index];
+	}
+	
+	public float getPrecisionModelAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_precisionModel[index];
+	}
+	
+	public float getRecallModelAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_recallModel[index];
+	}
+	
+	public float getFmeasureModelAtPoint(float beta, float point){
+		float[] fmeasure = this.getFmeasuresModel(beta);
+		int index = this.getPosition(point);
+		return fmeasure[index];
+	}
+	
+	private int getPosition(float point){
+		float len = (float)m_precision.length - (float)1;
+		float index = len * point;
+		return (int)Math.round(index);
+	}
+	
 	public static void main(String[] args){
 		// create the suffix tree
 		SuffixTreeStringArray st = new SuffixTreeStringArray();
@@ -152,16 +259,45 @@ public class SequenceEvaluator {
         st.putSequence(word4, 3);
         st.printSuffixTree();
         
-        // recommendations
+        // sequence to test
         ArrayList<String> seq = new ArrayList<String>();
         seq.add("a");
         seq.add("b");
         seq.add("c");
+        
+        // get the metrics
         SequenceEvaluator se = new SequenceEvaluator(seq, st);
         System.out.println("HR: " + se.getHitRatio());
         System.out.println("CR: " + se.getClickSoonRatio());
+        System.out.println("---");
         se.printPrecision();
         se.printRecall();
+        se.printFmeasure((float)1);
+        se.printFmeasure((float)0.5);
+        System.out.println("---");
+        System.out.println("Pr0.00: " + se.getPrecisionAtPoint((float)0));
+        System.out.println("Pr0.10: " + se.getPrecisionAtPoint((float)0.10));
+        System.out.println("Pr0.25: " + se.getPrecisionAtPoint((float)0.25));
+        System.out.println("Pr0.50: " + se.getPrecisionAtPoint((float)0.50));
+        System.out.println("Pr0.75: " + se.getPrecisionAtPoint((float)0.75));
+        System.out.println("Pr0.90: " + se.getPrecisionAtPoint((float)0.90));
+        System.out.println("Pr1.00: " + se.getPrecisionAtPoint((float)1.00));
+        System.out.println("---");
+        System.out.println("Pr0.00: " + se.getRecallAtPoint((float)0));
+        System.out.println("Pr0.10: " + se.getRecallAtPoint((float)0.10));
+        System.out.println("Pr0.25: " + se.getRecallAtPoint((float)0.25));
+        System.out.println("Pr0.50: " + se.getRecallAtPoint((float)0.50));
+        System.out.println("Pr0.75: " + se.getRecallAtPoint((float)0.75));
+        System.out.println("Pr0.90: " + se.getRecallAtPoint((float)0.90));
+        System.out.println("Pr1.00: " + se.getRecallAtPoint((float)1.00));
+        System.out.println("---");
+        System.out.println("Pr0.00: " + se.getFmeasureAtPoint((float)0.5,(float)0));
+        System.out.println("Pr0.10: " + se.getFmeasureAtPoint((float)0.5,(float)0.10));
+        System.out.println("Pr0.25: " + se.getFmeasureAtPoint((float)0.5,(float)0.25));
+        System.out.println("Pr0.50: " + se.getFmeasureAtPoint((float)0.5,(float)0.50));
+        System.out.println("Pr0.75: " + se.getFmeasureAtPoint((float)0.5,(float)0.75));
+        System.out.println("Pr0.90: " + se.getFmeasureAtPoint((float)0.5,(float)0.90));
+        System.out.println("Pr1.00: " + se.getFmeasureAtPoint((float)0.5,(float)1.00));
 	}
 	
 }
