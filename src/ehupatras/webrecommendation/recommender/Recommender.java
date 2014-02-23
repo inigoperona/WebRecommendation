@@ -17,7 +17,7 @@ public class Recommender {
 		m_pointerNode = m_gST.getRoot();
 	}
 	
-	public void updatePointer(String newstep){
+	private void updatePointer(String newstep){
 		boolean isupdate = false;
 		
 		if(m_pointerNode==null && m_pointerEdge!=null){
@@ -64,8 +64,14 @@ public class Recommender {
 		}
 	}
 	
-	public void updatefailure(){
+	private void updatefailure(){
 		// go to the root
+		m_pointerNode = m_gST.getRoot();
+		m_pointerEdge = null;
+		m_pointerPositionInTheEdge = 0;
+	}
+	
+	public void gotoroot(){
 		m_pointerNode = m_gST.getRoot();
 		m_pointerEdge = null;
 		m_pointerPositionInTheEdge = 0;
@@ -98,6 +104,11 @@ public class Recommender {
 			}
 		}
 		return listOfURLs;
+	}
+	
+	public ArrayList<String> moveAndGetRecommendations(String urlstep){
+		this.updatePointer(urlstep);
+		return this.getNextpossibleSteps();
 	}
 	
 	public static void main(String[] args){
