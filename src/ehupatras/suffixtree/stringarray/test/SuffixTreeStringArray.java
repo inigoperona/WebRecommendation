@@ -2,6 +2,8 @@ package ehupatras.suffixtree.stringarray.test;
 
 import ehupatras.suffixtree.stringarray.GeneralizedSuffixTreeStringArray;
 import ehupatras.suffixtree.stringarray.Node;
+import ehupatras.suffixtree.stringarray.EdgeBag;
+import ehupatras.suffixtree.stringarray.Edge;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -53,6 +55,25 @@ public class SuffixTreeStringArray {
 			}
 			return searchSeqs;
 		}
+	}
+	
+	public int getNumberOfNodes(){
+		int numberOfNodes = 0;
+		Node root = m_gST.getRoot();
+		ArrayList<Node> nodesToAnalyze = new ArrayList<Node>();
+		nodesToAnalyze.add(root);
+		for(int i=0; i<nodesToAnalyze.size(); i++){
+			Node nod = nodesToAnalyze.get(i);
+			numberOfNodes++;
+			EdgeBag ebag = nod.getEdges();
+			ArrayList<Edge> edges = ebag.values();
+			for(int j=0; j<edges.size(); j++){
+				Edge edge = edges.get(j);
+				Node dest = edge.getDest();
+				nodesToAnalyze.add(dest);
+			}
+		}
+		return numberOfNodes;
 	}
 	
     public static void main(String[] args){

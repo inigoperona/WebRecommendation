@@ -39,10 +39,8 @@ public class MainClass {
 		// LOAD PREPROCESSED LOGS
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] Start reading preprocessed data.");
-		Website.load();
-		WebAccessSequences.loadStructure();
-		WebAccessSequences.loadSequences();	
-	
+		MainClassPreprocess preprocess = new MainClassPreprocess();
+		preprocess.loadPreprocess();	
 	
 	
 //WebAccessSequences.computePageRank();
@@ -95,6 +93,8 @@ public class MainClass {
 		float[][] distmatrix = matrix.getMatrix();
 
 	
+		
+		/*
 	// HIERARCHICAL CLUSTERING //
 		ClusteringHierarchical clustering = new ClusteringHierarchical();
 	if(false){
@@ -220,6 +220,9 @@ public class MainClass {
 			suffixtrees.add(st);
 		}
 		
+		
+		*/
+		
 		/*
 		// print suffix trees
 		for(int i=0; i<maxClInd; i++){ // for each cluster
@@ -227,7 +230,7 @@ public class MainClass {
 			SuffixTreeStringArray st = suffixtrees.get(i);
 			st.printSuffixTree();
 		}
-		*/
+		
 		
 		
 		// create weighted sequences
@@ -280,7 +283,7 @@ public class MainClass {
 			}			
 		//}
 		
-		
+		*/
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

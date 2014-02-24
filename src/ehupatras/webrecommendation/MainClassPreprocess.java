@@ -2,43 +2,29 @@ package ehupatras.webrecommendation;
 
 import ehupatras.webrecommendation.structures.*;
 import ehupatras.webrecommendation.usage.preprocess.*;
-import ehupatras.webrecommendation.usage.preprocess.log.*;
+import ehupatras.webrecommendation.usage.preprocess.log.LogReader;
+import ehupatras.webrecommendation.usage.preprocess.log.LogReaderBidasoaTurismo;
 
 public class MainClassPreprocess {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		// Parameter control
-		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
-		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String filename1 = "/kk.log";
-		//String basedirectory = args[0];
-		//String filename1 = args[1];
-		
-		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(basedirectory);
-		Website.setWorkDirectory(basedirectory);
-		
-		// take the start time of the program
-		long starttimeprogram = System.currentTimeMillis();
+	public void preprocessLogs(String basedirectory, String logfile){
 		long starttime;
 		long endtime;
 		
+		// start preprocessing
+		starttime = System.currentTimeMillis();
+		System.out.println("[" + starttime + "] PREPROCESSING.");
 		
-	if(true){ // read the logs or load them	
-		// READ THE LOG FILE(S) //
 		
+		
+		// FILTER LOGS //
 		LogReader logreader = new LogReaderBidasoaTurismo();
 		
 		// It reads the log file and store the valid requests in [ehupatras.webrecommendation.structures.WebAccessSequences]
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start reading the log files and analyzing the URLs.");
 			String[] logfilesA = new String[1];
-			logfilesA[0] = basedirectory + filename1;
+			logfilesA[0] = basedirectory + logfile;
 		logreader.readLogFile(logfilesA);
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
@@ -138,19 +124,65 @@ public class MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-			
-			
-			
+						
 		// save the sessions structure we have created
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Start saving the preprocesssing.");
 		WebAccessSequences.saveStructure();
 		WebAccessSequences.saveSequences();
 		Website.save();
-	} else {
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. Elapsed time: "
+					+ (endtime-starttime)/1000 + " seconds.");
+
+	}
+	
+	public void loadPreprocess(){
+		long starttime;
+		long endtime;
+		
+		// start loading preprocessing data
 		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] Start reading preprocessed data.");
+		System.out.println("[" + starttime + "] LOADING PREPROCESSED DATA.");
+		
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Start reading preprocessed data.");
 		Website.load();
 		WebAccessSequences.loadStructure();
-		WebAccessSequences.loadSequences();	
+		WebAccessSequences.loadSequences();
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. Elapsed time: "
+				+ (endtime-starttime)/1000 + " seconds.");
+	}
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		// Parameter control
+		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
+		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String filename1 = "/kk.log";
+		//String basedirectory = args[0];
+		//String filename1 = args[1];
+		
+		// initialize the data structure
+		WebAccessSequencesUHC.setWorkDirectory(basedirectory);
+		Website.setWorkDirectory(basedirectory);
+		
+		// take the start time of the program
+		long starttimeprogram = System.currentTimeMillis();
+		long starttime;
+		long endtime;
+		
+		MainClassPreprocess main = new MainClassPreprocess(); 
+	if(true){ // read the logs or load them	
+		// READ THE LOG FILE(S) //
+		main.preprocessLogs(basedirectory, filename1);
+	} else {
+		main.loadPreprocess();
 	}
 			
 		// ending the program
