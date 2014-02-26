@@ -179,12 +179,13 @@ public class MultipleSequenceAlignment {
 		
 		// Create WAS-array
 		ArrayList<String[]> wasL = new ArrayList<String[]>();
-		wasL.add(seq1);
-		wasL.add(seq2);
-		wasL.add(seq3);
-		wasL.add(seq4);
-		wasL.add(seq5);
-		wasL.add(seq6);
+		ArrayList<Integer> namesL = new ArrayList<Integer>();
+		wasL.add(seq1); namesL.add(0);
+		wasL.add(seq2); namesL.add(1);
+		wasL.add(seq3); namesL.add(2);
+		wasL.add(seq4); namesL.add(3);
+		wasL.add(seq5); namesL.add(4);
+		wasL.add(seq6); namesL.add(5);
 		
 		// Which are in the same cluster?
 		ArrayList<Integer> clusters = new ArrayList<Integer>();
@@ -196,7 +197,7 @@ public class MultipleSequenceAlignment {
 		// Create the distance matrix of the sequences
 		ehupatras.webrecommendation.distmatrix.Matrix dm = 
 				new ehupatras.webrecommendation.distmatrix.SimilarityMatrix();
-		dm.computeMatrix(wasL);
+		dm.computeMatrix(namesL, wasL);
 		float[][] dmatrix = dm.getMatrix();
 
 		// Perform the multiple sequence alignment

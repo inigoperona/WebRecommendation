@@ -8,12 +8,36 @@ import java.util.ArrayList;
 
 public abstract class Matrix {
 	protected float[][] m_matrix;
+	protected ArrayList<Integer> m_names;
 	private String m_savefilename = "/_matrix.javaData";
 	
-	public abstract void computeMatrix(ArrayList<String[]> data);
+	public abstract void computeMatrix(ArrayList<Integer> names, ArrayList<String[]> data);
 	
 	public float[][] getMatrix(){
 		return m_matrix;
+	}
+	
+	public ArrayList<Integer> getNames(){
+		return m_names;
+	}
+	
+	public float getDistance(int rowSesID, int colSesID){
+		int rowind = m_names.indexOf(rowSesID);
+		int colind = m_names.indexOf(colSesID);
+		return m_matrix[rowind][colind];
+	}
+	
+	public int[] getSessionIDsIndexes(){
+		return this.getSessionIDsIndexes(m_names);
+	}
+	
+	public int[] getSessionIDsIndexes(ArrayList<Integer> sessionIDs){
+		int[] indexes = new int[sessionIDs.size()];
+		for(int i=0; i<sessionIDs.size(); i++){
+			int sesID = sessionIDs.get(i);
+			indexes[i] = sessionIDs.indexOf(sesID);
+		}
+		return indexes;
 	}
 	
 	public void writeMatrix(String outfilename){
@@ -57,11 +81,16 @@ public abstract class Matrix {
 	
 	public void save(String wordirectory){
 		SaveLoadObjects slo = new SaveLoadObjects();
-		slo.save(m_matrix, wordirectory + m_savefilename);
+		Object[] objA = new Object[2];
+		objA[0] = m_matrix;
+		objA[1] = m_names;
+		slo.save(objA, wordirectory + m_savefilename);
 	}
 	
 	public void load(String wordirectory){
 		SaveLoadObjects slo = new SaveLoadObjects();
-		m_matrix = (float[][])slo.load(wordirectory + m_savefilename);
+		Object[] objA = (Object[])slo.load(wordirectory + m_savefilename);
+		m_matrix = (float[][])objA[0];
+		m_names = (ArrayList<Integer>)objA[1];
 	}
 }

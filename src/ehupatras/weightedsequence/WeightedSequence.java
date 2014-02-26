@@ -3,10 +3,11 @@ package ehupatras.weightedsequence;
 import java.util.HashMap;
 
 public class WeightedSequence {
-	String[][] alignment;
-	String[] alphabet;
-	Float[][] weights;
-	Float k;
+	private String[][] alignment;
+	private String[] alphabet;
+	private Float[][] weights;
+	private Float k;
+	private String m_gap = "-";
 
 	public WeightedSequence() {
 		this.alignment = null;
@@ -15,6 +16,13 @@ public class WeightedSequence {
 	}
 
 	public void setAlignment(String[][] alignment) {
+		// define the gap length
+		int gaplen = alignment[0][0].length();
+		m_gap = "";
+		for(int i=0; i<gaplen; i++){ m_gap = m_gap + "-";}
+		
+		
+		// set alignmetn
 		this.alignment = alignment;
 		HashMap<String, String> pages = new HashMap<String, String>();
 		for (int i = 0; i < this.alignment.length; i++) {
@@ -23,7 +31,7 @@ public class WeightedSequence {
 				pages.put(p, "");
 			}
 		}
-		pages.remove("-");
+		pages.remove(m_gap);
 		this.alphabet = new String[pages.keySet().size()];
 		int i = 0;
 		for (Object s : pages.keySet()) {
@@ -64,7 +72,7 @@ public class WeightedSequence {
 			}
 			int symbols=0;
 			for(Object a:freq.keySet()){
-				if(a.equals("-")==false){
+				if(a.equals(m_gap)==false){
 					symbols+=freq.get(a);
 				}
 			}

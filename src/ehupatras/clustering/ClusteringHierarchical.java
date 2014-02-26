@@ -2,7 +2,7 @@ package ehupatras.clustering;
 
 import ehupatras.clustering.sapehac.HierarchicalAgglomerativeClusterer;
 import ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod;
-import ehupatras.clustering.sapehac.agglomeration.AverageLinkage;
+import ehupatras.clustering.sapehac.agglomeration.WardLinkage;
 import ehupatras.clustering.sapehac.dendrogram.*;
 import ehupatras.clustering.sapehac.experiment.DissimilarityMeasure;
 import ehupatras.clustering.sapehac.experiment.DissimilarityMeasureEhupatras;
@@ -17,12 +17,11 @@ public class ClusteringHierarchical {
 	private int m_ncases;
 	private String m_savefilename = "/_dendrogram.javaData";
 	
-	public void computeHierarchicalClustering(float[][] matrix){
-		m_ncases = matrix.length;
+	public void computeHierarchicalClustering(float[][] matrix, int[] selectedcases){
+		m_ncases = selectedcases.length;
 		Experiment experiment = new ExperimentEhuPatras(m_ncases);
-		DissimilarityMeasure dissimilarityMeasure = new DissimilarityMeasureEhupatras(matrix);
-		//AgglomerationMethod agglomerationMethod = new SingleLinkage();
-		AgglomerationMethod agglomerationMethod = new AverageLinkage();
+		DissimilarityMeasure dissimilarityMeasure = new DissimilarityMeasureEhupatras(matrix, selectedcases);
+		AgglomerationMethod agglomerationMethod = new WardLinkage();
 		DendrogramBuilder dendrogramBuilder = new DendrogramBuilder(experiment.getNumberOfObservations());
 		HierarchicalAgglomerativeClusterer clusterer = new HierarchicalAgglomerativeClusterer(experiment, dissimilarityMeasure, agglomerationMethod);
 		clusterer.cluster(dendrogramBuilder);
