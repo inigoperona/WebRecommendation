@@ -3,7 +3,7 @@ package ehupatras.webrecommendation.sequencealignment;
 import java.util.ArrayList;
 
 public class SequenceAlignmentGlobalNeedlemanWunsch
-				extends SequenceAlignment2
+				extends SequenceAlignmentBacktrack
 				implements SequenceAlignment{
     
     public float getScore(String[] seqA, String[] seqB){
@@ -44,14 +44,14 @@ public class SequenceAlignmentGlobalNeedlemanWunsch
             int j = mSeqB.length;
             mScore = mD[i][j];
             
-            while (i > 0 && j > 0) {                        
-                    if (mD[i][j] == mD[i-1][j-1] + weight(i, j)) {                          
+            while (i > 0 || j > 0) {
+                    if (i > 0 && j > 0 && mD[i][j] == mD[i-1][j-1] + weight(i, j)) {
                             mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
                             mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
                             i--;
                             j--;                            
                             continue;
-                    } else if (mD[i][j] == mD[i][j-1] - 1) {
+                    } else if (j > 0 && mD[i][j] == mD[i][j-1] - 1) {
                             mAlignmentSeqA += m_gap;
                             mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
                             j--;
@@ -87,8 +87,10 @@ public class SequenceAlignmentGlobalNeedlemanWunsch
     public static void main(String [] args) {
         //String[] seqA = { "A", "C", "G", "T", "C" };
         //String[] seqB = { "A", "G", "T", "C" };
-    	String[] seqA = { "01H", "02C", "03U", "04H", "01C" };
-    	String[] seqB = { "01H", "03U", "04H", "01C" };
+    	//String[] seqA = { "01H", "02C", "03U", "04H", "01C" };
+    	//String[] seqB = { "01H", "03U", "04H", "01C" };
+    	String[] seqA = { "1", "2", "3", "4"};
+    	String[] seqB = { "2", "3", "4", "3" };
 
         SequenceAlignmentGlobalNeedlemanWunsch nw = new SequenceAlignmentGlobalNeedlemanWunsch();
         System.out.println(nw.getScore(seqA, seqB));
