@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 
-public class SequenceEvaluatorUCH 
+public class SequenceEvaluatorUHC 
 				extends SequenceEvaluator {
 
-	public SequenceEvaluatorUCH(String[] sequence, SuffixTreeStringArray suffixtree){
+	public SequenceEvaluatorUHC(String[] sequence, SuffixTreeStringArray suffixtree){
 		super(sequence, suffixtree);
 		m_sequenceURL = this.removeLastUHC(m_sequence);
 	}
 	
-	public SequenceEvaluatorUCH(ArrayList<String> sequence, SuffixTreeStringArray suffixtree){
+	public SequenceEvaluatorUHC(ArrayList<String> sequence, SuffixTreeStringArray suffixtree){
 		super(sequence, suffixtree);
 		m_sequenceURL = this.removeLastUHC(m_sequence);
 	}
@@ -78,7 +78,7 @@ public class SequenceEvaluatorUCH
         seq.add("03U");
         
         // get the metrics
-        SequenceEvaluator se = new SequenceEvaluatorUCH(seq, st);
+        SequenceEvaluator se = new SequenceEvaluatorUHC(seq, st);
         se.computeSequenceMetrics();
         System.out.println("HR: " + se.getHitRatio());
         System.out.println("CR: " + se.getClickSoonRatio());

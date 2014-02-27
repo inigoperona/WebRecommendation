@@ -183,9 +183,12 @@ public class ClusteringHierarchical {
 			String nodeClassStr = node.getClass().toString();
 			if(nodeClassStr.contains("MergeNode")){
 				MergeNode mnode = (MergeNode)node;
-				dissimilarityList.add(mnode.getDissimilarity());
-				nodesList.add(mnode.getLeft());
-				nodesList.add(mnode.getRight());
+				double diss = mnode.getDissimilarity();
+				if(diss != (double)0.0){
+					dissimilarityList.add(diss);
+					nodesList.add(mnode.getLeft());
+					nodesList.add(mnode.getRight());
+				}
 			}
 		}
 		

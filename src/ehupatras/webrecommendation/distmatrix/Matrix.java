@@ -35,7 +35,7 @@ public abstract class Matrix {
 		int[] indexes = new int[sessionIDs.size()];
 		for(int i=0; i<sessionIDs.size(); i++){
 			int sesID = sessionIDs.get(i);
-			indexes[i] = sessionIDs.indexOf(sesID);
+			indexes[i] = m_names.indexOf(sesID);
 		}
 		return indexes;
 	}

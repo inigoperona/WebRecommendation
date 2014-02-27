@@ -36,7 +36,7 @@ public class TestSetEvaluator {
 		float[] fmeasure = new float[m_points.length];
 		for(int i=0; i<m_sequences.size(); i++){
 			String[] seq = m_sequences.get(i);
-			SequenceEvaluator seqEv = new SequenceEvaluatorUCH(seq, m_gST);
+			SequenceEvaluator seqEv = new SequenceEvaluatorUHC(seq, m_gST);
 			seqEv.computeSequenceMetrics();
 			numberOfRecommendationsRatio = numberOfRecommendationsRatio + seqEv.getNumberOfRecommendationsRatio();
 			hitratio = hitratio + seqEv.getHitRatio();

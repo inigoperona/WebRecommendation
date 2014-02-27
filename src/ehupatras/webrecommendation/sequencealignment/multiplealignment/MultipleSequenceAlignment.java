@@ -9,6 +9,14 @@ public class MultipleSequenceAlignment {
 	private String m_gap = "-";
 	private ArrayList<String[]> m_msa; 
 	
+	public void msa(int[] seqclust, float[][] d, ArrayList<String[]> was){
+		ArrayList<Integer> seqclustList = new ArrayList<Integer>();
+		for(int i=0; i<seqclust.length; i++){
+			seqclustList.add(seqclust[i]);
+		}
+		this.msa(seqclustList, d, was);
+	}
+	
 	public void msa(ArrayList<Integer> seqclust, float[][] d, ArrayList<String[]> was){
 		// define the gap length
 		int gaplen = was.get(0)[0].length();
@@ -71,14 +79,15 @@ public class MultipleSequenceAlignment {
 				// because "once gap, always gap"
 				int pos = 0;
 				int cnt = 0;
-				while(pos<align1.length-1){
+				while(pos<align1.length){
 					Object[] objA = this.nextSymbol(align1,pos);
 					int gaps = (int)objA[0];
-					pos = (int)objA[1];
-					if(gaps>spaces.get(cnt)){
+					int nextpos = (int)objA[1];
+					if(cnt<spaces.size() && gaps>spaces.get(cnt)){
 						spaces.set(cnt, gaps);
 					}
 					cnt++;
+					pos = nextpos;
 				}
 			}
 		}
@@ -97,13 +106,10 @@ public class MultipleSequenceAlignment {
 		for(int i=0; i<newCenter.size(); i++){ newCenterA[i] = newCenter.get(i); }
 		
 		// Align the new-center with other j-sequences
-		// Hashtable<String,Integer>[] ws = new Hashtable[seqclust.size()];
-		// for(int i=0; i<seqclust.size(); i++){ ws[i] = new Hashtable<String,Integer>(); }
 		m_msa = new ArrayList<String[]>();
 		m_msa.add(newCenterA); // align1, in index 0
 		for(int j=0; j<seqclust.size(); j++){
 			if (min!=seqclust.get(j)){
-				
 				// Perform the alignment
 				SequenceAlignmentBacktrack seqalign = new SequenceAlignmentGlobalNeedlemanWunsch();
 				String[] sequencej = was.get(seqclust.get(j));
@@ -113,8 +119,7 @@ public class MultipleSequenceAlignment {
 		    	int ngaps = counts[2];
 		    	int nspaces = counts[3];
 		    	String[] align1 = seqalign.getAlignSeqA();
-				String[] align2 = seqalign.getAlignSeqB();
-				
+				String[] align2 = seqalign.getAlignSeqB();		
 				// save the new alignment version
 				m_msa.add(align2);				
 			}
@@ -126,11 +131,12 @@ public class MultipleSequenceAlignment {
 		String symb = symbols[actualpos];
 		while(symb.equals(m_gap)){
 			gaps++;
+			// next element
 			actualpos++;
 			if(actualpos<symbols.length){
 				symb = symbols[actualpos];
 			} else {
-				symb = "";
+				break;
 			}
 		}
 		if(gaps==0){ actualpos++; }
@@ -140,12 +146,12 @@ public class MultipleSequenceAlignment {
 		return objA;
 	}
 	
-	private String[][] getMultipleSequenceAlignment(){
+	public String[][] getMultipleSequenceAlignment(){
 		int seqlen = m_msa.get(0).length;
 		String[][] msaMatrix = new String[m_msa.size()][seqlen];
 		for(int i=0; i<m_msa.size(); i++){
 			String[] alseq = m_msa.get(i); 
-			for(int j=0; j<alseq.length; j++){
+			for(int j=0; j<seqlen; j++){
 				msaMatrix[i][j] = alseq[j];
 			}
 		}	
