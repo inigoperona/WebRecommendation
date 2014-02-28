@@ -1,6 +1,7 @@
 package ehupatras.weightedsequence;
 
 import java.util.HashMap;
+import java.util.Set;
 
 public class WeightedSequence {
 	private String[][] alignment;
@@ -10,13 +11,14 @@ public class WeightedSequence {
 	private String m_gap = "-";
 	HashMap<String, Float> generatedStrings = new HashMap<String, Float>();
 
-	public WeightedSequence(Float rate) {
+	public WeightedSequence(String[][] alignmentIn, Float rate) {
 		this.alignment = null;
 		this.alphabet = null;
 		k = rate;
+		setAlignment(alignmentIn);
 	}
-
-	public void setAlignment(String[][] alignment) {
+	
+	private void setAlignment(String[][] alignment) {
 		// define the gap length
 		int gaplen = alignment[0][0].length();
 		m_gap = "";
@@ -43,19 +45,7 @@ public class WeightedSequence {
 
 	}
 
-	public void setK(Float k) {
-		this.k = k;
-	}
-
-	public void printAlphabet() {
-		if (this.alphabet == null || this.alphabet.length == 0)
-			return;
-		for (String a : this.alphabet) {
-			System.out.println(a);
-		}
-	}
-
-	public void calculateWeights() throws Exception {
+	private void calculateWeights() throws Exception {
 		if (this.alphabet == null || this.alphabet.length == 0
 				|| this.alignment == null || this.alignment.length == 0) {
 			throw new Exception("Can not Calculate Weights");
@@ -90,7 +80,23 @@ public class WeightedSequence {
 		}
 	}
 
-	public void printAlighment() {
+	
+	public void process() throws Exception {	
+		calculateWeights();	
+		generateStrings();				
+	}
+	////////////////////// Print Methods ///////////////////////////////////////////////////
+
+	private void printAlphabet() {
+		if (this.alphabet == null || this.alphabet.length == 0)
+			return;
+		for (String a : this.alphabet) {
+			System.out.println(a);
+		}
+	}
+	
+	
+	private void printAlighment() {
 		int rows = this.alignment.length;
 		int columns = this.alignment[0].length;
 		for (int i = 0; i < rows; i++) {
@@ -111,6 +117,17 @@ public class WeightedSequence {
 			System.out.println("");
 		}
 	}
+	
+	private void printGeneratedStrings() {
+		System.out.println("--------------------------------");
+		for (String s : generatedStrings.keySet()) {
+			System.out.println(s + ":" + generatedStrings.get(s));
+		}
+		System.out.println("--------------------------------");
+	}
+
+	
+////////////////////String Generation Methods//////////////////////////////////////////////////
 
 	public void generateStrings() {
 		this.generatedStrings.clear();
@@ -130,7 +147,7 @@ public class WeightedSequence {
 		}
 	}
 
-	public void expandStrings(HashMap<String, Float> posGenStrings, int offset) {
+	private void expandStrings(HashMap<String, Float> posGenStrings, int offset) {
 		/*
 		 * System.out.println("--------------------------------"); for(String
 		 * s:posGenStrings.keySet()){ System.out.println(s +":"+
@@ -174,12 +191,15 @@ public class WeightedSequence {
 
 	}
 
-	public void printGeneratedStrings() {
-		System.out.println("--------------------------------");
-		for (String s : generatedStrings.keySet()) {
-			System.out.println(s + ":" + generatedStrings.get(s));
-		}
-		System.out.println("--------------------------------");
-	}
+	
 
+
+	public String[] getGeneratedStrings(){
+		String[] answer=new String[this.generatedStrings.keySet().size()];
+		int i=0;
+		for (String s:this.generatedStrings.keySet()){
+			answer[i++]=s;
+		}
+		return answer;
+	}
 }
