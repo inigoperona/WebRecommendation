@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class SequenceAlignmentGlobalNeedlemanWunsch
 				extends SequenceAlignmentBacktrack
 				implements SequenceAlignment{
-    
+	
     public float getScore(String[] seqA, String[] seqB){
     	computeAlignment(seqA,seqB);
         return (float)mScore;
@@ -67,7 +67,7 @@ public class SequenceAlignmentGlobalNeedlemanWunsch
             mAlignmentSeqB = new StringBuffer(mAlignmentSeqB).reverse().toString();
     }
    
-    private int weight(int i, int j) {
+    protected int weight(int i, int j) {
             if (mSeqA[i - 1].equals(mSeqB[j - 1])) {
                     return 1;
             } else {

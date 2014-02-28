@@ -111,7 +111,7 @@ public class MultipleSequenceAlignment {
 		for(int j=0; j<seqclust.size(); j++){
 			if (min!=seqclust.get(j)){
 				// Perform the alignment
-				SequenceAlignmentBacktrack seqalign = new SequenceAlignmentGlobalNeedlemanWunsch();
+				SequenceAlignmentBacktrack seqalign = new SequenceAlignmentGlobalSeqAFix();
 				String[] sequencej = was.get(seqclust.get(j));
 				Integer[] counts = seqalign.getAlignmentOperations(newCenterA, sequencej);
 		    	int nmatches = counts[0];
@@ -121,7 +121,7 @@ public class MultipleSequenceAlignment {
 		    	String[] align1 = seqalign.getAlignSeqA();
 				String[] align2 = seqalign.getAlignSeqB();		
 				// save the new alignment version
-				m_msa.add(align2);				
+				m_msa.add(align2);
 			}
 		}
 	}
@@ -151,7 +151,7 @@ public class MultipleSequenceAlignment {
 		String[][] msaMatrix = new String[m_msa.size()][seqlen];
 		for(int i=0; i<m_msa.size(); i++){
 			String[] alseq = m_msa.get(i); 
-			for(int j=0; j<seqlen; j++){
+			for(int j=0; j<alseq.length; j++){
 				msaMatrix[i][j] = alseq[j];
 			}
 		}	
