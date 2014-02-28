@@ -8,20 +8,22 @@ public class WeightedSequence {
 	private Float[][] weights;
 	private Float k;
 	private String m_gap = "-";
+	HashMap<String, Float> generatedStrings = new HashMap<String, Float>();
 
-	public WeightedSequence() {
+	public WeightedSequence(Float rate) {
 		this.alignment = null;
 		this.alphabet = null;
-		k = 0.0f;
+		k = rate;
 	}
 
 	public void setAlignment(String[][] alignment) {
 		// define the gap length
 		int gaplen = alignment[0][0].length();
 		m_gap = "";
-		for(int i=0; i<gaplen; i++){ m_gap = m_gap + "-";}
-		
-		
+		for (int i = 0; i < gaplen; i++) {
+			m_gap = m_gap + "-";
+		}
+
 		// set alignmetn
 		this.alignment = alignment;
 		HashMap<String, String> pages = new HashMap<String, String>();
@@ -35,10 +37,10 @@ public class WeightedSequence {
 		this.alphabet = new String[pages.keySet().size()];
 		int i = 0;
 		for (Object s : pages.keySet()) {
-			 
+
 			this.alphabet[i++] = s.toString();
 		}
-		 
+
 	}
 
 	public void setK(Float k) {
@@ -70,19 +72,19 @@ public class WeightedSequence {
 					freq.put(alignment[i][j], 1);
 				}
 			}
-			int symbols=0;
-			for(Object a:freq.keySet()){
-				if(a.equals(m_gap)==false){
-					symbols+=freq.get(a);
+			int symbols = 0;
+			for (Object a : freq.keySet()) {
+				if (a.equals(m_gap) == false) {
+					symbols += freq.get(a);
 				}
 			}
 			int i = 0;
 			for (String a : this.alphabet) {
-				int anum=0;
-				if(freq.get(a)!=null){
-					anum=freq.get(a);
+				int anum = 0;
+				if (freq.get(a) != null) {
+					anum = freq.get(a);
 				}
-				this.weights[i][j] =  ((float)anum /symbols );
+				this.weights[i][j] = ((float) anum / symbols);
 				i++;
 			}
 		}
@@ -98,7 +100,7 @@ public class WeightedSequence {
 			System.out.println("");
 		}
 	}
-	
+
 	public void printWeights() {
 		int rows = this.weights.length;
 		int columns = this.weights[0].length;
@@ -109,4 +111,75 @@ public class WeightedSequence {
 			System.out.println("");
 		}
 	}
+
+	public void generateStrings() {
+		this.generatedStrings.clear();
+		int rows = this.weights.length;
+		int columns = this.weights[0].length;
+		for (int j = 0; j < columns - 1; j++) {
+			// System.out.println("==========================================");
+			// System.out.println("Starting Pos:"+j);
+			// System.out.println("==========================================");
+			HashMap<String, Float> posGenStrings = new HashMap<String, Float>();
+			for (int i = 0; i < rows; i++) {
+				if (weights[i][j] >= k)
+					posGenStrings.put(this.alphabet[i], weights[i][j]);
+			}
+			expandStrings(posGenStrings, j + 1);
+
+		}
+	}
+
+	public void expandStrings(HashMap<String, Float> posGenStrings, int offset) {
+		/*
+		 * System.out.println("--------------------------------"); for(String
+		 * s:posGenStrings.keySet()){ System.out.println(s +":"+
+		 * posGenStrings.get(s)); }
+		 * System.out.println("--------------------------------");
+		 */
+		int rows = this.weights.length;
+		int columns = this.weights[0].length;
+		HashMap<String, Float> extendedStrings = new HashMap<String, Float>();
+		for (String s : posGenStrings.keySet()) {
+			Float score = posGenStrings.get(s);
+			boolean extended = false;
+			for (int i = 0; i < rows; i++) {
+				if (score * weights[i][offset] >= k) {
+					extendedStrings.put(s + this.alphabet[i], score
+							* weights[i][offset]);
+					extended = true;
+				}
+			}
+
+			if (score >= k && extended == false) {
+				this.generatedStrings.put(s, score);
+				//System.out.println("PUTTING:" + s + ", score:" + score);
+
+			}
+
+		}
+
+		if (extendedStrings.size() > 0 && offset + 1 < columns) {
+			expandStrings(extendedStrings, offset + 1);
+		} else {
+			if (extendedStrings.size() > 0) {
+				for (String s : extendedStrings.keySet()) {
+					Float score = extendedStrings.get(s);
+					generatedStrings.put(s, score);
+					//System.out.println("PUTTING:" + s + ", score:" + score);
+				}
+			}
+
+		}
+
+	}
+
+	public void printGeneratedStrings() {
+		System.out.println("--------------------------------");
+		for (String s : generatedStrings.keySet()) {
+			System.out.println(s + ":" + generatedStrings.get(s));
+		}
+		System.out.println("--------------------------------");
+	}
+
 }
