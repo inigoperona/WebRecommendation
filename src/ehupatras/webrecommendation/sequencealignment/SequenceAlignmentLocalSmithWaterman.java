@@ -3,7 +3,7 @@ package ehupatras.webrecommendation.sequencealignment;
 import java.util.*;
 
 public class SequenceAlignmentLocalSmithWaterman
-				extends SequenceAlignment2
+				extends SequenceAlignmentBacktrack
 				implements SequenceAlignment{
     
     public float getScore(String[] seqA, String[] seqB){

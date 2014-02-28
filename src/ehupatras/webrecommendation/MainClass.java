@@ -21,9 +21,8 @@ public class MainClass {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
 		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String filename1 = "/kk.log";
+		String logfile = "/kk.log";
 		//String basedirectory = args[0];
 		//String filename1 = args[1];
 		
@@ -37,16 +36,15 @@ public class MainClass {
 		long endtime;
 		
 		// LOAD PREPROCESSED LOGS
-		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] Start reading preprocessed data.");
 		MainClassPreprocess preprocess = new MainClassPreprocess();
+		//preprocess.preprocessLogs(basedirectory, logfile);
 		preprocess.loadPreprocess();	
 	
 	
 //WebAccessSequences.computePageRank();
 			
 		ModelValidationHoldOut modelval = new ModelValidationHoldOut();
-	if(false){
+	if(true){
 		// SAMPLING //
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start sampling & Hold-outing.");
@@ -76,10 +74,10 @@ public class MainClass {
 		
 		// DISTANCE MATRIX //
 		Matrix matrix = new SimilarityMatrix();
-	if(false){
+	if(true){
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start computing the similarity matrix.");
-		matrix.computeMatrix(sequencesUHC);
+		matrix.computeMatrix(train, sequencesUHC);
 		matrix.save(basedirectory);
 		matrix.writeMatrix(basedirectory + "/distance_matrix.txt");
 			endtime = System.currentTimeMillis();

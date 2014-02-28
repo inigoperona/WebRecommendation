@@ -6,7 +6,8 @@ import java.util.*;
 public class SimilarityMatrix 
 				extends Matrix {
 	
-	public void computeMatrix(ArrayList<String[]> data){
+	public void computeMatrix(ArrayList<Integer> names, ArrayList<String[]> data){
+		m_names = names;
 		m_matrix = new float[data.size()][data.size()];
 		for(int i=0; i<data.size(); i++){
 			// compute each row similarities

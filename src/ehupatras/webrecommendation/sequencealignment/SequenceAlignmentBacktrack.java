@@ -2,7 +2,7 @@ package ehupatras.webrecommendation.sequencealignment;
 
 import java.util.ArrayList;
 
-public abstract class SequenceAlignment2 
+public abstract class SequenceAlignmentBacktrack 
 						implements SequenceAlignment {
     protected String[] mSeqA;
     protected String[] mSeqB;
@@ -10,6 +10,8 @@ public abstract class SequenceAlignment2
     protected int mScore;
     protected String mAlignmentSeqA = "";
     protected String mAlignmentSeqB = "";
+    protected String[] m_alignSeqA;
+    protected String[] m_alignSeqB;
     protected String m_gap = "-";
 
     // Functions to get the standard sequence alignment score
@@ -39,13 +41,13 @@ public abstract class SequenceAlignment2
     
     protected abstract ArrayList<String[]> getTrimedAlignedSequences(String str1, String str2);
     
-    protected Integer[] getAlignmentOperations(String[] seqA, String[] seqB){
+    public Integer[] getAlignmentOperations(String[] seqA, String[] seqB){
     	// compute match / mismatch / gaps / spaces
     	computeAlignment(seqA,seqB);
     	ArrayList<String[]> trimmedSeqs = getTrimedAlignedSequences(mAlignmentSeqA, mAlignmentSeqB);
-    	String[] alignSeqA = trimmedSeqs.get(0);
-    	String[] alignSeqB = trimmedSeqs.get(1);
-    	int alignLen = alignSeqA.length;
+    	m_alignSeqA = trimmedSeqs.get(0);
+    	m_alignSeqB = trimmedSeqs.get(1);
+    	int alignLen = m_alignSeqA.length;
     	int nmatches = 0;
     	int nmismatches = 0;
     	int ngaps = 0;
@@ -53,8 +55,8 @@ public abstract class SequenceAlignment2
     	String previousElemA = "";
     	String previousElemB = "";
     	for(int i=0; i<alignLen; i++){
-    		String elemA = alignSeqA[i];
-    		String elemB = alignSeqB[i];
+    		String elemA = m_alignSeqA[i];
+    		String elemB = m_alignSeqB[i];
     		if(elemA.equals(elemB)){
     			if(!elemA.equals(m_gap) && !elemB.equals(m_gap)){
     				nmatches++;
@@ -148,4 +150,12 @@ public abstract class SequenceAlignment2
         System.out.println();
     }
 
+    public String[] getAlignSeqA(){
+    	return m_alignSeqA;
+    }
+    
+    public String[] getAlignSeqB(){
+    	return m_alignSeqB;
+    }
+    
 }

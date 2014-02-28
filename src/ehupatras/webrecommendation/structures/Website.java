@@ -106,14 +106,17 @@ public class Website {
 	
 	public static void save(){
 		SaveLoadObjects slo = new SaveLoadObjects();
-		slo.save(m_url2idHT, m_workdirectory + "/_1_Website.javaData");
-		slo.save(m_ID2urlname, m_workdirectory + "/_2_Website.javaData");
+		Object[] objA = new Object[2];
+		objA[0] = m_url2idHT;
+		objA[1] = m_ID2urlname;
+		slo.save(objA, m_workdirectory + "/_Website.javaData");
 	}
 	
 	public static void load(){
 		SaveLoadObjects slo = new SaveLoadObjects();
-		m_url2idHT = (Hashtable<String,Page>)slo.load(m_workdirectory + "/_1_Website.javaData");
-		m_ID2urlname = (Hashtable<Integer,String>)slo.load(m_workdirectory + "/_2_Website.javaData");
+		Object[] objA = (Object[])slo.load(m_workdirectory + "/_Website.javaData");
+		m_url2idHT = (Hashtable<String,Page>)objA[0];
+		m_ID2urlname = (Hashtable<Integer,String>)objA[1];
 		
 		// update the maximum index
 		int maxindex = Integer.MIN_VALUE;

@@ -1,5 +1,5 @@
 package ehupatras.webrecommendation.modelvalidation;
 
-public interface ModelValidation {
-
+public class ModelValidation {
+	
 }

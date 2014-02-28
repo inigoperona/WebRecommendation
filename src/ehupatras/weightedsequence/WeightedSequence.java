@@ -1,20 +1,32 @@
 package ehupatras.weightedsequence;
 
 import java.util.HashMap;
+import java.util.Set;
 
 public class WeightedSequence {
-	String[][] alignment;
-	String[] alphabet;
-	Float[][] weights;
-	Float k;
+	private String[][] alignment;
+	private String[] alphabet;
+	private Float[][] weights;
+	private Float k;
+	private String m_gap = "-";
+	HashMap<String, Float> generatedStrings = new HashMap<String, Float>();
 
-	public WeightedSequence() {
+	public WeightedSequence(String[][] alignmentIn, Float rate) {
 		this.alignment = null;
 		this.alphabet = null;
-		k = 0.0f;
+		k = rate;
+		setAlignment(alignmentIn);
 	}
+	
+	private void setAlignment(String[][] alignment) {
+		// define the gap length
+		int gaplen = alignment[0][0].length();
+		m_gap = "";
+		for (int i = 0; i < gaplen; i++) {
+			m_gap = m_gap + "-";
+		}
 
-	public void setAlignment(String[][] alignment) {
+		// set alignmetn
 		this.alignment = alignment;
 		HashMap<String, String> pages = new HashMap<String, String>();
 		for (int i = 0; i < this.alignment.length; i++) {
@@ -23,29 +35,17 @@ public class WeightedSequence {
 				pages.put(p, "");
 			}
 		}
-		pages.remove("-");
+		pages.remove(m_gap);
 		this.alphabet = new String[pages.keySet().size()];
 		int i = 0;
 		for (Object s : pages.keySet()) {
-			 
+
 			this.alphabet[i++] = s.toString();
 		}
-		 
+
 	}
 
-	public void setK(Float k) {
-		this.k = k;
-	}
-
-	public void printAlphabet() {
-		if (this.alphabet == null || this.alphabet.length == 0)
-			return;
-		for (String a : this.alphabet) {
-			System.out.println(a);
-		}
-	}
-
-	public void calculateWeights() throws Exception {
+	private void calculateWeights() throws Exception {
 		if (this.alphabet == null || this.alphabet.length == 0
 				|| this.alignment == null || this.alignment.length == 0) {
 			throw new Exception("Can not Calculate Weights");
@@ -62,25 +62,41 @@ public class WeightedSequence {
 					freq.put(alignment[i][j], 1);
 				}
 			}
-			int symbols=0;
-			for(Object a:freq.keySet()){
-				if(a.equals("-")==false){
-					symbols+=freq.get(a);
+			int symbols = 0;
+			for (Object a : freq.keySet()) {
+				if (a.equals(m_gap) == false) {
+					symbols += freq.get(a);
 				}
 			}
 			int i = 0;
 			for (String a : this.alphabet) {
-				int anum=0;
-				if(freq.get(a)!=null){
-					anum=freq.get(a);
+				int anum = 0;
+				if (freq.get(a) != null) {
+					anum = freq.get(a);
 				}
-				this.weights[i][j] =  ((float)anum /symbols );
+				this.weights[i][j] = ((float) anum / symbols);
 				i++;
 			}
 		}
 	}
 
-	public void printAlighment() {
+	
+	public void process() throws Exception {	
+		calculateWeights();	
+		generateStrings();				
+	}
+	////////////////////// Print Methods ///////////////////////////////////////////////////
+
+	private void printAlphabet() {
+		if (this.alphabet == null || this.alphabet.length == 0)
+			return;
+		for (String a : this.alphabet) {
+			System.out.println(a);
+		}
+	}
+	
+	
+	private void printAlighment() {
 		int rows = this.alignment.length;
 		int columns = this.alignment[0].length;
 		for (int i = 0; i < rows; i++) {
@@ -90,7 +106,7 @@ public class WeightedSequence {
 			System.out.println("");
 		}
 	}
-	
+
 	public void printWeights() {
 		int rows = this.weights.length;
 		int columns = this.weights[0].length;
@@ -100,5 +116,90 @@ public class WeightedSequence {
 			}
 			System.out.println("");
 		}
+	}
+	
+	private void printGeneratedStrings() {
+		System.out.println("--------------------------------");
+		for (String s : generatedStrings.keySet()) {
+			System.out.println(s + ":" + generatedStrings.get(s));
+		}
+		System.out.println("--------------------------------");
+	}
+
+	
+////////////////////String Generation Methods//////////////////////////////////////////////////
+
+	public void generateStrings() {
+		this.generatedStrings.clear();
+		int rows = this.weights.length;
+		int columns = this.weights[0].length;
+		for (int j = 0; j < columns - 1; j++) {
+			// System.out.println("==========================================");
+			// System.out.println("Starting Pos:"+j);
+			// System.out.println("==========================================");
+			HashMap<String, Float> posGenStrings = new HashMap<String, Float>();
+			for (int i = 0; i < rows; i++) {
+				if (weights[i][j] >= k)
+					posGenStrings.put(this.alphabet[i], weights[i][j]);
+			}
+			expandStrings(posGenStrings, j + 1);
+
+		}
+	}
+
+	private void expandStrings(HashMap<String, Float> posGenStrings, int offset) {
+		/*
+		 * System.out.println("--------------------------------"); for(String
+		 * s:posGenStrings.keySet()){ System.out.println(s +":"+
+		 * posGenStrings.get(s)); }
+		 * System.out.println("--------------------------------");
+		 */
+		int rows = this.weights.length;
+		int columns = this.weights[0].length;
+		HashMap<String, Float> extendedStrings = new HashMap<String, Float>();
+		for (String s : posGenStrings.keySet()) {
+			Float score = posGenStrings.get(s);
+			boolean extended = false;
+			for (int i = 0; i < rows; i++) {
+				if (score * weights[i][offset] >= k) {
+					extendedStrings.put(s + this.alphabet[i], score
+							* weights[i][offset]);
+					extended = true;
+				}
+			}
+
+			if (score >= k && extended == false) {
+				this.generatedStrings.put(s, score);
+				//System.out.println("PUTTING:" + s + ", score:" + score);
+
+			}
+
+		}
+
+		if (extendedStrings.size() > 0 && offset + 1 < columns) {
+			expandStrings(extendedStrings, offset + 1);
+		} else {
+			if (extendedStrings.size() > 0) {
+				for (String s : extendedStrings.keySet()) {
+					Float score = extendedStrings.get(s);
+					generatedStrings.put(s, score);
+					//System.out.println("PUTTING:" + s + ", score:" + score);
+				}
+			}
+
+		}
+
+	}
+
+	
+
+
+	public String[] getGeneratedStrings(){
+		String[] answer=new String[this.generatedStrings.keySet().size()];
+		int i=0;
+		for (String s:this.generatedStrings.keySet()){
+			answer[i++]=s;
+		}
+		return answer;
 	}
 }
