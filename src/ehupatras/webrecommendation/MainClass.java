@@ -1,7 +1,6 @@
 package ehupatras.webrecommendation;
 
 import ehupatras.webrecommendation.structures.*;
-import ehupatras.webrecommendation.sampling.*;
 import ehupatras.webrecommendation.distmatrix.*;
 import ehupatras.webrecommendation.modelvalidation.*;
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
@@ -63,9 +62,9 @@ public class MainClass {
 		System.out.println("[" + starttime + "] Start reading sampling data.");
 		modelval.load(basedirectory);
 	}
-		ArrayList<Integer> train = modelval.getTrain();
-		ArrayList<Integer> val   = modelval.getValidation();
-		ArrayList<Integer> test  = modelval.getTest();
+		ArrayList<Integer> train = modelval.getTrain().get(0);
+		ArrayList<Integer> val   = modelval.getValidation().get(0);
+		ArrayList<Integer> test  = modelval.getTest().get(0);
 	
 		// get training sequences
 		ArrayList<String[]> sequencesUHC = WebAccessSequencesUHC.getSequencesInstanciated(train);

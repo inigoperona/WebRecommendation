@@ -1,4 +1,4 @@
-package ehupatras.webrecommendation.sampling;
+package ehupatras.webrecommendation.modelvalidation;
 
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import java.util.*;

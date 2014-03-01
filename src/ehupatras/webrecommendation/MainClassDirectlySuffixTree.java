@@ -37,9 +37,9 @@ public class MainClassDirectlySuffixTree {
 		ModelValidationHoldOut modelval = new ModelValidationHoldOut();
 		modelval.load(basedirectory);
 		// Get the splited data
-		ArrayList<Integer> train = modelval.getTrain();
-		ArrayList<Integer> val   = modelval.getValidation();
-		ArrayList<Integer> test  = modelval.getTest();
+		ArrayList<Integer> train = modelval.getTrain().get(0);
+		ArrayList<Integer> val   = modelval.getValidation().get(0);
+		ArrayList<Integer> test  = modelval.getTest().get(0);
 		// get training sequences
 		ArrayList<String[]> sequencesUHC_train = WebAccessSequencesUHC.getSequencesInstanciated(train);
 		ArrayList<String[]> sequencesUHC_val = WebAccessSequencesUHC.getSequencesInstanciated(val);

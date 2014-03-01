@@ -1,7 +1,7 @@
 package ehupatras.webrecommendation;
 
 import ehupatras.webrecommendation.structures.*;
-import ehupatras.webrecommendation.sampling.*;
+import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.distmatrix.*;
 import ehupatras.webrecommendation.modelvalidation.*;
 import ehupatras.webrecommendation.evaluator.*;
@@ -16,7 +16,7 @@ public class MainClass2 {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/20140228_v6";
 		String logfile = "/kk.log";
 		//basedirectory = args[0];
 		//logfile = args[1];
@@ -32,55 +32,91 @@ public class MainClass2 {
 		
 		
 		// LOAD PREPROCESSED LOGS //
+		System.out.println("PREPROCESSING");
 		MainClassPreprocess preprocess = new MainClassPreprocess();
 		//preprocess.preprocessLogs(basedirectory, logfile);
-		preprocess.loadPreprocess();
+		//preprocess.loadPreprocess();
 		
 		
-		// SAMPLING //
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start sampling.");
-		Sampling samp = new Sampling();
-		ArrayList<Integer> sampleSessionIDs = samp.getSample(100, (long)0, false);
-		// get instanciated sequences
-		ArrayList<String[]> sequencesUHC = WebAccessSequencesUHC.getSequencesInstanciated(sampleSessionIDs);
+		// CREATE THE DATABASE
+		System.out.println("CREATE THE DATABASE");
+		// Sampling
+		//Sampling samp = new Sampling();
+		//ArrayList<Integer> sampleSessionIDs = samp.getSample(10000, (long)0, false);
+		SaveLoadObjects sosess = new SaveLoadObjects();
+		//sosess.save(sampleSessionIDs, basedirectory + "/_sessionIDs.javaData");
+		ArrayList<Integer> sampleSessionIDs = (ArrayList<Integer>)sosess.load(basedirectory + "/_sessionIDs.javaData");
+		
+		
+		// INSTANCIATED SEQUENCES
+		//ArrayList<String[]> sequencesUHC = WebAccessSequencesUHC.getSequencesInstanciated(sampleSessionIDs);
+		SaveLoadObjects soseqs = new SaveLoadObjects();
+		//soseqs.save(sequencesUHC, basedirectory + "/_sequencesUHC.javaData");
+		ArrayList<String[]> sequencesUHC = (ArrayList<String[]>)soseqs.load(basedirectory + "/_sequencesUHC.javaData");
+		
 		
 		// DISTANCE MATRIX //
+		System.out.println("DISTANCE MATRIX");
 		Matrix matrix = new SimilarityMatrix();
-		if(false){
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start computing the similarity matrix.");
-		matrix.computeMatrix(sampleSessionIDs, sequencesUHC);
-		matrix.save(basedirectory);
-		matrix.writeMatrix(basedirectory + "/distance_matrix.txt");
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: "
-					+ (endtime-starttime)/1000 + " seconds.");
-		} else {
-			matrix.load(basedirectory);
-		}
+		//matrix.computeMatrix(sampleSessionIDs, sequencesUHC);
+		//matrix.save(basedirectory);
+		//matrix.writeMatrix(basedirectory + "/distance_matrix.txt");
+		matrix.load(basedirectory);
 		float[][] distmatrix = matrix.getMatrix();
 		
+		
 		// HOLD-OUT //
+		System.out.println("HOLD-OUT");
 		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
 		honestmodelval.prepareData(sampleSessionIDs, 70, 0, 30);
 		honestmodelval.save(basedirectory);
-		ArrayList<Integer> train = honestmodelval.getTrain();
-		ArrayList<Integer> val   = honestmodelval.getValidation();
-		ArrayList<Integer> test  = honestmodelval.getTest();
-		ArrayList<ArrayList<Integer>> trainAL = new ArrayList<ArrayList<Integer>>();
-		trainAL.add(train);
-		ArrayList<ArrayList<Integer>> valAL = new ArrayList<ArrayList<Integer>>();
-		valAL.add(val);
-		ArrayList<ArrayList<Integer>> testAL = new ArrayList<ArrayList<Integer>>();
-		testAL.add(test);
+		ArrayList<ArrayList<Integer>> trainAL = honestmodelval.getTrain();
+		ArrayList<ArrayList<Integer>> valAL   = honestmodelval.getValidation();
+		ArrayList<ArrayList<Integer>> testAL  = honestmodelval.getTest();
+
 		
 		// MODEL VALIDATION //
-		ModelEvaluator modelev = 
-				new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
-		modelev.createModels();
-		//modelev.writeClusters(basedirectory + "/clusters.txt");
-		modelev.writeAlignments(basedirectory + "/alignments.txt");
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
+		
+		System.out.println("MODEL_VALIDATION 50");
+		//modelev.buildClusters(50);
+		//modelev.saveClusters(basedirectory + "/_cl50.javaData");
+		//modelev.writeClusters(basedirectory + "/cl50.txt");
+		modelev.loadClusters(basedirectory + "/_cl50.javaData");
+		modelev.clustersSequenceAlignment();
+		//modelev.writeAlignments(basedirectory + "/cl50_alignments.txt");
+		
+		System.out.println("MODEL_VALIDATION 10");
+		modelev.setCutDendrogramDissimilarityThreshold(10);
+		//modelev.buildClusters();
+		//modelev.saveClusters(basedirectory + "/_cl10.javaData");
+		//modelev.writeClusters(basedirectory + "/cl10.txt");
+		//modelev.createModels();
+		//modelev.writeAlignments(basedirectory + "/cl10_alignments.txt");
+		
+		System.out.println("MODEL_VALIDATION 25");
+		modelev.setCutDendrogramDissimilarityThreshold(25);
+		//modelev.buildClusters();
+		//modelev.saveClusters(basedirectory + "/_cl25.javaData");
+		//modelev.writeClusters(basedirectory + "/cl25.txt");
+		//modelev.createModels();
+		//modelev.writeAlignments(basedirectory + "/cl25_alignments.txt");
+		
+		System.out.println("MODEL_VALIDATION 75");
+		modelev.setCutDendrogramDissimilarityThreshold(75);
+		//modelev.buildClusters();
+		//modelev.saveClusters(basedirectory + "/_cl75.javaData");
+		//modelev.writeClusters(basedirectory + "/cl75.txt");
+		//modelev.createModels();
+		//modelev.writeAlignments(basedirectory + "/cl75_alignments.txt");
+		
+		System.out.println("MODEL_VALIDATION 90");
+		modelev.setCutDendrogramDissimilarityThreshold(90);
+		//modelev.buildClusters();
+		//modelev.saveClusters(basedirectory + "/_cl90.javaData");
+		//modelev.writeClusters(basedirectory + "/cl90.txt");
+		//modelev.createModels();
+		//modelev.writeAlignments(basedirectory + "/cl90_alignments.txt");
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

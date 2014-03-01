@@ -48,16 +48,22 @@ public class ModelValidationHoldOut {
 		}
 	}
 	
-	public ArrayList<Integer> getTrain(){
-		return m_trainList;
+	public ArrayList<ArrayList<Integer>> getTrain(){
+		ArrayList<ArrayList<Integer>> trainAL = new ArrayList<ArrayList<Integer>>();
+		trainAL.add(m_trainList);
+		return trainAL;
 	}
 	
-	public ArrayList<Integer> getValidation(){
-		return m_validationList;
+	public ArrayList<ArrayList<Integer>> getValidation(){
+		ArrayList<ArrayList<Integer>> validationAL = new ArrayList<ArrayList<Integer>>();
+		validationAL.add(m_validationList);
+		return validationAL;
 	} 
 	
-	public ArrayList<Integer> getTest(){
-		return m_testList;
+	public ArrayList<ArrayList<Integer>> getTest(){
+		ArrayList<ArrayList<Integer>> testAL = new ArrayList<ArrayList<Integer>>();
+		testAL.add(m_testList);
+		return testAL;
 	}
 	
 	public void save(String workdirectory){

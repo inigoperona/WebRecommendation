@@ -119,7 +119,8 @@ public class MultipleSequenceAlignment {
 		    	int ngaps = counts[2];
 		    	int nspaces = counts[3];
 		    	String[] align1 = seqalign.getAlignSeqA();
-				String[] align2 = seqalign.getAlignSeqB();		
+				String[] align2 = seqalign.getAlignSeqB();
+				
 				// save the new alignment version
 				m_msa.add(align2);
 			}

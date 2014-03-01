@@ -3,6 +3,7 @@ package ehupatras.webrecommendation.evaluator;
 import ehupatras.clustering.ClusteringHierarchical;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import ehupatras.webrecommendation.sequencealignment.multiplealignment.MultipleSequenceAlignment;
+import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -62,17 +63,28 @@ public class ModelEvaluator {
 	}
 	
 	public void createModels(){
+		this.buildClusters();
+		this.clustersSequenceAlignment();
+	}
+	
+	
+	// CLUSTERING //
+	
+	public void buildClusters(int pCutDendrogramDiss){
+		m_pCutDendrogramDiss = pCutDendrogramDiss;
+		this.buildClusters();
+	}
+	
+	public void buildClusters(){
 		// Clustering for each fold
 		m_clustersAL = new ArrayList<int[]>();
 		for(int i=0; i<m_nFolds; i++){
 			m_clustersAL.add(this.clustering(i));
 		}
-		
-		// Multiple Sequence Alignment for each fold
-		m_msaAL = new ArrayList<ArrayList<String[][]>>();
-		for(int i=0; i<m_nFolds; i++){
-			m_msaAL.add(this.msa(i));
-		}
+	}
+	
+	public void setCutDendrogramDissimilarityThreshold(int pCutDendrogramDiss){
+		m_pCutDendrogramDiss = pCutDendrogramDiss;
 	}
 	
 	private int[] clustering(int indexFold){
@@ -85,6 +97,78 @@ public class ModelEvaluator {
 		// cut dendrogram
 		int[] clustersA = clustering.cutDendrogramByDissimilarity(m_pCutDendrogramDiss);
 		return clustersA;
+	}
+	
+	public void writeClusters(String outfilename){
+		// Open the given file
+		BufferedWriter writer = null;
+		try{
+			writer = new BufferedWriter(new FileWriter(outfilename));
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
+					"Not possible to open the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// Write the sequences in a file line by line
+		try{
+			for(int i=0; i<m_nFolds; i++){
+				String[] clusteringStrA = this.clusteringToString(i);
+				for(int j=0; j<clusteringStrA.length; j++){
+					String line = clusteringStrA[j];
+					writer.write(String.valueOf(line));
+				}
+			}
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeFilteredLog] " +
+					"Problems writing to the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// close the file
+		try{
+			writer.close();
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
+					"Problems at closing the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+	}
+
+	private String[] clusteringToString(int indexFold){
+		int[] clustersID = m_clustersAL.get(indexFold);
+		ArrayList<Integer> trainsetnames = m_trainAL.get(indexFold);
+		String[] strA = new String[clustersID.length];
+		for(int i=0; i<clustersID.length; i++){
+			strA[i] = "fold:" + indexFold + ":" + 
+			trainsetnames.get(i) + ":" + clustersID[i] + "\n";
+		}
+		return strA;
+	}
+	
+	public void saveClusters(String outfilename){
+		SaveLoadObjects so = new SaveLoadObjects();
+		so.save(m_clustersAL, outfilename);
+	}
+	
+	public void loadClusters(String outfilename){
+		SaveLoadObjects so = new SaveLoadObjects();
+		m_clustersAL = (ArrayList<int[]>)so.load(outfilename);
+	}
+	
+	
+	
+	// MULTIPLE SEQUENCE ALIGNMENT //
+	
+	public void clustersSequenceAlignment(){
+		// Multiple Sequence Alignment for each fold
+		m_msaAL = new ArrayList<ArrayList<String[][]>>();
+		for(int i=0; i<m_nFolds; i++){
+			m_msaAL.add(this.msa(i));
+		}
 	}
 	
 	private ArrayList<String[][]> msa(int indexFold){
@@ -113,57 +197,6 @@ public class ModelEvaluator {
 			multAlignsList.add(multAlign);
 		}
 		return multAlignsList;
-	}
-	
-	public void writeClusters(String outfilename){
-			// Open the given file
-			BufferedWriter writer = null;
-			try{
-				writer = new BufferedWriter(new FileWriter(outfilename));
-			} catch(IOException ex){
-				System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
-						"Not possible to open the file: " + outfilename);
-				System.err.println(ex.getMessage());
-				System.exit(1);
-			}
-			
-			// Write the sequences in a file line by line
-			try{
-				for(int i=0; i<m_nFolds; i++){
-					String[] clusteringStrA = this.clusteringToString(i);
-					for(int j=0; j<clusteringStrA.length; j++){
-						String line = clusteringStrA[j];
-						writer.write(String.valueOf(line));
-					}
-				}
-			} catch(IOException ex){
-				System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeFilteredLog] " +
-						"Problems writing to the file: " + outfilename);
-				System.err.println(ex.getMessage());
-				System.exit(1);
-			}
-			
-			// close the file
-			try{
-				writer.close();
-			} catch (IOException ex){
-				System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
-						"Problems at closing the file: " + outfilename);
-				System.err.println(ex.getMessage());
-				System.exit(1);
-			}
-			
-	}
-	
-	private String[] clusteringToString(int indexFold){
-		int[] clustersID = m_clustersAL.get(indexFold);
-		ArrayList<Integer> trainsetnames = m_trainAL.get(indexFold);
-		String[] strA = new String[clustersID.length];
-		for(int i=0; i<clustersID.length; i++){
-			strA[i] = "fold:" + indexFold + ":" + 
-						trainsetnames.get(i) + ":" + clustersID[i] + "\n";
-		}
-		return strA;
 	}
 	
 	public void writeAlignments(String outfilename){
