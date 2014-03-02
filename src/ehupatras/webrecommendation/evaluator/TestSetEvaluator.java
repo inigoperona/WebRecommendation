@@ -18,6 +18,9 @@ public class TestSetEvaluator {
 	private float[] m_precision;
 	private float[] m_recall;
 	private float[] m_fmeasure;
+	private float[] m_ModelPrecision;
+	private float[] m_ModelRecall;
+	private float[] m_ModelFmeasure;
 	
 	public TestSetEvaluator(ArrayList<String[]> sequences, SuffixTreeStringArray suffixtree){
 		m_sequences = sequences;
@@ -25,6 +28,9 @@ public class TestSetEvaluator {
 		m_precision = new float[m_points.length];
 		m_recall = new float[m_points.length];
 		m_fmeasure = new float[m_points.length];
+		m_ModelPrecision = new float[m_points.length];
+		m_ModelRecall = new float[m_points.length];
+		m_ModelFmeasure = new float[m_points.length];
 	}
 	
 	public void computeEvaluation(){
@@ -34,9 +40,12 @@ public class TestSetEvaluator {
 		float[] precission = new float[m_points.length];
 		float[] recall = new float[m_points.length];
 		float[] fmeasure = new float[m_points.length];
+		float[] modelPrecision = new float[m_points.length];
+		float[] modelRecall = new float[m_points.length];
+		float[] modelFmeasure = new float[m_points.length];
 		for(int i=0; i<m_sequences.size(); i++){
 			String[] seq = m_sequences.get(i);
-			SequenceEvaluator seqEv = new SequenceEvaluatorUHC(seq, m_gST);
+			SequenceEvaluator seqEv = new SequenceEvaluator(seq, m_gST);
 			seqEv.computeSequenceMetrics();
 			numberOfRecommendationsRatio = numberOfRecommendationsRatio + seqEv.getNumberOfRecommendationsRatio();
 			hitratio = hitratio + seqEv.getHitRatio();
@@ -45,6 +54,9 @@ public class TestSetEvaluator {
 				precission[j] = precission[j] + seqEv.getPrecisionAtPoint(m_points[j]);
 				recall[j] = recall[j] + seqEv.getRecallAtPoint(m_points[j]);
 				fmeasure[j] = fmeasure[j] + seqEv.getFmeasureAtPoint(m_beta, m_points[j]);
+				modelPrecision[j] = modelPrecision[j] + seqEv.getPrecisionModelAtPoint(m_points[j]);
+				modelRecall[j] = modelRecall[j] + seqEv.getRecallModelAtPoint(m_points[j]);
+				modelFmeasure[j] = modelFmeasure[j] + seqEv.getFmeasureModelAtPoint(m_beta, m_points[j]);
 			}
 		}
 		
@@ -56,6 +68,9 @@ public class TestSetEvaluator {
 			m_precision[j] = precission[j]/(float)m_sequences.size();
 			m_recall[j] = recall[j]/(float)m_sequences.size();
 			m_fmeasure[j] = fmeasure[j]/(float)m_sequences.size();
+			m_ModelPrecision[j] = modelPrecision[j]/(float)m_sequences.size();
+			m_ModelRecall[j] = modelRecall[j]/(float)m_sequences.size();
+			m_ModelFmeasure[j] = modelFmeasure[j]/(float)m_sequences.size();
 		}
 	}
 	
@@ -89,4 +104,39 @@ public class TestSetEvaluator {
 		System.out.println();
 	}
 	
+	public void setConfusionPoints(float[] confusionPoints){
+		m_points = confusionPoints;
+	}
+	public void setFmeasureBeta(float beta){
+		m_beta = beta;
+	}
+	
+	
+	public float getNumberOfRecommendationsRatio(){
+		return m_numberOfRecommendationsRatio;
+	}
+	public float getHitRatio(){
+		return m_hitratio;
+	}
+	public float getClickSoonRatio(){
+		return m_clicksoonratio;
+	}
+	public float[] getPrecisions(){
+		return m_precision;
+	}
+	public float[] getRecalls(){
+		return m_recall;
+	}
+	public float[] getFmeasures(){
+		return m_fmeasure;
+	}
+	public float[] getModelPrecisions(){
+		return m_ModelPrecision;
+	}
+	public float[] getModelRecalls(){
+		return m_ModelRecall;
+	}
+	public float[] getModelFmeasures(){
+		return m_ModelFmeasure;
+	}
 }

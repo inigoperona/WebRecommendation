@@ -1,14 +1,10 @@
 package ehupatras.webrecommendation;
 
 import ehupatras.webrecommendation.structures.*;
+import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.distmatrix.*;
 import ehupatras.webrecommendation.modelvalidation.*;
-import ehupatras.webrecommendation.utils.SaveLoadObjects;
-import ehupatras.clustering.*;
-import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
-import ehupatras.suffixtree.stringarray.Node;
-import ehupatras.suffixtree.stringarray.EdgeBag;
-import ehupatras.suffixtree.stringarray.Edge;
+import ehupatras.webrecommendation.evaluator.*;
 import java.util.*;
 
 public class MainClass {
@@ -20,10 +16,10 @@ public class MainClass {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/20140228_v6";
 		String logfile = "/kk.log";
-		//String basedirectory = args[0];
-		//String filename1 = args[1];
+		//basedirectory = args[0];
+		//logfile = args[1];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(basedirectory);
@@ -34,253 +30,95 @@ public class MainClass {
 		long starttime;
 		long endtime;
 		
-		// LOAD PREPROCESSED LOGS
+		
+		// LOAD PREPROCESSED LOGS //
+		System.out.println("PREPROCESSING");
 		MainClassPreprocess preprocess = new MainClassPreprocess();
 		//preprocess.preprocessLogs(basedirectory, logfile);
-		preprocess.loadPreprocess();	
-	
-	
-//WebAccessSequences.computePageRank();
-			
-		ModelValidationHoldOut modelval = new ModelValidationHoldOut();
-	if(true){
-		// SAMPLING //
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start sampling & Hold-outing.");
-		Sampling samp = new Sampling();
-		ArrayList<Integer> sampleSessionIDs = samp.getSample(10000, (long)0, false);
-	
-		// MODEL VALIDATION //
-		// split up the database to the evaluation process
-		modelval.prepareData(sampleSessionIDs, 70, 0, 30);
-		modelval.save(basedirectory);
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: "
-					+ (endtime-starttime)/1000 + " seconds.");
-	} else {
-		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] Start reading sampling data.");
-		modelval.load(basedirectory);
-	}
-		ArrayList<Integer> train = modelval.getTrain().get(0);
-		ArrayList<Integer> val   = modelval.getValidation().get(0);
-		ArrayList<Integer> test  = modelval.getTest().get(0);
-	
-		// get training sequences
-		ArrayList<String[]> sequencesUHC = WebAccessSequencesUHC.getSequencesInstanciated(train);
-
+		//preprocess.loadPreprocess();
+		
+		
+		// CREATE THE DATABASE
+		System.out.println("CREATE THE DATABASE");
+		// Sampling
+		//Sampling samp = new Sampling();
+		//ArrayList<Integer> sampleSessionIDs = samp.getSample(10000, (long)0, false);
+		SaveLoadObjects sosess = new SaveLoadObjects();
+		//sosess.save(sampleSessionIDs, basedirectory + "/_sessionIDs.javaData");
+		ArrayList<Integer> sampleSessionIDs = (ArrayList<Integer>)sosess.load(basedirectory + "/_sessionIDs.javaData");
+		
+		
+		// INSTANCIATED SEQUENCES
+		//ArrayList<String[]> sequencesUHC = WebAccessSequencesUHC.getSequencesInstanciated(sampleSessionIDs);
+		SaveLoadObjects soseqs = new SaveLoadObjects();
+		//soseqs.save(sequencesUHC, basedirectory + "/_sequencesUHC.javaData");
+		ArrayList<String[]> sequencesUHC = (ArrayList<String[]>)soseqs.load(basedirectory + "/_sequencesUHC.javaData");
 		
 		
 		// DISTANCE MATRIX //
+		System.out.println("DISTANCE MATRIX");
 		Matrix matrix = new SimilarityMatrix();
-	if(true){
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start computing the similarity matrix.");
-		matrix.computeMatrix(train, sequencesUHC);
-		matrix.save(basedirectory);
-		matrix.writeMatrix(basedirectory + "/distance_matrix.txt");
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: "
-					+ (endtime-starttime)/1000 + " seconds.");
-	} else {
-		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] Start reading the distance matrix.");
+		//matrix.computeMatrix(sampleSessionIDs, sequencesUHC);
+		//matrix.save(basedirectory);
+		//matrix.writeMatrix(basedirectory + "/distance_matrix.txt");
 		matrix.load(basedirectory);
-	}		
 		float[][] distmatrix = matrix.getMatrix();
+		
+		
+		// HOLD-OUT //
+		System.out.println("HOLD-OUT");
+		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
+		honestmodelval.prepareData(sampleSessionIDs, 70, 0, 30);
+		honestmodelval.save(basedirectory);
+		ArrayList<ArrayList<Integer>> trainAL = honestmodelval.getTrain();
+		ArrayList<ArrayList<Integer>> valAL   = honestmodelval.getValidation();
+		ArrayList<ArrayList<Integer>> testAL  = honestmodelval.getTest();
 
-	
 		
-		/*
-	// HIERARCHICAL CLUSTERING //
-		ClusteringHierarchical clustering = new ClusteringHierarchical();
-	if(false){
-		// hierarchical clustering: http://sape.inf.usi.ch/hac
-			System.out.println("[" + starttime + "] Start hierarchical clustering.");
-			starttime = System.currentTimeMillis();
-		clustering.computeHierarchicalClustering(distmatrix);
-			System.out.println("  The dendrogram was generated.");
-		//clustering.save(basedirectory);
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: "
-					+ (endtime-starttime)/1000 + " seconds.");
-	//} else {
-		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] Start reading the dendrogram.");
-		clustering.load(basedirectory) ;
-	}
-
-		//clustering.writeDendrogram();
-	
-	
-		// CUT THE DENDROGRAM
-	int[] clustersA;
-	SaveLoadObjects slo = new SaveLoadObjects();
-	
-	if(false){
-		clustersA = clustering.cutDendrogramByDissimilarity((float)0);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters000.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)10);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters010.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)20);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters020.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)25);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters025.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)30);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters030.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)40);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters040.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)50);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters050.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)60);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters060.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)70);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters070.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)75);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters075.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)80);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters080.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)90);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters090.javaData");
-	
-		clustersA = clustering.cutDendrogramByDissimilarity((float)100);
-		Arrays.sort(clustersA);
-		System.out.println(clustersA[clustersA.length-1]);
-		slo.save(clustersA, basedirectory + "/_clusters100.javaData");
+		// MODEL VALIDATION //
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
+		System.out.print("options," + modelev.getEvaluationHeader());
 		
-	}
-	
-	// SUFFIX TREE
-	clustersA = (int[])slo.load(basedirectory + "/_clusters050.javaData");
-	Arrays.sort(clustersA);
-	int maxClInd = clustersA[clustersA.length-1];
-	
-	// silly clustering
-	int[] clustersA2 = new int[clustersA.length];
-	int kk = 0;
-	for(int i=0; i<clustersA.length; i++){
-		if(i % 10 == 0){ kk++; }
-		clustersA2[i] = kk;
-	}
-	clustersA = clustersA2;
-	Arrays.sort(clustersA);
-	maxClInd = clustersA[clustersA.length-1];
-	
-		// compute suffix trees
-		ArrayList<SuffixTreeStringArray> suffixtrees = new ArrayList<SuffixTreeStringArray>();
-		for(int i=0; i<maxClInd; i++){ // for each cluster
-			SuffixTreeStringArray st = new SuffixTreeStringArray();
-			int size = 0;
-			for(int j=0; j<clustersA.length; j++){ // for each case
-				if(clustersA[j]==i){
-					String[] seq = sequencesUHC.get(i);
-					st.putSequence(seq, j);
-					size++;
-				}
-			}
-			System.out.println("cluster: " + i + "; size: " + size);
-			suffixtrees.add(st);
-		}
+		// Parameters to play with
+		String[] linkages = 
+			{"ehupatras.clustering.sapehac.agglomeration.AverageLinkage",
+			 "ehupatras.clustering.sapehac.agglomeration.CentroidLinkage",
+			 "ehupatras.clustering.sapehac.agglomeration.CompleteLinkage",
+			 "ehupatras.clustering.sapehac.agglomeration.MedianLinkage",
+			 "ehupatras.clustering.sapehac.agglomeration.SingleLinkage",
+			 "ehupatras.clustering.sapehac.agglomeration.WardLinkage"};
+		int[] cutthA = {10, 25, 50, 75, 90};
+		float[] seqweights = {0.25f, 0.40f, 0.50f, 0.6f, 0.7f, 0.8f};
+		//for(int i=0; i<cutthA.length; i++){
+		//	int cutth = cutthA[i];
+		int cutth = cutthA[0];
 		
-		
-		*/
-		
-		/*
-		// print suffix trees
-		for(int i=0; i<maxClInd; i++){ // for each cluster
-			System.out.println("=========" + i + "=========");
-			SuffixTreeStringArray st = suffixtrees.get(i);
-			st.printSuffixTree();
-		}
-		
-		
-		
-		// create weighted sequences
-		//for(int i=0; i<maxClInd; i++){ // for each cluster
-		int i = 1;	
-		
-			SuffixTreeStringArray st = suffixtrees.get(i);
-			// get the root node
-			Node root = st.getRoot(); // root node
-			//root.computeAndCacheCount();
-			//int totalfreq = root.getResultCount();
-			// create an object-array to save all node data we need
-			Object[] obj = new Object[4];
-			obj[0] = root;
-			obj[1] = 0; // tree level in the suffix tree
-			obj[2] = -1; // the parents index. No parents is the root
-			obj[3] = (float)1.0; // accumulated probability of appearance
-			// save the array object
-			ArrayList<Object[]> nodesToAnalyze = new ArrayList<Object[]>();
-			nodesToAnalyze.add(obj);
-			for(int j=0; j<nodesToAnalyze.size(); j++){
-				// get the node information
-				obj = nodesToAnalyze.get(j);
-				Node nod = (Node)obj[0];
-				int treelevel = (int)obj[1];
-				int parentindex = (int)obj[2];
-				float accumProb = (float)obj[3];
-				//nod.computeAndCacheCount();
-				
-				System.out.println(	" ind: " + j +
-						  			" treelevel: " + treelevel +
-									" parentindex: " + parentindex +
-									" acccumProb: " + accumProb);
-				
-				// get the edges information
-				EdgeBag edges = nod.getEdges();
-				ArrayList<Edge> edgesA = edges.values();
-				for(int k=0; k<edgesA.size(); k++){ // for each edge
-					Edge e = edgesA.get(k);
-					ArrayList<String> label = e.getLabel();
-					Node dest = e.getDest();
-					//int freq = dest.getResultCount();
-					obj = new Object[4];
-					obj[0] = dest;
-					obj[1] = treelevel + 1;
-					obj[2] = j;
-					obj[3] = (float)-1;
-					nodesToAnalyze.add(obj);
-				}
-			}			
+			System.out.print("cl_ " + cutth + ",");
+			
+			// Clustering
+			modelev.buildClusters(50, linkages[5]);
+			//modelev.saveClusters(basedirectory + "/_cl50.javaData");
+			//modelev.writeClusters(basedirectory + "/cl50.txt");
+			modelev.loadClusters(basedirectory + "/_cl" + cutth + ".javaData");
+			
+			// Sequence Alignment
+			modelev.clustersSequenceAlignment();
+			modelev.writeAlignments(basedirectory + "/cl" + cutth + "_alignments.txt");
+			
+			// Weighted Sequences
+			modelev.extractWeightedSequences(0.25f);
+			modelev.writeWeightedSequences(basedirectory + "/cl" + cutth + "_ws0.25.txt");
+			
+			// Suffix Tree
+			modelev.buildSuffixTrees();
+			
+			// Evaluation
+			float[] confusionPoints = {0.00f,0.10f,0.25f,0.50f,0.75f,0.90f,1.00f};
+			modelev.setConfusionPoints(confusionPoints);
+			modelev.setFmeasureBeta(0.5f);
+			String results = modelev.computeEvaluationTest();
+			System.out.print(results);
 		//}
-		
-		*/
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

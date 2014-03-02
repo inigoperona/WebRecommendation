@@ -10,6 +10,8 @@ import ehupatras.clustering.sapehac.experiment.Experiment;
 import ehupatras.clustering.sapehac.experiment.ExperimentEhuPatras;
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 public class ClusteringHierarchical {
 
@@ -17,11 +19,37 @@ public class ClusteringHierarchical {
 	private int m_ncases;
 	private String m_savefilename = "/_dendrogram.javaData";
 	
-	public void computeHierarchicalClustering(float[][] matrix, int[] selectedcases){
+	public void computeHierarchicalClustering(float[][] matrix, int[] selectedcases,
+			String agglomerationMethodClassName) {
 		m_ncases = selectedcases.length;
 		Experiment experiment = new ExperimentEhuPatras(m_ncases);
+		
+		// Define the dissimilarity matrix
 		DissimilarityMeasure dissimilarityMeasure = new DissimilarityMeasureEhupatras(matrix, selectedcases);
-		AgglomerationMethod agglomerationMethod = new WardLinkage();
+
+		// Define agglomeration-linkage method
+		// AgglomerationMethod agglomerationMethod = new WardLinkage();
+		Class<AgglomerationMethod> clazz = null;
+		try{
+			clazz = (Class<AgglomerationMethod>)Class.forName(agglomerationMethodClassName);
+		} catch (ClassNotFoundException ex){
+		}
+		Constructor<AgglomerationMethod> ctor = null;
+		try{
+			ctor = clazz.getConstructor(String.class);
+		} catch (NoSuchMethodException ex){
+		}
+		AgglomerationMethod agglomerationMethod = null;
+		try{
+			agglomerationMethod = ctor.newInstance();
+		
+		} catch (InstantiationException ex){
+		} catch (IllegalAccessException ex){
+		} catch (IllegalArgumentException ex){
+		} catch (InvocationTargetException ex){
+		}
+		
+		// Compute the dendrogram
 		DendrogramBuilder dendrogramBuilder = new DendrogramBuilder(experiment.getNumberOfObservations());
 		HierarchicalAgglomerativeClusterer clusterer = new HierarchicalAgglomerativeClusterer(experiment, dissimilarityMeasure, agglomerationMethod);
 		clusterer.cluster(dendrogramBuilder);

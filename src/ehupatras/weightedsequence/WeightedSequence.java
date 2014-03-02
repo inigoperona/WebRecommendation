@@ -1,7 +1,7 @@
 package ehupatras.weightedsequence;
 
 import java.util.HashMap;
-import java.util.Set;
+import java.util.ArrayList;
 
 public class WeightedSequence {
 	private String[][] alignment;
@@ -192,8 +192,6 @@ public class WeightedSequence {
 	}
 
 	
-
-
 	public String[] getGeneratedStrings(){
 		String[] answer=new String[this.generatedStrings.keySet().size()];
 		int i=0;
@@ -202,4 +200,23 @@ public class WeightedSequence {
 		}
 		return answer;
 	}
+	
+	public ArrayList<String[]> getGeneratedSequences(){
+		ArrayList<String[]> seqL = new ArrayList<String[]>(); 
+		String[] strA = this.getGeneratedStrings();
+		for(int i=0; i<strA.length; i++){
+			int elemlen = m_gap.length();
+			String str = strA[i];
+			String[] seq = new String[str.length()/elemlen];
+			int elemi = 0;
+			for(int j=0; j<str.length(); j=j+elemlen){
+				String elem = str.substring(j, j+elemlen);
+				seq[elemi] = elem;
+				elemi++;
+			}
+			seqL.add(seq);
+		}
+		return seqL;
+	}
+	
 }
