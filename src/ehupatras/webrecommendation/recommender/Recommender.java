@@ -17,7 +17,7 @@ public class Recommender {
 		m_pointerNode = m_gST.getRoot();
 	}
 	
-	private void updatePointer(String newstep){
+	public boolean updatePointer(String newstep){
 		boolean isupdate = false;
 		
 		if(m_pointerNode==null && m_pointerEdge!=null){
@@ -61,6 +61,9 @@ public class Recommender {
 		// it was impossible to move the pointer
 		if(!isupdate){
 			updatefailure();
+			return false;
+		} else {
+			return true;
 		}
 	}
 	
@@ -77,7 +80,7 @@ public class Recommender {
 		m_pointerPositionInTheEdge = 0;
 	}
 	
-	public ArrayList<String> getNextpossibleSteps(){
+	private ArrayList<String> getNextpossibleSteps(){
 		ArrayList<String> listOfURLs = new ArrayList<String>();
 		
 		// control if we are in the root or not
@@ -106,9 +109,94 @@ public class Recommender {
 		return listOfURLs;
 	}
 	
-	public ArrayList<String> moveAndGetRecommendations(String urlstep){
-		this.updatePointer(urlstep);
+	public ArrayList<String> getNextpossibleStepsRandom(int nReco, long seed){
+		ArrayList<String> list = this.getNextpossibleSteps();
+		int realNreco = Math.min(nReco, list.size());
+		ArrayList<String> list2 = new ArrayList<String>(); 
+		Random rand = new Random(seed);
+		for(int i=0; i<realNreco; i++){
+			int pos = rand.nextInt(list.size());
+			list2.add(list.get(pos));
+		}
+		return list2;
+	}
+	
+	public ArrayList<String> getNextpossibleStepsUnbounded(){
 		return this.getNextpossibleSteps();
+	}
+	
+	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone){
+		// save the pointers values
+		Node pointerNode = m_pointerNode;
+		Edge pointerEdge = m_pointerEdge;
+		int pointerPositionInTheEdge = m_pointerPositionInTheEdge;
+		
+		
+		
+		ArrayList<String> listForogat = this.getNextpossibleSteps();
+		
+		// run the way done  (clickstream done until now) in the suffix tree
+		// and create the sequence that it is runable in the sufffix tree
+		ArrayList<String> waydone2 = new ArrayList<String>(); 
+		this.gotoroot();
+		for(int i=0; i<waydone.size(); i++){
+			String step = waydone.get(i);
+			boolean stepdone = this.updatePointer(step);
+			if(!stepdone){
+				// if we have reset the run into the suffix tree
+				// reset also the clikstream done until now
+				waydone2 = new ArrayList<String>();
+			} else {
+				waydone2.add(step);
+			}
+		}
+		
+		// compute the weight of the waydone + next step sequences
+		ArrayList<String> nextsteps = this.getNextpossibleSteps();
+		int realNreco = Math.min(nRecos, nextsteps.size());
+		int[] frequencies = new int[nextsteps.size()];
+		ArrayList<String> way = waydone2;
+		for(int i=0; i<nextsteps.size(); i++){
+			String nstep = nextsteps.get(i);
+			way.add(nstep);
+			
+			// search
+			ArrayList<Integer> seqs = m_gST.search(way);
+			frequencies[i] = seqs.size();
+			
+			// put as before the sequence
+			way = waydone2;
+		}
+
+		// order the frequencies of searched sequences of the way
+		ArrayList<String> recos = new ArrayList<String>(); 
+		int[] frequencies2 = frequencies;
+		boolean[] isusedA = new boolean[frequencies.length];
+		Arrays.fill(isusedA, false);
+		Arrays.sort(frequencies2);
+		for(int i=frequencies2.length-1; i>=0; i--){
+			int freqmax = frequencies2[i];
+			for(int j=0; j<frequencies.length; j++){
+				if(!isusedA[j]){
+					if(freqmax==frequencies[j]){
+						recos.add(nextsteps.get(j));
+						isusedA[j] = true;
+						break;
+					}
+				}
+			}
+			if(recos.size()==realNreco){
+				break;
+			}
+		}
+		
+		// restore the pointers
+		m_pointerNode = pointerNode;
+		m_pointerEdge = pointerEdge;
+		m_pointerPositionInTheEdge = pointerPositionInTheEdge;
+		
+		// return the most weighted sequences
+		return recos;
 	}
 	
 	public static void main(String[] args){

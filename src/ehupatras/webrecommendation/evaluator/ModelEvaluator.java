@@ -388,7 +388,7 @@ public class ModelEvaluator {
 	
 	// MODEL EVALUATION
 	
-	public String computeEvaluationTest(){				
+	public String computeEvaluationTest(int mode, int nrecos, long seed){				
 		// metrics
 		int nNodes = 0;
 		float nEdges = 0;
@@ -417,7 +417,7 @@ public class ModelEvaluator {
 			TestSetEvaluator eval = new TestSetEvaluator(testseqs, suffixtree);
 			eval.setConfusionPoints(m_confusionPoints);
 			eval.setFmeasureBeta(m_fmeasurebeta);
-			eval.computeEvaluation();
+			eval.computeEvaluation(mode, nrecos, seed);
 			//eval.writeResults();
 			
 			nNodes = nNodes + suffixtree.getNumberOfNodes();

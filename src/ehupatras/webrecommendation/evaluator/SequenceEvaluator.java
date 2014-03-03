@@ -3,6 +3,7 @@ package ehupatras.webrecommendation.evaluator;
 import ehupatras.webrecommendation.recommender.*;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SequenceEvaluator {
 
@@ -40,13 +41,35 @@ public class SequenceEvaluator {
 		m_recallModel = new float[sequence.size()];
 	}
 	
-	public void computeSequenceMetrics(){
+	// mode = -1 : Unbounded
+	// mode =  0 : Random, fixed number of requests
+	// mode =  1 : Weighted, fixed number of requests
+	public void computeSequenceMetrics(int mode, int nrecos, long seed){
 		m_recommender.gotoroot();
-		ArrayList<String> list = m_recommender.getNextpossibleSteps();
+		ArrayList<String> waydone = null;
+		ArrayList<String> list = null;
+		if(mode==-1){
+			list = m_recommender.getNextpossibleStepsUnbounded();
+		} else if(mode==0){
+			list = m_recommender.getNextpossibleStepsRandom(nrecos, seed);
+		} else if(mode==1){
+			waydone = new ArrayList<String>();
+			list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
+		}
 		for(int i=0; i<m_sequence.size(); i++){
 			String step = m_sequence.get(i);
 			this.computeStepMetrics(i, list);
-			list = m_recommender.moveAndGetRecommendations(step);
+			
+			// do the step and get the next recommendations
+			m_recommender.updatePointer(step);
+			if(mode==-1){
+				list = m_recommender.getNextpossibleStepsUnbounded();
+			} else if(mode==0){
+				list = m_recommender.getNextpossibleStepsRandom(nrecos, seed);
+			} else if(mode==1){
+				waydone.add(step);
+				list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
+			}
 		}
 	}
 	
@@ -292,7 +315,7 @@ public class SequenceEvaluator {
         
         // get the metrics
         SequenceEvaluator se = new SequenceEvaluator(seq, st);
-        se.computeSequenceMetrics();
+        se.computeSequenceMetrics(-1, -1, (long)0);
         System.out.println("HR: " + se.getHitRatio());
         System.out.println("CR: " + se.getClickSoonRatio());
         System.out.println("---");

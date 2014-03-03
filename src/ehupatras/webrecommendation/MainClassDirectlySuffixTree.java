@@ -63,7 +63,7 @@ public class MainClassDirectlySuffixTree {
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start the evaluation.");
 		TestSetEvaluator eval = new TestSetEvaluator(sequencesUHC_test, suffixtree);
-		eval.computeEvaluation();
+		eval.computeEvaluation(-1, -1, (long)0);
 		eval.writeResults();
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 

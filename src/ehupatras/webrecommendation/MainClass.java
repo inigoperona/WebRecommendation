@@ -17,7 +17,7 @@ public class MainClass {
 		
 		// Parameter control
 		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/20140228_v6";
-		String logfile = "/kk.log";
+		//String logfile = "/kk.log";
 		basedirectory = args[0];
 		//logfile = args[1];
 		
@@ -76,9 +76,7 @@ public class MainClass {
 
 		
 		// MODEL VALIDATION //
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
-		System.out.print("options," + modelev.getEvaluationHeader());
-		
+	
 		// Parameters to play with
 		String[] linkages = 
 			{"ehupatras.clustering.sapehac.agglomeration.AverageLinkage",
@@ -88,44 +86,97 @@ public class MainClass {
 			 "ehupatras.clustering.sapehac.agglomeration.SingleLinkage",
 			 "ehupatras.clustering.sapehac.agglomeration.WardLinkage"};
 		int[] cutthA = {5, 10, 15, 20, 25, 30, 40, 50};
-		float[] seqweights = {0.25f, 0.40f, 0.50f, 0.6f, 0.7f, 0.8f};
-		float[] confusionPoints = {0.00f,0.10f,0.25f,0.50f,0.75f,0.90f,1.00f};
+		float[] seqweights = {0.25f, 0.50f, 0.75f};
+		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		
-		// Start generating andd evaluating the model
-		for(int i=0; i<linkages.length; i++){
+		// initialize the model evaluator
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
+		modelev.setFmeasureBeta(0.5f);
+		modelev.setConfusionPoints(confusionPoints);
+		System.out.print("options," + modelev.getEvaluationHeader());
+		
+		// Start generating and evaluating the model
+		//for(int i=0; i<linkages.length; i++){
+		int i = 5;
 			String linkageClassName = linkages[i];
-			for(int j=0; j<cutthA.length; j++){
+			//for(int j=0; j<cutthA.length; j++){
+			for(int j=0; j<3; j++){
 				int cutth = cutthA[j];
 				
 				String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
 				// Clustering
-				modelev.buildClusters(cutth, linkageClassName);
-				modelev.saveClusters(basedirectory + "/" + esperimentationStr + ".javaData");
-				modelev.writeClusters(basedirectory + "/" + esperimentationStr + ".txt");
-				//modelev.loadClusters(basedirectory + "/" + esperimentationStr + ".javaData");
+				//modelev.buildClusters(cutth, linkageClassName);
+				//modelev.saveClusters(basedirectory + "/" + esperimentationStr + ".javaData");
+				//modelev.writeClusters(basedirectory + "/" + esperimentationStr + ".txt");
+				modelev.loadClusters(basedirectory + "/" + esperimentationStr + ".javaData");
 			
-				/*
 				// Sequence Alignment
 				modelev.clustersSequenceAlignment();
-				modelev.writeAlignments(basedirectory + "/cl" + cutth + "_alignments.txt");
+				modelev.writeAlignments(basedirectory + "/" + esperimentationStr + "_alignments.txt");
 			
 				// Weighted Sequences
-				modelev.extractWeightedSequences(0.25f);
-				modelev.writeWeightedSequences(basedirectory + "/cl" + cutth + "_ws0.25.txt");
+				for(int k=0; k<seqweights.length; k++){
+					float minsup = seqweights[k];
+					String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
+					modelev.extractWeightedSequences(minsup);
+					modelev.writeWeightedSequences(basedirectory + "/" + esperimentationStr2 + ".txt");
 			
-				// Suffix Tree
-				modelev.buildSuffixTrees();
+					// Suffix Tree
+					modelev.buildSuffixTrees();
 			
-				// Evaluation
-				modelev.setConfusionPoints(confusionPoints);
-				modelev.setFmeasureBeta(0.5f);
-				String results = modelev.computeEvaluationTest();
-				System.out.print(esperimentationStr + ",");
-				System.out.print(results);
-				*/
+					// Evaluation
+					String results;
+				
+					// unbounded
+					results = modelev.computeEvaluationTest(-1, -1, (long)0);
+					System.out.print(esperimentationStr2 + "_unbounded,");
+					System.out.print(results);
+					
+					// random
+					results = modelev.computeEvaluationTest(0, 2, (long)0);
+					System.out.print(esperimentationStr2 + "_random2,");
+					System.out.print(results);
+					
+					results = modelev.computeEvaluationTest(0, 3, (long)0);
+					System.out.print(esperimentationStr2 + "_random3,");
+					System.out.print(results);
+					
+					results = modelev.computeEvaluationTest(0, 4, (long)0);
+					System.out.print(esperimentationStr2 + "_random4,");
+					System.out.print(results);
+					
+					results = modelev.computeEvaluationTest(0, 10, (long)0);
+					System.out.print(esperimentationStr2 + "_random10,");
+					System.out.print(results);
+					
+					results = modelev.computeEvaluationTest(0, 20, (long)0);
+					System.out.print(esperimentationStr2 + "_random20,");
+					System.out.print(results);
+					
+					// weighted
+					results = modelev.computeEvaluationTest(1, 2, (long)0);
+					System.out.print(esperimentationStr2 + "_weighted2,");
+					System.out.print(results);
+					
+					results = modelev.computeEvaluationTest(1, 3, (long)0);
+					System.out.print(esperimentationStr2 + "_weighted3,");
+					System.out.print(results);
+					
+					results = modelev.computeEvaluationTest(1, 4, (long)0);
+					System.out.print(esperimentationStr2 + "_weighted4,");
+					System.out.print(results);
+					
+					results = modelev.computeEvaluationTest(1, 10, (long)0);
+					System.out.print(esperimentationStr2 + "_weighted10,");
+					System.out.print(results);
+					
+					results = modelev.computeEvaluationTest(1, 20, (long)0);
+					System.out.print(esperimentationStr2 + "_weighted20,");
+					System.out.print(results);
+				}
 			}
-		}
+		//}
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

@@ -33,7 +33,7 @@ public class TestSetEvaluator {
 		m_ModelFmeasure = new float[m_points.length];
 	}
 	
-	public void computeEvaluation(){
+	public void computeEvaluation(int mode, int nrecos, long seed){
 		float numberOfRecommendationsRatio = (float)0;
 		float hitratio = (float)0;
 		float clicksoonratio = (float)0;
@@ -46,7 +46,7 @@ public class TestSetEvaluator {
 		for(int i=0; i<m_sequences.size(); i++){
 			String[] seq = m_sequences.get(i);
 			SequenceEvaluator seqEv = new SequenceEvaluator(seq, m_gST);
-			seqEv.computeSequenceMetrics();
+			seqEv.computeSequenceMetrics(mode, nrecos, seed);
 			numberOfRecommendationsRatio = numberOfRecommendationsRatio + seqEv.getNumberOfRecommendationsRatio();
 			hitratio = hitratio + seqEv.getHitRatio();
 			clicksoonratio = clicksoonratio + seqEv.getClickSoonRatio();
