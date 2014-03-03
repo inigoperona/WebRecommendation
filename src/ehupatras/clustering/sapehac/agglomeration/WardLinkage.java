@@ -41,7 +41,7 @@ package ehupatras.clustering.sapehac.agglomeration;
  * @author Matthias.Hauswirth@usi.ch
  */
 public final class WardLinkage implements AgglomerationMethod {
-
+	
     public double computeDissimilarity(final double dik, final double djk, final double dij, final int ci, final int cj, final int ck) {
         return ((ci+ck)*dik+(cj+ck)*djk-ck*dij)/(ci+cj+ck);
     }

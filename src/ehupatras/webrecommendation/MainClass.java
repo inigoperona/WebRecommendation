@@ -18,7 +18,7 @@ public class MainClass {
 		// Parameter control
 		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/20140228_v6";
 		String logfile = "/kk.log";
-		//basedirectory = args[0];
+		basedirectory = args[0];
 		//logfile = args[1];
 		
 		// initialize the data structure
@@ -32,8 +32,8 @@ public class MainClass {
 		
 		
 		// LOAD PREPROCESSED LOGS //
-		System.out.println("PREPROCESSING");
-		MainClassPreprocess preprocess = new MainClassPreprocess();
+		//System.out.println("PREPROCESSING");
+		//MainClassPreprocess preprocess = new MainClassPreprocess();
 		//preprocess.preprocessLogs(basedirectory, logfile);
 		//preprocess.loadPreprocess();
 		
@@ -87,38 +87,45 @@ public class MainClass {
 			 "ehupatras.clustering.sapehac.agglomeration.MedianLinkage",
 			 "ehupatras.clustering.sapehac.agglomeration.SingleLinkage",
 			 "ehupatras.clustering.sapehac.agglomeration.WardLinkage"};
-		int[] cutthA = {10, 25, 50, 75, 90};
+		int[] cutthA = {5, 10, 15, 20, 25, 30, 40, 50};
 		float[] seqweights = {0.25f, 0.40f, 0.50f, 0.6f, 0.7f, 0.8f};
-		//for(int i=0; i<cutthA.length; i++){
-		//	int cutth = cutthA[i];
-		int cutth = cutthA[0];
+		float[] confusionPoints = {0.00f,0.10f,0.25f,0.50f,0.75f,0.90f,1.00f};
 		
-			System.out.print("cl_ " + cutth + ",");
+		// Start generating andd evaluating the model
+		for(int i=0; i<linkages.length; i++){
+			String linkageClassName = linkages[i];
+			for(int j=0; j<cutthA.length; j++){
+				int cutth = cutthA[j];
+				
+				String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
-			// Clustering
-			modelev.buildClusters(50, linkages[5]);
-			//modelev.saveClusters(basedirectory + "/_cl50.javaData");
-			//modelev.writeClusters(basedirectory + "/cl50.txt");
-			modelev.loadClusters(basedirectory + "/_cl" + cutth + ".javaData");
+				// Clustering
+				modelev.buildClusters(cutth, linkageClassName);
+				modelev.saveClusters(basedirectory + "/" + esperimentationStr + ".javaData");
+				modelev.writeClusters(basedirectory + "/" + esperimentationStr + ".txt");
+				//modelev.loadClusters(basedirectory + "/" + esperimentationStr + ".javaData");
 			
-			// Sequence Alignment
-			modelev.clustersSequenceAlignment();
-			modelev.writeAlignments(basedirectory + "/cl" + cutth + "_alignments.txt");
+				/*
+				// Sequence Alignment
+				modelev.clustersSequenceAlignment();
+				modelev.writeAlignments(basedirectory + "/cl" + cutth + "_alignments.txt");
 			
-			// Weighted Sequences
-			modelev.extractWeightedSequences(0.25f);
-			modelev.writeWeightedSequences(basedirectory + "/cl" + cutth + "_ws0.25.txt");
+				// Weighted Sequences
+				modelev.extractWeightedSequences(0.25f);
+				modelev.writeWeightedSequences(basedirectory + "/cl" + cutth + "_ws0.25.txt");
 			
-			// Suffix Tree
-			modelev.buildSuffixTrees();
+				// Suffix Tree
+				modelev.buildSuffixTrees();
 			
-			// Evaluation
-			float[] confusionPoints = {0.00f,0.10f,0.25f,0.50f,0.75f,0.90f,1.00f};
-			modelev.setConfusionPoints(confusionPoints);
-			modelev.setFmeasureBeta(0.5f);
-			String results = modelev.computeEvaluationTest();
-			System.out.print(results);
-		//}
+				// Evaluation
+				modelev.setConfusionPoints(confusionPoints);
+				modelev.setFmeasureBeta(0.5f);
+				String results = modelev.computeEvaluationTest();
+				System.out.print(esperimentationStr + ",");
+				System.out.print(results);
+				*/
+			}
+		}
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

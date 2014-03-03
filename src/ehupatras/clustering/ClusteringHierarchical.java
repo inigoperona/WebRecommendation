@@ -2,7 +2,7 @@ package ehupatras.clustering;
 
 import ehupatras.clustering.sapehac.HierarchicalAgglomerativeClusterer;
 import ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod;
-import ehupatras.clustering.sapehac.agglomeration.WardLinkage;
+import ehupatras.clustering.sapehac.agglomeration.*;
 import ehupatras.clustering.sapehac.dendrogram.*;
 import ehupatras.clustering.sapehac.experiment.DissimilarityMeasure;
 import ehupatras.clustering.sapehac.experiment.DissimilarityMeasureEhupatras;
@@ -29,24 +29,54 @@ public class ClusteringHierarchical {
 
 		// Define agglomeration-linkage method
 		// AgglomerationMethod agglomerationMethod = new WardLinkage();
-		Class<AgglomerationMethod> clazz = null;
+		Class<?> clazz = null;
 		try{
-			clazz = (Class<AgglomerationMethod>)Class.forName(agglomerationMethodClassName);
+			clazz = Class.forName(agglomerationMethodClassName);
 		} catch (ClassNotFoundException ex){
-		}
-		Constructor<AgglomerationMethod> ctor = null;
+			System.err.println("[ehupatras.clustering.ClusteringHierarchical.computeHierarchicalClustering] " +
+					"Getting the class from the class-name. " + 
+					"Class not found: " + agglomerationMethodClassName);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		};
+		Constructor<?> ctor = null;
 		try{
-			ctor = clazz.getConstructor(String.class);
+			ctor = clazz.getConstructor();
 		} catch (NoSuchMethodException ex){
+			System.err.println("[ehupatras.clustering.ClusteringHierarchical.computeHierarchicalClustering] " +
+					"Geting the constructor of the class: " + 
+					"Not such method: Constructor");
+			System.err.println(ex.getMessage());
+			System.exit(1);
 		}
 		AgglomerationMethod agglomerationMethod = null;
 		try{
-			agglomerationMethod = ctor.newInstance();
+			agglomerationMethod = (AgglomerationMethod)ctor.newInstance();
 		
 		} catch (InstantiationException ex){
+			System.err.println("[ehupatras.clustering.ClusteringHierarchical.computeHierarchicalClustering] " +
+					"Creating an instance of the class. " + 
+					"InstantiationException");
+			System.err.println(ex.getMessage());
+			System.exit(1);
 		} catch (IllegalAccessException ex){
+			System.err.println("[ehupatras.clustering.ClusteringHierarchical.computeHierarchicalClustering] " +
+					"Creating an instance of the class. " + 
+					"IllegalAccessException");
+			System.err.println(ex.getMessage());
+			System.exit(1);
 		} catch (IllegalArgumentException ex){
+			System.err.println("[ehupatras.clustering.ClusteringHierarchical.computeHierarchicalClustering] " +
+					"Creating an instance of the class. " + 
+					"IllegalArgumentException");
+			System.err.println(ex.getMessage());
+			System.exit(1);
 		} catch (InvocationTargetException ex){
+			System.err.println("[ehupatras.clustering.ClusteringHierarchical.computeHierarchicalClustering] " +
+					"Creating an instance of the class. " + 
+					"InvocationTargetException");
+			System.err.println(ex.getMessage());
+			System.exit(1);
 		}
 		
 		// Compute the dendrogram
