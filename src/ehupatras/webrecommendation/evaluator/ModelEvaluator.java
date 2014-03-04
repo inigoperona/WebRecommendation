@@ -6,7 +6,7 @@ import ehupatras.webrecommendation.sequencealignment.multiplealignment.MultipleS
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.weightedsequence.WeightedSequence;
-
+import ehupatras.markovmodel.MarkovChain;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,7 +36,10 @@ public class ModelEvaluator {
 	private ArrayList<ArrayList<String[]>> m_weightedSequences;
 	
 	// Generalized Suffix tree
-	private ArrayList<SuffixTreeStringArray> m_suffixtreeAL;
+	private ArrayList<SuffixTreeStringArray> m_suffixtreeAL = null;
+	
+	// Markov Chain
+	private ArrayList<MarkovChain> m_markovChainAL = null;
 	
 	// to evaluate the model
 	private ArrayList<ArrayList<Integer>> m_valAL;
@@ -66,9 +69,9 @@ public class ModelEvaluator {
 		m_dataset = dataset;
 	}
 	
-	public void createModels(){
-		this.buildClusters();
-		this.clustersSequenceAlignment();
+	public void resetModels(){
+		m_suffixtreeAL = null;
+		m_markovChainAL = null;
 	}
 	
 	
@@ -386,6 +389,27 @@ public class ModelEvaluator {
 	
 	
 	
+	// MARKOV CHAIN
+	public void buildMarkovChains(){
+		// Clustering for each fold
+		m_markovChainAL = new ArrayList<MarkovChain>();
+		for(int i=0; i<m_nFolds; i++){
+			m_markovChainAL.add(this.getMarkovChain(i));
+		}
+	}
+	
+	public MarkovChain getMarkovChain(int indexFold){
+		// get the train sequences from sessionIDs
+		ArrayList<Integer> sessionIDs = m_trainAL.get(indexFold); 
+		int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs);
+		ArrayList<String[]> trainseqs = new ArrayList<String[]>();
+		for(int j=0; j<inds.length; j++){ trainseqs.add(m_dataset.get(inds[j])); }
+		MarkovChain mchain = new MarkovChain(trainseqs);
+		return mchain;
+	}
+	
+	
+	
 	// MODEL EVALUATION
 	
 	public String computeEvaluationTest(int mode, int nrecos, long seed){				
@@ -404,24 +428,35 @@ public class ModelEvaluator {
 		
 		// for each fold obtain the metrics
 		for(int i=0; i<m_nFolds; i++){
-			// get the suffix tree
-			SuffixTreeStringArray suffixtree = m_suffixtreeAL.get(i);
-			
 			// get the test sequences from sessionIDs
 			ArrayList<Integer> sessionIDs = m_testAL.get(i); 
 			int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs);
 			ArrayList<String[]> testseqs = new ArrayList<String[]>();
 			for(int j=0; j<inds.length; j++){ testseqs.add(m_dataset.get(inds[j])); }
 			
+			// SELECT THE MODEL
+			TestSetEvaluator eval = null;
+			SuffixTreeStringArray suffixtree = null;
+			if(m_suffixtreeAL!=null){
+				// get the suffix tree
+				suffixtree = m_suffixtreeAL.get(i);
+				eval = new TestSetEvaluator(testseqs, suffixtree);
+			}
+			if(m_markovChainAL!=null){
+				MarkovChain markovchain = m_markovChainAL.get(i);
+				eval = new TestSetEvaluator(testseqs, markovchain);
+			}
+			
 			// carry out the evaluation
-			TestSetEvaluator eval = new TestSetEvaluator(testseqs, suffixtree);
 			eval.setConfusionPoints(m_confusionPoints);
 			eval.setFmeasureBeta(m_fmeasurebeta);
 			eval.computeEvaluation(mode, nrecos, seed);
 			//eval.writeResults();
 			
-			nNodes = nNodes + suffixtree.getNumberOfNodes();
-			nEdges = nEdges + suffixtree.getNumberOfEdges();
+			if(m_suffixtreeAL!=null){
+				nNodes = nNodes + suffixtree.getNumberOfNodes();
+				nEdges = nEdges + suffixtree.getNumberOfEdges();
+			}
 			nrec = nrec + eval.getNumberOfRecommendationsRatio();
 			hitratio = hitratio + eval.getHitRatio();
 			clicksoonration = clicksoonration + eval.getClickSoonRatio();

@@ -95,6 +95,63 @@ public class MainClass {
 		modelev.setConfusionPoints(confusionPoints);
 		System.out.print("options," + modelev.getEvaluationHeader());
 		
+		
+		
+		// MARKOV CHAIN
+		modelev.buildMarkovChains();
+		String resultsMarkov;
+		
+		resultsMarkov = modelev.computeEvaluationTest(-1, -1, (long)0);
+		System.out.print("markovchain_unbounded,");
+		System.out.print(resultsMarkov);
+		
+		// random
+		resultsMarkov = modelev.computeEvaluationTest(0, 2, (long)0);
+		System.out.print("markovchain" + "_random2,");
+		System.out.print(resultsMarkov);
+		
+		resultsMarkov = modelev.computeEvaluationTest(0, 3, (long)0);
+		System.out.print("markovchain" + "_random3,");
+		System.out.print(resultsMarkov);
+		
+		resultsMarkov = modelev.computeEvaluationTest(0, 4, (long)0);
+		System.out.print("markovchain" + "_random4,");
+		System.out.print(resultsMarkov);
+		
+		resultsMarkov = modelev.computeEvaluationTest(0, 10, (long)0);
+		System.out.print("markovchain" + "_random10,");
+		System.out.print(resultsMarkov);
+		
+		resultsMarkov = modelev.computeEvaluationTest(0, 20, (long)0);
+		System.out.print("markovchain" + "_random20,");
+		System.out.print(resultsMarkov);
+
+		// weighted
+		resultsMarkov = modelev.computeEvaluationTest(1, 2, (long)0);
+		System.out.print("markovchain" + "_weighted2,");
+		System.out.print(resultsMarkov);
+		
+		resultsMarkov = modelev.computeEvaluationTest(1, 3, (long)0);
+		System.out.print("markovchain" + "_weighted3,");
+		System.out.print(resultsMarkov);
+		
+		resultsMarkov = modelev.computeEvaluationTest(1, 4, (long)0);
+		System.out.print("markovchain" + "_weighted4,");
+		System.out.print(resultsMarkov);
+		
+		resultsMarkov = modelev.computeEvaluationTest(1, 10, (long)0);
+		System.out.print("markovchain" + "_weighted10,");
+		System.out.print(resultsMarkov);
+		
+		resultsMarkov = modelev.computeEvaluationTest(1, 20, (long)0);
+		System.out.print("markovchain" + "_weighted20,");
+		System.out.print(resultsMarkov);
+		
+		
+		
+		/*
+		// SUFFIX TREE
+		modelev.resetModels();
 		// Start generating and evaluating the model
 		//for(int i=0; i<linkages.length; i++){
 		int i = 5;
@@ -127,56 +184,60 @@ public class MainClass {
 			
 					// Evaluation
 					String results;
-				
+					
 					// unbounded
-					results = modelev.computeEvaluationTest(-1, -1, (long)0);
+					results = modelev.computeEvaluationTest(-1, -1, (long)0, false);
 					System.out.print(esperimentationStr2 + "_unbounded,");
 					System.out.print(results);
 					
 					// random
-					results = modelev.computeEvaluationTest(0, 2, (long)0);
+					results = modelev.computeEvaluationTest(0, 2, (long)0, false);
 					System.out.print(esperimentationStr2 + "_random2,");
 					System.out.print(results);
 					
-					results = modelev.computeEvaluationTest(0, 3, (long)0);
+					results = modelev.computeEvaluationTest(0, 3, (long)0, false);
 					System.out.print(esperimentationStr2 + "_random3,");
 					System.out.print(results);
 					
-					results = modelev.computeEvaluationTest(0, 4, (long)0);
+					results = modelev.computeEvaluationTest(0, 4, (long)0, false);
 					System.out.print(esperimentationStr2 + "_random4,");
 					System.out.print(results);
 					
-					results = modelev.computeEvaluationTest(0, 10, (long)0);
+					results = modelev.computeEvaluationTest(0, 10, (long)0, false);
 					System.out.print(esperimentationStr2 + "_random10,");
 					System.out.print(results);
 					
-					results = modelev.computeEvaluationTest(0, 20, (long)0);
+					results = modelev.computeEvaluationTest(0, 20, (long)0, false);
 					System.out.print(esperimentationStr2 + "_random20,");
 					System.out.print(results);
-					
+				
 					// weighted
-					results = modelev.computeEvaluationTest(1, 2, (long)0);
+					results = modelev.computeEvaluationTest(1, 2, (long)0, false);
 					System.out.print(esperimentationStr2 + "_weighted2,");
 					System.out.print(results);
 					
-					results = modelev.computeEvaluationTest(1, 3, (long)0);
+					results = modelev.computeEvaluationTest(1, 3, (long)0, false);
 					System.out.print(esperimentationStr2 + "_weighted3,");
 					System.out.print(results);
 					
-					results = modelev.computeEvaluationTest(1, 4, (long)0);
+					results = modelev.computeEvaluationTest(1, 4, (long)0, false);
 					System.out.print(esperimentationStr2 + "_weighted4,");
 					System.out.print(results);
 					
-					results = modelev.computeEvaluationTest(1, 10, (long)0);
+					results = modelev.computeEvaluationTest(1, 10, (long)0, false);
 					System.out.print(esperimentationStr2 + "_weighted10,");
 					System.out.print(results);
 					
-					results = modelev.computeEvaluationTest(1, 20, (long)0);
+					results = modelev.computeEvaluationTest(1, 20, (long)0, false);
 					System.out.print(esperimentationStr2 + "_weighted20,");
 					System.out.print(results);
+					
+					
 				}
 			}
 		//}
+		
+		*/
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

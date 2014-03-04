@@ -1,7 +1,11 @@
 package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.webrecommendation.recommender.*;
+import ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
+import ehupatras.markovmodel.MarkovChain;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -20,10 +24,7 @@ public class SequenceEvaluator {
 	private float[] m_recallModel;
 	
 	public SequenceEvaluator(String[] sequence, SuffixTreeStringArray suffixtree){
-		ArrayList<String> sequenceAL = new ArrayList<String>();
-		for(int i=0; i<sequence.length; i++){
-			sequenceAL.add(sequence[i]);
-		}
+		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructor(sequenceAL, suffixtree);
 	}
 	
@@ -32,7 +33,7 @@ public class SequenceEvaluator {
 	}
 	
 	private void constructor(ArrayList<String> sequence, SuffixTreeStringArray suffixtree){
-		m_recommender = new Recommender(suffixtree);
+		m_recommender = new RecommenderSuffixTree(suffixtree);
 		m_sequence = sequence;
 		m_sequenceURL = sequence;
 		m_precision = new float[sequence.size()];
@@ -41,11 +42,38 @@ public class SequenceEvaluator {
 		m_recallModel = new float[sequence.size()];
 	}
 	
+	public SequenceEvaluator(String[] sequence, MarkovChain markovchain){
+		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
+		this.constructor(sequenceAL, markovchain);
+	}
+	
+	public SequenceEvaluator(ArrayList<String> sequence, MarkovChain markovchain){
+		this.constructor(sequence, markovchain);
+	}
+	
+	private void constructor(ArrayList<String> sequence, MarkovChain markovchain){
+		m_recommender = new RecommenderMarkovChain(markovchain);
+		m_sequence = sequence;
+		m_sequenceURL = sequence;
+		m_precision = new float[sequence.size()];
+		m_recall = new float[sequence.size()];
+		m_precisionModel = new float[sequence.size()];
+		m_recallModel = new float[sequence.size()];
+	}
+	
+	private ArrayList<String> convertToArrayList(String[] strA){
+		ArrayList<String> sequenceAL = new ArrayList<String>();
+		for(int i=0; i<strA.length; i++){
+			sequenceAL.add(strA[i]);
+		}
+		return sequenceAL;
+	}
+	
 	// mode = -1 : Unbounded
 	// mode =  0 : Random, fixed number of requests
 	// mode =  1 : Weighted, fixed number of requests
 	public void computeSequenceMetrics(int mode, int nrecos, long seed){
-		m_recommender.gotoroot();
+		m_recommender.reset();
 		ArrayList<String> waydone = null;
 		ArrayList<String> list = null;
 		if(mode==-1){
@@ -61,7 +89,7 @@ public class SequenceEvaluator {
 			this.computeStepMetrics(i, list);
 			
 			// do the step and get the next recommendations
-			m_recommender.updatePointer(step);
+			m_recommender.update(step);
 			if(mode==-1){
 				list = m_recommender.getNextpossibleStepsUnbounded();
 			} else if(mode==0){

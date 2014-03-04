@@ -2,11 +2,13 @@ package ehupatras.webrecommendation.evaluator;
 
 import java.util.ArrayList;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
+import ehupatras.markovmodel.MarkovChain;
 
 public class TestSetEvaluator {
 
 	private ArrayList<String[]> m_sequences;
-	private SuffixTreeStringArray m_gST;
+	private SuffixTreeStringArray m_gST = null;
+	private MarkovChain m_markovchain = null;
 	
 	private float[] m_points = {(float)0.0, (float)0.10, (float)0.25, 
 			(float)0.50, (float)0.75, (float)0.90, (float)1.00};
@@ -33,6 +35,17 @@ public class TestSetEvaluator {
 		m_ModelFmeasure = new float[m_points.length];
 	}
 	
+	public TestSetEvaluator(ArrayList<String[]> sequences, MarkovChain markovchain){
+		m_sequences = sequences;
+		m_markovchain = markovchain;
+		m_precision = new float[m_points.length];
+		m_recall = new float[m_points.length];
+		m_fmeasure = new float[m_points.length];
+		m_ModelPrecision = new float[m_points.length];
+		m_ModelRecall = new float[m_points.length];
+		m_ModelFmeasure = new float[m_points.length];
+	}
+	
 	public void computeEvaluation(int mode, int nrecos, long seed){
 		float numberOfRecommendationsRatio = (float)0;
 		float hitratio = (float)0;
@@ -45,7 +58,15 @@ public class TestSetEvaluator {
 		float[] modelFmeasure = new float[m_points.length];
 		for(int i=0; i<m_sequences.size(); i++){
 			String[] seq = m_sequences.get(i);
-			SequenceEvaluator seqEv = new SequenceEvaluator(seq, m_gST);
+			
+			// select the model
+			SequenceEvaluator seqEv = null;
+			if(m_gST!=null){
+				seqEv = new SequenceEvaluator(seq, m_gST);
+			} else {
+				seqEv = new SequenceEvaluator(seq, m_markovchain);
+			}
+			
 			seqEv.computeSequenceMetrics(mode, nrecos, seed);
 			numberOfRecommendationsRatio = numberOfRecommendationsRatio + seqEv.getNumberOfRecommendationsRatio();
 			hitratio = hitratio + seqEv.getHitRatio();
