@@ -70,11 +70,29 @@ public class MainClassPreprocess {
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start creating sequences.");
 		ses.createSequences();
+		WebAccessSequences.writeValidness(basedirectory + "/validness.txt");
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		
-		// ensure a minimun activity in each sequence
+		// ensure that each sequence is made up mainly by valid URLs
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Start ensuring minimum amount of valid URLs.");
+		ses.ensureMinimumValidURLs(0.75f);
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. Elapsed time: "
+					+ (endtime-starttime)/1000 + " seconds.");
+		
+		// ensure that there are not consecutive same URLs
+		// in this case only select the first one
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Start removing consecutive same URLs.");
+		ses.removeConsecutiveSameURLs();
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. Elapsed time: "
+					+ (endtime-starttime)/1000 + " seconds.");
+			
+		// ensure a minimum activity in each sequence
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start ensuring a minimun activity in each sequence.");
 		ses.ensureMinimumActivityInEachSequence(3);
@@ -98,55 +116,31 @@ public class MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 			
-		
-			
-			// write preprocessed logs
+		// remove those ssequences that have many Unimportant
 			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start writing processed logs.");
-		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: "
-				+ (endtime-starttime)/1000 + " seconds.");
-			
-		// write the sequences we have created
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start writing created sequences of request indexes.");
-		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
+			System.out.println("[" + starttime + "] Start removing Unimportant sequences.");
+		ses.computePageRoleUHC_removeOnlyUnimportant(0.75f);
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
-
-		// write the sequence instantiation1: 
-		// sequence of urlID with each role: Unimportant (U), Hub (H), Content (C)
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start writing created sequences of urlID+(U,H,C).");
+		
+		// write preprocessed logs
+		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
+		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
 		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: "
-				+ (endtime-starttime)/1000 + " seconds.");
 						
 		// save the sessions structure we have created
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start saving the preprocesssing.");
 		WebAccessSequences.saveStructure();
 		WebAccessSequences.saveSequences();
 		Website.save();
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: "
-					+ (endtime-starttime)/1000 + " seconds.");
-
 	}
 	
 	public void loadPreprocess(){
 		long starttime;
 		long endtime;
 		
-		// start loading preprocessing data
-		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] LOADING PREPROCESSED DATA.");
-		
 			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start reading preprocessed data.");
+			System.out.println("[" + starttime + "] Start loading preprocessed data.");
 		Website.load();
 		WebAccessSequences.loadStructure();
 		WebAccessSequences.loadSequences();
@@ -165,8 +159,8 @@ public class MainClassPreprocess {
 		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
 		String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String filename1 = "/kk.log";
-		//String basedirectory = args[0];
-		//String filename1 = args[1];
+		basedirectory = args[0];
+		filename1 = args[1];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(basedirectory);

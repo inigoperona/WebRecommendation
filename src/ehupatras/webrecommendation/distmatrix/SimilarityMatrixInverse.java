@@ -1,15 +1,20 @@
 package ehupatras.webrecommendation.distmatrix;
 
-import ehupatras.webrecommendation.sequencealignment.*;
-import java.util.*;
+import java.util.ArrayList;
 
-public class SimilarityMatrix 
+import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
+import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010;
+
+public class SimilarityMatrixInverse 
 				extends Matrix {
 	
 	public void computeMatrix(ArrayList<Integer> names, ArrayList<String[]> data){
 		m_names = names;
 		m_matrix = new float[data.size()][data.size()];
+		
+		float[][] simmatrix = new float[data.size()][data.size()];
 		for(int i=0; i<data.size(); i++){
+			System.out.println("  [" + System.currentTimeMillis() + "] Computing similarities of row " + i);
 			// compute each row similarities
 			// and check the maximum and minimum values to create the distance
 			String[] seqA = data.get(i);
@@ -24,10 +29,18 @@ public class SimilarityMatrix
 				if(sim<minsim){ minsim = sim; }
 				similaritiesrow[j] = sim;
 			}
-			// covert the similarities to distance
+			// put the similarity between 0 and 1
 			for(int j=0; j<data.size(); j++){
 				float sim = similaritiesrow[j];
-				m_matrix[i][j] = (sim-minsim) / Math.abs(maxsim-minsim);
+				simmatrix[i][j] = (sim-minsim) / Math.abs(maxsim-minsim);
+			}
+		}
+		
+		// convert to distance by inversing the value
+		for(int i=0; i<data.size(); i++){
+			for(int j=0; j<data.size(); j++){
+				float sim = simmatrix[i][j];
+				m_matrix[i][j] = 1f - sim; 
 			}
 		}
 	}

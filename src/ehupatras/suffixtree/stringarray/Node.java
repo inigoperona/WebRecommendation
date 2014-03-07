@@ -57,7 +57,7 @@ public class Node {
      * @see Node#computeAndCacheCount() 
      */
     private int resultCount = -1;
-
+    
     /**
      * Creates a new Node
      */

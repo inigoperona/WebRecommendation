@@ -7,10 +7,12 @@ import ehupatras.suffixtree.stringarray.Edge;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Hashtable;
 
 public class SuffixTreeStringArray {
     
 	private GeneralizedSuffixTreeStringArray m_gST = new GeneralizedSuffixTreeStringArray();
+	private Hashtable<Node,Integer> m_nodeWeights = new Hashtable<Node,Integer>();
 
 	public void putSequence(String[] seq, int index){
 		ArrayList<String> seqAL = StringToArrayList(seq);
@@ -103,6 +105,23 @@ public class SuffixTreeStringArray {
 			if(nEdgesA.get(i)>0){ nElem++; }
 		}
 		return ((float)sum / (float)nElem);
+	}
+	
+	public void incrementNodeWeight(Node nod){
+		int freq = 0;
+		if(m_nodeWeights.containsKey(nod)){
+			freq = m_nodeWeights.get(nod);
+		}
+		freq++;
+		m_nodeWeights.put(nod, freq);
+	}
+
+	public int getNodeWeight(Node nod){
+		int freq = 0;
+		if(m_nodeWeights.contains(nod)){
+			freq = m_nodeWeights.get(nod);
+		}
+		return freq;
 	}
 	
     public static void main(String[] args){

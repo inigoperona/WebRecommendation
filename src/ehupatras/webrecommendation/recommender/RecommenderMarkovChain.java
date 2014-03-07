@@ -48,7 +48,7 @@ public class RecommenderMarkovChain
 		return recos2;
 	}
 	
-	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone){
+	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone){
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> recos = (ArrayList<String>)objA[0];
 		ArrayList<Float> probs = (ArrayList<Float>)objA[1];
@@ -77,6 +77,10 @@ public class RecommenderMarkovChain
 			}
 		}
 		return recos2;
+	}
+	
+	public ArrayList<String> getNextpossibleStepsWeightedTest(int nrecos){
+		return this.getNextpossibleStepsWeightedTrain(nrecos, null);
 	}
 	
 	private Object[] getNextpossibleSteps(){

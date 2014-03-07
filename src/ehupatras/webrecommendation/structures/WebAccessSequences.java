@@ -21,6 +21,7 @@ public class WebAccessSequences {
 	// The sequences we are going to use to link prediction
 	// sessionID1: req1, req2, req3
 	public static Hashtable<Integer,ArrayList<Integer>> m_sequences = new Hashtable<Integer,ArrayList<Integer>>();
+	public static Hashtable<Integer,Float> m_validnessOfSequences = new Hashtable<Integer,Float>();
 	private static String m_seqfilename = "_sequences.javaData";
 	
 	// protected constructor
@@ -392,6 +393,50 @@ public class WebAccessSequences {
 			// update pointers
 			m_lastloadedrequest = m_filterlog.size()-1;
 		}
+	}
+	
+	
+	public static void writeValidness(String outfilename){
+		// order the keys
+		ArrayList<Integer> keysOrd = getSequencesIDs();
+		
+		// Open the given file
+		BufferedWriter writer = null;
+		try{
+			writer = new BufferedWriter(new FileWriter(outfilename));
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeValidness] " +
+					"Not possible to open the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// Write the sequences in a file line by line
+		try{
+			for(int i=0; i<keysOrd.size(); i++){
+				int sessionID = keysOrd.get(i).intValue();
+				float prob = WebAccessSequences.m_validnessOfSequences.get(sessionID);
+				writer.write(String.valueOf(sessionID)); // write the session identification
+				writer.write(" " + String.valueOf(prob));
+				writer.write("\n");
+			}
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeValidness] " +
+					"Problems writing to the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// close the file
+		try{
+			writer.close();
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeValidness] " +
+					"Problems at closing the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
 	}
 	
 }

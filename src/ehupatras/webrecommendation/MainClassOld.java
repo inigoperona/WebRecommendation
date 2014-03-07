@@ -72,7 +72,7 @@ public class MainClassOld {
 		
 		
 		// DISTANCE MATRIX //
-		Matrix matrix = new SimilarityMatrix();
+		Matrix matrix = new SimilarityMatrixEuclidean();
 	if(true){
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start computing the similarity matrix.");

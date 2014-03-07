@@ -34,6 +34,7 @@ public class RecommenderSuffixTree
 				}
 			} else {
 				m_pointerNode = m_pointerEdge.getDest();
+				m_gST.incrementNodeWeight(m_pointerNode);
 				m_pointerEdge = null;
 				m_pointerPositionInTheEdge = 0;
 			}
@@ -90,8 +91,9 @@ public class RecommenderSuffixTree
 		this.gotoroot();
 	}
 	
-	private ArrayList<String> getNextpossibleSteps(){
+	private Object[] getNextpossibleSteps(){
 		ArrayList<String> listOfURLs = new ArrayList<String>();
+		ArrayList<Integer> listOfWeights = new ArrayList<Integer>();
 		
 		// control if we are in the root or not
 		Node destnode = null;
@@ -106,25 +108,36 @@ public class RecommenderSuffixTree
 		// take the possible steps
 		if(m_pointerEdge!=null && label.size()>m_pointerPositionInTheEdge){
 			listOfURLs.add(label.get(m_pointerPositionInTheEdge));
+			listOfWeights.add(0);
 		} else {
 			// take the first element of each edge label
 			EdgeBag edges = destnode.getEdges();
 			ArrayList<Edge> edgesA = edges.values();
 			for(int i=0; i<edgesA.size(); i++){ // for each edge
 				Edge e = edgesA.get(i);
+				Node d = e.getDest();
 				ArrayList<String> label2 = e.getLabel();
 				listOfURLs.add(label2.get(0));
+				listOfWeights.add(m_gST.getNodeWeight(d));
 			}
 		}
-		return listOfURLs;
+		
+		// return the recommendations with their weights
+		Object[] objA = new Object[2];
+		objA[0] = listOfURLs;
+		objA[1] = listOfWeights;
+		return objA;
 	}
 	
 	public ArrayList<String> getNextpossibleStepsUnbounded(){
-		return this.getNextpossibleSteps();
+		Object[] objA = this.getNextpossibleSteps();
+		ArrayList<String> listOfUrls = (ArrayList<String>)objA[0];
+		return listOfUrls;
 	}
 	
 	public ArrayList<String> getNextpossibleStepsRandom(int nReco, long seed){
-		ArrayList<String> list = this.getNextpossibleSteps();
+		Object[] objA = this.getNextpossibleSteps();
+		ArrayList<String> list = (ArrayList<String>)objA[0];
 		int realNreco = Math.min(nReco, list.size());
 		ArrayList<String> list2 = new ArrayList<String>(); 
 		Random rand = new Random(seed);
@@ -135,14 +148,14 @@ public class RecommenderSuffixTree
 		return list2;
 	}
 	
-	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone){
+	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone){
 		// save the pointers values
 		Node pointerNode = m_pointerNode;
 		Edge pointerEdge = m_pointerEdge;
 		int pointerPositionInTheEdge = m_pointerPositionInTheEdge;
 		
 		// run the way done  (clickstream done until now) in the suffix tree
-		// and create the sequence that it is runable in the sufffix tree
+		// and create the sequence that it is runnable in the suffix tree
 		ArrayList<String> waydone2 = new ArrayList<String>(); 
 		this.gotoroot();
 		for(int i=0; i<waydone.size(); i++){
@@ -158,7 +171,8 @@ public class RecommenderSuffixTree
 		}
 		
 		// compute the weight of the waydone + next step sequences
-		ArrayList<String> nextsteps = this.getNextpossibleSteps();
+		Object[] objA = this.getNextpossibleSteps();
+		ArrayList<String> nextsteps = (ArrayList<String>)objA[0];
 		int realNreco = Math.min(nRecos, nextsteps.size());
 		int[] frequencies = new int[nextsteps.size()];
 		ArrayList<String> way = (ArrayList<String>)waydone2.clone();
@@ -205,6 +219,40 @@ public class RecommenderSuffixTree
 		return recos;
 	}
 	
+	public ArrayList<String> getNextpossibleStepsWeightedTest(int nRecos){
+		// take the weights
+		Object[] objA = this.getNextpossibleSteps();
+		ArrayList<String> listOfUrls = (ArrayList<String>)objA[0];
+		ArrayList<Integer> listOfWeights = (ArrayList<Integer>)objA[1];
+		int[] listOfWeightsA = new int[listOfWeights.size()];
+		for(int i=0; i<listOfWeights.size(); i++){ listOfWeightsA[i] = listOfWeights.get(i); }
+		Arrays.sort(listOfWeightsA);
+		
+		// select the most weighted sequences
+		ArrayList<String> recos = new ArrayList<String>();
+		int realNreco = Math.min(nRecos, listOfUrls.size());
+		boolean[] isusedA = new boolean[listOfWeightsA.length];
+		Arrays.fill(isusedA, false);
+		for(int i=listOfWeightsA.length-1; i>=0; i--){
+			int freqmax = listOfWeightsA[i];
+			for(int j=0; j<listOfWeights.size(); j++){
+				if(!isusedA[j]){
+					if(freqmax==listOfWeights.get(j)){
+						recos.add(listOfUrls.get(j));
+						isusedA[j] = true;
+						break;
+					}
+				}
+			}
+			if(recos.size()==realNreco){
+				break;
+			}
+		}
+		
+		// return the most weighted sequences
+		return recos;
+	}
+	
 	public static void main(String[] args){
 		// create the suffix tree
 		SuffixTreeStringArray st = new SuffixTreeStringArray();
@@ -221,9 +269,11 @@ public class RecommenderSuffixTree
         // recommendations
         RecommenderSuffixTree rec = new RecommenderSuffixTree(st);
         
+        Object[] objA;
         ArrayList<String> list;
         
-        list = rec.getNextpossibleSteps();
+		objA = rec.getNextpossibleSteps();
+		list = (ArrayList<String>)objA[0];
         
         // recommendations from the root
         System.out.println("---");
@@ -232,15 +282,18 @@ public class RecommenderSuffixTree
         // paths that are exists
         rec.updatePointer("c");
         rec.updatePointer("a");
-        list = rec.getNextpossibleSteps();
+        objA = rec.getNextpossibleSteps();
+		list = (ArrayList<String>)objA[0];
         rec.updatePointer("c");
-        list = rec.getNextpossibleSteps();
+        objA = rec.getNextpossibleSteps();
+		list = (ArrayList<String>)objA[0];
         System.out.println("---");
         for(int i=0; i<list.size(); i++){ System.out.println(list.get(i)); }
 	
         // paths that they not exists
         rec.updatePointer("z");
-        list = rec.getNextpossibleSteps();
+        objA = rec.getNextpossibleSteps();
+		list = (ArrayList<String>)objA[0];
         System.out.println("---");
         for(int i=0; i<list.size(); i++){ System.out.println(list.get(i)); }
 	}

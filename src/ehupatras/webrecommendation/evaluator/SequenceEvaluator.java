@@ -76,13 +76,15 @@ public class SequenceEvaluator {
 		m_recommender.reset();
 		ArrayList<String> waydone = null;
 		ArrayList<String> list = null;
-		if(mode==-1){
+		if(mode==-1){ // Unbounded
 			list = m_recommender.getNextpossibleStepsUnbounded();
-		} else if(mode==0){
+		} else if(mode==0){ // Random
 			list = m_recommender.getNextpossibleStepsRandom(nrecos, seed);
-		} else if(mode==1){
+		} else if(mode==1){ // Weighted Suffix Tree with Train-Clusters-WeightedSequences
 			waydone = new ArrayList<String>();
-			list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
+			list = m_recommender.getNextpossibleStepsWeightedTrain(nrecos, waydone);
+		} else if(mode==2){
+			list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
 		}
 		for(int i=0; i<m_sequence.size(); i++){
 			String step = m_sequence.get(i);
@@ -96,7 +98,9 @@ public class SequenceEvaluator {
 				list = m_recommender.getNextpossibleStepsRandom(nrecos, seed);
 			} else if(mode==1){
 				waydone.add(step);
-				list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
+				list = m_recommender.getNextpossibleStepsWeightedTrain(nrecos, waydone);
+			} else if(mode==2){
+				list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
 			}
 		}
 	}

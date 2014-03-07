@@ -7,5 +7,6 @@ public interface Recommender {
 	public void reset();
 	public ArrayList<String> getNextpossibleStepsUnbounded();
 	public ArrayList<String> getNextpossibleStepsRandom(int nReco, long seed);
-	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone);
+	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone);
+	public ArrayList<String> getNextpossibleStepsWeightedTest(int nrecos);
 }

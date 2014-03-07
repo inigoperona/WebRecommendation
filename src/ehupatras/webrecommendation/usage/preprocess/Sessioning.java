@@ -9,10 +9,6 @@ import java.util.*;
 
 public class Sessioning {
 	
-	public Sessioning(){
-		
-	}
-	
 	// expireSessionsInMin: We suppose after this time that a new session starts.
 	// expireSessionsInMin: We split up sequences in two sessions when we see this jump of time between clicks.
 	public void createSessions(int expireSessionsInMin){
@@ -167,24 +163,116 @@ public class Sessioning {
 	}
 		
 	public void createSequences(){
+		// to measure the proportion of valid URLs in a session
+		Hashtable<Integer,Integer[]> validnessOfSequences = new Hashtable<Integer,Integer[]>();
+		
 		int sequencecounter = 0;
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
 			Request req = WebAccessSequences.getRequest(i);
 			int sessionID = req.getSessionID();
+			int nvalid = 0;
+			int len = 0;
 			if(	req.getIsSuitableToLinkPrediction() ){
 				if( WebAccessSequences.m_sequences.containsKey(sessionID) ){
 					ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 					sequence.add(i);
 					WebAccessSequences.m_sequences.put(sessionID,sequence);
+					
+					// validness
+					Integer[] objA = validnessOfSequences.get(sessionID);
+					nvalid = objA[0] + 1;
+					len = objA[1];
 				} else{
 					ArrayList<Integer> sequence = new ArrayList<Integer>();
 					sequence.add(i);
 					WebAccessSequences.m_sequences.put(sessionID,sequence);
 					sequencecounter++;
 				}
+				len++;
+				Integer[] newObjA = new Integer[2];
+				newObjA[0] = nvalid;
+				newObjA[1] = len;
+				validnessOfSequences.put(sessionID, newObjA);
 			}
 		}
 		System.out.println("  " + sequencecounter + " sequences created.");
+		
+		// update validness
+		Enumeration<Integer> keys = validnessOfSequences.keys();
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement();
+			Integer[] freqData = validnessOfSequences.get(sessionID);
+			int nvalid = freqData[0];
+			int len = freqData[1];
+			float prob = (float)nvalid/(float)len;
+			WebAccessSequences.m_validnessOfSequences.put(sessionID, prob);
+		}
+	}
+	
+	public void ensureMinimumValidURLs(float pValid){
+		Enumeration<Integer> keys = WebAccessSequences.m_sequences.keys();
+		int removecounter = 0;
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement().intValue();
+			float pValidSeq = WebAccessSequences.m_validnessOfSequences.get(sessionID);
+			if(pValidSeq<pValid){
+				WebAccessSequences.m_sequences.remove(sessionID);
+				removecounter++;
+			}
+		}
+		System.out.println("  " + removecounter + " sequences removed.");
+	}
+	
+	public void removeConsecutiveSameURLs(){
+		// store all request_indexes
+		ArrayList<Integer> reqindexes = new ArrayList<Integer>();
+		Enumeration<Integer> keys = WebAccessSequences.m_sequences.keys();
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement().intValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);			
+			for(int i=0; i<sequence.size(); i++){
+				reqindexes.add(sequence.get(i));
+			}
+		}
+		int[] reqindexesA = new int[reqindexes.size()];
+		for(int i=0; i<reqindexes.size(); i++){ reqindexesA[i] = reqindexes.get(i); }
+		Arrays.sort(reqindexesA);
+		
+		// access to request data and take the URLname
+		Hashtable<Integer,String> req2url = new Hashtable<Integer,String>();
+		for(int i=0; i<reqindexesA.length; i++){
+			int reqi = reqindexesA[i];
+			Request req = WebAccessSequences.getRequest(reqi);
+			String urlname = req.getFormatedUrlName();
+			req2url.put(reqi, urlname);
+		}
+		
+		// when consecutive same URL find remove the following ones
+		Enumeration<Integer> keys2 = WebAccessSequences.m_sequences.keys();
+		int removecounter = 0;
+		while(keys2.hasMoreElements()){
+			int sessionID = keys2.nextElement().intValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+			ArrayList<Integer> sequence2 = new ArrayList<Integer>();
+			String urlnameold = "";
+			for(int i=0; i<sequence.size(); i++){
+				int reqi = sequence.get(i);
+				String urlname = req2url.get(reqi);
+				if(i==0){
+					sequence2.add(reqi);
+					urlnameold = urlname;
+				} else {
+					if(!urlnameold.equals(urlname)){
+						sequence2.add(reqi);
+						urlnameold = urlname;
+					} else {
+						removecounter++;
+					}
+				}
+			}
+			WebAccessSequences.m_sequences.put(sessionID, sequence2);	
+		}
+		System.out.println("  " + removecounter + " requests were removed.");
 	}
 	
 	public void ensureMinimumActivityInEachSequence(int nclicks){
@@ -299,6 +387,54 @@ public class Sessioning {
 			// Update the request with the page role
 			WebAccessSequences.replaceRequest(reqind, req);
 		}
+	}
+	
+	
+	public void computePageRoleUHC_removeOnlyUnimportant(float pMaxUnimportant){
+		// store all request_indexes
+		ArrayList<Integer> reqindexes = new ArrayList<Integer>();
+		Enumeration<Integer> keys = WebAccessSequences.m_sequences.keys();
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement().intValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);			
+			for(int i=0; i<sequence.size(); i++){
+				reqindexes.add(sequence.get(i));
+			}
+		}
+		int[] reqindexesA = new int[reqindexes.size()];
+		for(int i=0; i<reqindexes.size(); i++){ reqindexesA[i] = reqindexes.get(i); }
+		Arrays.sort(reqindexesA);
+		
+		// access to request data and take the URLname
+		Hashtable<Integer,String> req2role = new Hashtable<Integer,String>();
+		for(int i=0; i<reqindexesA.length; i++){
+			int reqi = reqindexesA[i];
+			Request req = WebAccessSequences.getRequest(reqi);
+			String role = req.getPageRoleUHC();
+			req2role.put(reqi, role);
+		}
+		
+		// remove the sequences that have a lot of Unimportant
+		Enumeration<Integer> keys2 = WebAccessSequences.m_sequences.keys();
+		int removecounter = 0;
+		while(keys2.hasMoreElements()){
+			int sessionID = keys2.nextElement().intValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+			int nU = 0;
+			for(int i=0; i<sequence.size(); i++){
+				int reqi = sequence.get(i);
+				String role = req2role.get(reqi);
+				if(role.equals("U")){
+					nU++;
+				}
+			}
+			float pU = (float)nU/(float)sequence.size();
+			if(pU>=pMaxUnimportant){
+				WebAccessSequences.m_sequences.remove(sessionID);
+				removecounter++;
+			}	
+		}
+		System.out.println("  " + removecounter + " sequences were removed.");
 	}
 	
 }

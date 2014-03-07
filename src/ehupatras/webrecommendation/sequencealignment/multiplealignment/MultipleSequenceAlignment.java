@@ -203,7 +203,7 @@ public class MultipleSequenceAlignment {
 		
 		// Create the distance matrix of the sequences
 		ehupatras.webrecommendation.distmatrix.Matrix dm = 
-				new ehupatras.webrecommendation.distmatrix.SimilarityMatrix();
+				new ehupatras.webrecommendation.distmatrix.SimilarityMatrixEuclidean();
 		dm.computeMatrix(namesL, wasL);
 		float[][] dmatrix = dm.getMatrix();
 
