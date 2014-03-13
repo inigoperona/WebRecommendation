@@ -6,7 +6,9 @@ import java.util.*;
 public class SimilarityMatrixEuclidean 
 				extends Matrix {
 	
-	public void computeMatrix(ArrayList<Integer> names, ArrayList<String[]> data){
+	public void computeMatrix(ArrayList<Integer> names, 
+							ArrayList<String[]> data,
+							float[][] roleWeights){
 		m_names = names;
 		m_matrix = new float[data.size()][data.size()];
 
@@ -18,6 +20,7 @@ public class SimilarityMatrixEuclidean
 			for(int j=0; j<data.size(); j++){
 				String[] seqB = data.get(j);
 				SequenceAlignment seqalign = new SequenceAlignmentCombineGlobalLocalDimopoulos2010();
+				seqalign.setRoleWeights(roleWeights);
 				float sim = seqalign.getScore(seqA, seqB);
 				similaritiesM[i][j] = sim;
 			}

@@ -93,7 +93,11 @@ public class MarkovChain {
 	}
 	
 	public int getElemIndex(String elemName){
-		 return m_symbols.get(elemName);
+		if(m_symbols.containsKey(elemName)){
+			return m_symbols.get(elemName);
+		} else {
+			return -1;
+		}
 	}
 	
 	public float getInitialProb(int i){

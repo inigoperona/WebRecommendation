@@ -13,9 +13,9 @@ public class SequenceAlignmentGlobalSeqAFix
         while (i > 0 || j > 0) {
 
         	// check the values of three possible movements
-        	int valueDiagonal = Integer.MIN_VALUE;
-        	int valueHorizontal = Integer.MIN_VALUE;
-        	int valueVertical = Integer.MIN_VALUE;
+        	float valueDiagonal = Float.MIN_VALUE;
+        	float valueHorizontal = Float.MIN_VALUE;
+        	float valueVertical = Float.MIN_VALUE;
         	if(i > 0 && j > 0){
         		valueDiagonal = mD[i-1][j-1];
         	}

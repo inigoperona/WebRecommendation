@@ -4,7 +4,10 @@ import ehupatras.suffixtree.stringarray.GeneralizedSuffixTreeStringArray;
 import ehupatras.suffixtree.stringarray.Node;
 import ehupatras.suffixtree.stringarray.EdgeBag;
 import ehupatras.suffixtree.stringarray.Edge;
+import ehupatras.webrecommendation.recommender.Recommender;
+import ehupatras.webrecommendation.recommender.RecommenderSuffixTree;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Hashtable;
@@ -122,6 +125,19 @@ public class SuffixTreeStringArray {
 			freq = m_nodeWeights.get(nod);
 		}
 		return freq;
+	}
+	
+	public void weightTheSuffixTree(ArrayList<String[]> sequences){
+		RecommenderSuffixTree recST = new RecommenderSuffixTree(this);
+		for(int i=0; i<sequences.size(); i++){
+			String[] seq = sequences.get(i);
+			recST.reset();
+			for(int i1=0; i1<seq.length; i1++){
+				for(int i2=i1; i2<seq.length; i2++){
+					recST.update(seq[i2], true);
+				}
+			}
+		}
 	}
 	
     public static void main(String[] args){

@@ -46,7 +46,7 @@ public class TestSetEvaluator {
 		m_ModelFmeasure = new float[m_points.length];
 	}
 	
-	public void computeEvaluation(int mode, int nrecos, long seed){
+	public void computeEvaluation(int mode, int nrecos, long seed, MarkovChain markovchain){
 		float numberOfRecommendationsRatio = (float)0;
 		float hitratio = (float)0;
 		float clicksoonratio = (float)0;
@@ -67,7 +67,7 @@ public class TestSetEvaluator {
 				seqEv = new SequenceEvaluator(seq, m_markovchain);
 			}
 			
-			seqEv.computeSequenceMetrics(mode, nrecos, seed);
+			seqEv.computeSequenceMetrics(mode, nrecos, seed, markovchain);
 			numberOfRecommendationsRatio = numberOfRecommendationsRatio + seqEv.getNumberOfRecommendationsRatio();
 			hitratio = hitratio + seqEv.getHitRatio();
 			clicksoonratio = clicksoonratio + seqEv.getClickSoonRatio();

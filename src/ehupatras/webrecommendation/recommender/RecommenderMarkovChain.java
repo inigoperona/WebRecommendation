@@ -19,7 +19,7 @@ public class RecommenderMarkovChain
 		m_lastStep = null;
 	}
 	
-	public boolean update(String laststep){
+	public boolean update(String laststep, boolean incrWeigh){
 		m_lastStep = laststep;
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> recos = (ArrayList<String>)objA[0];
@@ -83,6 +83,18 @@ public class RecommenderMarkovChain
 		return this.getNextpossibleStepsWeightedTrain(nrecos, null);
 	}
 	
+	public ArrayList<String> getNextpossibleStepsWeighted(int nrecos, ArrayList<String> waydone){
+		return this.getNextpossibleStepsWeightedTrain(nrecos, null);
+	}
+	
+	public ArrayList<String> getNextpossibleStepsMarkov(int nrecos, ArrayList<String> waydone, ArrayList<String> listMarkov){
+		return this.getNextpossibleStepsWeightedTrain(nrecos, null);
+	}
+	
+	public ArrayList<String> getNextpossibleStepsWeightedByOriginalSequences(int nrecos){
+		return this.getNextpossibleStepsWeightedTrain(nrecos, null);
+	}
+	
 	private Object[] getNextpossibleSteps(){
 		ArrayList<String> recos = new ArrayList<String>(); 
 		ArrayList<Float> probs = new ArrayList<Float>(); 
@@ -99,7 +111,8 @@ public class RecommenderMarkovChain
 			// from transition matrix
 			int index = m_markovChain.getElemIndex(m_lastStep);
 			for(int i=0; i<m_markovChain.numberOfSymbols(); i++){
-				if(m_markovChain.getTransitionMatrix(index,i)>0){
+				// first verify if the URL is modeled and then recommend
+				if(index>0 && m_markovChain.getTransitionMatrix(index,i)>0){
 					recos.add(m_markovChain.getElemName(i));
 					probs.add(m_markovChain.getTransitionMatrix(index,i));
 				}

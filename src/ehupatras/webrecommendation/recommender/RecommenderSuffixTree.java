@@ -19,7 +19,7 @@ public class RecommenderSuffixTree
 		m_pointerNode = m_gST.getRoot();
 	}
 	
-	private boolean updatePointer(String newstep){
+	private boolean updatePointer(String newstep, boolean incrWeigh){
 		boolean isupdate = false;
 		
 		if(m_pointerNode==null && m_pointerEdge!=null){
@@ -34,7 +34,9 @@ public class RecommenderSuffixTree
 				}
 			} else {
 				m_pointerNode = m_pointerEdge.getDest();
-				m_gST.incrementNodeWeight(m_pointerNode);
+				if(incrWeigh){
+					m_gST.incrementNodeWeight(m_pointerNode);
+				}
 				m_pointerEdge = null;
 				m_pointerPositionInTheEdge = 0;
 			}
@@ -70,15 +72,20 @@ public class RecommenderSuffixTree
 		}
 	}
 	
-	public boolean update(String newstep){
-		return this.updatePointer(newstep);
+	public boolean update(String newstep, boolean incrWeigh){
+		return this.updatePointer(newstep, incrWeigh);
 	}
 	
+	public boolean updatefailureAllSuffixes(String newstep, boolean incrWeigh){
+		return this.updatePointer(newstep, incrWeigh);
+	}
+	
+	public boolean updatefailureAllPrefixes(String newstep, boolean incrWeigh){
+		return this.updatePointer(newstep, incrWeigh);
+	}
+		
 	private void updatefailure(){
-		// go to the root
-		m_pointerNode = m_gST.getRoot();
-		m_pointerEdge = null;
-		m_pointerPositionInTheEdge = 0;
+		this.gotoroot();
 	}
 	
 	private void gotoroot(){
@@ -149,31 +156,13 @@ public class RecommenderSuffixTree
 	}
 	
 	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone){
-		// save the pointers values
-		Node pointerNode = m_pointerNode;
-		Edge pointerEdge = m_pointerEdge;
-		int pointerPositionInTheEdge = m_pointerPositionInTheEdge;
-		
 		// run the way done  (clickstream done until now) in the suffix tree
 		// and create the sequence that it is runnable in the suffix tree
-		ArrayList<String> waydone2 = new ArrayList<String>(); 
-		this.gotoroot();
-		for(int i=0; i<waydone.size(); i++){
-			String step = waydone.get(i);
-			boolean stepdone = this.updatePointer(step);
-			if(!stepdone){
-				// if we have reset the run into the suffix tree
-				// reset also the clikstream done until now
-				waydone2 = new ArrayList<String>();
-			} else {
-				waydone2.add(step);
-			}
-		}
+		ArrayList<String> waydone2 = this.getTheWayInSuffixTree(waydone);
 		
 		// compute the weight of the waydone + next step sequences
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> nextsteps = (ArrayList<String>)objA[0];
-		int realNreco = Math.min(nRecos, nextsteps.size());
 		int[] frequencies = new int[nextsteps.size()];
 		ArrayList<String> way = (ArrayList<String>)waydone2.clone();
 		for(int i=0; i<nextsteps.size(); i++){
@@ -189,24 +178,32 @@ public class RecommenderSuffixTree
 		}
 
 		// order the frequencies of searched sequences of the way
-		ArrayList<String> recos = new ArrayList<String>(); 
-		int[] frequencies2 = frequencies.clone();
-		Arrays.sort(frequencies2);
-		boolean[] isusedA = new boolean[frequencies.length];
-		Arrays.fill(isusedA, false);
-		for(int i=frequencies2.length-1; i>=0; i--){
-			int freqmax = frequencies2[i];
-			for(int j=0; j<frequencies.length; j++){
-				if(!isusedA[j]){
-					if(freqmax==frequencies[j]){
-						recos.add(nextsteps.get(j));
-						isusedA[j] = true;
-						break;
-					}
-				}
-			}
-			if(recos.size()==realNreco){
-				break;
+		int realNreco = Math.min(nRecos, nextsteps.size());
+		ArrayList<String> recos = this.getTheMostWeightedURLs(realNreco, nextsteps, frequencies);		
+		
+		// return the most weighted sequences
+		return recos;
+	}
+	
+	private ArrayList<String> getTheWayInSuffixTree(ArrayList<String> waydone){
+		// save the pointers values
+		Node pointerNode = m_pointerNode;
+		Edge pointerEdge = m_pointerEdge;
+		int pointerPositionInTheEdge = m_pointerPositionInTheEdge;
+		
+		// run the way done  (clickstream done until now) in the suffix tree
+		// and create the sequence that it is runnable in the suffix tree
+		ArrayList<String> waydone2 = new ArrayList<String>(); 
+		this.gotoroot();
+		for(int i=0; i<waydone.size(); i++){
+			String step = waydone.get(i);
+			boolean stepdone = this.updatePointer(step, false);
+			if(!stepdone){
+				// if we have reset the run into the suffix tree
+				// reset also the clikstream done until now
+				waydone2 = new ArrayList<String>();
+			} else {
+				waydone2.add(step);
 			}
 		}
 		
@@ -215,7 +212,36 @@ public class RecommenderSuffixTree
 		m_pointerEdge = pointerEdge;
 		m_pointerPositionInTheEdge = pointerPositionInTheEdge;
 		
-		// return the most weighted sequences
+		// return the runnable clickstream in the suffix tree
+		return waydone2;
+	}
+	
+	private ArrayList<String> getTheMostWeightedURLs(int nrec, ArrayList<String> list, int[] frequencies){
+		ArrayList<String> recos = new ArrayList<String>();
+		
+		// order the frequencies of searched sequences of the way 
+		int[] frequencies2 = frequencies.clone();
+		Arrays.sort(frequencies2);
+		
+		boolean[] isusedA = new boolean[frequencies.length];
+		Arrays.fill(isusedA, false);
+		
+		for(int i=frequencies2.length-1; i>=0; i--){
+			int freqmax = frequencies2[i];
+			for(int j=0; j<frequencies.length; j++){
+				if(!isusedA[j]){
+					if(freqmax==frequencies[j]){
+						recos.add(list.get(j));
+						isusedA[j] = true;
+						break;
+					}
+				}
+			}
+			if(recos.size()==nrec){
+				break;
+			}
+		}
+		
 		return recos;
 	}
 	
@@ -226,28 +252,103 @@ public class RecommenderSuffixTree
 		ArrayList<Integer> listOfWeights = (ArrayList<Integer>)objA[1];
 		int[] listOfWeightsA = new int[listOfWeights.size()];
 		for(int i=0; i<listOfWeights.size(); i++){ listOfWeightsA[i] = listOfWeights.get(i); }
-		Arrays.sort(listOfWeightsA);
 		
 		// select the most weighted sequences
-		ArrayList<String> recos = new ArrayList<String>();
+		// order the frequencies of searched sequences of the way
 		int realNreco = Math.min(nRecos, listOfUrls.size());
-		boolean[] isusedA = new boolean[listOfWeightsA.length];
-		Arrays.fill(isusedA, false);
-		for(int i=listOfWeightsA.length-1; i>=0; i--){
-			int freqmax = listOfWeightsA[i];
-			for(int j=0; j<listOfWeights.size(); j++){
-				if(!isusedA[j]){
-					if(freqmax==listOfWeights.get(j)){
-						recos.add(listOfUrls.get(j));
-						isusedA[j] = true;
-						break;
-					}
+		ArrayList<String> recos = this.getTheMostWeightedURLs(realNreco, listOfUrls, listOfWeightsA);
+		
+		// return the most weighted sequences
+		return recos;
+	}
+	
+	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone){
+		// Compute testset related node weights
+		Object[] objA2 = this.getNextpossibleSteps();
+		ArrayList<String> nextsteps = (ArrayList<String>)objA2[0];
+		ArrayList<Integer> listOfWeights2 = (ArrayList<Integer>)objA2[1];
+		
+		// Compute trainset related node weights
+		// run the way done  (clickstream done until now) in the suffix tree
+		// and create the sequence that it is runnable in the suffix tree
+		ArrayList<String> waydone2 = this.getTheWayInSuffixTree(waydone);
+		// compute the weight of the waydone + next step sequences
+		int[] frequencies1 = new int[nextsteps.size()];
+		ArrayList<String> way = (ArrayList<String>)waydone2.clone();
+		for(int i=0; i<nextsteps.size(); i++){
+			String nstep = nextsteps.get(i);
+			way.add(nstep);
+			
+			// search
+			ArrayList<Integer> seqs = m_gST.search(way);
+			frequencies1[i] = seqs.size();
+			
+			// put as before the sequence
+			way = (ArrayList<String>)waydone2.clone();
+		}
+		
+		// Sum both frequencies
+		int[] listOfWeightsA = new int[nextsteps.size()];
+		for(int i=0; i<nextsteps.size(); i++){
+			listOfWeightsA[i] = listOfWeights2.get(i) + frequencies1[i];
+		}
+		
+		// select the most weighted sequences
+		// order the frequencies of searched sequences of the way
+		int realNreco = Math.min(nRecos, nextsteps.size());
+		ArrayList<String> recos = this.getTheMostWeightedURLs(realNreco, nextsteps, listOfWeightsA);
+		
+		// return the most weighted sequences
+		return recos;
+	}
+	
+	public ArrayList<String> getNextpossibleStepsMarkov(int nRecos, ArrayList<String> waydone, ArrayList<String> listMarkov){
+		// get Suffix Tree recommendation
+		ArrayList<String> listST = this.getNextpossibleStepsWeightedTrain(nRecos, waydone);
+
+		// merge the two recommendations
+		ArrayList<String> recos = new ArrayList<String>();
+		int counter = 0;
+		int i = 0;
+		while(counter<nRecos){
+			boolean hasMoreElemsST = listST.size()>i;
+			boolean hasMoreElemsM = listMarkov.size()>i;
+			if(!hasMoreElemsST && !hasMoreElemsM){ break;}
+			if(hasMoreElemsST){
+				String url1 = listST.get(i);
+				if(!recos.contains(url1)){
+					recos.add(url1);
+					counter++;
 				}
 			}
-			if(recos.size()==realNreco){
-				break;
+			if(hasMoreElemsM){
+				String url2 = listMarkov.get(i);
+				if(!recos.contains(url2)){
+					recos.add(url2);
+					counter++;
+				}
 			}
+			i++;
 		}
+		
+		// return the most weighted sequences
+		return recos;
+	}
+	
+	public ArrayList<String> getNextpossibleStepsWeightedByOriginalSequences(int nRecos){
+		// Compute testset related node weights
+		Object[] objA2 = this.getNextpossibleSteps();
+		ArrayList<String> nextsteps = (ArrayList<String>)objA2[0];
+		ArrayList<Integer> listOfWeightsAL = (ArrayList<Integer>)objA2[1];
+				
+		// weights to int-array
+		int[] listOfWeightsA = new int[nextsteps.size()];
+		for(int i=0; i<nextsteps.size(); i++){ listOfWeightsA[i] = listOfWeightsAL.get(i); }
+		
+		// select the most weighted sequences
+		// order the frequencies of searched sequences of the way
+		int realNreco = Math.min(nRecos, nextsteps.size());
+		ArrayList<String> recos = this.getTheMostWeightedURLs(realNreco, nextsteps, listOfWeightsA);
 		
 		// return the most weighted sequences
 		return recos;
@@ -280,18 +381,18 @@ public class RecommenderSuffixTree
         for(int i=0; i<list.size(); i++){ System.out.println(list.get(i)); }
         
         // paths that are exists
-        rec.updatePointer("c");
-        rec.updatePointer("a");
+        rec.updatePointer("c", false);
+        rec.updatePointer("a", false);
         objA = rec.getNextpossibleSteps();
 		list = (ArrayList<String>)objA[0];
-        rec.updatePointer("c");
+        rec.updatePointer("c", false);
         objA = rec.getNextpossibleSteps();
 		list = (ArrayList<String>)objA[0];
         System.out.println("---");
         for(int i=0; i<list.size(); i++){ System.out.println(list.get(i)); }
 	
         // paths that they not exists
-        rec.updatePointer("z");
+        rec.updatePointer("z", false);
         objA = rec.getNextpossibleSteps();
 		list = (ArrayList<String>)objA[0];
         System.out.println("---");

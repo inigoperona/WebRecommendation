@@ -71,9 +71,14 @@ public class SequenceEvaluator {
 	
 	// mode = -1 : Unbounded
 	// mode =  0 : Random, fixed number of requests
-	// mode =  1 : Weighted, fixed number of requests
-	public void computeSequenceMetrics(int mode, int nrecos, long seed){
+	// mode =  1 : Weighted the suffix tree only by weighted training sequences.
+	// mode =  2 : Weighted the suffix tree only by original testing sequences (in exploitation).
+	// mode =  3 : Weighted the suffix tree by weighted training sequences and original test sequences.
+	// mode =  4 : Merge Markov Chain model and Suffix Tree models recommendations
+	// mode =  5 : Weight the Suffix tree with original train sequences and in exploitation with original test sequences
+	public void computeSequenceMetrics(int mode, int nrecos, long seed, MarkovChain markovchain){
 		m_recommender.reset();
+		Recommender recM = null;
 		ArrayList<String> waydone = null;
 		ArrayList<String> list = null;
 		if(mode==-1){ // Unbounded
@@ -85,13 +90,23 @@ public class SequenceEvaluator {
 			list = m_recommender.getNextpossibleStepsWeightedTrain(nrecos, waydone);
 		} else if(mode==2){
 			list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
+		} else if(mode==3){
+			waydone = new ArrayList<String>();
+			list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
+		} else if(mode==4){
+			waydone = new ArrayList<String>();
+			recM = new RecommenderMarkovChain(markovchain);
+			ArrayList<String> listMarkov = recM.getNextpossibleStepsWeightedTest(nrecos);
+			list = m_recommender.getNextpossibleStepsMarkov(nrecos, waydone, listMarkov);
+		} else if(mode==5){
+			list = m_recommender.getNextpossibleStepsWeightedByOriginalSequences(nrecos);
 		}
 		for(int i=0; i<m_sequence.size(); i++){
 			String step = m_sequence.get(i);
 			this.computeStepMetrics(i, list);
 			
 			// do the step and get the next recommendations
-			m_recommender.update(step);
+			m_recommender.update(step, true);
 			if(mode==-1){
 				list = m_recommender.getNextpossibleStepsUnbounded();
 			} else if(mode==0){
@@ -101,6 +116,16 @@ public class SequenceEvaluator {
 				list = m_recommender.getNextpossibleStepsWeightedTrain(nrecos, waydone);
 			} else if(mode==2){
 				list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
+			} else if(mode==3){
+				waydone.add(step);
+				list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
+			} else if(mode==4){
+				waydone.add(step);
+				recM.update(step,false);
+				ArrayList<String> listMarkov = recM.getNextpossibleStepsWeightedTest(nrecos);
+				list = m_recommender.getNextpossibleStepsMarkov(nrecos, waydone, listMarkov);
+			} else if(mode==5){
+				list = m_recommender.getNextpossibleStepsWeightedByOriginalSequences(nrecos);
 			}
 		}
 	}
@@ -347,7 +372,7 @@ public class SequenceEvaluator {
         
         // get the metrics
         SequenceEvaluator se = new SequenceEvaluator(seq, st);
-        se.computeSequenceMetrics(-1, -1, (long)0);
+        se.computeSequenceMetrics(-1, -1, (long)0, null);
         System.out.println("HR: " + se.getHitRatio());
         System.out.println("CR: " + se.getClickSoonRatio());
         System.out.println("---");

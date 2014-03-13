@@ -11,7 +11,9 @@ public abstract class Matrix {
 	protected ArrayList<Integer> m_names;
 	private String m_savefilename = "/_matrix.javaData";
 	
-	public abstract void computeMatrix(ArrayList<Integer> names, ArrayList<String[]> data);
+	public abstract void computeMatrix(ArrayList<Integer> names, 
+							ArrayList<String[]> data,
+							float[][] roleWeights);
 	
 	public float[][] getMatrix(){
 		return m_matrix;

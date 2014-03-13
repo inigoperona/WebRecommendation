@@ -35,7 +35,7 @@ public class MainClassOld {
 		long endtime;
 		
 		// LOAD PREPROCESSED LOGS
-		MainClassPreprocess preprocess = new MainClassPreprocess();
+		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		//preprocess.preprocessLogs(basedirectory, logfile);
 		preprocess.loadPreprocess();	
 	
@@ -72,11 +72,15 @@ public class MainClassOld {
 		
 		
 		// DISTANCE MATRIX //
+		float[][] roleW1 = {{1f,1f,1f},
+		          		    {1f,1f,1f},
+		                    {1f,1f,1f}};
+		
 		Matrix matrix = new SimilarityMatrixEuclidean();
 	if(true){
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start computing the similarity matrix.");
-		matrix.computeMatrix(train, sequencesUHC);
+		matrix.computeMatrix(train, sequencesUHC,roleW1);
 		matrix.save(basedirectory);
 		matrix.writeMatrix(basedirectory + "/distance_matrix.txt");
 			endtime = System.currentTimeMillis();

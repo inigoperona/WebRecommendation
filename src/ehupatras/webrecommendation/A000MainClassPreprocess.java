@@ -5,7 +5,7 @@ import ehupatras.webrecommendation.usage.preprocess.*;
 import ehupatras.webrecommendation.usage.preprocess.log.LogReader;
 import ehupatras.webrecommendation.usage.preprocess.log.LogReaderBidasoaTurismo;
 
-public class MainClassPreprocess {
+public class A000MainClassPreprocess {
 
 	public void preprocessLogs(String basedirectory, String logfile){
 		long starttime;
@@ -168,16 +168,10 @@ public class MainClassPreprocess {
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
-		long starttime;
-		long endtime;
-		
-		MainClassPreprocess main = new MainClassPreprocess(); 
-	if(true){ // read the logs or load them	
+		A000MainClassPreprocess main = new A000MainClassPreprocess();
+			
 		// READ THE LOG FILE(S) //
 		main.preprocessLogs(basedirectory, filename1);
-	} else {
-		main.loadPreprocess();
-	}
 			
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

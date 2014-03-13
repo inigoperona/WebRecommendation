@@ -1,11 +1,23 @@
 package ehupatras.webrecommendation.sequencealignment;
 
-public class SequenceAlignmentCombineGlobalLocalDimopoulos2010 implements SequenceAlignment{
+public class SequenceAlignmentCombineGlobalLocalDimopoulos2010 
+					implements SequenceAlignment{
+	
+    // weights of roles
+    protected float[][] m_roleW = {{1,1,1},  // Unimportant
+    					 		   {1,1,1},  // Hub
+    					 		   {1,1,1}}; // Content
+	
+	public void setRoleWeights(float[][] roleweights){
+		m_roleW = roleweights;
+	}
 	
 	public float getScore(String[] seqA, String[] seqB){
-		SequenceAlignment nw = new SequenceAlignmentGlobalDimopoulos2010();
+		SequenceAlignmentBacktrack nw = new SequenceAlignmentGlobalDimopoulos2010();
+		nw.setRoleWeights(m_roleW);
 		float scoreNW = nw.getScore(seqA, seqB);
-		SequenceAlignment sw = new SequenceAlignmentLocalDimopoulos2010();
+		SequenceAlignmentBacktrack sw = new SequenceAlignmentLocalDimopoulos2010();
+		sw.setRoleWeights(m_roleW);
 		float scoreSW = sw.getScore(seqA, seqB);
 		float p;
 		if(seqA.length > seqB.length){

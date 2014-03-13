@@ -14,21 +14,21 @@ public class SequenceAlignmentLocalSmithWaterman
     protected void init(String[] seqA, String[] seqB) {
             mSeqA = seqA;
             mSeqB = seqB;
-            mD = new int[mSeqA.length + 1][mSeqB.length + 1];
+            mD = new float[mSeqA.length + 1][mSeqB.length + 1];
             for (int i = 0; i <= mSeqA.length; i++) {
-                    mD[i][0] = 0;                  
+                    mD[i][0] = 0f;                  
             }
             for (int j = 0; j <= mSeqB.length; j++) {
-                    mD[0][j] = 0;
+                    mD[0][j] = 0f;
             }
     }
    
     protected void process() {
             for (int i = 1; i <= mSeqA.length; i++) {
                     for (int j = 1; j <= mSeqB.length; j++) {
-                            int scoreDiag = mD[i-1][j-1] + weight(i, j);
-                            int scoreLeft = mD[i][j-1] - 1;
-                            int scoreUp = mD[i-1][j] - 1;
+                            float scoreDiag = mD[i-1][j-1] + weight(i, j);
+                            float scoreLeft = mD[i][j-1] - 1f;
+                            float scoreUp = mD[i-1][j] - 1f;
                             mD[i][j] = Math.max(Math.max(Math.max(scoreDiag, scoreLeft), scoreUp), 0);
                     }
             }
@@ -37,7 +37,7 @@ public class SequenceAlignmentLocalSmithWaterman
     protected void backtrack() {
             int i = 1;
             int j = 1;
-            int max = mD[i][j];
+            float max = mD[i][j];
 
             for (int k = 1; k <= mSeqA.length; k++) {
                     for (int l = 1; l <= mSeqB.length; l++) {
@@ -72,7 +72,7 @@ public class SequenceAlignmentLocalSmithWaterman
                             i--;
                             j--;                            
                             continue;
-                    } else if (mD[i][j] == mD[i][j-1] - 1) {
+                    } else if (mD[i][j] == mD[i][j-1] - 1f) {
                             mAlignmentSeqA += m_gap;
                             mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
                             j--;
@@ -98,14 +98,6 @@ public class SequenceAlignmentLocalSmithWaterman
            
             mAlignmentSeqA = new StringBuffer(mAlignmentSeqA).reverse().toString();
             mAlignmentSeqB = new StringBuffer(mAlignmentSeqB).reverse().toString();
-    }
-   
-    private int weight(int i, int j) {
-            if (mSeqA[i - 1].equals(mSeqB[j - 1])) {
-                    return 2;
-            } else {
-                    return -1;
-            }
     }
     
     protected ArrayList<String[]> getTrimedAlignedSequences(String str1, String str2){

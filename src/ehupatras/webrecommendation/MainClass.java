@@ -36,52 +36,33 @@ public class MainClass {
 		
 		
 		// LOAD PREPROCESSED LOGS //
-		//System.out.println("PREPROCESSING");
-		//MainClassPreprocess preprocess = new MainClassPreprocess();
+		//A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		//preprocess.preprocessLogs(preprocessingWD, logfile);
 		//preprocess.loadPreprocess();
 		
 		
-		// CREATE THE DATABASE
-		System.out.println("CREATE THE DATABASE");
-		// Sampling
-		ArrayList<Integer> sampleSessionIDs;
-		//Sampling samp = new Sampling();
-		//sampleSessionIDs = samp.getSample(8000, (long)0, false);
-		SaveLoadObjects sosess = new SaveLoadObjects();
-		//sosess.save(sampleSessionIDs, databaseWD + "/_sessionIDs.javaData");
-		sampleSessionIDs = (ArrayList<Integer>)sosess.load(databaseWD + "/_sessionIDs.javaData");
-		
-		
-		// INSTANCIATED SEQUENCES
-		ArrayList<String[]> sequencesUHC;
-		//sequencesUHC = WebAccessSequencesUHC.getSequencesInstanciated(sampleSessionIDs);
-		SaveLoadObjects soseqs = new SaveLoadObjects();
-		//soseqs.save(sequencesUHC, databaseWD + "/_sequencesUHC.javaData");
-		sequencesUHC = (ArrayList<String[]>)soseqs.load(databaseWD + "/_sequencesUHC.javaData");
+		// LOAD DATABASE //
+		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
+		//database.createDatabase(databaseWD);
+		database.loadDatabase(databaseWD);
+		ArrayList<Integer> sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
 		
 		
 		// DISTANCE MATRIX //
-		System.out.println("DISTANCE MATRIX");
-		Matrix matrix = new SimilarityMatrixInverse();
-		//matrix.computeMatrix(sampleSessionIDs, sequencesUHC);
-		//matrix.save(databaseWD);
-		//matrix.writeMatrix(databaseWD + "/distance_matrix.txt");
-		matrix.load(databaseWD);
+		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
+		Matrix matrix = dm.getMatrix();
 		float[][] distmatrix = matrix.getMatrix();
-		
-		
-		
 
+		
 		// HOLD-OUT //
-		System.out.println("HOLD-OUT");
-		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
-		//honestmodelval.prepareData(sampleSessionIDs, 70, 0, 30);
-		//honestmodelval.save(validationWD);
-		honestmodelval.load(validationWD);
-		ArrayList<ArrayList<Integer>> trainAL = honestmodelval.getTrain();
-		ArrayList<ArrayList<Integer>> valAL   = honestmodelval.getValidation();
-		ArrayList<ArrayList<Integer>> testAL  = honestmodelval.getTest();
+		A020MainClassHoldOut ho = new A020MainClassHoldOut();
+		ho.createParts(validationWD, sampleSessionIDs);
+		ModelValidationHoldOut mv = ho.getParts();
+		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
+		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
+		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
+
 
 		
 		// MODEL VALIDATION //
@@ -94,8 +75,8 @@ public class MainClass {
 			 "ehupatras.clustering.sapehac.agglomeration.MedianLinkage",
 			 "ehupatras.clustering.sapehac.agglomeration.SingleLinkage",
 			 "ehupatras.clustering.sapehac.agglomeration.WardLinkage"};
-		int[] cutthA = {3, 5, 10, 15};
-		float[] seqweights = {0.15f, 0.20f, 0.25f, 0.50f, 0.75f};
+		int[] cutthA = {10, 15, 20};
+		float[] seqweights = {0.10f, 0.15f, 0.20f};
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		
 		// initialize the model evaluator
@@ -105,10 +86,11 @@ public class MainClass {
 		System.out.print("options," + modelev.getEvaluationHeader());
 		
 		
-	
+
 		// MARKOV CHAIN //
-/*
 		modelev.buildMarkovChains();
+
+/*
 		String resultsMarkov;
 		
 			// unbounded
@@ -135,9 +117,9 @@ public class MainClass {
 		}
 */
 		
-		
+	
 		// SUFFIX TREE //
-		modelev.resetModels();
+		//modelev.resetModels();
 		
 		// Start generating and evaluating the model
 		//for(int i=0; i<linkages.length; i++){
@@ -153,7 +135,7 @@ public class MainClass {
 				//modelev.saveClusters(validationWD + "/" + esperimentationStr + ".javaData");
 				//modelev.writeClusters(validationWD + "/" + esperimentationStr + ".txt");
 				modelev.loadClusters(validationWD + "/" + esperimentationStr + ".javaData");
-			
+
 				// Sequence Alignment
 				modelev.clustersSequenceAlignment();
 				modelev.writeAlignments(validationWD + "/" + esperimentationStr + "_alignments.txt");
@@ -170,12 +152,12 @@ public class MainClass {
 			
 					// Evaluation
 					String results;
-					
+/*			
 						// unbounded
 					results = modelev.computeEvaluationTest(-1, -1, (long)0);
 					System.out.print(esperimentationStr2 + "_unbounded,");
 					System.out.print(results);
-					
+		
 						// random
 					int[] nrecsRST = new int[]{2,3,4,5,10,20};
 					for(int ind=0; ind<nrecsRST.length; ind++ ){
@@ -186,9 +168,9 @@ public class MainClass {
 					}
 				
 						// weightedTrain
-					int[] nrecsWST = new int[]{2,3,4,5,10,20};
-					for(int ind=0; ind<nrecsWST.length; ind++ ){
-						int nrec = nrecsWST[ind];
+					int[] nrecsWST1 = new int[]{2,3,4,5,10,20};
+					for(int ind=0; ind<nrecsWST1.length; ind++ ){
+						int nrec = nrecsWST1[ind];
 						results = modelev.computeEvaluationTest(1, nrec, (long)0);
 						System.out.print(esperimentationStr2 + "_TrainWeighted" + nrec + ",");
 						System.out.print(results);
@@ -196,17 +178,47 @@ public class MainClass {
 					
 						// weightedTest
 					int[] nrecsWST2 = new int[]{2,3,4,5,10,20};
-					for(int ind=0; ind<nrecsWST.length; ind++ ){
+					for(int ind=0; ind<nrecsWST2.length; ind++ ){
 						int nrec = nrecsWST2[ind];
 						results = modelev.computeEvaluationTest(2, nrec, (long)0);
 						System.out.print(esperimentationStr2 + "_TestWeighted" + nrec + ",");
 						System.out.print(results);
 					}
+					
+						// weighted
+					int[] nrecsWST = new int[]{2,3,4,5,10,20};
+					for(int ind=0; ind<nrecsWST.length; ind++ ){
+						int nrec = nrecsWST[ind];
+						results = modelev.computeEvaluationTest(3, nrec, (long)0);
+						System.out.print(esperimentationStr2 + "_Weighted" + nrec + ",");
+						System.out.print(results);
+					}
+
+						// weighted with markov
+					int[] nrecsWSTM = new int[]{2,3,4,5,10,20};
+					for(int ind=0; ind<nrecsWSTM.length; ind++ ){
+						int nrec = nrecsWSTM[ind];
+						results = modelev.computeEvaluationTest(4, nrec, (long)0);
+						System.out.print(esperimentationStr2 + "_withMarkov" + nrec + ",");
+						System.out.print(results);
+					}
+*/
+					// weighted with markov
+					int[] nrecsWSTOrig = new int[]{2,3,4,5,10,20};
+					for(int ind=0; ind<nrecsWSTOrig.length; ind++ ){
+						int nrec = nrecsWSTOrig[ind];
+						results = modelev.computeEvaluationTest(5, nrec, (long)0);
+						System.out.print(esperimentationStr2 + "_WeightedOrig" + nrec + ",");
+						System.out.print(results);
+					}
+					
+					
 				}
 
 			}
 		//}
-		
+					
+					
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");

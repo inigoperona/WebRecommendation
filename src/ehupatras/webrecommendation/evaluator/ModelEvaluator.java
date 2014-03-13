@@ -374,20 +374,39 @@ public class ModelEvaluator {
 		// Build Suffox Trees for each fold
 		m_suffixtreeAL = new ArrayList<SuffixTreeStringArray>();
 		for(int i=0; i<m_nFolds; i++){
-			m_suffixtreeAL.add(this.createSuffixTree(i));
+			m_suffixtreeAL.add(this.createSuffixTreePlusWeights(i));
 		}
 	}
 
-	private SuffixTreeStringArray createSuffixTree(int indexFold){
+	private SuffixTreeStringArray createSuffixTree(ArrayList<String[]> sequences){
 		SuffixTreeStringArray suffixtree = new SuffixTreeStringArray();
-		ArrayList<String[]> sequences = m_weightedSequences.get(indexFold);
 		for(int i=0; i<sequences.size(); i++){
 			suffixtree.putSequence(sequences.get(i), i);
 		}
 		return suffixtree;
 	}
 	
+	private SuffixTreeStringArray createSuffixTreeNoWeights(int indexFold){
+		ArrayList<String[]> sequences = m_weightedSequences.get(indexFold);
+		SuffixTreeStringArray suffixtree = this.createSuffixTree(sequences);
+		return suffixtree;
+	}
 	
+	private SuffixTreeStringArray createSuffixTreePlusWeights(int indexFold){
+		// create the suffix tree without weight
+		ArrayList<String[]> sequences = m_weightedSequences.get(indexFold);
+		SuffixTreeStringArray suffixtree = this.createSuffixTree(sequences);
+		
+		// take original train sequences to weight the nodes
+		ArrayList<Integer> sessionIDs = m_trainAL.get(indexFold); 
+		int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs);
+		ArrayList<String[]> trainseqs = new ArrayList<String[]>();
+		for(int j=0; j<inds.length; j++){ trainseqs.add(m_dataset.get(inds[j])); }
+
+		// Weight the suffix tree by training sequences
+		suffixtree.weightTheSuffixTree(trainseqs);
+		return suffixtree;
+	}
 	
 	// MARKOV CHAIN
 	public void buildMarkovChains(){
@@ -441,8 +460,7 @@ public class ModelEvaluator {
 				// get the suffix tree
 				suffixtree = m_suffixtreeAL.get(i);
 				eval = new TestSetEvaluator(testseqs, suffixtree);
-			}
-			if(m_markovChainAL!=null){
+			} else { // Markov Chain
 				MarkovChain markovchain = m_markovChainAL.get(i);
 				eval = new TestSetEvaluator(testseqs, markovchain);
 			}
@@ -450,7 +468,7 @@ public class ModelEvaluator {
 			// carry out the evaluation
 			eval.setConfusionPoints(m_confusionPoints);
 			eval.setFmeasureBeta(m_fmeasurebeta);
-			eval.computeEvaluation(mode, nrecos, seed);
+			eval.computeEvaluation(mode, nrecos, seed, m_markovChainAL.get(i));
 			//eval.writeResults();
 			
 			if(m_suffixtreeAL!=null){

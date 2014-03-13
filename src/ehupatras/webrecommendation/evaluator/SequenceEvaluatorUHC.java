@@ -79,7 +79,7 @@ public class SequenceEvaluatorUHC
         
         // get the metrics
         SequenceEvaluator se = new SequenceEvaluatorUHC(seq, st);
-        se.computeSequenceMetrics(-1, -1, (long)0);
+        se.computeSequenceMetrics(-1, -1, (long)0, null);
         System.out.println("HR: " + se.getHitRatio());
         System.out.println("CR: " + se.getClickSoonRatio());
         System.out.println("---");

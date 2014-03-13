@@ -6,13 +6,18 @@ public abstract class SequenceAlignmentBacktrack
 						implements SequenceAlignment {
     protected String[] mSeqA;
     protected String[] mSeqB;
-    protected int[][] mD;
-    protected int mScore;
+    protected float[][] mD;
+    protected float mScore;
     protected String mAlignmentSeqA = "";
     protected String mAlignmentSeqB = "";
     protected String[] m_alignSeqA;
     protected String[] m_alignSeqB;
     protected String m_gap = "-";
+    
+    // weights of roles
+    protected float[][] m_roleW = {{ 1f,-1f,-1f},  // Unimportant
+    					 		   {-1f, 1f,-1f},  // Hub
+    					 		   {-1f,-1f, 1f}}; // Content
 
     // Functions to get the standard sequence alignment score
     
@@ -136,7 +141,7 @@ public abstract class SequenceAlignmentBacktrack
                         System.out.print("     ");
                 }
                 for (int j = 0; j < mSeqB.length + 1; j++) {
-                        System.out.print(String.format("%4d ", mD[i][j]));
+                        System.out.print(String.format("%4f ", mD[i][j]));
                 }
                 System.out.println();
         }
@@ -156,6 +161,42 @@ public abstract class SequenceAlignmentBacktrack
     
     public String[] getAlignSeqB(){
     	return m_alignSeqB;
+    }
+    
+    protected int weightOld(int i, int j) {
+        if (mSeqA[i - 1].equals(mSeqB[j - 1])) {
+                return 1;
+        } else {
+                return -1;
+        }
+    }
+    
+    protected float weight(int i, int j) {
+    	int len = m_gap.length();
+    	String urlA = mSeqA[i-1].substring(0,len-1);
+    	String rolA = mSeqA[i-1].substring(len-1,len);
+    	int rolAi = this.role2int(rolA);
+    	String urlB = mSeqB[j-1].substring(0,len-1);
+    	String rolB = mSeqB[j-1].substring(len-1,len);
+    	int rolBi = this.role2int(rolB);
+    	
+        if (urlA.equals(urlB)){
+        	return m_roleW[rolAi][rolBi];
+        } else {
+        	return -1f;
+        }
+    }
+    
+    private int role2int(String role){
+    	int roli = 0;
+    	if(role.equals("U")){ roli = 0; }
+    	else if(role.equals("H")){ roli = 1;}
+    	else if(role.equals("C")){ roli = 2;}
+    	return roli;
+    }
+    
+    public void setRoleWeights(float[][] roleweights){
+    	m_roleW = roleweights;
     }
     
 }

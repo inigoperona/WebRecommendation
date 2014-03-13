@@ -8,7 +8,7 @@ import ehupatras.webrecommendation.structures.Website;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import ehupatras.webrecommendation.evaluator.TestSetEvaluator;
 
-public class MainClassDirectlySuffixTree {
+public class MainClassOldDirectlySuffixTree {
 
 	/**
 	 * @param args
@@ -30,7 +30,7 @@ public class MainClassDirectlySuffixTree {
 		long endtime;
 		
 		// LOAD PREPROCESSED LOGS
-		MainClassPreprocess preprocess = new MainClassPreprocess();
+		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		preprocess.loadPreprocess();
 		
 		// LOAD TRAIN / VALIDATION / TEST data.
@@ -63,7 +63,7 @@ public class MainClassDirectlySuffixTree {
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start the evaluation.");
 		TestSetEvaluator eval = new TestSetEvaluator(sequencesUHC_test, suffixtree);
-		eval.computeEvaluation(-1, -1, (long)0);
+		eval.computeEvaluation(-1, -1, (long)0, null);
 		eval.writeResults();
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 

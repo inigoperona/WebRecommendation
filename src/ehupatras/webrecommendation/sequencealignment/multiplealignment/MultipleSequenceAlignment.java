@@ -201,10 +201,15 @@ public class MultipleSequenceAlignment {
 		clusters.add(4);
 		clusters.add(5);
 		
+		// role weights
+		float[][] roleW1 = {{ 1f,-1f,-1f},
+		          		  {-1f, 1f,-1f},
+		          		  {-1f,-1f, 1f}};
+		
 		// Create the distance matrix of the sequences
 		ehupatras.webrecommendation.distmatrix.Matrix dm = 
 				new ehupatras.webrecommendation.distmatrix.SimilarityMatrixEuclidean();
-		dm.computeMatrix(namesL, wasL);
+		dm.computeMatrix(namesL, wasL, roleW1);
 		float[][] dmatrix = dm.getMatrix();
 
 		// Perform the multiple sequence alignment
