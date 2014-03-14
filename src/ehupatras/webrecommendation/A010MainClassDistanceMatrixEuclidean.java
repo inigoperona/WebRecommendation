@@ -43,10 +43,10 @@ public class A010MainClassDistanceMatrixEuclidean {
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		//preprocessingWD = args[0];
-		//logfile = args[1];
-		//databaseWD = args[2];
-		//validationWD = args[3];
+		preprocessingWD = args[0];
+		logfile = args[1];
+		databaseWD = args[2];
+		validationWD = args[3];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -54,8 +54,7 @@ public class A010MainClassDistanceMatrixEuclidean {
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
-		long starttime;
-		long endtime;
+		
 		
 		
 		// LOAD PREPROCESSED LOGS //
@@ -73,22 +72,45 @@ public class A010MainClassDistanceMatrixEuclidean {
 		
 		
 		// DISTANCE MATRIX //
+		A010MainClassDistanceMatrixEuclidean dm;
+		
+
+		// No role
 		float[][] roleW1 = {{ 1f, 1f, 1f},
 				            { 1f, 1f, 1f},
 				            { 1f, 1f, 1f}};
+		dm = new A010MainClassDistanceMatrixEuclidean();
+		dm.createDistanceMatrix(databaseWD + "/DM_00_no_role", 
+				sampleSessionIDs, sequencesUHC, 
+				roleW1);
+		
+		// 3 roles: U & H & C
 		float[][] roleW2 = {{ 1f,-1f,-1f},
-		          		    {-1f, 1f,-1f},
-		          		    {-1f,-1f, 1f}};
+      		    			{-1f, 1f,-1f},
+      		    			{-1f,-1f, 1f}};
+		dm = new A010MainClassDistanceMatrixEuclidean();
+		dm.createDistanceMatrix(databaseWD + "/DM_01_U_H_C", 
+				sampleSessionIDs, sequencesUHC, 
+				roleW2);
+		
+		// 2 roles: U & HC
 		float[][] roleW3 = {{ 1f,-1f,-1f},
-		          		    {-1f, 1f, 1f},
-		          		    {-1f, 1f, 1f}};
+      		    			{-1f, 1f, 1f},
+      		    			{-1f, 1f, 1f}};
+		dm = new A010MainClassDistanceMatrixEuclidean();
+		dm.createDistanceMatrix(databaseWD + "/DM_02_U_HC", 
+				sampleSessionIDs, sequencesUHC, 
+				roleW3);
+		
+		// Treat the role intelligently
 		float[][] roleW4 = {{-1f,   -1f,   -1f},
-        		  		    {-1f,    1f, 0.75f},
-        		  		    {-1f, 0.75f,    1f}};
-		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD, sampleSessionIDs, sequencesUHC, roleW1);
-		Matrix m = dm.getMatrix();
-		float[][] distmatrix = m.getMatrix();
+	  		    			{-1f,    1f, 0.75f},
+	  		    			{-1f, 0.75f,    1f}};
+		dm = new A010MainClassDistanceMatrixEuclidean();
+		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent", 
+				sampleSessionIDs, sequencesUHC, 
+				roleW4);
+		
 		
 		
 		// ending the program

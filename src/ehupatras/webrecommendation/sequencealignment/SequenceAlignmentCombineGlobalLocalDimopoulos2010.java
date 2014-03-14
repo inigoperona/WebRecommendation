@@ -4,9 +4,9 @@ public class SequenceAlignmentCombineGlobalLocalDimopoulos2010
 					implements SequenceAlignment{
 	
     // weights of roles
-    protected float[][] m_roleW = {{1,1,1},  // Unimportant
-    					 		   {1,1,1},  // Hub
-    					 		   {1,1,1}}; // Content
+    protected float[][] m_roleW = {{ 1f, 1f, 1f},  // Unimportant
+    					 		   { 1f, 1f, 1f},  // Hub
+    					 		   { 1f, 1f, 1f}}; // Content
 	
 	public void setRoleWeights(float[][] roleweights){
 		m_roleW = roleweights;

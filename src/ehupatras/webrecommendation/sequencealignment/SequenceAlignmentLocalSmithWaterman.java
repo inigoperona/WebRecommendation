@@ -66,23 +66,23 @@ public class SequenceAlignmentLocalSmithWaterman
             }
            
             while (mD[i][j] != 0) {                
-                    if (mD[i][j] == mD[i-1][j-1] + weight(i, j)) {                          
-                            mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
-                            mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
-                            i--;
-                            j--;                            
-                            continue;
-                    } else if (mD[i][j] == mD[i][j-1] - 1f) {
-                            mAlignmentSeqA += m_gap;
-                            mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
-                            j--;
-                            continue;
-                    } else {
-                            mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
-                            mAlignmentSeqB += m_gap;
-                            i--;
-                            continue;
-                    }
+                if (mD[i][j] == mD[i][j-1] - 1f) {
+                	mAlignmentSeqA += m_gap;
+                    mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
+                    j--;
+                    continue;
+                } else if (mD[i][j] == mD[i-1][j] - 1f){
+                    mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
+                    mAlignmentSeqB += m_gap;
+                    i--;
+                    continue;
+                } else if (mD[i][j] == mD[i-1][j-1] + weight(i, j)) {                          
+                     mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
+                     mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
+                     i--;
+                     j--;                            
+                     continue;
+                }
             }
            
             while (i > 0) {

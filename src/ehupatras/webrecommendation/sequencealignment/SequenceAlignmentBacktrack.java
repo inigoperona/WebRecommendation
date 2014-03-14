@@ -15,9 +15,9 @@ public abstract class SequenceAlignmentBacktrack
     protected String m_gap = "-";
     
     // weights of roles
-    protected float[][] m_roleW = {{ 1f,-1f,-1f},  // Unimportant
-    					 		   {-1f, 1f,-1f},  // Hub
-    					 		   {-1f,-1f, 1f}}; // Content
+    protected float[][] m_roleW = {{ 1f, 1f, 1f},  // Unimportant
+    					 		   { 1f, 1f, 1f},  // Hub
+    					 		   { 1f, 1f, 1f}}; // Content
 
     // Functions to get the standard sequence alignment score
     

@@ -374,10 +374,28 @@ public class ModelEvaluator {
 		// Build Suffox Trees for each fold
 		m_suffixtreeAL = new ArrayList<SuffixTreeStringArray>();
 		for(int i=0; i<m_nFolds; i++){
-			m_suffixtreeAL.add(this.createSuffixTreePlusWeights(i));
+			m_suffixtreeAL.add(this.createSuffixTreeNoWeights(i));
 		}
 	}
 
+	public void buildSuffixTreesFromOriginalSequences(){
+		// Build Suffox Trees for each fold
+		m_suffixtreeAL = new ArrayList<SuffixTreeStringArray>();
+		for(int i=0; i<m_nFolds; i++){
+			m_suffixtreeAL.add(this.createSuffixTreeFromOriginalSequences(i));
+		}
+	}
+	
+	public SuffixTreeStringArray createSuffixTreeFromOriginalSequences(int indexFold){		
+		ArrayList<Integer> trainnames = m_trainAL.get(indexFold);
+		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames);
+		ArrayList<String[]> sequences = new ArrayList<String[]>(); 
+		for(int i=0; i<trainDMindexes.length; i++){
+			sequences.add(m_dataset.get(i));
+		}
+		return this.createSuffixTree(sequences);
+	}
+	
 	private SuffixTreeStringArray createSuffixTree(ArrayList<String[]> sequences){
 		SuffixTreeStringArray suffixtree = new SuffixTreeStringArray();
 		for(int i=0; i<sequences.size(); i++){
@@ -408,7 +426,10 @@ public class ModelEvaluator {
 		return suffixtree;
 	}
 	
+	
+	
 	// MARKOV CHAIN
+	
 	public void buildMarkovChains(){
 		// Clustering for each fold
 		m_markovChainAL = new ArrayList<MarkovChain>();

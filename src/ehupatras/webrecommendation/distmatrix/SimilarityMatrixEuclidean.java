@@ -32,10 +32,11 @@ public class SimilarityMatrixEuclidean
 		for(int i=0; i<data.size(); i++){
 			System.out.println("  [" + System.currentTimeMillis() + "] Computing euclidean of row " + i);
 			float[] vectori = similaritiesM[i];
-			for(int j=0; j<data.size(); j++){
+			for(int j=(i+1); j<data.size(); j++){
 				float[] vectorj = similaritiesM[j];
 				double dist = this.getEuclideanDistance(vectori, vectorj);
 				m_matrix[i][j] = (float)dist;
+				m_matrix[j][i] = (float)dist;
 			}
 		}
 	}
