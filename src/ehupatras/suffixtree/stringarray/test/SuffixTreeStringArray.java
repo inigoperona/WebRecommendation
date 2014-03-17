@@ -128,14 +128,12 @@ public class SuffixTreeStringArray {
 	}
 	
 	public void weightTheSuffixTree(ArrayList<String[]> sequences){
-		RecommenderSuffixTree recST = new RecommenderSuffixTree(this);
+		RecommenderSuffixTree recST = new RecommenderSuffixTree(this, 0);
 		for(int i=0; i<sequences.size(); i++){
 			String[] seq = sequences.get(i);
 			recST.reset();
 			for(int i1=0; i1<seq.length; i1++){
-				for(int i2=i1; i2<seq.length; i2++){
-					recST.update(seq[i2], true);
-				}
+				recST.update(null, seq[i1], true, false);
 			}
 		}
 	}

@@ -15,6 +15,8 @@ public class TestSetEvaluator {
 	private float m_beta = (float)0.5;
 	
 	private float m_numberOfRecommendationsRatio = (float)0;
+	private int m_numberOfFailures = 0;
+	private float[] m_failuresHist = new float[12]; 
 	private float m_hitratio = (float)0;
 	private float m_clicksoonratio = (float)0;
 	private float[] m_precision;
@@ -46,10 +48,14 @@ public class TestSetEvaluator {
 		m_ModelFmeasure = new float[m_points.length];
 	}
 	
-	public void computeEvaluation(int mode, int nrecos, long seed, MarkovChain markovchain){
-		float numberOfRecommendationsRatio = (float)0;
-		float hitratio = (float)0;
-		float clicksoonratio = (float)0;
+	public void computeEvaluation(int mode, int nrecos, long seed, 
+			MarkovChain markovchain,
+			int failureMode){
+		float numberOfRecommendationsRatio = 0f;
+		int numberOfFailures = 0;
+		int[] failuresHist = new int[m_failuresHist.length]; 
+		float hitratio = 0f;
+		float clicksoonratio = 0f;
 		float[] precission = new float[m_points.length];
 		float[] recall = new float[m_points.length];
 		float[] fmeasure = new float[m_points.length];
@@ -62,13 +68,44 @@ public class TestSetEvaluator {
 			// select the model
 			SequenceEvaluator seqEv = null;
 			if(m_gST!=null){
-				seqEv = new SequenceEvaluator(seq, m_gST);
+				seqEv = new SequenceEvaluator(seq, m_gST, failureMode);
 			} else {
 				seqEv = new SequenceEvaluator(seq, m_markovchain);
 			}
 			
 			seqEv.computeSequenceMetrics(mode, nrecos, seed, markovchain);
+			// Statistics
 			numberOfRecommendationsRatio = numberOfRecommendationsRatio + seqEv.getNumberOfRecommendationsRatio();
+			// Failure functions
+			int nfails = seqEv.getNumberOfFailures();
+			numberOfFailures = numberOfFailures + nfails;
+			switch(nfails){
+				case 0: failuresHist[0]++;
+						break;
+				case 1: failuresHist[1]++;
+						break;
+				case 2: failuresHist[2]++;
+						break;
+				case 3: failuresHist[3]++;
+						break;
+				case 4: failuresHist[4]++;
+						break;
+				case 5: failuresHist[5]++;
+						break;
+				case 6: failuresHist[6]++;
+						break;
+				case 7: failuresHist[7]++;
+						break;
+				case 8: failuresHist[8]++;
+						break;
+				case 9: failuresHist[9]++;
+						break;
+				case 10: failuresHist[10]++;
+						break;
+				default: failuresHist[11]++;
+						break;
+			}
+			// Metrics
 			hitratio = hitratio + seqEv.getHitRatio();
 			clicksoonratio = clicksoonratio + seqEv.getClickSoonRatio();
 			for(int j=0; j<m_points.length; j++){
@@ -81,8 +118,14 @@ public class TestSetEvaluator {
 			}
 		}
 		
-		// compute the average values
+		// Compute the average values
 		m_numberOfRecommendationsRatio = numberOfRecommendationsRatio/(float)m_sequences.size();
+		// Failure functions
+		m_numberOfFailures = numberOfFailures;
+		for(int j=0; j<failuresHist.length; j++){
+			m_failuresHist[j] = (float)failuresHist[j] / (float)m_sequences.size();
+		}
+		// Metrics
 		m_hitratio = hitratio/(float)m_sequences.size();
 		m_clicksoonratio = clicksoonratio/(float)m_sequences.size();
 		for(int j=0; j<m_points.length; j++){
@@ -133,8 +176,24 @@ public class TestSetEvaluator {
 	}
 	
 	
+	public int getNumberOfSequences(){
+		return m_sequences.size();
+	}
+	public int getNumberOfClicks(){
+		int nURLs = 0;
+		for(int i=0; i<m_sequences.size(); i++){
+			nURLs = nURLs + m_sequences.get(i).length;
+		}
+		return nURLs;
+	}
 	public float getNumberOfRecommendationsRatio(){
 		return m_numberOfRecommendationsRatio;
+	}
+	public int getNumberOfFailures(){
+		return m_numberOfFailures;
+	}
+	public float[] getFailuresHistogram(){
+		return m_failuresHist;
 	}
 	public float getHitRatio(){
 		return m_hitratio;

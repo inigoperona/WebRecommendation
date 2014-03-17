@@ -16,6 +16,7 @@ public class SequenceEvaluator {
 	protected ArrayList<String> m_sequenceURL = null;
 	
 	protected int m_numberOfRecommendations = 0;
+	private int m_nFailures = 0;
 	private int m_hitscore = 0;
 	private int m_clicksoonscore = 0;
 	private float[] m_precision;
@@ -25,15 +26,30 @@ public class SequenceEvaluator {
 	
 	public SequenceEvaluator(String[] sequence, SuffixTreeStringArray suffixtree){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
-		this.constructor(sequenceAL, suffixtree);
+		this.constructor(sequenceAL, suffixtree, 0);
+	}
+
+	public SequenceEvaluator(String[] sequence, 
+				SuffixTreeStringArray suffixtree,
+				int failuremode){
+		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
+		this.constructor(sequenceAL, suffixtree, failuremode);
 	}
 	
 	public SequenceEvaluator(ArrayList<String> sequence, SuffixTreeStringArray suffixtree){
-		this.constructor(sequence, suffixtree);
+		this.constructor(sequence, suffixtree, 0);
 	}
 	
-	private void constructor(ArrayList<String> sequence, SuffixTreeStringArray suffixtree){
-		m_recommender = new RecommenderSuffixTree(suffixtree);
+	public SequenceEvaluator(ArrayList<String> sequence, 
+			SuffixTreeStringArray suffixtree,
+			int failuremode){
+		this.constructor(sequence, suffixtree, failuremode);
+	}
+	
+	private void constructor(ArrayList<String> sequence, 
+					SuffixTreeStringArray suffixtree,
+					int failuremode){
+		m_recommender = new RecommenderSuffixTree(suffixtree, failuremode);
 		m_sequence = sequence;
 		m_sequenceURL = sequence;
 		m_precision = new float[sequence.size()];
@@ -79,22 +95,19 @@ public class SequenceEvaluator {
 	public void computeSequenceMetrics(int mode, int nrecos, long seed, MarkovChain markovchain){
 		m_recommender.reset();
 		Recommender recM = null;
-		ArrayList<String> waydone = null;
+		ArrayList<String> waydone = new ArrayList<String>();
 		ArrayList<String> list = null;
 		if(mode==-1){ // Unbounded
 			list = m_recommender.getNextpossibleStepsUnbounded();
 		} else if(mode==0){ // Random
 			list = m_recommender.getNextpossibleStepsRandom(nrecos, seed);
 		} else if(mode==1){ // Weighted Suffix Tree with Train-Clusters-WeightedSequences
-			waydone = new ArrayList<String>();
 			list = m_recommender.getNextpossibleStepsWeightedTrain(nrecos, waydone);
 		} else if(mode==2){
 			list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
 		} else if(mode==3){
-			waydone = new ArrayList<String>();
 			list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
 		} else if(mode==4){
-			waydone = new ArrayList<String>();
 			recM = new RecommenderMarkovChain(markovchain);
 			ArrayList<String> listMarkov = recM.getNextpossibleStepsWeightedTest(nrecos);
 			list = m_recommender.getNextpossibleStepsMarkov(nrecos, waydone, listMarkov);
@@ -106,28 +119,27 @@ public class SequenceEvaluator {
 			this.computeStepMetrics(i, list);
 			
 			// do the step and get the next recommendations
-			m_recommender.update(step, true);
+			waydone.add(step);
+			m_recommender.update(waydone, step, true, true);
 			if(mode==-1){
 				list = m_recommender.getNextpossibleStepsUnbounded();
 			} else if(mode==0){
 				list = m_recommender.getNextpossibleStepsRandom(nrecos, seed);
 			} else if(mode==1){
-				waydone.add(step);
 				list = m_recommender.getNextpossibleStepsWeightedTrain(nrecos, waydone);
 			} else if(mode==2){
 				list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
 			} else if(mode==3){
-				waydone.add(step);
 				list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
 			} else if(mode==4){
-				waydone.add(step);
-				recM.update(step,false);
+				recM.update(null, step, false, false);
 				ArrayList<String> listMarkov = recM.getNextpossibleStepsWeightedTest(nrecos);
 				list = m_recommender.getNextpossibleStepsMarkov(nrecos, waydone, listMarkov);
 			} else if(mode==5){
 				list = m_recommender.getNextpossibleStepsWeightedByOriginalSequences(nrecos);
 			}
 		}
+		m_nFailures = m_recommender.getNumberOfFailures();
 	}
 	
 	protected void computeStepMetrics(int stepIndex, ArrayList<String> recommendatios){		
@@ -230,6 +242,14 @@ public class SequenceEvaluator {
 		}
 	}
 	
+	public float getNumberOfRecommendationsRatio(){
+		return (float)m_numberOfRecommendations / (float)m_sequence.size();
+	}
+	
+	public int getNumberOfFailures(){
+		return m_nFailures;
+	}
+	
 	public float getHitRatio(){
 		return (float)m_hitscore/(float)m_sequence.size();
 	}
@@ -252,10 +272,6 @@ public class SequenceEvaluator {
 	
 	public float[] getRecallsModel(){
 		return m_recallModel;
-	}
-	
-	public float getNumberOfRecommendationsRatio(){
-		return (float)m_numberOfRecommendations / (float)m_sequence.size();
 	}
 	
 	public float[] getFmeasures(float beta){

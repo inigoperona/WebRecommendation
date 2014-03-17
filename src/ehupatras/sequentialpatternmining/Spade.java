@@ -1,0 +1,154 @@
+package ehupatras.sequentialpatternmining;
+
+import ca.pfv.spmf.algorithms.sequentialpatterns.spade_spam_AGP.candidatePatternsGeneration.CandidateGenerator;
+import ca.pfv.spmf.algorithms.sequentialpatterns.spade_spam_AGP.candidatePatternsGeneration.CandidateGenerator_Qualitative;
+import ca.pfv.spmf.algorithms.sequentialpatterns.spade_spam_AGP.dataStructures.creators.AbstractionCreator;
+import ca.pfv.spmf.algorithms.sequentialpatterns.spade_spam_AGP.dataStructures.creators.AbstractionCreator_Qualitative;
+import ca.pfv.spmf.algorithms.sequentialpatterns.spade_spam_AGP.dataStructures.database.SequenceDatabase;
+import ca.pfv.spmf.algorithms.sequentialpatterns.spade_spam_AGP.dataStructures.*;
+import ca.pfv.spmf.algorithms.sequentialpatterns.spade_spam_AGP.idLists.creators.IdListCreator;
+import ca.pfv.spmf.algorithms.sequentialpatterns.spade_spam_AGP.idLists.creators.IdListCreator_FatBitmap;
+import ca.pfv.spmf.algorithms.sequentialpatterns.spade_spam_AGP.EquivalenceClass;
+import java.io.IOException;
+import java.util.*;
+
+/**
+ * Example of how to use the algorithm SPADE, saving the results in the 
+ * main  memory
+ * 
+ * @author agomariz
+ */
+public class Spade {
+
+	private double m_minsupport = 0.5d;
+	private SequenceDatabase m_sequenceDB;
+	private MyAlgoSpade m_algorithm;
+	
+	public Spade(ArrayList<String[]> sequences, double minsup){
+		m_minsupport = minsup;
+		
+		// initialization
+	    AbstractionCreator abstractionCreator = AbstractionCreator_Qualitative.getInstance();
+	    IdListCreator idListCreator = IdListCreator_FatBitmap.getInstance();
+	    CandidateGenerator candidateGenerator = CandidateGenerator_Qualitative.getInstance();
+	    m_sequenceDB = new SequenceDatabase(abstractionCreator, idListCreator);
+	    
+	    // insert sequences
+	    for(int i=0; i<sequences.size(); i++){
+	    	m_sequenceDB.addSequence(sequences.get(i));
+	    }
+	    this.removeNotFrequentURLs();
+	    this.reduceDatabase(m_sequenceDB.getFrequentItems().keySet());
+	    
+	    // run SPADE
+		boolean dfs=true;
+		m_algorithm = new MyAlgoSpade(m_minsupport, dfs, abstractionCreator);
+		boolean keepPatterns = true;
+		boolean verbose = false;
+		try{
+			m_algorithm.runAlgorithm(m_sequenceDB, candidateGenerator, keepPatterns, verbose, null);
+		} catch(IOException ex){
+			System.err.println("[ehupatras.sequentialpatternmining.Spade] " +
+					"IOException runnung the algorithm Spade.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+	}
+	
+	public Object[] getFrequentSequences(int patterLen){
+		return m_algorithm.getFrequentSequences(patterLen);
+	}
+	
+	public void printSequencesDatabase(){
+		System.out.println(m_sequenceDB.toString());
+	}
+	
+	public void printStatistics(){
+		System.out.println("Minimum support (relative) = " + m_minsupport);
+		System.out.println(m_algorithm.getNumberOfFrequentPatterns() + " frequent patterns.");
+		System.out.println(m_algorithm.printStatistics());
+	}
+	
+    private void removeNotFrequentURLs(){
+        double sup = (int) Math.ceil(m_minsupport * m_sequenceDB.size());
+        Set<Item> frequentItemsSet = m_sequenceDB.getFrequentItems().keySet();
+        Set<Item> itemsToRemove = new HashSet<Item>();
+        //We remove those items that are not frequent
+        for (Item frequentItem : frequentItemsSet) {
+            //From the item set of frequent items
+            EquivalenceClass equivalenceClass = m_sequenceDB.getFrequentItems().get(frequentItem);
+            if (equivalenceClass.getIdList().getSupport() < sup) {
+                itemsToRemove.add(frequentItem);
+            } else {
+                equivalenceClass.getIdList().setAppearingSequences(equivalenceClass.getClassIdentifier());
+            }
+        }
+        for (Item itemToRemove : itemsToRemove) {
+        	m_sequenceDB.getFrequentItems().remove(itemToRemove);
+        }
+    }
+    
+    /**
+     * It reduces the original database to just frequent items.
+     * @param keySet the set of frequent items that should be kept.
+     */
+    private void reduceDatabase(Set<Item> keySet) {
+        for (Sequence sequence : m_sequenceDB.getSequences()) {
+            for (int i = 0; i < sequence.size(); i++) {
+                Itemset itemset = sequence.get(i);
+                for (int j = 0; j < itemset.size(); j++) {
+                    Item item = itemset.get(j);
+                    if (!keySet.contains(item)) {
+                        sequence.remove(i, j);
+                        j--;
+                    }
+                }
+                if (itemset.size() == 0) {
+                    sequence.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws IOException {
+    	
+    	// sequences
+    	String[] seq1 = {"1", "-1", "1", "2", "3", "-1", "1", "3", "-1", "4", "-1", "3", "6", "-1", "-2"};
+    	String[] seq2 = {"1", "4", "-1", "3", "-1", "2", "3", "-1", "1", "5", "-1", "-2"};
+    	String[] seq3 ={"5", "6", "-1", "1", "2", "-1", "4", "6", "-1", "3", "-1", "2", "-1", "-2"};
+    	String[] seq4 = {"5", "-1", "7", "-1", "1", "6", "-1", "3", "-1", "2", "-1", "3", "-1", "-2"};
+    	ArrayList<String[]> list = new ArrayList<String[]>();
+    	list.add(seq1);
+    	list.add(seq2);
+    	list.add(seq3);
+    	list.add(seq4);
+    	
+    	// SPADE
+    	Spade sp = new Spade(list, 0.5d);
+    	//sp.printSequencesDatabase();
+    	//sp.printStatistics();
+    	
+    	Object[] objA;
+    	
+    	System.out.println("___Len1___");
+    	objA = sp.getFrequentSequences(1);
+    	ArrayList<ArrayList<String>> freqseqs = (ArrayList<ArrayList<String>>)objA[0];
+    	ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
+    	for(int i=0; i<freqseqs.size(); i++){
+    		System.out.print("(" + supports.get(i) + ")");
+    		System.out.print(" " + (freqseqs.get(i)).get(0));
+    		System.out.println();
+    	}
+    	
+    	System.out.println("___Len2___");
+    	sp.getFrequentSequences(2);
+    	System.out.println("___Len3___");
+    	sp.getFrequentSequences(3);
+    }
+    
+}

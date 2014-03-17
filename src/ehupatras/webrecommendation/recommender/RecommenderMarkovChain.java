@@ -19,7 +19,12 @@ public class RecommenderMarkovChain
 		m_lastStep = null;
 	}
 	
-	public boolean update(String laststep, boolean incrWeigh){
+	public int getNumberOfFailures(){
+		return 0;
+	}
+	
+	public boolean update(ArrayList<String> waydone, String laststep, 
+							boolean incrWeigh, boolean performFailureFunction){
 		m_lastStep = laststep;
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> recos = (ArrayList<String>)objA[0];

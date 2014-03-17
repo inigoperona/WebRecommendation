@@ -207,7 +207,7 @@ public class MainClass {
 					int[] nrecsWSTOrig = new int[]{2,3,4,5,10,20};
 					for(int ind=0; ind<nrecsWSTOrig.length; ind++ ){
 						int nrec = nrecsWSTOrig[ind];
-						results = modelev.computeEvaluationTest(5, nrec, (long)0);
+						results = modelev.computeEvaluationTest(5, nrec, (long)0, 0);
 						System.out.print(esperimentationStr2 + "_WeightedOrig" + nrec + ",");
 						System.out.print(results);
 					}

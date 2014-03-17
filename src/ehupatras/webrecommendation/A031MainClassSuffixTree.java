@@ -19,10 +19,10 @@ public class A031MainClassSuffixTree {
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		preprocessingWD = args[0];
-		logfile = args[1];
-		databaseWD = args[2];
-		validationWD = args[3];
+		//preprocessingWD = args[0];
+		//logfile = args[1];
+		//databaseWD = args[2];
+		//validationWD = args[3];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -48,7 +48,8 @@ public class A031MainClassSuffixTree {
 		
 		// DISTANCE MATRIX //
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.loadDistanceMatrix(databaseWD + "/DM_00_no_role");
+		//dm.loadDistanceMatrix(databaseWD + "/DM_00_no_role");
+		dm.loadDistanceMatrix(databaseWD);
 		Matrix matrix = dm.getMatrix();
 		float[][] distmatrix = matrix.getMatrix();
 
@@ -60,8 +61,7 @@ public class A031MainClassSuffixTree {
 		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
 		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
 		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
-
-
+		
 		
 		// MODEL VALIDATION //
 
@@ -83,37 +83,46 @@ public class A031MainClassSuffixTree {
 		System.out.print("options," + modelev.getEvaluationHeader());
 		
 		// Experimentation string
-		String esperimentationStr2 = "suffixtree";
+		String esperimentationStr = "suffixtree";
 			
 		// Evaluation
 		String results;
 
+		int[] failmodesA = new int[]{0, 1, 2};
+		for(int fmodei=0; fmodei<failmodesA.length; fmodei++){
+			int fmode = failmodesA[fmodei];
+			String esperimentationStr2 = esperimentationStr + "_failure" + fmode; 
+		
 			// unbounded
-		results = modelev.computeEvaluationTest(-1, -1, (long)0);
-		System.out.print(esperimentationStr2 + "_unbounded,");
-		System.out.print(results);
+			results = modelev.computeEvaluationTest(-1, -1, (long)0, fmode);
+			System.out.print(esperimentationStr2 + "_unbounded,");
+			System.out.print(results);
 		
 			// random
-		int[] nrecsRST = new int[]{2,3,4,5,10,20};
-		for(int ind=0; ind<nrecsRST.length; ind++ ){
-			int nrec = nrecsRST[ind];
-			results = modelev.computeEvaluationTest(0, nrec, (long)0);
-			System.out.print(esperimentationStr2 + "_random" + nrec + ",");
-			System.out.print(results);
-		}
+			int[] nrecsRST = new int[]{2,3,4,5,10,20};
+			for(int ind=0; ind<nrecsRST.length; ind++ ){
+				int nrec = nrecsRST[ind];
+				results = modelev.computeEvaluationTest(0, nrec, (long)0, fmode);
+				System.out.print(esperimentationStr2 + "_random" + nrec + ",");
+				System.out.print(results);
+			}
 		
 			// weighted
 			// construction sequences
 			// test sequences
-		int[] nrecsWST = new int[]{2,3,4,5,10,20};
-		for(int ind=0; ind<nrecsWST.length; ind++ ){
-			int nrec = nrecsWST[ind];
-			results = modelev.computeEvaluationTest(3, nrec, (long)0);
-			System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
-			System.out.print(results);
+			int[] nrecsWST = new int[]{2,3,4,5,10,20};
+			for(int ind=0; ind<nrecsWST.length; ind++ ){
+				int nrec = nrecsWST[ind];
+				results = modelev.computeEvaluationTest(3, nrec, (long)0, fmode);
+				System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
+				System.out.print(results);
+			}
+			
 		}
 		
 		/*
+		 * OTHER METHOD TRIED TO WEIGHT THE SUFFIX TREE
+		 * 
 			// weightedTrain
 		int[] nrecsWST1 = new int[]{2,3,4,5,10,20};
 		for(int ind=0; ind<nrecsWST1.length; ind++ ){
@@ -131,11 +140,7 @@ public class A031MainClassSuffixTree {
 			System.out.print(esperimentationStr2 + "_TestWeighted" + nrec + ",");
 			System.out.print(results);
 		}
-		*/
-		
 
-
-		/*
 			// weighted with markov
 		int[] nrecsWSTM = new int[]{2,3,4,5,10,20};
 		for(int ind=0; ind<nrecsWSTM.length; ind++ ){
@@ -145,7 +150,7 @@ public class A031MainClassSuffixTree {
 			System.out.print(results);
 		}
 
-			// weighted with original sequeences
+			// weighted with original sequences
 		int[] nrecsWSTOrig = new int[]{2,3,4,5,10,20};
 		for(int ind=0; ind<nrecsWSTOrig.length; ind++ ){
 			int nrec = nrecsWSTOrig[ind];

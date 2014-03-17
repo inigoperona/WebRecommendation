@@ -452,11 +452,18 @@ public class ModelEvaluator {
 	
 	// MODEL EVALUATION
 	
-	public String computeEvaluationTest(int mode, int nrecos, long seed){				
+	public String computeEvaluationTest(int mode, int nrecos, long seed,
+			int failuremode){				
 		// metrics
+		int trnURLs = 0;
+		int trnSeqs = 0;
+		int tsnURLs = 0;
+		int tsnSeqs = 0;
 		int nNodes = 0;
 		float nEdges = 0;
 		float nrec = 0f;
+		int nFailuresI = 0;
+		float[] failuresHist = new float[12];
 		float hitratio = 0f;
 		float clicksoonration = 0f;
 		float[] prA = new float[m_confusionPoints.length];
@@ -489,14 +496,37 @@ public class ModelEvaluator {
 			// carry out the evaluation
 			eval.setConfusionPoints(m_confusionPoints);
 			eval.setFmeasureBeta(m_fmeasurebeta);
-			eval.computeEvaluation(mode, nrecos, seed, m_markovChainAL.get(i));
+			eval.computeEvaluation(mode, nrecos, seed, 
+					m_markovChainAL.get(i),
+					failuremode);
 			//eval.writeResults();
 			
+			// METRICS1
+			// get the train sequences from sessionIDs
+			ArrayList<Integer> trsessionIDs = m_trainAL.get(i); 
+			int[] trinds = m_distancematrix.getSessionIDsIndexes(trsessionIDs);
+			ArrayList<String[]> trainseqs = new ArrayList<String[]>();
+			for(int j=0; j<trinds.length; j++){ trainseqs.add(m_dataset.get(trinds[j])); }
+			for(int j=0; j<trainseqs.size(); j++){ trnURLs = trnURLs + trainseqs.get(j).length; }
+			trnSeqs = trnSeqs + trainseqs.size();
+			
+			// METRICS2
+			tsnURLs = tsnURLs + eval.getNumberOfClicks();
+			tsnSeqs = tsnSeqs + eval.getNumberOfSequences();
+			
+			// METRICS3
 			if(m_suffixtreeAL!=null){
 				nNodes = nNodes + suffixtree.getNumberOfNodes();
 				nEdges = nEdges + suffixtree.getNumberOfEdges();
 			}
+			
+			// METRICS4
 			nrec = nrec + eval.getNumberOfRecommendationsRatio();
+			nFailuresI = nFailuresI + eval.getNumberOfFailures();
+			float[] failuresHist2 = eval.getFailuresHistogram();
+			for(int j=0; j<failuresHist2.length; j++){
+				failuresHist[j] = failuresHist[j] + failuresHist2[j];
+			}
 			hitratio = hitratio + eval.getHitRatio();
 			clicksoonration = clicksoonration + eval.getClickSoonRatio();
 			float[] prA2 = eval.getPrecisions();
@@ -516,9 +546,17 @@ public class ModelEvaluator {
 		}
 		
 		// compute the metric's average value of all folds
+		float trnURLsf = (float)trnURLs / (float)m_nFolds;
+		float trnSeqsf = (float)trnSeqs / (float)m_nFolds;
+		float tsnURLsf = (float)tsnURLs / (float)m_nFolds;
+		float tsnSeqsf = (float)tsnSeqs / (float)m_nFolds;
 		float nNodesf = (float)nNodes / (float)m_nFolds;
 		float nEdgesf = (float)nEdges / (float)m_nFolds;
 		nrec = nrec / (float)m_nFolds;
+		float nFailures = (float)((double)nFailuresI / (double)m_nFolds);
+		for(int j=0; j<failuresHist.length; j++){
+			failuresHist[j] = failuresHist[j] / (float)m_nFolds; 
+		}
 		hitratio = hitratio / (float)m_nFolds;
 		clicksoonration = clicksoonration / (float)m_nFolds;
 		for(int j=0; j<m_confusionPoints.length; j++){
@@ -531,9 +569,15 @@ public class ModelEvaluator {
 		}
 		
 		// write metric's values
-		String results = String.valueOf(nNodesf);
+		String results = String.valueOf(trnURLsf);
+		results = results + "," + trnSeqsf;
+		results = results + "," + tsnURLsf;
+		results = results + "," + tsnSeqsf;
+		results = results + "," + nNodesf;
 		results = results + "," + nEdgesf;
 		results = results + "," + nrec;
+		results = results + "," + nFailures;
+		for(int j=0; j<failuresHist.length; j++){results = results + "," + failuresHist[j];}
 		results = results + "," + hitratio;
 		results = results + "," + clicksoonration;
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + prA[j];}
@@ -547,9 +591,16 @@ public class ModelEvaluator {
 	}
 	
 	public String getEvaluationHeader(){
-		String header = "nNodes";
+		String header = "trNClicks";
+		header = header + ",trNSeqs";
+		header = header + ",tsNClicks";
+		header = header + ",tsNSeqs";
+		header = header + ",nNodes";
 		header = header + ",nEdges";
 		header = header + ",nRecos";
+		header = header + ",nFailures";
+		for(int j=0; j<11; j++){header = header + ",f=" + j;}
+		header = header + ",f>10";
 		header = header + ",hitratio";
 		header = header + ",clicksoonration";
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",pr_" + m_confusionPoints[j];}
