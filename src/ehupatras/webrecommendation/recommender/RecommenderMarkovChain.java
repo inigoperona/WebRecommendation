@@ -23,13 +23,20 @@ public class RecommenderMarkovChain
 		return 0;
 	}
 	
-	public boolean update(ArrayList<String> waydone, String laststep, 
+	public ArrayList<String> update(ArrayList<String> waydone, String laststep, 
 							boolean incrWeigh, boolean performFailureFunction){
 		m_lastStep = laststep;
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> recos = (ArrayList<String>)objA[0];
 		ArrayList<Float> probs = (ArrayList<Float>)objA[1];
-		return recos.size()>0;
+		
+		// if there are recommendations, there are transitions
+		// so, the way until now is runnable
+		if(recos.size()>0){
+			return waydone;
+		} else {
+			return (new ArrayList<String>());
+		}
 	}
 	
 	public ArrayList<String> getNextpossibleStepsUnbounded(){

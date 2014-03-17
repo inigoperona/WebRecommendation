@@ -28,8 +28,10 @@ public class RecommenderSuffixTree
 		m_failureMode = failuremode;
 	}
 	
-	private boolean updatePointer(ArrayList<String> waydone, String newstep, 
-						boolean incrWeigh, boolean performFailureFunction){
+	private ArrayList<String> updatePointer(ArrayList<String> waydone, 
+						String newstep, 
+						boolean incrWeigh, 
+						boolean performFailureFunction){
 		boolean isupdate = false;
 		
 		if(m_pointerNode==null && m_pointerEdge!=null){
@@ -75,15 +77,18 @@ public class RecommenderSuffixTree
 		
 		// it was impossible to move the pointer
 		if(!isupdate){
+			ArrayList<String> wayRunInST;
 			if(performFailureFunction){
-				updatefailure(waydone, newstep);
+				wayRunInST = updatefailure(waydone, newstep);
 				m_nFailures++;
 			} else {
-				updatefailure(waydone, newstep, 0);
+				wayRunInST = updatefailure(waydone, newstep, 0);
 			}
-			return false;
+			return wayRunInST;
 		} else {
-			return true;
+			if(waydone==null){waydone = new ArrayList<String>();}
+			waydone.add(newstep);
+			return waydone;
 		}
 	}
 	
@@ -92,56 +97,85 @@ public class RecommenderSuffixTree
 		return m_nFailures;
 	}
 	
-	private void updatefailure(ArrayList<String> waydone, String nextstep, int failuremode){
+	private ArrayList<String> updatefailure(ArrayList<String> waydone, String nextstep, int failuremode){
+		ArrayList<String> wayInST = new ArrayList<String>();
 		if(failuremode==0){
-			this.gotoroot();
+			wayInST = this.gotoroot();
 		} else if (failuremode==1){
-			this.gotoLongestSuffixes(waydone, nextstep);
+			wayInST = this.gotoLongestSuffixes(waydone, nextstep);
 		} else if(failuremode==2){
-			this.gotoLongesstPrefixes(waydone, nextstep);
+			wayInST = this.gotoLongesstPrefixes(waydone, nextstep);
 		}
+		return wayInST;
 	}
 	
-	private void updatefailure(ArrayList<String> waydone, String nextstep){
-		this.updatefailure(waydone, nextstep, m_failureMode);
+	private ArrayList<String> updatefailure(ArrayList<String> waydone, String nextstep){
+		return this.updatefailure(waydone, nextstep, m_failureMode);
 	}
 	
-	private void gotoroot(){
+	private ArrayList<String> gotoroot(){
 		m_pointerNode = m_gST.getRoot();
 		m_pointerEdge = null;
 		m_pointerPositionInTheEdge = 0;
+		return (new ArrayList<String>());
 	}
 	
-	public boolean update(ArrayList<String> waydone, String newstep, 
+	public ArrayList<String> update(ArrayList<String> waydone, String newstep, 
 					boolean incrWeigh, boolean performFailureFunction){
 		return this.updatePointer(waydone, newstep, incrWeigh, performFailureFunction);
 	}
 	
-	public void gotoLongestSuffixes(ArrayList<String> waydone, String newstep){
-		ArrayList<String> waydone2 = this.getTheWayInSuffixTree(waydone);
+	public ArrayList<String> gotoLongestSuffixes(ArrayList<String> waydone, String newstep){
+		// the way we want to perform in the suffix tree
+		ArrayList<String> waydone2 = (ArrayList<String>)waydone.clone();
 		waydone2.add(newstep);
+		
+		// the running of the way in the Suffix Tree
+		boolean runnable = false;
+		this.gotoroot();
 		ArrayList<String> suffix = new ArrayList<String>();
-		for(int i=1; i<waydone2.size(); i++){ // for each try
+		for(int i=0; i<waydone2.size(); i++){ // for each try
+			suffix = new ArrayList<String>();
 			for(int j=i; j<waydone2.size(); j++){ // create a smaller suffix
 				String step = waydone2.get(j);
 				suffix.add(step);
 			}
-			boolean runnable = this.performTheWayInSuffixTree(suffix);
+			runnable = this.performTheWayInSuffixTree(suffix);
 			if(runnable){break;}
+		}
+		
+		// return the way we have done in the suffix tree
+		if(runnable){
+			return suffix;
+		} else {
+			return (new ArrayList<String>());
 		}
 	}
 	
-	public void gotoLongesstPrefixes(ArrayList<String> waydone, String newstep){
-		ArrayList<String> waydone2 = this.getTheWayInSuffixTree(waydone);
+	public ArrayList<String> gotoLongesstPrefixes(ArrayList<String> waydone, String newstep){
+		// the way we want to perform in the suffix tree
+		ArrayList<String> waydone2 = (ArrayList<String>)waydone.clone();
 		waydone2.add(newstep);
+		
+		// the running of the way in the Suffix Tree
+		boolean runnable = false;
+		this.gotoroot();
 		ArrayList<String> preffix = new ArrayList<String>();
-		for(int i=waydone2.size()-2; i>=0; i--){ // for each try
+		for(int i=waydone2.size()-1; i>=0; i--){ // for each try
+			preffix = new ArrayList<String>();
 			for(int j=0; j<=i; j++){ // create a smaller suffix
 				String step = waydone2.get(j);
 				preffix.add(step);
 			}
-			boolean runnable = this.performTheWayInSuffixTree(preffix);
+			runnable = this.performTheWayInSuffixTree(preffix);
 			if(runnable){break;}
+		}
+		
+		// return the way we have done in the suffix tree
+		if(runnable){
+			return preffix;
+		} else {
+			return (new ArrayList<String>());
 		}
 	}
 	
@@ -210,7 +244,7 @@ public class RecommenderSuffixTree
 	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone){
 		// run the way done  (clickstream done until now) in the suffix tree
 		// and create the sequence that it is runnable in the suffix tree
-		ArrayList<String> waydone2 = this.getTheWayInSuffixTree(waydone);
+		ArrayList<String> waydone2 = (ArrayList<String>)waydone;
 		
 		// compute the weight of the waydone + next step sequences
 		Object[] objA = this.getNextpossibleSteps();
@@ -249,7 +283,7 @@ public class RecommenderSuffixTree
 		this.gotoroot();
 		for(int i=0; i<waydone.size(); i++){
 			String step = waydone.get(i);
-			boolean stepdone = this.updatePointer(null, step, false, false);
+			boolean stepdone = this.updatePointer(null, step, false, false).size()>0;
 			if(!stepdone){
 				// if we have reset the run into the suffix tree
 				// reset also the clikstream done until now
@@ -268,19 +302,14 @@ public class RecommenderSuffixTree
 		return waydone2;
 	}
 	
-	private boolean performTheWayInSuffixTree(ArrayList<String> waydone){
-		// save the pointers values
-		Node pointerNode = m_pointerNode;
-		Edge pointerEdge = m_pointerEdge;
-		int pointerPositionInTheEdge = m_pointerPositionInTheEdge;
-		
+	private boolean performTheWayInSuffixTree(ArrayList<String> waydone){		
 		// run the way done  (clickstream done until now) in the suffix tree
 		// and create the sequence that it is runnable in the suffix tree
 		boolean runnableway = true;
 		this.gotoroot();
 		for(int i=0; i<waydone.size(); i++){
 			String step = waydone.get(i);
-			boolean stepdone = this.updatePointer(null, step, false, false);
+			boolean stepdone = this.updatePointer(null, step, false, false).size()>0;
 			if(stepdone){
 				runnableway = true;
 			} else {
@@ -290,10 +319,7 @@ public class RecommenderSuffixTree
 		}
 		
 		if(!runnableway){
-			// restore the pointers
-			m_pointerNode = pointerNode;
-			m_pointerEdge = pointerEdge;
-			m_pointerPositionInTheEdge = pointerPositionInTheEdge;
+			this.gotoroot();
 		}
 		
 		// return if it is runnable the way given
@@ -355,7 +381,7 @@ public class RecommenderSuffixTree
 		// Compute trainset related node weights
 		// run the way done  (clickstream done until now) in the suffix tree
 		// and create the sequence that it is runnable in the suffix tree
-		ArrayList<String> waydone2 = this.getTheWayInSuffixTree(waydone);
+		ArrayList<String> waydone2 = (ArrayList<String>)waydone;
 		// compute the weight of the waydone + next step sequences
 		int[] frequencies1 = new int[nextsteps.size()];
 		ArrayList<String> way = (ArrayList<String>)waydone2.clone();

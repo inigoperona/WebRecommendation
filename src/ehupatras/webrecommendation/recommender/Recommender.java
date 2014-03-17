@@ -3,7 +3,7 @@ package ehupatras.webrecommendation.recommender;
 import java.util.ArrayList;
 
 public interface Recommender {
-	public boolean update(ArrayList<String> waydone, String newstep, boolean incrWeigh, boolean performFailureFunction);
+	public ArrayList<String> update(ArrayList<String> waydone, String newstep, boolean incrWeigh, boolean performFailureFunction);
 	public void reset();
 	public int getNumberOfFailures();
 	public ArrayList<String> getNextpossibleStepsUnbounded();

@@ -119,17 +119,16 @@ public class SequenceEvaluator {
 			this.computeStepMetrics(i, list);
 			
 			// do the step and get the next recommendations
-			waydone.add(step);
-			m_recommender.update(waydone, step, true, true);
-			if(mode==-1){
+			waydone = m_recommender.update(waydone, step, true, true);
+			if(mode==-1){ // BASELINE
 				list = m_recommender.getNextpossibleStepsUnbounded();
-			} else if(mode==0){
+			} else if(mode==0){ // BASELINE
 				list = m_recommender.getNextpossibleStepsRandom(nrecos, seed);
 			} else if(mode==1){
 				list = m_recommender.getNextpossibleStepsWeightedTrain(nrecos, waydone);
 			} else if(mode==2){
 				list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
-			} else if(mode==3){
+			} else if(mode==3){ // OUR PROPOSED METHOD
 				list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
 			} else if(mode==4){
 				recM.update(null, step, false, false);
