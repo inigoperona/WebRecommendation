@@ -7,7 +7,7 @@ import ehupatras.webrecommendation.modelvalidation.*;
 import ehupatras.webrecommendation.evaluator.*;
 import java.util.*;
 
-public class A030MainClassMarkovChain {
+public class A040MainClassHclust {
 
 	/**
 	 * @param args
@@ -49,13 +49,13 @@ public class A030MainClassMarkovChain {
 		ArrayList<Integer> sampleSessionIDs = database.getSessionsIDs();
 		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
 		
-
+		
 		// DISTANCE MATRIX //
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
 		float[][] distmatrix = matrix.getMatrix();
-		
+
 		
 		// HOLD-OUT //
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
@@ -66,45 +66,45 @@ public class A030MainClassMarkovChain {
 		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
 
 
-		// MARKOV CHAIN VALIDATION //
-
+		
+		// MODEL VALIDATION //
+	
+		// Parameters to play with
+		// Agglomeration method of Hierarchical Clustering
+		String[] linkages = 
+			{"ehupatras.clustering.sapehac.agglomeration.AverageLinkage",
+			 "ehupatras.clustering.sapehac.agglomeration.CentroidLinkage",
+			 "ehupatras.clustering.sapehac.agglomeration.CompleteLinkage",
+			 "ehupatras.clustering.sapehac.agglomeration.MedianLinkage",
+			 "ehupatras.clustering.sapehac.agglomeration.SingleLinkage",
+			 "ehupatras.clustering.sapehac.agglomeration.WardLinkage"};
+		int i = 5;
+		String linkageClassName = linkages[i];
+		// Cutting the dendrogram
+		int[] cutthA = {10, 15, 20, 25};
+		
 		// initialize the model evaluator
-		float[] confusionPoints = {0.25f,0.50f,0.75f};
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
-		modelev.setConfusionPoints(confusionPoints);
-		System.out.print("options," + modelev.getEvaluationHeader());
-		
-		// compute markov chain
-		modelev.buildMarkovChains();
-
-		// compute results
-		String resultsMarkov;
-		
-			// unbounded
-		resultsMarkov = modelev.computeEvaluationTest(-1, -1, (long)0, 0, 100);
-		System.out.print("markovchain_unbounded,");
-		System.out.print(resultsMarkov);
-		
-			// random
-		int[] nrecsR = new int[]{2,3,4,5,10,20};
-		for(int i=0; i<nrecsR.length; i++ ){
-			int nrec = nrecsR[i];
-			resultsMarkov = modelev.computeEvaluationTest(0, nrec, (long)0, 0, 100);
-			System.out.print("markovchain" + "_random" + nrec + ",");
-			System.out.print(resultsMarkov);
-		}
-
-			// weighted
-		int[] nrecsW = new int[]{2,3,4,5,10,20};
-		for(int i=0; i<nrecsR.length; i++ ){
-			int nrec = nrecsW[i];
-			resultsMarkov = modelev.computeEvaluationTest(1, nrec, (long)0, 0, 100);
-			System.out.print("markovchain" + "_weighted" + nrec + ",");
-			System.out.print(resultsMarkov);
+		float[] confusionPoints = {0.25f,0.50f,0.75f};
+		modelev.setConfusionPoints(confusionPoints);		
+	
+		// HIERARCHICAL CLUSTERING //
+		modelev.resetModels();
+		for(int j=0; j<cutthA.length; j++){ // for each height
+			int cutth = cutthA[j];
+				
+			String esperimentationStr = "agglo" + i + "_cl" + cutth;
+			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
+			
+			// Clustering
+			modelev.buildClusters(cutth, linkageClassName);
+			modelev.saveClusters(validationWD + "/" + esperimentationStr + ".javaData");
+			modelev.writeClusters(validationWD + "/" + esperimentationStr + ".txt");
+			//modelev.loadClusters(validationWD + "/" + esperimentationStr + ".javaData");
 		}
 					
-					
+			
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");

@@ -90,36 +90,44 @@ public class A031MainClassSuffixTree {
 		// Evaluation
 		String results;
 
-		int[] failmodesA = new int[]{0, 1, 2};
+		//int[] failmodesA = new int[]{0, 1, 2};
+		int[] failmodesA = new int[]{1};
 		for(int fmodei=0; fmodei<failmodesA.length; fmodei++){
 			int fmode = failmodesA[fmodei];
-			String esperimentationStr2 = esperimentationStr + "_failure" + fmode; 
-		
-			// unbounded
-			results = modelev.computeEvaluationTest(-1, -1, (long)0, fmode);
-			System.out.print(esperimentationStr2 + "_unbounded,");
-			System.out.print(results);
-		
-			// random
-			int[] nrecsRST = new int[]{2,3,4,5,10,20};
-			for(int ind=0; ind<nrecsRST.length; ind++ ){
-				int nrec = nrecsRST[ind];
-				results = modelev.computeEvaluationTest(0, nrec, (long)0, fmode);
-				System.out.print(esperimentationStr2 + "_random" + nrec + ",");
-				System.out.print(results);
-			}
-		
-			// weighted
-			// construction sequences
-			// test sequences
-			int[] nrecsWST = new int[]{2,3,4,5,10,20};
-			for(int ind=0; ind<nrecsWST.length; ind++ ){
-				int nrec = nrecsWST[ind];
-				results = modelev.computeEvaluationTest(3, nrec, (long)0, fmode);
-				System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
-				System.out.print(results);
-			}
+			String esperimentationStr2 = esperimentationStr + "_failure" + fmode;
 			
+			int[] goToMemA = new int[]{1,2,3,4,5, 100};
+			for(int gt=0; gt<goToMemA.length; gt++){
+				int gtmem = goToMemA[gt];
+				String esperimentationStr3 = esperimentationStr2 + "_gt" + gtmem; 
+		
+				/*
+				// random
+				int[] nrecsRST = new int[]{2,3,4,5,10,20};
+				for(int ind=0; ind<nrecsRST.length; ind++ ){
+					int nrec = nrecsRST[ind];
+					results = modelev.computeEvaluationTest(0, nrec, (long)0, fmode, gtmem);
+					System.out.print(esperimentationStr3 + "_random" + nrec + ",");
+					System.out.print(results);
+				}
+				*/
+		
+				// weighted
+				// construction sequences
+				// test sequences
+				int[] nrecsWST = new int[]{2,3,4,5,10,20};
+				for(int ind=0; ind<nrecsWST.length; ind++ ){
+					int nrec = nrecsWST[ind];
+					results = modelev.computeEvaluationTest(3, nrec, (long)0, fmode, gtmem);
+					System.out.print(esperimentationStr3 + "_weighted" + nrec + ",");
+					System.out.print(results);
+				}
+			
+				// unbounded
+				results = modelev.computeEvaluationTest(-1, -1, (long)0, fmode, gtmem);
+				System.out.print(esperimentationStr3 + "_unbounded,");
+				System.out.print(results);
+			}
 		}
 		
 		/*

@@ -453,7 +453,7 @@ public class ModelEvaluator {
 	// MODEL EVALUATION
 	
 	public String computeEvaluationTest(int mode, int nrecos, long seed,
-			int failuremode){				
+			int failuremode, int maxMemory){				
 		// metrics
 		int trnURLs = 0;
 		int trnSeqs = 0;
@@ -498,7 +498,8 @@ public class ModelEvaluator {
 			eval.setFmeasureBeta(m_fmeasurebeta);
 			eval.computeEvaluation(mode, nrecos, seed, 
 					m_markovChainAL.get(i),
-					failuremode);
+					failuremode,
+					maxMemory);
 			//eval.writeResults();
 			
 			// METRICS1

@@ -19,11 +19,14 @@ public class MainClass {
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String dmWD = "/DM_00_no_role";
+		dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
-		validationWD = args[3];
+		dmWD = args[3];
+		validationWD = args[4];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -51,6 +54,7 @@ public class MainClass {
 		
 		// DISTANCE MATRIX //
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
+		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
 		float[][] distmatrix = matrix.getMatrix();
 
@@ -207,7 +211,7 @@ public class MainClass {
 					int[] nrecsWSTOrig = new int[]{2,3,4,5,10,20};
 					for(int ind=0; ind<nrecsWSTOrig.length; ind++ ){
 						int nrec = nrecsWSTOrig[ind];
-						results = modelev.computeEvaluationTest(5, nrec, (long)0, 0);
+						results = modelev.computeEvaluationTest(5, nrec, (long)0, 0, 100);
 						System.out.print(esperimentationStr2 + "_WeightedOrig" + nrec + ",");
 						System.out.print(results);
 					}

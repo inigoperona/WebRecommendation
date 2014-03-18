@@ -26,6 +26,8 @@ public class RecommenderMarkovChain
 	public ArrayList<String> update(ArrayList<String> waydone, String laststep, 
 							boolean incrWeigh, boolean performFailureFunction){
 		m_lastStep = laststep;
+		
+		// see if there are recommendations
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> recos = (ArrayList<String>)objA[0];
 		ArrayList<Float> probs = (ArrayList<Float>)objA[1];

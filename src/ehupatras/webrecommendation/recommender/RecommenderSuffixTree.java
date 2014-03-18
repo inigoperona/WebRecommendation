@@ -16,6 +16,7 @@ public class RecommenderSuffixTree
 	
 	// failure function
 	private int m_failureMode = 0;
+	private int m_maxMemory = 100;
 	private int m_nFailures = 0;
 	
 	public RecommenderSuffixTree(SuffixTreeStringArray gST){
@@ -23,9 +24,14 @@ public class RecommenderSuffixTree
 	}
 	
 	public RecommenderSuffixTree(SuffixTreeStringArray gST, int failuremode){
+		this(gST, failuremode, 100);
+	}
+	
+	public RecommenderSuffixTree(SuffixTreeStringArray gST, int failuremode, int maxMemory){
 		m_gST = gST;
 		m_pointerNode = m_gST.getRoot();
 		m_failureMode = failuremode;
+		m_maxMemory = maxMemory;
 	}
 	
 	private ArrayList<String> updatePointer(ArrayList<String> waydone, 
@@ -125,16 +131,20 @@ public class RecommenderSuffixTree
 		return this.updatePointer(waydone, newstep, incrWeigh, performFailureFunction);
 	}
 	
-	public ArrayList<String> gotoLongestSuffixes(ArrayList<String> waydone, String newstep){
+	private ArrayList<String> gotoLongestSuffixes(ArrayList<String> waydone, String newstep){
 		// the way we want to perform in the suffix tree
 		ArrayList<String> waydone2 = (ArrayList<String>)waydone.clone();
 		waydone2.add(newstep);
+
+		// take the last clicks as a suffix
+		int startInd = waydone2.size() - m_maxMemory;
+		startInd = startInd<0 ? 0 : startInd; 
 		
 		// the running of the way in the Suffix Tree
 		boolean runnable = false;
 		this.gotoroot();
 		ArrayList<String> suffix = new ArrayList<String>();
-		for(int i=0; i<waydone2.size(); i++){ // for each try
+		for(int i=startInd; i<waydone2.size(); i++){ // for each try
 			suffix = new ArrayList<String>();
 			for(int j=i; j<waydone2.size(); j++){ // create a smaller suffix
 				String step = waydone2.get(j);
@@ -152,7 +162,7 @@ public class RecommenderSuffixTree
 		}
 	}
 	
-	public ArrayList<String> gotoLongesstPrefixes(ArrayList<String> waydone, String newstep){
+	private ArrayList<String> gotoLongesstPrefixes(ArrayList<String> waydone, String newstep){
 		// the way we want to perform in the suffix tree
 		ArrayList<String> waydone2 = (ArrayList<String>)waydone.clone();
 		waydone2.add(newstep);

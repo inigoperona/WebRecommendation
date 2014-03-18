@@ -1,14 +1,15 @@
 package ehupatras.webrecommendation;
 
-import ehupatras.webrecommendation.structures.*;
-import ehupatras.webrecommendation.utils.SaveLoadObjects;
-import ehupatras.webrecommendation.distmatrix.*;
-import ehupatras.webrecommendation.modelvalidation.*;
-import ehupatras.webrecommendation.evaluator.*;
-import java.util.*;
+import java.util.ArrayList;
 
-public class A010MainClassDistanceMatrixEuclidean {
+import ehupatras.webrecommendation.distmatrix.DistanceMatrixEdit;
+import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.distmatrix.SimilarityMatrixEuclidean;
+import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
+import ehupatras.webrecommendation.structures.Website;
 
+public class A012MainClassDistanceMatrixED {
+	
 	private Matrix m_matrix;
 	
 	public void createDistanceMatrix(String databaseWD,
@@ -16,7 +17,7 @@ public class A010MainClassDistanceMatrixEuclidean {
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights){
 		System.out.println("DISTANCE MATRIX");
-		m_matrix = new SimilarityMatrixEuclidean();
+		m_matrix = new DistanceMatrixEdit();
 		m_matrix.computeMatrix(sampleSessionIDs, sequencesUHC, roleWeights);
 		m_matrix.save(databaseWD);
 		m_matrix.writeMatrix(databaseWD + "/distance_matrix.txt");
@@ -32,12 +33,7 @@ public class A010MainClassDistanceMatrixEuclidean {
 		return m_matrix;
 	}
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
+	public static void main(String[] args){
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
@@ -75,49 +71,19 @@ public class A010MainClassDistanceMatrixEuclidean {
 		
 		
 		// DISTANCE MATRIX //
-		A010MainClassDistanceMatrixEuclidean dm;
+		A012MainClassDistanceMatrixED dm;
 		
-
 		// No role
-		float[][] roleW1 = {{ 1f, 1f, 1f},
-				            { 1f, 1f, 1f},
-				            { 1f, 1f, 1f}};
-		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_00_no_role", 
+		float[][] roleW1 = {{ 0f, 0f, 0f},
+	            			{ 0f, 0f, 0f},
+	            			{ 0f, 0f, 0f}};
+		dm = new A012MainClassDistanceMatrixED();
+		dm.createDistanceMatrix(databaseWD + "/DM_04_edit", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW1);
-		
-		// 3 roles: U & H & C
-		float[][] roleW2 = {{ 1f,-1f,-1f},
-      		    			{-1f, 1f,-1f},
-      		    			{-1f,-1f, 1f}};
-		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_01_U_H_C", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW2);
-		
-		// 2 roles: U & HC
-		float[][] roleW3 = {{ 1f,-1f,-1f},
-      		    			{-1f, 1f, 1f},
-      		    			{-1f, 1f, 1f}};
-		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_02_U_HC", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW3);
-		
-		// Treat the role intelligently
-		float[][] roleW4 = {{-1f,   -1f,   -1f},
-	  		    			{-1f,    1f, 0.75f},
-	  		    			{-1f, 0.75f,    1f}};
-		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW4);
-		
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
 	}
-
 }

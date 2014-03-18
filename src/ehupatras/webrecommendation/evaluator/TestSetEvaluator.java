@@ -50,7 +50,8 @@ public class TestSetEvaluator {
 	
 	public void computeEvaluation(int mode, int nrecos, long seed, 
 			MarkovChain markovchain,
-			int failureMode){
+			int failureMode,
+			int maxMemory){
 		float numberOfRecommendationsRatio = 0f;
 		int numberOfFailures = 0;
 		int[] failuresHist = new int[m_failuresHist.length]; 
@@ -68,7 +69,7 @@ public class TestSetEvaluator {
 			// select the model
 			SequenceEvaluator seqEv = null;
 			if(m_gST!=null){
-				seqEv = new SequenceEvaluator(seq, m_gST, failureMode);
+				seqEv = new SequenceEvaluator(seq, m_gST, failureMode, maxMemory);
 			} else {
 				seqEv = new SequenceEvaluator(seq, m_markovchain);
 			}

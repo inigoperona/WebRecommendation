@@ -35,6 +35,15 @@ public class SequenceEvaluator {
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructor(sequenceAL, suffixtree, failuremode);
 	}
+
+	public SequenceEvaluator(String[] sequence, 
+			SuffixTreeStringArray suffixtree,
+			int failuremode,
+			int maxMemory){
+		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
+		this.constructor(sequenceAL, suffixtree, failuremode, maxMemory);
+	}
+
 	
 	public SequenceEvaluator(ArrayList<String> sequence, SuffixTreeStringArray suffixtree){
 		this.constructor(sequence, suffixtree, 0);
@@ -46,10 +55,29 @@ public class SequenceEvaluator {
 		this.constructor(sequence, suffixtree, failuremode);
 	}
 	
+	public SequenceEvaluator(ArrayList<String> sequence, 
+			SuffixTreeStringArray suffixtree,
+			int failuremode,
+			int maxMemory){
+		this.constructor(sequence, suffixtree, failuremode, maxMemory);
+	}
+	
 	private void constructor(ArrayList<String> sequence, 
 					SuffixTreeStringArray suffixtree,
 					int failuremode){
 		m_recommender = new RecommenderSuffixTree(suffixtree, failuremode);
+		this.constructor2(sequence);
+	}
+	
+	private void constructor(ArrayList<String> sequence, 
+					SuffixTreeStringArray suffixtree,
+					int failuremode,
+					int maxMemory){
+		m_recommender = new RecommenderSuffixTree(suffixtree, failuremode, maxMemory);
+		this.constructor2(sequence);
+	}
+	
+	private void constructor2(ArrayList<String> sequence){
 		m_sequence = sequence;
 		m_sequenceURL = sequence;
 		m_precision = new float[sequence.size()];
@@ -115,11 +143,13 @@ public class SequenceEvaluator {
 			list = m_recommender.getNextpossibleStepsWeightedByOriginalSequences(nrecos);
 		}
 		for(int i=0; i<m_sequence.size(); i++){
-			String step = m_sequence.get(i);
 			this.computeStepMetrics(i, list);
 			
-			// do the step and get the next recommendations
-			waydone = m_recommender.update(waydone, step, true, true);
+			// do the step
+			String nextstep = m_sequence.get(i);
+			waydone = m_recommender.update(waydone, nextstep, true, true);
+			
+			// get the next recommendations
 			if(mode==-1){ // BASELINE
 				list = m_recommender.getNextpossibleStepsUnbounded();
 			} else if(mode==0){ // BASELINE
@@ -131,7 +161,7 @@ public class SequenceEvaluator {
 			} else if(mode==3){ // OUR PROPOSED METHOD
 				list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
 			} else if(mode==4){
-				recM.update(null, step, false, false);
+				recM.update(null, nextstep, false, false);
 				ArrayList<String> listMarkov = recM.getNextpossibleStepsWeightedTest(nrecos);
 				list = m_recommender.getNextpossibleStepsMarkov(nrecos, waydone, listMarkov);
 			} else if(mode==5){
