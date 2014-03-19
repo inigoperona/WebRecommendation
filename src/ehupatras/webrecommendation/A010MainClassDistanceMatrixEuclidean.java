@@ -114,6 +114,14 @@ public class A010MainClassDistanceMatrixEuclidean {
 				sampleSessionIDs, sequencesUHC, 
 				roleW4);
 		
+		// Treat the role intelligently2
+		float[][] roleW5 = {{ 0f,    0f,    0f},
+	  		    			{ 0f,    1f, 0.75f},
+	  		    			{ 0f, 0.75f,    1f}};
+		dm = new A010MainClassDistanceMatrixEuclidean();
+		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent2", 
+				sampleSessionIDs, sequencesUHC, 
+				roleW5);
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

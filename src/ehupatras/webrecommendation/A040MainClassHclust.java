@@ -22,11 +22,14 @@ public class A040MainClassHclust {
 		String dmWD = "/DM_00_no_role";
 		dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String clustWD = "/CL_00_no_role";
+		clustWD = "";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
 		dmWD = args[3];
 		validationWD = args[4];
+		clustWD = args[5];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -99,8 +102,8 @@ public class A040MainClassHclust {
 			
 			// Clustering
 			modelev.buildClusters(cutth, linkageClassName);
-			modelev.saveClusters(validationWD + "/" + esperimentationStr + ".javaData");
-			modelev.writeClusters(validationWD + "/" + esperimentationStr + ".txt");
+			modelev.saveClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+			modelev.writeClusters(validationWD + clustWD + "/" + esperimentationStr + ".txt");
 			//modelev.loadClusters(validationWD + "/" + esperimentationStr + ".javaData");
 		}
 					

@@ -7,21 +7,21 @@ public class SequenceAlignmentGlobalDimopoulos2010
 
     public float getScore(String[] seqA, String[] seqB){
     	// constants
-    	float wm = (float)1;
-    	float wms = (float)1;
-    	float wg = (float)1;
-    	float ws = (float)5;
+    	float wm  = 1f;
+    	float wms = 1f;
+    	float wg  = 1f;
+    	float ws  = 5f;
     	
     	// counts
-    	Integer[] counts = getAlignmentOperations(seqA, seqB);
-    	int nmatches = counts[0];
-    	int nmismatches = counts[1];
-    	int ngaps = counts[2];
-    	int nspaces = counts[3];
+    	Float[] counts = getAlignmentOperations(seqA, seqB);
+    	float nmatches = counts[0];
+    	float nmismatches = counts[1];
+    	float ngaps = counts[2];
+    	float nspaces = counts[3];
     	
     	// compute the score and return
-    	float score = wm*(float)nmatches 
-    			- wms*(float)nmismatches - wg*(float)ngaps - ws*(float)nspaces;
+    	float score = wm*nmatches 
+    			- wms*nmismatches - wg*ngaps - ws*nspaces;
     	return score;
     }
     

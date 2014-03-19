@@ -1,12 +1,13 @@
 package ehupatras.webrecommendation;
 
 import ehupatras.webrecommendation.structures.*;
+import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.distmatrix.*;
 import ehupatras.webrecommendation.modelvalidation.*;
 import ehupatras.webrecommendation.evaluator.*;
 import java.util.*;
 
-public class A031MainClassSuffixTree {
+public class A050MainClassHclustMsaSt {
 
 	/**
 	 * @param args
@@ -21,11 +22,14 @@ public class A031MainClassSuffixTree {
 		String dmWD = "/DM_00_no_role";
 		dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String clustWD = "/CL_00_no_role";
+		clustWD = "";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
 		dmWD = args[3];
 		validationWD = args[4];
+		clustWD = args[5];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -63,110 +67,74 @@ public class A031MainClassSuffixTree {
 		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
 		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
 		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
-		
+
+
 		
 		// MODEL VALIDATION //
-
+	
+		// Parameters to play with
+		int[] cutthA = {10, 15, 20, 25};
+		float[] seqweights = {0.10f, 0.15f, 0.20f};
+		
 		// initialize the model evaluator
-		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
 		modelev.setFmeasureBeta(0.5f);
+		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
-		
-		// Markov Chain uses one of failure functions
-		// so just in case we computed it
+				
+		// MARKOV CHAIN //
 		modelev.buildMarkovChains();
+	
 		
 		// SUFFIX TREE //
-		modelev.buildSuffixTreesFromOriginalSequences();		
 		
 		// Results' header
 		System.out.print("options," + modelev.getEvaluationHeader());
 		
-		// Experimentation string
-		String esperimentationStr = "suffixtree";
+		// Start generating and evaluating the model
+		int i = 5; // Hclust - linkage method
+		for(int j=0; j<cutthA.length; j++){
+			int cutth = cutthA[j];
+				
+			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
-		// Evaluation
-		String results;
+			// Load clustering
+			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 
-		//int[] failmodesA = new int[]{0, 1, 2};
-		int[] failmodesA = new int[]{1};
-		for(int fmodei=0; fmodei<failmodesA.length; fmodei++){
-			int fmode = failmodesA[fmodei];
-			String esperimentationStr2 = esperimentationStr + "_failure" + fmode;
+			// Sequence Alignment
+			modelev.clustersSequenceAlignment();
+			modelev.writeAlignments(validationWD + clustWD + "/" + esperimentationStr + "_alignments.txt");
 			
-			int[] goToMemA = new int[]{1,2,3,4,5, 100};
-			for(int gt=0; gt<goToMemA.length; gt++){
-				int gtmem = goToMemA[gt];
-				String esperimentationStr3 = esperimentationStr2 + "_gt" + gtmem; 
-		
-				/*
-				// random
-				int[] nrecsRST = new int[]{2,3,4,5,10,20};
-				for(int ind=0; ind<nrecsRST.length; ind++ ){
-					int nrec = nrecsRST[ind];
-					results = modelev.computeEvaluationTest(0, nrec, (long)0, fmode, gtmem);
-					System.out.print(esperimentationStr3 + "_random" + nrec + ",");
-					System.out.print(results);
-				}
-				*/
-		
+			// Weighted Sequences
+			for(int k=0; k<seqweights.length; k++){
+				float minsup = seqweights[k];
+				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
+				modelev.extractWeightedSequences(minsup);
+				modelev.writeWeightedSequences(validationWD + clustWD + "/" + esperimentationStr2 + ".txt");
+			
+				// Suffix Tree
+				modelev.buildSuffixTrees();
+			
+				// Evaluation
+				String results;
+				
 				// weighted by construction sequences (test sequences)
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(3, nrec, (long)0, fmode, gtmem);
-					System.out.print(esperimentationStr3 + "_weighted" + nrec + ",");
+					results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1);
+					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, -1, (long)0, fmode, gtmem);
-				System.out.print(esperimentationStr3 + "_unbounded,");
+				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1);
+				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}
+
 		}
 		
-		/*
-		 * OTHER METHOD TRIED TO WEIGHT THE SUFFIX TREE
-		 * 
-			// weightedTrain
-		int[] nrecsWST1 = new int[]{2,3,4,5,10,20};
-		for(int ind=0; ind<nrecsWST1.length; ind++ ){
-			int nrec = nrecsWST1[ind];
-			results = modelev.computeEvaluationTest(1, nrec, (long)0);
-			System.out.print(esperimentationStr2 + "_TrainWeighted" + nrec + ",");
-			System.out.print(results);
-		}
-					
-			// weightedTest
-		int[] nrecsWST2 = new int[]{2,3,4,5,10,20};
-		for(int ind=0; ind<nrecsWST2.length; ind++ ){
-			int nrec = nrecsWST2[ind];
-			results = modelev.computeEvaluationTest(2, nrec, (long)0);
-			System.out.print(esperimentationStr2 + "_TestWeighted" + nrec + ",");
-			System.out.print(results);
-		}
-
-			// weighted with markov
-		int[] nrecsWSTM = new int[]{2,3,4,5,10,20};
-		for(int ind=0; ind<nrecsWSTM.length; ind++ ){
-			int nrec = nrecsWSTM[ind];
-			results = modelev.computeEvaluationTest(4, nrec, (long)0);
-			System.out.print(esperimentationStr2 + "_withMarkov" + nrec + ",");
-			System.out.print(results);
-		}
-
-			// weighted with original sequences
-		int[] nrecsWSTOrig = new int[]{2,3,4,5,10,20};
-		for(int ind=0; ind<nrecsWSTOrig.length; ind++ ){
-			int nrec = nrecsWSTOrig[ind];
-			results = modelev.computeEvaluationTest(5, nrec, (long)0);
-			System.out.print(esperimentationStr2 + "_WeightedOrig" + nrec + ",");
-			System.out.print(results);
-		}
-		*/
-					
 					
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

@@ -63,11 +63,11 @@ public class MultipleSequenceAlignment {
 				// Perform global alignment betweeen center and sequencej
 				SequenceAlignmentBacktrack seqalign = new SequenceAlignmentGlobalNeedlemanWunsch();
 		    	String[] sequencej = was.get(seqclust.get(j));
-		    	Integer[] counts = seqalign.getAlignmentOperations(center, sequencej);
-		    	int nmatches = counts[0];
-		    	int nmismatches = counts[1];
-		    	int ngaps = counts[2];
-		    	int nspaces = counts[3];
+		    	Float[] counts = seqalign.getAlignmentOperations(center, sequencej);
+		    	float nmatches = counts[0];
+		    	float nmismatches = counts[1];
+		    	float ngaps = counts[2];
+		    	float nspaces = counts[3];
 				String[] align1 = seqalign.getAlignSeqA();
 				String[] align2 = seqalign.getAlignSeqB();
 				
@@ -113,11 +113,11 @@ public class MultipleSequenceAlignment {
 				// Perform the alignment
 				SequenceAlignmentBacktrack seqalign = new SequenceAlignmentGlobalSeqAFix();
 				String[] sequencej = was.get(seqclust.get(j));
-				Integer[] counts = seqalign.getAlignmentOperations(newCenterA, sequencej);
-		    	int nmatches = counts[0];
-		    	int nmismatches = counts[1];
-		    	int ngaps = counts[2];
-		    	int nspaces = counts[3];
+				Float[] counts = seqalign.getAlignmentOperations(newCenterA, sequencej);
+		    	float nmatches = counts[0];
+		    	float nmismatches = counts[1];
+		    	float ngaps = counts[2];
+		    	float nspaces = counts[3];
 		    	String[] align1 = seqalign.getAlignSeqA();
 				String[] align2 = seqalign.getAlignSeqB();
 				

@@ -26,7 +26,7 @@ public class SequenceAlignmentLocalSmithWaterman
     protected void process() {
             for (int i = 1; i <= mSeqA.length; i++) {
                     for (int j = 1; j <= mSeqB.length; j++) {
-                            float scoreDiag = mD[i-1][j-1] + weight(i, j);
+                            float scoreDiag = mD[i-1][j-1] + weight2(i, j);
                             float scoreLeft = mD[i][j-1] - 1f;
                             float scoreUp = mD[i-1][j] - 1f;
                             mD[i][j] = Math.max(Math.max(Math.max(scoreDiag, scoreLeft), scoreUp), 0);
@@ -76,7 +76,7 @@ public class SequenceAlignmentLocalSmithWaterman
                     mAlignmentSeqB += m_gap;
                     i--;
                     continue;
-                } else if (mD[i][j] == mD[i-1][j-1] + weight(i, j)) {                          
+                } else if (mD[i][j] == mD[i-1][j-1] + weight2(i, j)) {                          
                      mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
                      mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
                      i--;

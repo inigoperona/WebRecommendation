@@ -46,25 +46,26 @@ public abstract class SequenceAlignmentBacktrack
     
     protected abstract ArrayList<String[]> getTrimedAlignedSequences(String str1, String str2);
     
-    public Integer[] getAlignmentOperations(String[] seqA, String[] seqB){
+    public Float[] getAlignmentOperations(String[] seqA, String[] seqB){
     	// compute match / mismatch / gaps / spaces
     	computeAlignment(seqA,seqB);
     	ArrayList<String[]> trimmedSeqs = getTrimedAlignedSequences(mAlignmentSeqA, mAlignmentSeqB);
     	m_alignSeqA = trimmedSeqs.get(0);
     	m_alignSeqB = trimmedSeqs.get(1);
     	int alignLen = m_alignSeqA.length;
-    	int nmatches = 0;
-    	int nmismatches = 0;
-    	int ngaps = 0;
-    	int nspaces = 0;
+    	float nmatches = 0;
+    	float nmismatches = 0;
+    	float ngaps = 0;
+    	float nspaces = 0;
     	String previousElemA = "";
     	String previousElemB = "";
     	for(int i=0; i<alignLen; i++){
     		String elemA = m_alignSeqA[i];
     		String elemB = m_alignSeqB[i];
-    		if(elemA.equals(elemB)){
+    		float w = this.equalURLs(elemA, elemB);
+    		if(w>=0){
     			if(!elemA.equals(m_gap) && !elemB.equals(m_gap)){
-    				nmatches++;
+    				nmatches = nmatches + w;
     			} else { // gaps
     				boolean iscounted = false;
     				if(elemA.equals(m_gap)){
@@ -110,7 +111,7 @@ public abstract class SequenceAlignmentBacktrack
     	}
     	
     	// return the count values
-    	Integer[] counts = new Integer[4];
+    	Float[] counts = new Float[4];
     	counts[0] = nmatches;
     	counts[1] = nmismatches;
     	counts[2] = ngaps;
@@ -163,7 +164,7 @@ public abstract class SequenceAlignmentBacktrack
     	return m_alignSeqB;
     }
     
-    protected int weightOld(int i, int j) {
+    protected int weight(int i, int j) {
         if (mSeqA[i - 1].equals(mSeqB[j - 1])) {
                 return 1;
         } else {
@@ -171,13 +172,17 @@ public abstract class SequenceAlignmentBacktrack
         }
     }
     
-    protected float weight(int i, int j) {
+    protected float weight2(int i, int j) {
+    	return this.equalURLs(mSeqA[i-1], mSeqB[j-1]);
+    }
+    
+    private float equalURLs(String strA, String strB){
     	int len = m_gap.length();
-    	String urlA = mSeqA[i-1].substring(0,len-1);
-    	String rolA = mSeqA[i-1].substring(len-1,len);
+    	String urlA = strA.substring(0,len-1);
+    	String rolA = strA.substring(len-1,len);
     	int rolAi = this.role2int(rolA);
-    	String urlB = mSeqB[j-1].substring(0,len-1);
-    	String rolB = mSeqB[j-1].substring(len-1,len);
+    	String urlB = strB.substring(0,len-1);
+    	String rolB = strB.substring(len-1,len);
     	int rolBi = this.role2int(rolB);
     	
         if (urlA.equals(urlB)){
