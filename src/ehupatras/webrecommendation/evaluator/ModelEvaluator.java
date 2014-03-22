@@ -24,7 +24,7 @@ public class ModelEvaluator {
 	private ArrayList<ArrayList<Integer>> m_trainAL;
 	
 	// Clustering
-	private String m_AgglemerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
+	private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
 	private int m_pCutDendrogramDiss = 50;
 	private ArrayList<int[]> m_clustersAL;
 	
@@ -80,7 +80,7 @@ public class ModelEvaluator {
 	
 	public void buildClusters(int pCutDendrogramDiss, String agglemerativeMethodString){
 		m_pCutDendrogramDiss = pCutDendrogramDiss;
-		m_AgglemerativeMethodClassName = agglemerativeMethodString;
+		m_AgglomerativeMethodClassName = agglemerativeMethodString;
 		this.buildClusters();
 	}
 	
@@ -102,7 +102,7 @@ public class ModelEvaluator {
 		ClusteringHierarchical clustering = new ClusteringHierarchical();
 		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames);
 		float[][] distmatrix = m_distancematrix.getMatrix();
-		clustering.computeHierarchicalClustering(distmatrix,trainDMindexes,m_AgglemerativeMethodClassName);
+		clustering.computeHierarchicalClustering(distmatrix,trainDMindexes,m_AgglomerativeMethodClassName);
 		// cut dendrogram
 		int[] clustersA = clustering.cutDendrogramByDissimilarity(m_pCutDendrogramDiss);
 		return clustersA;

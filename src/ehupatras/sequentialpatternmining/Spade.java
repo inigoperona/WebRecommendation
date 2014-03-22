@@ -24,7 +24,7 @@ public class Spade {
 	private SequenceDatabase m_sequenceDB;
 	private MyAlgoSpade m_algorithm;
 	
-	public Spade(ArrayList<String[]> sequences, double minsup){
+	public Spade(ArrayList<String[]> sequences, double minsup, boolean len1){
 		m_minsupport = minsup;
 		
 		// initialization
@@ -35,7 +35,13 @@ public class Spade {
 	    
 	    // insert sequences
 	    for(int i=0; i<sequences.size(); i++){
-	    	m_sequenceDB.addSequence(sequences.get(i));
+	    	String[] seq = sequences.get(i);
+	    	if(len1){
+	    		String[] seq2 = this.convertSequenceToProperFormatLength1(seq);
+	    		m_sequenceDB.addSequence(seq2);
+	    	} else{
+	    		m_sequenceDB.addSequence(seq);
+	    	}
 	    }
 	    this.removeNotFrequentURLs();
 	    this.reduceDatabase(m_sequenceDB.getFrequentItems().keySet());
@@ -53,6 +59,39 @@ public class Spade {
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
+	}
+	
+	private String[] convertSequenceToProperFormatLength1(String[] sequence){
+		// put the separator -1
+		ArrayList<String> seq2 = new ArrayList<String>();
+		int ind;
+		for(ind=0; ind<sequence.length-1; ind++){
+			seq2.add(sequence[ind]);
+			seq2.add("-1");
+		}
+		seq2.add(sequence[ind]);
+		seq2.add("-2");		
+		
+		// convert to String[]
+		String[] seq = new String[seq2.size()];
+		for(int i=0; i<seq2.size(); i++){ seq[i] = seq2.get(i); }
+		return seq;
+	}
+	
+	public Object[] getFrequentSequencesLength1(){
+		Object[] objA = getFrequentSequences(1);
+    	ArrayList<ArrayList<String>> freqseqs = (ArrayList<ArrayList<String>>)objA[0];
+    	ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
+    	ArrayList<String> freqseq1 = new ArrayList<String>();
+    	for(int i=0; i<freqseqs.size(); i++){
+    		freqseq1.add( (freqseqs.get(i)).get(0) );
+    	}
+    	
+    	// return the value
+    	Object[] objA2 = new Object[2];
+    	objA2[0] = freqseq1;
+    	objA2[1] = supports;
+		return objA2;
 	}
 	
 	public Object[] getFrequentSequences(int patterLen){
@@ -128,20 +167,33 @@ public class Spade {
     	list.add(seq3);
     	list.add(seq4);
     	
+    	// sequences2
+    	String[] seq11 = {"1", "1", "2", "3", "1", "3", "4", "3", "6"};
+    	String[] seq12 = {"1", "4", "3", "2", "3", "1", "5"};
+    	String[] seq13 ={"5", "6", "1", "2", "4", "6", "3", "2"};
+    	String[] seq14 = {"5", "7", "1", "6", "3", "2", "3"};
+    	ArrayList<String[]> list2 = new ArrayList<String[]>();
+    	list2.add(seq11);
+    	list2.add(seq12);
+    	list2.add(seq13);
+    	list2.add(seq14);
+    	
     	// SPADE
-    	Spade sp = new Spade(list, 0.5d);
+    	Spade sp;
+    	//sp = new Spade(list, 0.5d, false);
+    	sp = new Spade(list2, 0.5d, true);
     	//sp.printSequencesDatabase();
     	//sp.printStatistics();
     	
     	Object[] objA;
     	
     	System.out.println("___Len1___");
-    	objA = sp.getFrequentSequences(1);
-    	ArrayList<ArrayList<String>> freqseqs = (ArrayList<ArrayList<String>>)objA[0];
+    	objA = sp.getFrequentSequencesLength1();
+    	ArrayList<String> freqseqs1 = (ArrayList<String>)objA[0];
     	ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
-    	for(int i=0; i<freqseqs.size(); i++){
+    	for(int i=0; i<freqseqs1.size(); i++){
     		System.out.print("(" + supports.get(i) + ")");
-    		System.out.print(" " + (freqseqs.get(i)).get(0));
+    		System.out.print(" " + freqseqs1.get(i));
     		System.out.println();
     	}
     	

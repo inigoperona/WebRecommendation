@@ -6,10 +6,21 @@ import ehupatras.markovmodel.MarkovChain;
 
 public class TestSetEvaluator {
 
+	// test sequences 
 	private ArrayList<String[]> m_sequences;
+	
+	// Model: Suffix Tree
 	private SuffixTreeStringArray m_gST = null;
+	
+	// Model: Markov Chain
 	private MarkovChain m_markovchain = null;
 	
+	// Model: Medoids & recos for each medoids
+	private ArrayList<String[]> m_medoids;
+	private int[] m_gMedoids;
+	private ArrayList<ArrayList<String>> m_recosAL;
+	
+	// Validation metrics
 	private float[] m_points = {(float)0.0, (float)0.10, (float)0.25, 
 			(float)0.50, (float)0.75, (float)0.90, (float)1.00};
 	private float m_beta = (float)0.5;
@@ -26,9 +37,44 @@ public class TestSetEvaluator {
 	private float[] m_ModelRecall;
 	private float[] m_ModelFmeasure;
 	
+	
+	
+	// CREATOR SUFFIX TREE //
+	
 	public TestSetEvaluator(ArrayList<String[]> sequences, SuffixTreeStringArray suffixtree){
-		m_sequences = sequences;
 		m_gST = suffixtree;
+		this.constructor(sequences);
+	}
+	
+	
+	
+	// CREATOR MARKOV CHAIN //
+	
+	public TestSetEvaluator(ArrayList<String[]> sequences, MarkovChain markovchain){
+		m_markovchain = markovchain;
+		this.constructor(sequences);
+	}
+	
+	
+	
+	// CREATOR MEDOIDS & RECOS //
+	
+	public TestSetEvaluator(ArrayList<String[]> sequences, 
+				ArrayList<String[]> medoids,
+				int[] gmedoids,
+				ArrayList<ArrayList<String>> recos){
+		m_medoids = medoids;
+		m_gMedoids = gmedoids;
+		m_recosAL = recos;
+		this.constructor(sequences);
+	}
+	
+	
+	
+	// UTILS //
+	
+	private void constructor(ArrayList<String[]> sequences){
+		m_sequences = sequences;
 		m_precision = new float[m_points.length];
 		m_recall = new float[m_points.length];
 		m_fmeasure = new float[m_points.length];
@@ -37,16 +83,9 @@ public class TestSetEvaluator {
 		m_ModelFmeasure = new float[m_points.length];
 	}
 	
-	public TestSetEvaluator(ArrayList<String[]> sequences, MarkovChain markovchain){
-		m_sequences = sequences;
-		m_markovchain = markovchain;
-		m_precision = new float[m_points.length];
-		m_recall = new float[m_points.length];
-		m_fmeasure = new float[m_points.length];
-		m_ModelPrecision = new float[m_points.length];
-		m_ModelRecall = new float[m_points.length];
-		m_ModelFmeasure = new float[m_points.length];
-	}
+	
+	
+	// BODY //
 	
 	public void computeEvaluation(int mode, int nrecos, long seed, 
 			MarkovChain markovchain,

@@ -104,7 +104,7 @@ public class A010MainClassDistanceMatrixEuclidean {
 		dm.createDistanceMatrix(databaseWD + "/DM_02_U_HC", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW3);
-		
+
 		// Treat the role intelligently
 		float[][] roleW4 = {{-1f,   -1f,   -1f},
 	  		    			{-1f,    1f, 0.75f},
