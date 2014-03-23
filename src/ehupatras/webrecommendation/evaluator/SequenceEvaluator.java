@@ -106,7 +106,7 @@ public class SequenceEvaluator {
 	public SequenceEvaluator(String[] sequence, 
 						ArrayList<String[]> medoids,
 						int[] gmedoids,
-						ArrayList<ArrayList<String>> medoidsRecos){
+						ArrayList<Object[]> medoidsRecos){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorClRecos(sequenceAL, medoids, gmedoids, medoidsRecos);
 	}
@@ -114,14 +114,14 @@ public class SequenceEvaluator {
 	public SequenceEvaluator(ArrayList<String> sequence, 
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
-			ArrayList<ArrayList<String>> medoidsRecos){
+			ArrayList<Object[]> medoidsRecos){
 		this.constructorClRecos(sequence, medoids, gmedoids, medoidsRecos);
 	}
 	
 	private void constructorClRecos(ArrayList<String> sequence,
 						ArrayList<String[]> medoids,
 						int[] gMedoids,
-						ArrayList<ArrayList<String>> medoidsRecos){
+						ArrayList<Object[]> medoidsRecos){
 		m_recommender = new RecommenderKnnToClusters(medoids, gMedoids, medoidsRecos);
 		this.constructor2(sequence);
 	}

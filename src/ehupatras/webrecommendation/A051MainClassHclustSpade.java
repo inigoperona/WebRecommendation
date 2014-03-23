@@ -1,16 +1,16 @@
 package ehupatras.webrecommendation;
 
-import ehupatras.webrecommendation.structures.*;
-import ehupatras.webrecommendation.distmatrix.*;
-import ehupatras.webrecommendation.modelvalidation.*;
-import ehupatras.webrecommendation.evaluator.*;
-import java.util.*;
+import java.util.ArrayList;
 
-public class A050MainClassHclustMsaSt {
+import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorUHC;
+import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
+import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
+import ehupatras.webrecommendation.structures.Website;
 
-	/**
-	 * @param args
-	 */
+public class A051MainClassHclustSpade {
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
@@ -77,12 +77,14 @@ public class A050MainClassHclustMsaSt {
 		
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
+		modelev.setDataSet2(sequencesUHC); // with UHC
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
-				
-		// MARKOV CHAIN //
-		modelev.buildMarkovChains();
+
+		
+		
+
 	
 		
 		// SUFFIX TREE //
@@ -99,21 +101,15 @@ public class A050MainClassHclustMsaSt {
 			
 			// Load clustering
 			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
-
-			// Sequence Alignment
-			modelev.clustersSequenceAlignment();
-			modelev.writeAlignments(validationWD + clustWD + "/" + esperimentationStr + "_alignments.txt");
 			
 			// Weighted Sequences
 			for(int k=0; k<seqweights.length; k++){
 				float minsup = seqweights[k];
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
-				modelev.extractWeightedSequences(minsup);
-				modelev.writeWeightedSequences(validationWD + clustWD + "/" + esperimentationStr2 + ".txt");
-			
-				// Suffix Tree
-				modelev.buildSuffixTrees();
-			
+				
+				// MEDOIDS models //
+				modelev.buildMedoidsModels(minsup);
+				
 				// Evaluation
 				String results;
 				
@@ -139,5 +135,5 @@ public class A050MainClassHclustMsaSt {
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
 	}
-
+	
 }

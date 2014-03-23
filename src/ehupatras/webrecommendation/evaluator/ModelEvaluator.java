@@ -7,6 +7,8 @@ import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.weightedsequence.WeightedSequence;
 import ehupatras.markovmodel.MarkovChain;
+import ehupatras.clustering.cvi.CVI;
+import ehupatras.sequentialpatternmining.Spade;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,9 +20,12 @@ public class ModelEvaluator {
 	// Number of folds
 	private int m_nFolds;
 	
-	// To create the model
+	// database
 	private ArrayList<String[]> m_dataset;
+	private ArrayList<String[]> m_dataset2;
 	private Matrix m_distancematrix;
+	
+	// To create the model: trainset
 	private ArrayList<ArrayList<Integer>> m_trainAL;
 	
 	// Clustering
@@ -40,6 +45,11 @@ public class ModelEvaluator {
 	
 	// Markov Chain
 	private ArrayList<MarkovChain> m_markovChainAL = null;
+	
+	// Medoids of clusters with each recommendations
+	private ArrayList<ArrayList<String[]>> m_medoidsAL = null;
+	private ArrayList<int[]> m_gmedoidsAL = null;
+	private ArrayList<ArrayList<Object[]>> m_recosAL = null;
 	
 	// to evaluate the model
 	private ArrayList<ArrayList<Integer>> m_valAL;
@@ -67,6 +77,10 @@ public class ModelEvaluator {
 	
 	protected void setDataSet(ArrayList<String[]> dataset){
 		m_dataset = dataset;
+	}
+	
+	public void setDataSet2(ArrayList<String[]> dataset){
+		m_dataset2 = dataset;
 	}
 	
 	public void resetModels(){
@@ -371,7 +385,7 @@ public class ModelEvaluator {
 	// GENERALIZED SUFFIX TREE //
 	
 	public void buildSuffixTrees(){
-		// Build Suffox Trees for each fold
+		// Build Suffix Trees for each fold
 		m_suffixtreeAL = new ArrayList<SuffixTreeStringArray>();
 		for(int i=0; i<m_nFolds; i++){
 			m_suffixtreeAL.add(this.createSuffixTreeNoWeights(i));
@@ -379,7 +393,7 @@ public class ModelEvaluator {
 	}
 
 	public void buildSuffixTreesFromOriginalSequences(){
-		// Build Suffox Trees for each fold
+		// Build Suffix Trees for each fold
 		m_suffixtreeAL = new ArrayList<SuffixTreeStringArray>();
 		for(int i=0; i<m_nFolds; i++){
 			m_suffixtreeAL.add(this.createSuffixTreeFromOriginalSequences(i));
@@ -431,7 +445,7 @@ public class ModelEvaluator {
 	// MARKOV CHAIN
 	
 	public void buildMarkovChains(){
-		// Clustering for each fold
+		// compute markov chain for each fold
 		m_markovChainAL = new ArrayList<MarkovChain>();
 		for(int i=0; i<m_nFolds; i++){
 			m_markovChainAL.add(this.getMarkovChain(i));
@@ -446,6 +460,88 @@ public class ModelEvaluator {
 		for(int j=0; j<inds.length; j++){ trainseqs.add(m_dataset.get(inds[j])); }
 		MarkovChain mchain = new MarkovChain(trainseqs);
 		return mchain;
+	}
+	
+	
+	
+	// MEDOIDS and its recommendations
+	
+	public void buildMedoidsModels(float minsup){
+		// compute medoids for each fold
+		m_medoidsAL = new ArrayList<ArrayList<String[]>>();
+		m_gmedoidsAL = new ArrayList<int[]>();
+		m_recosAL = new ArrayList<ArrayList<Object[]>>();
+		for(int i=0; i<m_nFolds; i++){
+			Object[] medObjA = this.getMedoids(i);
+			ArrayList<String[]> medoids = (ArrayList<String[]>)medObjA[0];
+			int[] gmedoids = (int[])medObjA[1];
+			m_medoidsAL.add(medoids);
+			m_gmedoidsAL.add(gmedoids);
+			m_recosAL.add(this.getRecommendations(i, minsup));
+		}
+	}
+	
+	private Object[] getMedoids(int indexFold){
+		// train cases indexes
+		ArrayList<Integer> trSesIDs = m_trainAL.get(indexFold);
+		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs);
+		
+		// cluster indexes
+		int[] clusters = m_clustersAL.get(indexFold);
+		
+		// get medoids & global medoids
+		CVI cvindex = new CVI(inds,clusters);
+		cvindex.computeMedoids(m_distancematrix.getMatrix());
+		int[] medoids = cvindex.getMedoids();
+		ArrayList<String[]> medoidSeqs = new ArrayList<String[]>();
+		for(int i=0; i<medoids.length; i++){
+			String[] medSeq = m_dataset2.get(medoids[i]);
+			medoidSeqs.add(medSeq);
+		}
+		int[] gmedoids = cvindex.getGlobalMedoids();
+		
+		// Return medoids
+		Object[] objA = new Object[2];
+		objA[0] = medoidSeqs;
+		objA[1] = gmedoids;
+		return objA;
+	}
+	
+	private ArrayList<Object[]> getRecommendations(int indexFold, float minsup){
+		// train cases indexes
+		ArrayList<Integer> trSesIDs = m_trainAL.get(indexFold);
+		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs);
+		
+		// cluster indexes
+		int[] clusters = m_clustersAL.get(indexFold);
+		// find the maximum index
+		int max = Integer.MIN_VALUE;
+		for(int i=0; i<clusters.length; i++){
+			int clInd = clusters[i];
+			if(max<clInd){
+				max = clInd;
+			}
+		}
+		
+		// for each cluster extract the most common URLs
+		ArrayList<Object[]> recos = new ArrayList<Object[]>();
+		for(int i=0; i<=max; i++){
+			ArrayList<String[]> trainseqs = new ArrayList<String[]>();
+			// get train sequences
+			for(int j=0; j<clusters.length; j++){
+				if(i==clusters[j]){
+					trainseqs.add(m_dataset.get(inds[j]));
+				}
+			}
+			// Frequent patter mining
+			Spade sp = new Spade(trainseqs, minsup, true);
+			Object[] objA = sp.getFrequentSequencesLength1();
+			//ArrayList<String> freqseqs1 = (ArrayList<String>)objA[0];
+			//ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
+			recos.add(objA);
+		}
+		
+		return recos;
 	}
 	
 	
@@ -484,13 +580,17 @@ public class ModelEvaluator {
 			// SELECT THE MODEL
 			TestSetEvaluator eval = null;
 			SuffixTreeStringArray suffixtree = null;
-			if(m_suffixtreeAL!=null){
-				// get the suffix tree
+			if(m_suffixtreeAL!=null){ // Suffix Tree
 				suffixtree = m_suffixtreeAL.get(i);
 				eval = new TestSetEvaluator(testseqs, suffixtree);
-			} else { // Markov Chain
+			} else if(m_markovChainAL!=null) { // Markov Chain
 				MarkovChain markovchain = m_markovChainAL.get(i);
 				eval = new TestSetEvaluator(testseqs, markovchain);
+			} else { // Medoids
+				eval = new TestSetEvaluator(testseqs,
+								m_medoidsAL.get(i),
+								m_gmedoidsAL.get(i),
+								m_recosAL.get(i));
 			}
 			
 			// carry out the evaluation

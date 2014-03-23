@@ -16,9 +16,9 @@ public class TestSetEvaluator {
 	private MarkovChain m_markovchain = null;
 	
 	// Model: Medoids & recos for each medoids
-	private ArrayList<String[]> m_medoids;
-	private int[] m_gMedoids;
-	private ArrayList<ArrayList<String>> m_recosAL;
+	private ArrayList<String[]> m_medoids = null;
+	private int[] m_gMedoids = null;
+	private ArrayList<Object[]> m_recosAL = null;
 	
 	// Validation metrics
 	private float[] m_points = {(float)0.0, (float)0.10, (float)0.25, 
@@ -62,7 +62,7 @@ public class TestSetEvaluator {
 	public TestSetEvaluator(ArrayList<String[]> sequences, 
 				ArrayList<String[]> medoids,
 				int[] gmedoids,
-				ArrayList<ArrayList<String>> recos){
+				ArrayList<Object[]> recos){
 		m_medoids = medoids;
 		m_gMedoids = gmedoids;
 		m_recosAL = recos;
@@ -109,8 +109,10 @@ public class TestSetEvaluator {
 			SequenceEvaluator seqEv = null;
 			if(m_gST!=null){
 				seqEv = new SequenceEvaluator(seq, m_gST, failureMode, maxMemory);
-			} else {
+			} else if(m_markovchain!=null){
 				seqEv = new SequenceEvaluator(seq, m_markovchain);
+			} else if(m_medoids!=null){
+				seqEv = new SequenceEvaluator(seq, m_medoids, m_gMedoids, m_recosAL);
 			}
 			
 			seqEv.computeSequenceMetrics(mode, nrecos, seed, markovchain);

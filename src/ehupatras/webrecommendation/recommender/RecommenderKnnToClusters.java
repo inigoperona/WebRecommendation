@@ -5,6 +5,7 @@ import java.util.*;
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010;
+import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtein;
 
 public class RecommenderKnnToClusters
 				implements Recommender {
@@ -12,12 +13,13 @@ public class RecommenderKnnToClusters
 	private ArrayList<String> m_waydone = new ArrayList<String>();
 	private ArrayList<String[]> m_medoids;
 	private int[] m_gmedoids; 
-	private ArrayList<ArrayList<String>> m_recosInEachCluster;
+	private ArrayList<Object[]> m_recosInEachCluster;
 	private int m_0recosClusters = 0;
+	private boolean m_isDistance = true;
 	
 	public RecommenderKnnToClusters(ArrayList<String[]> medoids,
 			int[] globalMedoids,
-			ArrayList<ArrayList<String>> recosForEachMedoid){
+			ArrayList<Object[]> recosForEachMedoid){
 		m_medoids = medoids;
 		m_recosInEachCluster = recosForEachMedoid;
 		m_gmedoids = globalMedoids;
@@ -50,7 +52,10 @@ public class RecommenderKnnToClusters
 		boolean end = false;
 		for(int i=0; i<orderedMedoids.length; i++){
 			int nearesCl = orderedMedoids[i];
-			ArrayList<String> recosCl = m_recosInEachCluster.get(nearesCl);
+			Object[] objA = m_recosInEachCluster.get(nearesCl);
+			ArrayList<String> recosCl = (ArrayList<String>)objA[0];
+			ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
+			
 			if(recosCl.size()==0){m_0recosClusters++;}
 			for(int j=0; j<recosCl.size(); j++){
 				if(recos.size()<nRecos){
@@ -86,36 +91,81 @@ public class RecommenderKnnToClusters
 		float[] simA = new float[m_medoids.size()];
 		for(int i=0; i<m_medoids.size(); i++){
 			String[] medoid = m_medoids.get(i);
-			SequenceAlignment seqalign = new SequenceAlignmentCombineGlobalLocalDimopoulos2010();
-			//seqalign.setRoleWeights(roleWeights);
+			SequenceAlignment seqalign;
+			if(m_isDistance){
+				float[][] roleW5 = {{ 0f,    0f,    0f},
+  		    						{ 0f,    1f, 0.75f},
+  		    						{ 0f, 0.75f,    1f}};
+				seqalign = new SequenceAlignmentLevenshtein();
+				seqalign.setRoleWeights(roleW5);
+			} else{
+				float[][] roleW1 = {{ 0f, 0f, 0f},
+            						{ 0f, 0f, 0f},
+            						{ 0f, 0f, 0f}};
+				seqalign = new SequenceAlignmentCombineGlobalLocalDimopoulos2010();
+				seqalign.setRoleWeights(roleW1);
+			}
 			float sim = seqalign.getScore(waydone, medoid);
 			simA[i] = sim;
 		}
 		
+		// order the similarities or the distance
+		float[] simAord = this.orderSim(simA);
+		
+		// return the index of medoids ordered
+		Object[] objA = this.orderSimilarities(simA, simAord);
+		int[] orderedMedoids = (int[])objA[0];
+		float[] orderedSims = (float[])objA[1];
+		return orderedMedoids;
+	}
+	
+	private float[] orderSim(float[] sims){
+		// order the similarities
+		float[] simAord = sims.clone();
+		Arrays.sort(simAord);
+		
+		if(m_isDistance){
+			float[] simAordCopy = simAord.clone();
+			// reverse the simAord array
+			int iaux = 0;
+			for(int i=simAordCopy.length-1; i>=0; i--){
+				simAord[iaux] = simAordCopy[i];
+				iaux++;
+			}
+		}
+		
+		return simAord;
+	}
+	
+	private Object[] orderSimilarities(float[] sims, float[] orderSims){
 		// order from biggest similarity value to the minimum
 		// initialize the result array
-		int[] orderedMedoids = new int[simA.length];
+		int[] orderedMedoids = new int[sims.length];
+		float[] orderedSims = new float[sims.length];
 		int ind = 0;
-		// order the similarities
-		float[] simA2 = simA.clone();
-		Arrays.sort(simA2);
+		
 		// to check if we have used before
-		boolean[] isOrderA = new boolean[simA2.length];
+		boolean[] isOrderA = new boolean[sims.length];
 		Arrays.fill(isOrderA, false);
 		// for the largest to smallest find the medoid index
-		for(int i=simA2.length-1; i>=0; i--){
-			float sim = simA2[i];
-			for(int j=0; j<simA.length; j++){
-				if(!isOrderA[j] && sim==simA[j]){
+		for(int i=orderSims.length-1; i>=0; i--){
+			float sim = orderSims[i];
+			for(int j=0; j<sims.length; j++){
+				if(!isOrderA[j] && sim==sims[j]){
 					orderedMedoids[ind] = j;
+					orderedSims[ind] = sim;
 					ind++;
 					isOrderA[j] = true;
 					break;
 				}
 			}
 		}
+		
 		// return the index of medoids ordered
-		return orderedMedoids;
+		Object[] objA = new Object[2];
+		objA[0] = orderedMedoids;
+		objA[1] = orderedSims;
+		return objA;
 	}
 
 	public ArrayList<String> getNextpossibleStepsUnbounded(){
@@ -153,15 +203,30 @@ public class RecommenderKnnToClusters
 		int[] gmedoids = new int[]{1,0};
 		
 		// create recos
-		ArrayList<ArrayList<String>> recos = new ArrayList<ArrayList<String>>();
+		ArrayList<Object[]> recos = new ArrayList<Object[]>();
+
 		ArrayList<String> recs1 = new ArrayList<String>();
 		recs1.add("1");
 		recs1.add("2");
+		ArrayList<Integer> supp1 = new ArrayList<Integer>();
+		supp1.add(4);
+		supp1.add(3);
+		Object[] objA1 = new Object[2];
+		objA1[0] = recs1;
+		objA1[1] = supp1;
+		
 		ArrayList<String> recs2 = new ArrayList<String>();
 		recs2.add("3");
 		recs2.add("2");
-		recos.add(recs1);
-		recos.add(recs2);
+		ArrayList<Integer> supp2 = new ArrayList<Integer>();
+		supp2.add(3);
+		supp2.add(2);
+		Object[] objA2 = new Object[2];
+		objA2[0] = recs2;
+		objA2[1] = supp2;
+		
+		recos.add(objA1);
+		recos.add(objA2);
 		
 		// Run the classs
 		ArrayList<String> list;
