@@ -1,13 +1,11 @@
 package ehupatras.webrecommendation.recommender;
 
 import java.util.*;
-
-import ehupatras.markovmodel.MarkovChain;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtein;
 
-public class RecommenderKnnToClusters
+public class RecommenderKnnToClustersTopURLs
 				implements Recommender {
 	
 	private ArrayList<String> m_waydone = new ArrayList<String>();
@@ -16,14 +14,21 @@ public class RecommenderKnnToClusters
 	private ArrayList<Object[]> m_recosInEachCluster;
 	private int m_0recosClusters = 0;
 	private boolean m_isDistance = true;
+	private float[][] m_rolesW = {{ 0f, 0f, 0f},
+								  { 0f, 0f, 0f},
+								  { 0f, 0f, 0f}};
 	
-	public RecommenderKnnToClusters(ArrayList<String[]> medoids,
+	public RecommenderKnnToClustersTopURLs(ArrayList<String[]> medoids,
 			int[] globalMedoids,
-			ArrayList<Object[]> recosForEachMedoid){
+			ArrayList<Object[]> recosForEachMedoid,
+			boolean isDistance,
+			float[][] rolesW){
 		m_medoids = medoids;
 		m_recosInEachCluster = recosForEachMedoid;
 		m_gmedoids = globalMedoids;
 		m_waydone = new ArrayList<String>();
+		m_isDistance = isDistance;
+		
 	}
 	
 	public void reset(){
@@ -46,7 +51,9 @@ public class RecommenderKnnToClusters
 		ArrayList<String> recos = new ArrayList<String>(); 
 		
 		// medoids ordered from the nearest to farthest
-		int[] orderedMedoids = this.knnSim();
+		Object[] objAa = this.knnSim();
+		int[] orderedMedoids = (int[])objAa[0];
+		float[] orderedSims = (float[])objAa[1]; // it can be null
 		
 		// for each medoid take the reccommendations
 		boolean end = false;
@@ -75,11 +82,14 @@ public class RecommenderKnnToClusters
 		return recos;
 	}
 	
-	private int[] knnSim(){
+	private Object[] knnSim(){
 		// if we do not know nothing about the navigation
 		// return the most centered medoid in the database
 		if(m_waydone.size()==0){
-			return m_gmedoids;
+			Object[] objA = new Object[2];
+			objA[0] = m_gmedoids;
+			objA[1] = null;
+			return objA;
 		}
 		
 		// Else find the nearest medoid
@@ -93,17 +103,11 @@ public class RecommenderKnnToClusters
 			String[] medoid = m_medoids.get(i);
 			SequenceAlignment seqalign;
 			if(m_isDistance){
-				float[][] roleW5 = {{ 0f,    0f,    0f},
-  		    						{ 0f,    1f, 0.75f},
-  		    						{ 0f, 0.75f,    1f}};
 				seqalign = new SequenceAlignmentLevenshtein();
-				seqalign.setRoleWeights(roleW5);
+				seqalign.setRoleWeights(m_rolesW);
 			} else{
-				float[][] roleW1 = {{ 0f, 0f, 0f},
-            						{ 0f, 0f, 0f},
-            						{ 0f, 0f, 0f}};
 				seqalign = new SequenceAlignmentCombineGlobalLocalDimopoulos2010();
-				seqalign.setRoleWeights(roleW1);
+				seqalign.setRoleWeights(m_rolesW);
 			}
 			float sim = seqalign.getScore(waydone, medoid);
 			simA[i] = sim;
@@ -114,9 +118,9 @@ public class RecommenderKnnToClusters
 		
 		// return the index of medoids ordered
 		Object[] objA = this.orderSimilarities(simA, simAord);
-		int[] orderedMedoids = (int[])objA[0];
-		float[] orderedSims = (float[])objA[1];
-		return orderedMedoids;
+		//int[] orderedMedoids = (int[])objA[0];
+		//float[] orderedSims = (float[])objA[1];
+		return objA;
 	}
 	
 	private float[] orderSim(float[] sims){
@@ -231,7 +235,11 @@ public class RecommenderKnnToClusters
 		// Run the classs
 		ArrayList<String> list;
 		ArrayList<String> waydone = new ArrayList<String>();
-		RecommenderKnnToClusters rkt5 = new RecommenderKnnToClusters(medoids, gmedoids, recos);
+		float[][] rolesW = {{ 0f, 0f, 0f},
+							{ 0f, 0f, 0f},
+							{ 0f, 0f, 0f}};
+		RecommenderKnnToClustersTopURLs rkt5 = new RecommenderKnnToClustersTopURLs(medoids, gmedoids, recos,
+														true, rolesW);
 		
 		// STEP0
 		list = rkt5.getNextpossibleSteps(5);

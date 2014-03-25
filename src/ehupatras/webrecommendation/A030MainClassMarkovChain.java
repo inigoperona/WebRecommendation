@@ -82,7 +82,7 @@ public class A030MainClassMarkovChain {
 		String resultsMarkov;
 		
 			// unbounded
-		resultsMarkov = modelev.computeEvaluationTest(-1, -1, (long)0, 0, 100);
+		resultsMarkov = modelev.computeEvaluationTest(-1, -1, (long)0, 0, 100, false, null);
 		System.out.print("markovchain_unbounded,");
 		System.out.print(resultsMarkov);
 		
@@ -90,7 +90,7 @@ public class A030MainClassMarkovChain {
 		int[] nrecsR = new int[]{2,3,4,5,10,20};
 		for(int i=0; i<nrecsR.length; i++ ){
 			int nrec = nrecsR[i];
-			resultsMarkov = modelev.computeEvaluationTest(0, nrec, (long)0, 0, 100);
+			resultsMarkov = modelev.computeEvaluationTest(0, nrec, (long)0, 0, 100, false, null);
 			System.out.print("markovchain" + "_random" + nrec + ",");
 			System.out.print(resultsMarkov);
 		}
@@ -99,7 +99,7 @@ public class A030MainClassMarkovChain {
 		int[] nrecsW = new int[]{2,3,4,5,10,20};
 		for(int i=0; i<nrecsR.length; i++ ){
 			int nrec = nrecsW[i];
-			resultsMarkov = modelev.computeEvaluationTest(1, nrec, (long)0, 0, 100);
+			resultsMarkov = modelev.computeEvaluationTest(1, nrec, (long)0, 0, 100, false, null);
 			System.out.print("markovchain" + "_weighted" + nrec + ",");
 			System.out.print(resultsMarkov);
 		}

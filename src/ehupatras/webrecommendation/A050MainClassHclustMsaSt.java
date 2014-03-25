@@ -121,13 +121,13 @@ public class A050MainClassHclustMsaSt {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1);
+					results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1, false, null);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1);
+				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1, false, null);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}

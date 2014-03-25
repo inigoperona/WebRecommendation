@@ -19,6 +19,10 @@ public class TestSetEvaluator {
 	private ArrayList<String[]> m_medoids = null;
 	private int[] m_gMedoids = null;
 	private ArrayList<Object[]> m_recosAL = null;
+	private boolean m_isDistance = true;
+	private float[][] m_rolesW = {{ 0f, 0f, 0f},
+			  					  { 0f, 0f, 0f},
+			  					  { 0f, 0f, 0f}};
 	
 	// Validation metrics
 	private float[] m_points = {(float)0.0, (float)0.10, (float)0.25, 
@@ -62,10 +66,14 @@ public class TestSetEvaluator {
 	public TestSetEvaluator(ArrayList<String[]> sequences, 
 				ArrayList<String[]> medoids,
 				int[] gmedoids,
-				ArrayList<Object[]> recos){
+				ArrayList<Object[]> recos,
+				boolean isDistance,
+				float[][] rolesW){
 		m_medoids = medoids;
 		m_gMedoids = gmedoids;
 		m_recosAL = recos;
+		m_isDistance = isDistance;
+		m_rolesW = rolesW;
 		this.constructor(sequences);
 	}
 	
@@ -109,10 +117,11 @@ public class TestSetEvaluator {
 			SequenceEvaluator seqEv = null;
 			if(m_gST!=null){
 				seqEv = new SequenceEvaluator(seq, m_gST, failureMode, maxMemory);
-			} else if(m_markovchain!=null){
-				seqEv = new SequenceEvaluator(seq, m_markovchain);
 			} else if(m_medoids!=null){
-				seqEv = new SequenceEvaluator(seq, m_medoids, m_gMedoids, m_recosAL);
+				seqEv = new SequenceEvaluator(seq, m_medoids, m_gMedoids, m_recosAL, 
+								m_isDistance, m_rolesW);
+			} else { // markov chain
+				seqEv = new SequenceEvaluator(seq, m_markovchain);
 			}
 			
 			seqEv.computeSequenceMetrics(mode, nrecos, seed, markovchain);

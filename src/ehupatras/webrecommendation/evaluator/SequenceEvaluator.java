@@ -106,23 +106,32 @@ public class SequenceEvaluator {
 	public SequenceEvaluator(String[] sequence, 
 						ArrayList<String[]> medoids,
 						int[] gmedoids,
-						ArrayList<Object[]> medoidsRecos){
+						ArrayList<Object[]> medoidsRecos,
+						boolean isDistance,
+						float[][] rolesW){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
-		this.constructorClRecos(sequenceAL, medoids, gmedoids, medoidsRecos);
+		this.constructorClRecos(sequenceAL, medoids, gmedoids, medoidsRecos,
+				isDistance, rolesW);
 	}
 	
 	public SequenceEvaluator(ArrayList<String> sequence, 
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
-			ArrayList<Object[]> medoidsRecos){
-		this.constructorClRecos(sequence, medoids, gmedoids, medoidsRecos);
+			ArrayList<Object[]> medoidsRecos,
+			boolean isDistance,
+			float[][] rolesW){
+		this.constructorClRecos(sequence, medoids, gmedoids, medoidsRecos,
+				isDistance, rolesW);
 	}
 	
 	private void constructorClRecos(ArrayList<String> sequence,
 						ArrayList<String[]> medoids,
 						int[] gMedoids,
-						ArrayList<Object[]> medoidsRecos){
-		m_recommender = new RecommenderKnnToClusters(medoids, gMedoids, medoidsRecos);
+						ArrayList<Object[]> medoidsRecos,
+						boolean isDistance,
+						float[][] rolesW){
+		m_recommender = new RecommenderKnnToClustersTopURLs(medoids, gMedoids, medoidsRecos,
+				isDistance, rolesW);
 		this.constructor2(sequence);
 	}
 	
@@ -178,6 +187,8 @@ public class SequenceEvaluator {
 			list = m_recommender.getNextpossibleStepsMarkov(nrecos, waydone, listMarkov);
 		} else if(mode==5){
 			list = m_recommender.getNextpossibleStepsWeightedByOriginalSequences(nrecos);
+		} else if(mode==6){
+			list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
 		}
 		for(int i=0; i<m_sequence.size(); i++){
 			this.computeStepMetrics(i, list);
@@ -203,6 +214,8 @@ public class SequenceEvaluator {
 				list = m_recommender.getNextpossibleStepsMarkov(nrecos, waydone, listMarkov);
 			} else if(mode==5){
 				list = m_recommender.getNextpossibleStepsWeightedByOriginalSequences(nrecos);
+			} else if(mode==6){
+				list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
 			}
 		}
 		m_nFailures = m_recommender.getNumberOfFailures();

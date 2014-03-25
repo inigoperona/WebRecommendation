@@ -62,6 +62,7 @@ public class CVI {
 			}
 			m_medoids[j] = minind;
 		}
+		
 		// remove the clusters that does not exists
 		ArrayList<Integer> medoidsA = new ArrayList<Integer>();
 		for(int i=0; i<m_medoids.length; i++){ if(m_medoids[i]>=0){medoidsA.add(m_medoids[i]);}}
@@ -89,17 +90,15 @@ public class CVI {
 			// Take the case that minimize the distance to all its cluster members as a medoid
 			float mindist = Float.MAX_VALUE;
 			int minind = -1;
-			int isOrderedi = -1;
 			for(int i=0; i<avgdist.length; i++){
 				float d = avgdist[i];
 				if(!isOrdered[i] && mindist>d){
 					mindist = d;
-					minind = m_medoids[i];
-					isOrderedi = i;
+					minind = i;
 				}
 			}
 			m_globalMedoids[j] = minind;
-			isOrdered[isOrderedi] = true;
+			isOrdered[minind] = true;
 		}
 		
 	}

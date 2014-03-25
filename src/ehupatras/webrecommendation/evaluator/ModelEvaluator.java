@@ -8,7 +8,7 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.weightedsequence.WeightedSequence;
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.clustering.cvi.CVI;
-import ehupatras.sequentialpatternmining.Spade;
+import ehupatras.sequentialpatternmining.MySPADE;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -492,12 +492,14 @@ public class ModelEvaluator {
 		// get medoids & global medoids
 		CVI cvindex = new CVI(inds,clusters);
 		cvindex.computeMedoids(m_distancematrix.getMatrix());
+		// treat medoids
 		int[] medoids = cvindex.getMedoids();
 		ArrayList<String[]> medoidSeqs = new ArrayList<String[]>();
 		for(int i=0; i<medoids.length; i++){
 			String[] medSeq = m_dataset2.get(medoids[i]);
 			medoidSeqs.add(medSeq);
 		}
+		// treat global medoids
 		int[] gmedoids = cvindex.getGlobalMedoids();
 		
 		// Return medoids
@@ -534,7 +536,7 @@ public class ModelEvaluator {
 				}
 			}
 			// Frequent patter mining
-			Spade sp = new Spade(trainseqs, minsup, true);
+			MySPADE sp = new MySPADE(trainseqs, minsup);
 			Object[] objA = sp.getFrequentSequencesLength1();
 			//ArrayList<String> freqseqs1 = (ArrayList<String>)objA[0];
 			//ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
@@ -549,7 +551,8 @@ public class ModelEvaluator {
 	// MODEL EVALUATION
 	
 	public String computeEvaluationTest(int mode, int nrecos, long seed,
-			int failuremode, int maxMemory){				
+			int failuremode, int maxMemory,
+			boolean isDistance, float[][] rolesW){				
 		// metrics
 		int trnURLs = 0;
 		int trnSeqs = 0;
@@ -583,14 +586,15 @@ public class ModelEvaluator {
 			if(m_suffixtreeAL!=null){ // Suffix Tree
 				suffixtree = m_suffixtreeAL.get(i);
 				eval = new TestSetEvaluator(testseqs, suffixtree);
-			} else if(m_markovChainAL!=null) { // Markov Chain
-				MarkovChain markovchain = m_markovChainAL.get(i);
-				eval = new TestSetEvaluator(testseqs, markovchain);
-			} else { // Medoids
+			} else if(m_medoidsAL!=null) { // Medoids
 				eval = new TestSetEvaluator(testseqs,
 								m_medoidsAL.get(i),
 								m_gmedoidsAL.get(i),
-								m_recosAL.get(i));
+								m_recosAL.get(i),
+								isDistance, rolesW);
+			} else { // Markov Chain
+				MarkovChain markovchain = m_markovChainAL.get(i);
+				eval = new TestSetEvaluator(testseqs, markovchain);
 			}
 			
 			// carry out the evaluation

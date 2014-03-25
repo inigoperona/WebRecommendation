@@ -73,7 +73,11 @@ public class A051MainClassHclustSpade {
 	
 		// Parameters to play with
 		int[] cutthA = {10, 15, 20, 25};
-		float[] seqweights = {0.10f, 0.15f, 0.20f};
+		//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
+		float[] seqweights = {0.25f, 0.30f, 0.40f, 0.50f};
+		float[][] rolesW = {{ 0f, 0f, 0f},
+				  			{ 0f, 0f, 0f},
+				  			{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
@@ -81,13 +85,13 @@ public class A051MainClassHclustSpade {
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
-
+		modelev.buildMarkovChains();
 		
 		
 
 	
 		
-		// SUFFIX TREE //
+		// Hclust + MySPADE //
 		
 		// Results' header
 		System.out.print("options," + modelev.getEvaluationHeader());
@@ -117,13 +121,13 @@ public class A051MainClassHclustSpade {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1);
+					results = modelev.computeEvaluationTest(6, nrec, (long)0, 1, 1, true, rolesW);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1);
+				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1, true, rolesW);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}

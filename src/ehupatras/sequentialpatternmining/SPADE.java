@@ -18,13 +18,13 @@ import java.util.*;
  * 
  * @author agomariz
  */
-public class Spade {
+public class SPADE {
 
 	private double m_minsupport = 0.5d;
 	private SequenceDatabase m_sequenceDB;
-	private MyAlgoSpade m_algorithm;
+	private MyAlgoSPADE m_algorithm;
 	
-	public Spade(ArrayList<String[]> sequences, double minsup, boolean len1){
+	public SPADE(ArrayList<String[]> sequences, double minsup, boolean len1){
 		m_minsupport = minsup;
 		
 		// initialization
@@ -48,7 +48,7 @@ public class Spade {
 	    
 	    // run SPADE
 		boolean dfs=true;
-		m_algorithm = new MyAlgoSpade(m_minsupport, dfs, abstractionCreator);
+		m_algorithm = new MyAlgoSPADE(m_minsupport, dfs, abstractionCreator);
 		boolean keepPatterns = true;
 		boolean verbose = false;
 		try{
@@ -179,9 +179,9 @@ public class Spade {
     	list2.add(seq14);
     	
     	// SPADE
-    	Spade sp;
+    	SPADE sp;
     	//sp = new Spade(list, 0.5d, false);
-    	sp = new Spade(list2, 0.5d, true);
+    	sp = new SPADE(list2, 0.5d, true);
     	//sp.printSequencesDatabase();
     	//sp.printStatistics();
     	

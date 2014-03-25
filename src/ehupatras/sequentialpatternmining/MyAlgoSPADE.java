@@ -40,7 +40,7 @@ import java.util.concurrent.*;
  *
  * @author agomariz
  */
-public class MyAlgoSpade {
+public class MyAlgoSPADE {
 
     public long joinCount; // PFV 2013
     
@@ -89,7 +89,7 @@ public class MyAlgoSpade {
      * we indicate that we want a breath-first search.
      * @param abstractionCreator An abstraction creator.
      */
-    public MyAlgoSpade(double support, boolean dfs, AbstractionCreator abstractionCreator) {
+    public MyAlgoSPADE(double support, boolean dfs, AbstractionCreator abstractionCreator) {
         this.minSup = support;
         this.abstractionCreator = abstractionCreator;
         this.dfs = dfs;
