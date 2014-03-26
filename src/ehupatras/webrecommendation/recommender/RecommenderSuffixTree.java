@@ -474,6 +474,90 @@ public class RecommenderSuffixTree
 		return recos;
 	}
 	
+	public ArrayList<String> getNextpossibleStepsWeightedEnrichWithStep1(int nRecos, ArrayList<String> waydone){
+		// RECOMMENDATIONS DEPTH IN THE SUFFIX TREE //
+		
+		// Compute testset related node weights
+		Object[] objA2 = this.getNextpossibleSteps();
+		ArrayList<String> nextsteps = (ArrayList<String>)objA2[0];
+		ArrayList<Integer> listOfWeights2 = (ArrayList<Integer>)objA2[1];
+		
+		// Compute trainset related node weights
+		// run the way done  (clickstream done until now) in the suffix tree
+		// and create the sequence that it is runnable in the suffix tree
+		ArrayList<String> waydone2 = (ArrayList<String>)waydone;
+		// compute the weight of the waydone + next step sequences
+		int[] frequencies1 = new int[nextsteps.size()];
+		ArrayList<String> way = (ArrayList<String>)waydone2.clone();
+		for(int i=0; i<nextsteps.size(); i++){
+			String nstep = nextsteps.get(i);
+			way.add(nstep);
+			
+			// search
+			ArrayList<Integer> seqs = m_gST.search(way);
+			frequencies1[i] = seqs.size();
+			
+			// put as before the sequence
+			way = (ArrayList<String>)waydone2.clone();
+		}
+		
+		// Sum both frequencies
+		int[] listOfWeightsA = new int[nextsteps.size()];
+		for(int i=0; i<nextsteps.size(); i++){
+			listOfWeightsA[i] = listOfWeights2.get(i) + frequencies1[i];
+		}
+				
+		// select the most weighted sequences
+		// order the frequencies of searched sequences of the way
+		int realNreco = Math.min(nRecos, nextsteps.size());
+		ArrayList<String> recos = this.getTheMostWeightedURLs(realNreco, nextsteps, listOfWeightsA);
+		
+		
+		// RECOMMENDATIONS SHALLOW (1-step) IN THE SUFFIX TREE //
+		
+		// Enrich the recommendations with the URLs available in the 1st step
+		ArrayList<String> waydone1step = new ArrayList<String>();
+		if(recos.size()<nRecos && waydone.size()>0){
+			String laststep = waydone.get(waydone.size()-1); 
+			waydone1step.add(laststep);
+			// save the pointers values
+			Node pointerNode = m_pointerNode;
+			Edge pointerEdge = m_pointerEdge;
+			int pointerPositionInTheEdge = m_pointerPositionInTheEdge;
+			// perform 1-step in the suffix tree
+			this.performTheWayInSuffixTree(waydone1step);
+			// get the recommendations
+			Object[] objA3 = this.getNextpossibleSteps();
+			ArrayList<String> nextsteps3 = (ArrayList<String>)objA3[0];
+			ArrayList<Integer> listOfWeights3 = (ArrayList<Integer>)objA3[1];
+			// restore the pointers
+			m_pointerNode = pointerNode;
+			m_pointerEdge = pointerEdge;
+			m_pointerPositionInTheEdge = pointerPositionInTheEdge;
+			// get the recommendations ordered
+			int[] listOfWeights3A = new int[listOfWeights3.size()];
+			for(int i=0; i<listOfWeights3.size(); i++){ listOfWeights3A[i] = listOfWeights3.get(i); }
+			ArrayList<String> recos3 = this.getTheMostWeightedURLs(1000, nextsteps3, listOfWeights3A);
+		
+			// ADD THE RECOMMENDATIONS TO THE LIST //
+			int i = 0;
+			while(recos.size()<nRecos){
+				if(i<recos3.size()){
+					String url = recos3.get(i);
+					if(!recos.contains(url)){
+						recos.add(url);
+					}
+				} else {
+					break;
+				}
+				i++;
+			}
+		}
+		
+		// return the most weighted sequences
+		return recos;
+	}
+		
 	public static void main(String[] args){
 		// create the suffix tree
 		SuffixTreeStringArray st = new SuffixTreeStringArray();

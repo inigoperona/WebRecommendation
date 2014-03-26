@@ -95,7 +95,8 @@ public class A031MainClassSuffixTree {
 			int fmode = failmodesA[fmodei];
 			String esperimentationStr2 = esperimentationStr + "_failure" + fmode;
 			
-			int[] goToMemA = new int[]{1,2,3,4,5, 100};
+			//int[] goToMemA = new int[]{1,2,3,4,5, 100};
+			int[] goToMemA = new int[]{1000};
 			for(int gt=0; gt<goToMemA.length; gt++){
 				int gtmem = goToMemA[gt];
 				String esperimentationStr3 = esperimentationStr2 + "_gt" + gtmem; 
@@ -111,11 +112,23 @@ public class A031MainClassSuffixTree {
 				}
 				*/
 		
+				/*
 				// weighted by construction sequences (test sequences)
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					results = modelev.computeEvaluationTest(3, nrec, (long)0, fmode, gtmem, false, null);
+					System.out.print(esperimentationStr3 + "_weighted" + nrec + ",");
+					System.out.print(results);
+				}
+				*/
+				
+				// weighted by construction sequences (& test sequences)
+				// enrich with step1 urls in the suffix tree
+				int[] nrecsWST = new int[]{2,3,4,5,10,20};
+				for(int ind=0; ind<nrecsWST.length; ind++ ){
+					int nrec = nrecsWST[ind];
+					results = modelev.computeEvaluationTest(6, nrec, (long)0, fmode, gtmem, false, null);
 					System.out.print(esperimentationStr3 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}

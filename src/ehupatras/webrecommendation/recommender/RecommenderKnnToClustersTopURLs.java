@@ -1,6 +1,7 @@
 package ehupatras.webrecommendation.recommender;
 
 import java.util.*;
+
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtein;
@@ -191,6 +192,9 @@ public class RecommenderKnnToClustersTopURLs
 		return this.getNextpossibleSteps(nRecos);
 	}
 	public ArrayList<String> getNextpossibleStepsWeightedByOriginalSequences(int nRecos){
+		return this.getNextpossibleSteps(nRecos);
+	}
+	public ArrayList<String> getNextpossibleStepsWeightedEnrichWithStep1(int nRecos, ArrayList<String> waydone){
 		return this.getNextpossibleSteps(nRecos);
 	}
 	

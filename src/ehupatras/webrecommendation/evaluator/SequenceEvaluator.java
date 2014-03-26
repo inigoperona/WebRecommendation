@@ -188,7 +188,7 @@ public class SequenceEvaluator {
 		} else if(mode==5){
 			list = m_recommender.getNextpossibleStepsWeightedByOriginalSequences(nrecos);
 		} else if(mode==6){
-			list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
+			list = m_recommender.getNextpossibleStepsWeightedEnrichWithStep1(nrecos, waydone);
 		}
 		for(int i=0; i<m_sequence.size(); i++){
 			this.computeStepMetrics(i, list);
@@ -215,7 +215,7 @@ public class SequenceEvaluator {
 			} else if(mode==5){
 				list = m_recommender.getNextpossibleStepsWeightedByOriginalSequences(nrecos);
 			} else if(mode==6){
-				list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
+				list = m_recommender.getNextpossibleStepsWeightedEnrichWithStep1(nrecos, waydone);
 			}
 		}
 		m_nFailures = m_recommender.getNumberOfFailures();

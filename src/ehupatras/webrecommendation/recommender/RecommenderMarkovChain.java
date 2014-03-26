@@ -109,6 +109,10 @@ public class RecommenderMarkovChain
 		return this.getNextpossibleStepsWeightedTrain(nrecos, null);
 	}
 	
+	public ArrayList<String> getNextpossibleStepsWeightedEnrichWithStep1(int nRecos, ArrayList<String> waydone){
+		return this.getNextpossibleStepsWeightedTrain(nRecos, null);
+	}
+	
 	private Object[] getNextpossibleSteps(){
 		ArrayList<String> recos = new ArrayList<String>(); 
 		ArrayList<Float> probs = new ArrayList<Float>(); 
