@@ -1,33 +1,45 @@
 package ehupatras.clustering;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class ClusteringPAM {
 
 	private int m_k = 10;
 	private float[][] m_dm;
+	private int[] m_realInds;
 	private ArrayList<Integer> m_medoids;
 	private double m_cost;
 	
-	public ClusteringPAM(int k, float[][] dm){
-		m_k = k;
+	public ClusteringPAM(int k, float[][] dm, int[] realIndexes){
+		if(k>realIndexes.length){
+			m_k = realIndexes.length;
+		} else {
+			m_k = k;
+		}
+		
 		m_dm = dm;
+		m_realInds = realIndexes;
 		
 		// create the medoids array
 		m_medoids = new ArrayList<Integer>();
 	}
 	
+	public void runPAM(){
+		this.build();
+		this.swap();
+	}
 	
 	private int databaseMedoid(){
-		int nSeq = m_dm.length;
+		int nSeq = numberOfCases();
 		
 		// Find the most centered case
-		float minsumdist = Float.MAX_VALUE;
+		double minsumdist = Double.MAX_VALUE;
 		int medoidIndex = -1;
 		for(int i=0; i<nSeq; i++){
-			float rowsum = 0f;
+			double rowsum = 0f;
 		    for(int j=0; j<nSeq; j++){
-		    	rowsum = rowsum + m_dm[i][j];
+		    	rowsum = rowsum + (double)getDM(i,j);
 		    }
 		    if(minsumdist>=rowsum){
 		      minsumdist = rowsum;
@@ -40,7 +52,7 @@ public class ClusteringPAM {
 	
 	
 	private void build(){
-		int nSeq = m_dm.length;
+		int nSeq = numberOfCases();
 		System.out.println("BUILD phase");
 		
 		// find the center-medoid of the database
@@ -67,11 +79,11 @@ public class ClusteringPAM {
 		        
 		    		// compute the contribution hj does
 		    		float distmedh = nearest1[h];
-		    		float rest = distmedh - m_dm[j][h];
+		    		float rest = distmedh - getDM(j,h);
 		    		float chj = rest>0f ? rest : 0f;
 		    		contribution = contribution + chj;
 		    	}
-		    	if(contributionMAX<=contribution){
+		    	if(contributionMAX<=contribution){ // maximize the contribution
 		    		contributionMAX = contribution;
 		    		representant = j;
 		    	}
@@ -80,11 +92,8 @@ public class ClusteringPAM {
 		}
 		
 		// print the medoids
-		System.out.print(" after build: medoids are " + m_medoids.get(0));
-		for(int i=1; i<m_medoids.size(); i++){
-			System.out.print("," + m_medoids.get(i));
-		}
-		System.out.println();
+		System.out.print(" after build: medoids are ");
+		this.printMedoids();
 		
 		// print the cost (objective function)
 		m_cost = this.objectivefunc();
@@ -93,7 +102,7 @@ public class ClusteringPAM {
 	
 	
 	private float[] findNearests1(){
-		int nSeq = m_dm.length;
+		int nSeq = numberOfCases();
 		
 		// Find the nearest medoid for each case
 		float[] nearest1 = new float[nSeq];
@@ -101,7 +110,7 @@ public class ClusteringPAM {
 		    float minDistH1 = Float.MAX_VALUE;
 		    for(int j=0; j<m_medoids.size(); j++){
 		    	int medoidInd = m_medoids.get(j);
-		        float dij = m_dm[i][medoidInd];
+		        float dij = getDM(i,medoidInd);
 		        if(minDistH1 > dij){
 		        	minDistH1 = dij;
 		        }
@@ -114,11 +123,11 @@ public class ClusteringPAM {
 	
 	
 	private void swap(){
-		int nSeq = m_dm.length;
+		int nSeq = numberOfCases();
 		System.out.println("SWAP phase");
 
-		//while(true){
-		for(int ii=0; ii<10; ii++){
+		while(true){
+		//for(int ii=0; ii<10; ii++){
 			double contributionMIN = Double.MAX_VALUE;
 			int medoidiMIN = -1;
 			int medoidhMIN = -1;
@@ -143,14 +152,14 @@ public class ClusteringPAM {
 						// contribution of j
 						float contj = 0f;
 
-						if(m_dm[medoid][j]==nearest1[j]){
+						if(getDM(medoid,j)==nearest1[j]){
 							// is j's medoid
-							float small = nearest2[j]>m_dm[h][j] ? m_dm[h][j] : nearest2[j];
+							float small = nearest2[j]>getDM(h,j) ? getDM(h,j) : nearest2[j];
 							contj = small - nearest1[j];
 						} else {
 							// is not j's medoid
-							if(m_dm[h][j] < nearest1[j]) {
-								contj = m_dm[h][j] - nearest1[j];
+							if(getDM(h,j) < nearest1[j]) {
+								contj = getDM(h,j) - nearest1[j];
 							}
 						}
 
@@ -159,7 +168,7 @@ public class ClusteringPAM {
 					}
 
 					// which j has the minimum contribution value?
-					if(contributionMIN>contribution){
+					if(contributionMIN>contribution){ // minimize the contribution
 						contributionMIN = contribution;
 						medoidiMIN = i; // medoid index
 						medoidhMIN = h; // no-medoid case
@@ -193,15 +202,22 @@ public class ClusteringPAM {
 		   } else {
 		     double cost = objectivefunc();
 		     System.out.println(" [" + System.currentTimeMillis() + 
-		    		 "] no swp. (" + cost + ")\n");
+		    		 "] no swp. (" + cost + ")");
 		     break;
 		   }
 		}
+		
+		// print the medoids
+		System.out.print(" after swap: medoids are ");
+		this.printMedoids();
+		
+		// print the assignment of medoids
+		System.out.println(" the assignment of medoids are: ");
+		this.printMedoidAssignment();
 	}
 	
-	
 	private double objectivefunc(){
-		int nSeq = m_dm.length;
+		int nSeq = numberOfCases();
 		
 		// the objective function
 		double cost = 0d;
@@ -209,12 +225,12 @@ public class ClusteringPAM {
 		    float mindist = Float.MAX_VALUE;
 		    for(int j=0; j<m_medoids.size(); j++){
 		    	int medoid = m_medoids.get(j);
-		    	float dist = m_dm[medoid][i];
+		    	float dist = getDM(medoid,i);
 		    	if(mindist>dist){
 		    		mindist = dist;
 		    	}
 		    }
-		    cost = cost + (float)mindist;
+		    cost = cost + (double)mindist;
 		}
 		
 		return cost;
@@ -222,7 +238,7 @@ public class ClusteringPAM {
 	
 	
 	private Object[] findnearests2(){
-		int nSeq = m_dm.length;
+		int nSeq = numberOfCases();
 		
 		// Find the two nearest medoids for each case
 		float[] nearest1 = new float[nSeq];
@@ -231,7 +247,7 @@ public class ClusteringPAM {
 		    float mindisth1 = Float.MAX_VALUE;
 		    float mindisth2 = Float.MAX_VALUE;
 		    for(int j=0; j<m_medoids.size(); j++){
-		    	float dij = m_dm[i][m_medoids.get(j)];
+		    	float dij = getDM(i,m_medoids.get(j));
 		    	if(mindisth1 > dij){
 		    		mindisth2 = mindisth1;
 		    		mindisth1 = dij;
@@ -251,11 +267,94 @@ public class ClusteringPAM {
 		objA[1] = nearest2;
 		return objA;
 	}
-
+	
+	private float getDM(int i, int j){
+		int i2 = m_realInds[i];
+		int j2 = m_realInds[j];
+		if(i2<=j2){
+			return m_dm[i2][j2];
+		} else {
+			return m_dm[j2][i2];
+		}
+	}
+	
+	public void printMedoids(){
+		System.out.print(" " + m_medoids.get(0));
+		for(int i=1; i<m_medoids.size(); i++){
+			System.out.print("," + m_medoids.get(i));
+		}
+		System.out.println();
+	}
+	
+	public void printMedoidAssignment(){
+		int[] medAssign = this.findNearestsMedoid();
+		System.out.print(" " + medAssign[0]);
+		for(int i=1; i<medAssign.length; i++){
+			System.out.print("," + medAssign[i]);
+		}
+		System.out.println();
+	}
+	
+	public int[] getMedoidAssignment(){
+		int[] medAssign = this.findNearestsMedoid();
+		int[] clusters = new int[medAssign.length];
+		Hashtable<Integer,Integer> medToCl = new Hashtable<Integer,Integer>();
+		int kont = 0;
+		for(int i=0; i<medAssign.length; i++){
+			int med = medAssign[i];
+			int cl;
+			if(medToCl.containsKey(med)){
+				cl = medToCl.get(med);
+			} else {
+				cl = kont;
+				medToCl.put(med, cl);
+				kont++;
+			}
+			clusters[i] = cl;
+		}
+		return clusters;
+	}
+	
+	private int[] findNearestsMedoid(){
+		int nSeq = numberOfCases();
+		
+		// Find the nearest medoid for each case
+		int[] nearest1 = new int[nSeq];
+		for(int i=0; i<nSeq; i++){
+		    float minDistH1 = Float.MAX_VALUE;
+		    int minDistInd = -1;
+		    for(int j=0; j<m_medoids.size(); j++){
+		    	int medoidInd = m_medoids.get(j);
+		        float dij = getDM(i,medoidInd);
+		        if(minDistH1 > dij){
+		        	minDistH1 = dij;
+		        	minDistInd = medoidInd; 
+		        }
+		    }
+		    nearest1[i] = minDistInd;
+		}
+		
+		return nearest1;
+	}
+	
+	private void setInitialMedoids(ArrayList<Integer> medoids){
+		m_medoids = medoids;
+	}
+	
+	private int numberOfCases(){
+		return m_realInds.length;
+	}
 	
 	public static void main(String[] args){
 		// create the distance matrix
-		float[][] dm = new float[][]{
+		float[][] dm0 = new float[][]{
+				{10.171465f, 10.908582f, 10.927378f, 10.337211f, 10.054189f},
+				{ 9.566395f, 10.189844f, 10.351626f,  9.183324f,  8.928350f},
+				{10.238303f, 10.272046f,  9.328211f,  9.877080f, 10.435159f},
+				{ 9.667533f,  8.847469f, 10.411028f, 10.039314f,  9.614549f},
+				{10.522501f, 10.297253f, 10.359733f, 10.443354f,  9.551569f}
+		};
+		float[][] dm1 = new float[][]{
 				{ 0.000000f, 9.830335f, 10.182363f,  9.834867f,  9.719266f},
 				{ 9.830335f, 0.000000f,  9.493369f,  9.899817f,  9.513756f},
 				{10.182363f, 9.493369f,  0.000000f, 10.028477f,  9.830633f},
@@ -270,12 +369,25 @@ public class ClusteringPAM {
 				{1,2,3,4,0}
 		};
 		
+		// medoids
+		ArrayList<Integer> meds = new ArrayList<Integer>();
+		meds.add(1);
+		meds.add(4);
+		
+		// indexes
+		int[] inds = new int[]{0,1,3,4};
+		
 		// create the object
-		ClusteringPAM pam = new ClusteringPAM(2, dm);
+		ClusteringPAM pam = new ClusteringPAM(2, dm0, inds);
 		
 		// the center of the database
-		pam.build();
-		pam.swap();
+		pam.runPAM();
+		//pam.build();
+		//pam.setInitialMedoids(meds);
+		//pam.swap();
+		int[] cls = pam.getMedoidAssignment();
+		for(int i=0; i<cls.length; i++){System.out.print(cls[i] + ",");}
+		System.out.println();
 		
 		/*
 		# R comparison

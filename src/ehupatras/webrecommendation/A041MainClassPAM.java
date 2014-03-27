@@ -1,18 +1,17 @@
 package ehupatras.webrecommendation;
 
-import ehupatras.webrecommendation.structures.*;
-import ehupatras.webrecommendation.distmatrix.*;
-import ehupatras.webrecommendation.modelvalidation.*;
-import ehupatras.webrecommendation.evaluator.*;
-import java.util.*;
+import java.util.ArrayList;
 
-public class A050MainClassHclustMsaSt {
+import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorUHC;
+import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
+import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
+import ehupatras.webrecommendation.structures.Website;
 
-	/**
-	 * @param args
-	 */
+public class A041MainClassPAM {
+
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
@@ -36,7 +35,7 @@ public class A050MainClassHclustMsaSt {
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
-		
+
 		
 		// LOAD PREPROCESSED LOGS //
 		//A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
@@ -72,72 +71,36 @@ public class A050MainClassHclustMsaSt {
 		// MODEL VALIDATION //
 	
 		// Parameters to play with
-		int[] cutthA = {10, 15, 20, 25};
-		float[] seqweights = {0.10f, 0.15f, 0.20f};
+
+		// k, number of clusters
+		int[] ks = {300, 200, 150, 100, 50};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
-		modelev.setConfusionPoints(confusionPoints);
-				
-		// MARKOV CHAIN //
-		modelev.buildMarkovChains();
+		modelev.setConfusionPoints(confusionPoints);		
 	
-		
-		// SUFFIX TREE //
-		
-		// Results' header
-		System.out.print("options," + modelev.getEvaluationHeader());
-		
-		// Start generating and evaluating the model
-		int i = 5; // Hclust - linkage method
-		for(int j=0; j<cutthA.length; j++){
-			int cutth = cutthA[j];
-				
-			String esperimentationStr = "agglo" + i + "_cl" + cutth;
-			
-			// Load clustering
-			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+		// HIERARCHICAL CLUSTERING //
+		modelev.resetModels();
+		for(int j=0; j<ks.length; j++){ // for each height
+			int k = ks[j];
 
-			// Sequence Alignment
-			modelev.clustersSequenceAlignment();
-			modelev.writeAlignments(validationWD + clustWD + "/" + esperimentationStr + "_alignments.txt");
+			String esperimentationStr = "pam" + k;
+			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			
-			// Weighted Sequences
-			for(int k=0; k<seqweights.length; k++){
-				float minsup = seqweights[k];
-				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
-				modelev.extractWeightedSequences(minsup);
-				modelev.writeWeightedSequences(validationWD + clustWD + "/" + esperimentationStr2 + ".txt");
-			
-				// Suffix Tree
-				modelev.buildSuffixTrees();
-			
-				// Evaluation
-				String results;
-				
-				// weighted by construction sequences (test sequences)
-				int[] nrecsWST = new int[]{2,3,4,5,10,20};
-				for(int ind=0; ind<nrecsWST.length; ind++ ){
-					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(6, nrec, (long)0, 1, 1000, false, null);
-					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
-					System.out.print(results);
-				}
-
-				// unbounded
-				results = modelev.computeEvaluationTest(6, 1000, (long)0, 1, 1000, false, null);
-				System.out.print(esperimentationStr2 + "_unbounded,");
-				System.out.print(results);
-			}
-
+			// Clustering
+			modelev.buildClustersPAM(k);
+			modelev.saveClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+			modelev.writeClusters(validationWD + clustWD + "/" + esperimentationStr + ".txt");
+			//modelev.loadClusters(validationWD + "/" + esperimentationStr + ".javaData");
 		}
-		
 					
+			
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
+		
 	}
-
+	
 }

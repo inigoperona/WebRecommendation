@@ -134,7 +134,7 @@ public class A031MainClassSuffixTree {
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, -1, (long)0, fmode, gtmem, false, null);
+				results = modelev.computeEvaluationTest(6, 1000, (long)0, fmode, gtmem, false, null);
 				System.out.print(esperimentationStr3 + "_unbounded,");
 				System.out.print(results);
 			}

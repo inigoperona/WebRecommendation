@@ -101,7 +101,7 @@ public class A040MainClassHclust {
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			
 			// Clustering
-			modelev.buildClusters(cutth, linkageClassName);
+			modelev.buildClustersH(cutth, linkageClassName);
 			modelev.saveClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			modelev.writeClusters(validationWD + clustWD + "/" + esperimentationStr + ".txt");
 			//modelev.loadClusters(validationWD + "/" + esperimentationStr + ".javaData");

@@ -1,6 +1,7 @@
 package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.clustering.ClusteringHierarchical;
+import ehupatras.clustering.ClusteringPAM;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import ehupatras.webrecommendation.sequencealignment.multiplealignment.MultipleSequenceAlignment;
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
@@ -28,10 +29,13 @@ public class ModelEvaluator {
 	// To create the model: trainset
 	private ArrayList<ArrayList<Integer>> m_trainAL;
 	
-	// Clustering
+	// Hierarchical Clustering
 	private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
 	private int m_pCutDendrogramDiss = 50;
 	private ArrayList<int[]> m_clustersAL;
+	
+	// PAM: Partitioning Around Medoids
+	private int m_k;
 	
 	// Multiple Sequence Alignment
 	private ArrayList<ArrayList<String[][]>> m_msaAL;
@@ -90,19 +94,19 @@ public class ModelEvaluator {
 	
 	
 	
-	// CLUSTERING //
+	// HIERARCHICAL CLUSTERING //
 	
-	public void buildClusters(int pCutDendrogramDiss, String agglemerativeMethodString){
+	public void buildClustersH(int pCutDendrogramDiss, String agglemerativeMethodString){
 		m_pCutDendrogramDiss = pCutDendrogramDiss;
 		m_AgglomerativeMethodClassName = agglemerativeMethodString;
-		this.buildClusters();
+		this.buildClustersH();
 	}
 	
-	public void buildClusters(){
+	public void buildClustersH(){
 		// Clustering for each fold
 		m_clustersAL = new ArrayList<int[]>();
 		for(int i=0; i<m_nFolds; i++){
-			m_clustersAL.add(this.clustering(i));
+			m_clustersAL.add(this.clusteringH(i));
 		}
 	}
 	
@@ -110,7 +114,7 @@ public class ModelEvaluator {
 		m_pCutDendrogramDiss = pCutDendrogramDiss;
 	}
 	
-	private int[] clustering(int indexFold){
+	private int[] clusteringH(int indexFold){
 		ArrayList<Integer> trainnames = m_trainAL.get(indexFold);
 		// hierarchical clustering: http://sape.inf.usi.ch/hac
 		ClusteringHierarchical clustering = new ClusteringHierarchical();
@@ -121,6 +125,33 @@ public class ModelEvaluator {
 		int[] clustersA = clustering.cutDendrogramByDissimilarity(m_pCutDendrogramDiss);
 		return clustersA;
 	}
+	
+	
+	// PAM CLUSTERING //
+	
+	public void buildClustersPAM(int k){
+		m_k = k;
+		
+		// Clustering for each fold
+		m_clustersAL = new ArrayList<int[]>();
+		for(int i=0; i<m_nFolds; i++){
+			m_clustersAL.add(this.clusteringPAM(i));
+		}
+	}
+	
+	private int[] clusteringPAM(int indexFold){
+		ArrayList<Integer> trainnames = m_trainAL.get(indexFold);
+		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames);
+		float[][] distmatrix = m_distancematrix.getMatrix();
+		
+		ClusteringPAM pam = new ClusteringPAM(m_k, distmatrix, trainDMindexes);
+		pam.runPAM();
+		
+		return pam.getMedoidAssignment();
+	}
+	
+	
+	// Clustering UTILS //
 	
 	public void writeClusters(String outfilename){
 		// Open the given file
