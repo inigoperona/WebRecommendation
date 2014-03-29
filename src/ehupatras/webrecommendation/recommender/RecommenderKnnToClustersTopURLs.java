@@ -43,7 +43,7 @@ public class RecommenderKnnToClustersTopURLs
 	
 	public ArrayList<String> update(ArrayList<String> waydone, String laststep, 
 			boolean incrWeigh, boolean performFailureFunction){
-		m_waydone = waydone;
+		m_waydone.add(laststep);
 		return m_waydone;
 	}
 	
@@ -81,6 +81,110 @@ public class RecommenderKnnToClustersTopURLs
 		
 		// return the list of recommendations
 		return recos;
+	}
+	
+	private ArrayList<String> getNextpossibleStepsW(int nRecos){
+		int minsupfreq = 5;
+		
+		// the elements we are interested in
+		ArrayList<String> recos = new ArrayList<String>();
+		ArrayList<Float> weightsA = new ArrayList<Float>();
+		
+		// medoids ordered from the nearest to farthest
+		Object[] objAa = this.knnSim();
+		int[] orderedMedoids = (int[])objAa[0];
+		float[] orderedSims = (float[])objAa[1]; // it can be null
+		if(orderedSims==null){ return getNextpossibleSteps(nRecos); }
+		
+		// find maximum & minimum values of the similarities
+		float maxsim = Float.MIN_VALUE;
+		float minsim = Float.MAX_VALUE;
+		for(int i=0; i<orderedSims.length; i++){
+			float sim = orderedSims[i];
+			if(maxsim<sim){maxsim = sim;}
+			if(minsim>sim){minsim = sim;}
+		}
+		
+		// take more URLs and after select the best ones
+		int nRecos2 = Math.round((float)nRecos * 1.5f);
+		
+		// for each medoid take the reccommendations		
+		boolean end = false;
+		for(int i=0; i<orderedMedoids.length; i++){
+			int nearesCl = orderedMedoids[i];
+			float sim = orderedSims[i];
+			float normsim = (sim-minsim)/(maxsim-minsim);
+			
+			// get the recommendations of the cluster
+			Object[] objA = m_recosInEachCluster.get(nearesCl);
+			ArrayList<String> recosCl = (ArrayList<String>)objA[0];
+			ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
+			
+			// if it does not have recommendations
+			if(recosCl.size()==0){m_0recosClusters++;}
+			
+			// sum all support-frequency values
+			int sumsup = 0;
+			for(int j=0; j<supports.size(); j++){ sumsup = sumsup + supports.get(j);}
+			
+			// take the URLs we are interested in with their weights
+			int nurls = recosCl.size();
+			for(int j=0; j<nurls; j++){
+				if(recos.size()<nRecos2){
+					String reco = recosCl.get(j);
+					int sup = supports.get(j);
+					
+					float weight = 0f;
+					if(sup>=minsupfreq){
+						// compute the weight
+						//float supDist = 1f - (float)nurls/(float)sumsup;
+						float supf = sup/(float)sumsup;
+						
+						if(m_isDistance){
+							weight = supf * (1f-normsim);
+						} else {
+							weight = supf * normsim;
+						}
+					}
+					
+					if(!recos.contains(reco)){
+						recos.add(reco);
+						weightsA.add(weight);
+					} else {
+						int index = recos.indexOf(reco);
+						float w = weightsA.get(index) + weight;
+						weightsA.set(index, w);
+					}
+				} else {
+					end = true;
+					break;
+				}
+			}
+			if(end){ break;}
+		}
+		
+		// take the most relevant URLs
+		ArrayList<String> recos2 = new ArrayList<String>();
+		boolean[] isTaken = new boolean[recos.size()];
+		Arrays.fill(isTaken, false);
+		for(int i=0; i<nRecos; i++){
+			if(i>=recos2.size()){ break;}
+			float maxw = Float.MIN_VALUE;
+			int maxj = -1;
+			for(int j=0; j<weightsA.size(); j++){
+				float w = weightsA.get(j);
+				if(!isTaken[j] && maxw<w && w>0){
+					maxw = w;
+					maxj = j;
+				}
+			}
+			String rec = recos.get(maxj);
+			recos2.add(rec);
+			isTaken[maxj] = true;
+		}
+		
+		// return the list of recommendations
+		return recos2;
 	}
 	
 	private Object[] knnSim(){
@@ -173,6 +277,8 @@ public class RecommenderKnnToClustersTopURLs
 		return objA;
 	}
 
+	
+	
 	public ArrayList<String> getNextpossibleStepsUnbounded(){
 		return this.getNextpossibleSteps(100);
 	}
@@ -186,7 +292,7 @@ public class RecommenderKnnToClustersTopURLs
 		return this.getNextpossibleSteps(nrecos);
 	}
 	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone){
-		return this.getNextpossibleSteps(nRecos);
+		return this.getNextpossibleStepsW(nRecos);
 	}
 	public ArrayList<String> getNextpossibleStepsMarkov(int nRecos, ArrayList<String> waydone, ArrayList<String> listMarkov){
 		return this.getNextpossibleSteps(nRecos);
