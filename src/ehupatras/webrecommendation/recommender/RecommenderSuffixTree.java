@@ -34,6 +34,10 @@ public class RecommenderSuffixTree
 		m_maxMemory = maxMemory;
 	}
 	
+	
+	
+	// UPDATE POINTER //
+	
 	private ArrayList<String> updatePointer(ArrayList<String> waydone, 
 						String newstep, 
 						boolean incrWeigh, 
@@ -99,9 +103,8 @@ public class RecommenderSuffixTree
 	}
 	
 	
-	public int getNumberOfFailures(){
-		return m_nFailures;
-	}
+	
+	// FAILURE FUNCTIONS //
 	
 	private ArrayList<String> updatefailure(ArrayList<String> waydone, String nextstep, int failuremode){
 		ArrayList<String> wayInST = new ArrayList<String>();
@@ -189,12 +192,20 @@ public class RecommenderSuffixTree
 		}
 	}
 	
+	public int getNumberOfFailures(){
+		return m_nFailures;
+	}
+		
 	public void reset(){
 		this.gotoroot();
 		m_nFailures = 0;
 	}
 	
-	private Object[] getNextpossibleSteps(){
+	
+	
+	// GET RECOMMENDATIONS //
+	
+	protected Object[] getNextpossibleSteps(){
 		ArrayList<String> listOfURLs = new ArrayList<String>();
 		ArrayList<Integer> listOfWeights = new ArrayList<Integer>();
 		
@@ -278,90 +289,6 @@ public class RecommenderSuffixTree
 		ArrayList<String> recos = this.getTheMostWeightedURLs(realNreco, nextsteps, frequencies);		
 		
 		// return the most weighted sequences
-		return recos;
-	}
-	
-	private ArrayList<String> getTheWayInSuffixTree(ArrayList<String> waydone){
-		// save the pointers values
-		Node pointerNode = m_pointerNode;
-		Edge pointerEdge = m_pointerEdge;
-		int pointerPositionInTheEdge = m_pointerPositionInTheEdge;
-		
-		// run the way done  (clickstream done until now) in the suffix tree
-		// and create the sequence that it is runnable in the suffix tree
-		ArrayList<String> waydone2 = new ArrayList<String>(); 
-		this.gotoroot();
-		for(int i=0; i<waydone.size(); i++){
-			String step = waydone.get(i);
-			boolean stepdone = this.updatePointer(null, step, false, false).size()>0;
-			if(!stepdone){
-				// if we have reset the run into the suffix tree
-				// reset also the clikstream done until now
-				waydone2 = new ArrayList<String>();
-			} else {
-				waydone2.add(step);
-			}
-		}
-		
-		// restore the pointers
-		m_pointerNode = pointerNode;
-		m_pointerEdge = pointerEdge;
-		m_pointerPositionInTheEdge = pointerPositionInTheEdge;
-		
-		// return the runnable clickstream in the suffix tree
-		return waydone2;
-	}
-	
-	private boolean performTheWayInSuffixTree(ArrayList<String> waydone){		
-		// run the way done  (clickstream done until now) in the suffix tree
-		// and create the sequence that it is runnable in the suffix tree
-		boolean runnableway = true;
-		this.gotoroot();
-		for(int i=0; i<waydone.size(); i++){
-			String step = waydone.get(i);
-			boolean stepdone = this.updatePointer(null, step, false, false).size()>0;
-			if(stepdone){
-				runnableway = true;
-			} else {
-				runnableway = false;
-				break;
-			}
-		}
-		
-		if(!runnableway){
-			this.gotoroot();
-		}
-		
-		// return if it is runnable the way given
-		return runnableway;
-	}
-	
-	private ArrayList<String> getTheMostWeightedURLs(int nrec, ArrayList<String> list, int[] frequencies){
-		ArrayList<String> recos = new ArrayList<String>();
-		
-		// order the frequencies of searched sequences of the way 
-		int[] frequencies2 = frequencies.clone();
-		Arrays.sort(frequencies2);
-		
-		boolean[] isusedA = new boolean[frequencies.length];
-		Arrays.fill(isusedA, false);
-		
-		for(int i=frequencies2.length-1; i>=0; i--){
-			int freqmax = frequencies2[i];
-			for(int j=0; j<frequencies.length; j++){
-				if(!isusedA[j]){
-					if(freqmax==frequencies[j]){
-						recos.add(list.get(j));
-						isusedA[j] = true;
-						break;
-					}
-				}
-			}
-			if(recos.size()==nrec){
-				break;
-			}
-		}
-		
 		return recos;
 	}
 	
@@ -557,7 +484,103 @@ public class RecommenderSuffixTree
 		// return the most weighted sequences
 		return recos;
 	}
+	
+	
+	
+	// UTILS //
+	
+	private boolean performTheWayInSuffixTree(ArrayList<String> waydone){		
+		// run the way done  (clickstream done until now) in the suffix tree
+		// and create the sequence that it is runnable in the suffix tree
+		boolean runnableway = true;
+		this.gotoroot();
+		for(int i=0; i<waydone.size(); i++){
+			String step = waydone.get(i);
+			boolean stepdone = this.updatePointer(null, step, false, false).size()>0;
+			if(stepdone){
+				runnableway = true;
+			} else {
+				runnableway = false;
+				break;
+			}
+		}
 		
+		if(!runnableway){
+			this.gotoroot();
+		}
+		
+		// return if it is runnable the way given
+		return runnableway;
+	}
+	
+	private ArrayList<String> getTheMostWeightedURLs(int nrec, ArrayList<String> list, int[] frequencies){
+		ArrayList<String> recos = new ArrayList<String>();
+		
+		// order the frequencies of searched sequences of the way 
+		int[] frequencies2 = frequencies.clone();
+		Arrays.sort(frequencies2);
+		
+		boolean[] isusedA = new boolean[frequencies.length];
+		Arrays.fill(isusedA, false);
+		
+		for(int i=frequencies2.length-1; i>=0; i--){
+			int freqmax = frequencies2[i];
+			for(int j=0; j<frequencies.length; j++){
+				if(!isusedA[j]){
+					if(freqmax==frequencies[j]){
+						recos.add(list.get(j));
+						isusedA[j] = true;
+						break;
+					}
+				}
+			}
+			if(recos.size()==nrec){
+				break;
+			}
+		}
+		
+		return recos;
+	}
+	
+	private ArrayList<String> getTheWayInSuffixTree(ArrayList<String> waydone){
+		// save the pointers values
+		Node pointerNode = m_pointerNode;
+		Edge pointerEdge = m_pointerEdge;
+		int pointerPositionInTheEdge = m_pointerPositionInTheEdge;
+		
+		// run the way done  (clickstream done until now) in the suffix tree
+		// and create the sequence that it is runnable in the suffix tree
+		ArrayList<String> waydone2 = new ArrayList<String>(); 
+		this.gotoroot();
+		for(int i=0; i<waydone.size(); i++){
+			String step = waydone.get(i);
+			boolean stepdone = this.updatePointer(null, step, false, false).size()>0;
+			if(!stepdone){
+				// if we have reset the run into the suffix tree
+				// reset also the clikstream done until now
+				waydone2 = new ArrayList<String>();
+			} else {
+				waydone2.add(step);
+			}
+		}
+		
+		// restore the pointers
+		m_pointerNode = pointerNode;
+		m_pointerEdge = pointerEdge;
+		m_pointerPositionInTheEdge = pointerPositionInTheEdge;
+		
+		// return the runnable clickstream in the suffix tree
+		return waydone2;
+	}
+	
+	public SuffixTreeStringArray getSuffixTree(){
+		return m_gST;
+	}
+	
+	
+	
+	// MAIN TO TEST THE CLASS //
+	
 	public static void main(String[] args){
 		// create the suffix tree
 		SuffixTreeStringArray st = new SuffixTreeStringArray();

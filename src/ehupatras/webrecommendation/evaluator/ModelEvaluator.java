@@ -47,6 +47,9 @@ public class ModelEvaluator {
 	// Generalized Suffix tree
 	private ArrayList<SuffixTreeStringArray> m_suffixtreeAL = null;
 	
+	// Modular approach Cluster-ST version
+	private ArrayList<ArrayList<SuffixTreeStringArray>> m_clustSuffixTreeAL = null;
+	
 	// Markov Chain
 	private ArrayList<MarkovChain> m_markovChainAL = null;
 	
@@ -473,7 +476,59 @@ public class ModelEvaluator {
 	
 	
 	
-	// MARKOV CHAIN
+	// Modular Approach: Cluster-SuffixTree //
+	
+	public void buildClustersSuffixTrees(){
+		// Build Cluster-SuffixTrees for each fold
+		m_clustSuffixTreeAL = new ArrayList<ArrayList<SuffixTreeStringArray>>();
+		for(int i=0; i<m_nFolds; i++){
+			m_clustSuffixTreeAL.add(this.createClustersSuffixTrees(i));
+		}
+	}
+	
+	public ArrayList<SuffixTreeStringArray> createClustersSuffixTrees(int indexFold){
+		// train sessions names
+		ArrayList<Integer> trainsetnames = m_trainAL.get(indexFold);
+		
+		// assignment to each case
+		int[] clindexes = m_clustersAL.get(indexFold);
+		// maximum cluster index
+		int climax = Integer.MIN_VALUE;
+		for(int i=0; i<clindexes.length; i++){
+			int cli = clindexes[i];
+			if(cli>climax){
+				climax = cli;
+			}
+		}
+		
+		// for each cluster
+		ArrayList<SuffixTreeStringArray> stAL = new ArrayList<SuffixTreeStringArray>(); 
+		for(int cli=0; cli<=climax; cli++){
+			// take the sessions we are interested in
+			ArrayList<Integer> names = new ArrayList<Integer>();
+			for(int i=0; i<clindexes.length; i++){
+				if(cli==clindexes[i]){
+					names.add(trainsetnames.get(i));
+				}
+			}
+			
+			// take the sequences
+			int[] clusterDMind = m_distancematrix.getSessionIDsIndexes(names);
+			ArrayList<String[]> sequences = new ArrayList<String[]>(); 
+			for(int i=0; i<clusterDMind.length; i++){
+				sequences.add(m_dataset.get(i));
+			}
+			
+			// create the Suffix Tree
+			SuffixTreeStringArray st = this.createSuffixTree(sequences);
+			stAL.add(st);
+		}
+		
+		return stAL;
+	}
+	
+	
+	// MARKOV CHAIN //
 	
 	public void buildMarkovChains(){
 		// compute markov chain for each fold
@@ -495,7 +550,7 @@ public class ModelEvaluator {
 	
 	
 	
-	// MEDOIDS and its recommendations
+	// MEDOIDS and its recommendations //
 	
 	public void buildMedoidsModels(float minsup){
 		// compute medoids for each fold
@@ -579,7 +634,10 @@ public class ModelEvaluator {
 	
 	
 	
-	// MODEL EVALUATION
+	
+	
+	
+	// MODEL EVALUATION //
 	
 	public String computeEvaluationTest(int mode, int nrecos, long seed,
 			int failuremode, int maxMemory,

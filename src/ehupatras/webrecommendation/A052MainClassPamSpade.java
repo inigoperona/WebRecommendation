@@ -21,12 +21,12 @@ public class A052MainClassPamSpade {
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
 		clustWD = "";
-		//preprocessingWD = args[0];
-		//logfile = args[1];
-		//databaseWD = args[2];
-		//dmWD = args[3];
-		//validationWD = args[4];
-		//clustWD = args[5];
+		preprocessingWD = args[0];
+		logfile = args[1];
+		databaseWD = args[2];
+		dmWD = args[3];
+		validationWD = args[4];
+		clustWD = args[5];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -69,10 +69,9 @@ public class A052MainClassPamSpade {
 		// MODEL VALIDATION //
 		
 		// Parameters to play with
-		///int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
-		int[] ks = {10};
+		int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
 		//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
-		float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
+		float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
 		float[][] rolesW = {{ 0f, 0f, 0f},
 				  			{ 0f, 0f, 0f},
 				  			{ 0f, 0f, 0f}};
@@ -95,8 +94,7 @@ public class A052MainClassPamSpade {
 		for(int j=0; j<ks.length; j++){
 			int k = ks[j];
 				
-			///String esperimentationStr = "pam" + k;
-			String esperimentationStr = "agglo5_cl10";
+			String esperimentationStr = "pam" + k;
 			
 			// Load clustering
 			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
@@ -113,11 +111,10 @@ public class A052MainClassPamSpade {
 				String results;
 				
 				// weighted by construction sequences (test sequences)
-				//int[] nrecsWST = new int[]{2,3,4,5,10,20};
-				int[] nrecsWST = new int[]{10};
+				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1, true, rolesW);
+					results = modelev.computeEvaluationTest(2, nrec, (long)0, 1, 1, true, rolesW);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
