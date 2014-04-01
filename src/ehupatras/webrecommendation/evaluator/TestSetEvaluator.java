@@ -24,6 +24,9 @@ public class TestSetEvaluator {
 			  					  { 0f, 0f, 0f},
 			  					  { 0f, 0f, 0f}};
 	
+	// Model: modular approach of ST for each cluster
+	private ArrayList<SuffixTreeStringArray> m_STAL = null;
+	
 	// Validation metrics
 	private float[] m_points = {(float)0.0, (float)0.10, (float)0.25, 
 			(float)0.50, (float)0.75, (float)0.90, (float)1.00};
@@ -79,6 +82,16 @@ public class TestSetEvaluator {
 	
 	
 	
+	// CREATOR OF MODULAR APPROACH (CLUSTERS+ST) //
+	
+	public TestSetEvaluator(ArrayList<String[]> sequences, 
+				ArrayList<SuffixTreeStringArray> suffixtreeAL){
+		m_STAL = suffixtreeAL;
+		this.constructor(sequences);
+	}
+	
+	
+	
 	// UTILS //
 	
 	private void constructor(ArrayList<String[]> sequences){
@@ -120,6 +133,8 @@ public class TestSetEvaluator {
 			} else if(m_medoids!=null){
 				seqEv = new SequenceEvaluator(seq, m_medoids, m_gMedoids, m_recosAL, 
 								m_isDistance, m_rolesW);
+			} else if(m_STAL!=null){
+				seqEv = new SequenceEvaluator(seq, m_STAL);
 			} else { // markov chain
 				seqEv = new SequenceEvaluator(seq, m_markovchain);
 			}

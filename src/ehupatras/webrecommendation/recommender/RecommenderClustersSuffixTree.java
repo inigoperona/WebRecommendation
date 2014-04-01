@@ -109,22 +109,22 @@ public class RecommenderClustersSuffixTree
 		ArrayList<Integer> listOfWeights = new ArrayList<Integer>();
 		for(int i=0; i<supportsA.length; i++){
 			if(supportsA[i]==maxsup){
+				// get the recommendations
 				RecommenderSuffixTree rst = m_recSuffixTreeAL.get(i);
-				Object[] objA = rst.getNextpossibleSteps();
-				ArrayList<String> listOfURLs2 = (ArrayList<String>)objA[0];
-				ArrayList<Integer> listOfWeights2 = (ArrayList<Integer>)objA[1];
+				Object[] objA1 = rst.getNextpossibleSteps();
+				ArrayList<String> listOfURLs1 = (ArrayList<String>)objA1[0];
+				ArrayList<Integer> listOfWeights1 = (ArrayList<Integer>)objA1[1];
+				
+				// update weights
+				Object[] objA2 = rst.getUrlWeights(m_waydone, listOfURLs1, listOfWeights1);
+				ArrayList<String> listOfURLs2 = (ArrayList<String>)objA2[0];
+				ArrayList<Integer> listOfWeights2 = (ArrayList<Integer>)objA2[1];
+				
+				// accumulate all clusters-STs URLs
 				for(int j=0; j<listOfURLs2.size(); j++){
-					
 					// the next URL
 					String url = listOfURLs2.get(j);
-					int w1 = listOfWeights2.get(j);
-					// compute the weight of the URLs
-					SuffixTreeStringArray st = rst.getSuffixTree();
-					ArrayList<String> wd = (ArrayList<String>)m_waydone.clone();
-					wd.add(url);
-					ArrayList<Integer> seqs = st.search(wd);
-					int w2 = seqs.size();
-					int w = w1 + w2;
+					int w = listOfWeights2.get(j);
 					
 					if(!listOfURLs.contains(url)){
 						listOfURLs.add(url);
@@ -134,8 +134,9 @@ public class RecommenderClustersSuffixTree
 						int wAux = listOfWeights.get(jAux);
 						listOfWeights.set(jAux, wAux+w);
 					}
-					
 				}
+			} else {
+				m_validSTs[i] = false;
 			}
 		}
 		
@@ -166,15 +167,52 @@ public class RecommenderClustersSuffixTree
 	}
 	
 	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone){
+		// get the possible URLs in the actual position
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> list = (ArrayList<String>)objA[0];
 		ArrayList<Integer> weig = (ArrayList<Integer>)objA[1];
 		
-		
-		
-		
-		
+		// get the most weighted URLs
 		ArrayList<String> listOfURLs = this.getTheMostWeightedURLs(nRecos, list, weig);
+		if(listOfURLs.size()>=nRecos){
+			return listOfURLs;
+		}
+		// else add URLs from step1
+		
+		// add step1 recommendations
+		ArrayList<String> listOfURLsStep1 = new ArrayList<String>();
+		ArrayList<Integer> listOfWeightsStep1 = new ArrayList<Integer>();
+		for(int i=0; i<m_recSuffixTreeAL.size(); i++){
+			if(m_validSTs[i]){
+				RecommenderSuffixTree rst = m_recSuffixTreeAL.get(i);
+				String laststep = m_waydone.get(m_waydone.size()-1);
+				Object[] objA2 = rst.getStep1Recommendations(laststep);
+				ArrayList<String> listOfURLs2 = (ArrayList<String>)objA2[0];
+				ArrayList<Integer> listOfWeights2 = (ArrayList<Integer>)objA2[1];
+				
+				// accumulate all clusters-STs URLs
+				for(int j=0; j<listOfURLs2.size(); j++){
+					// the next URL
+					String url = listOfURLs2.get(j);
+					int w = listOfWeights2.get(j);
+					
+					if(!listOfURLsStep1.contains(url)){
+						listOfURLsStep1.add(url);
+						listOfWeightsStep1.add(w);
+					} else {
+						int jAux = listOfURLsStep1.indexOf(url); 
+						int wAux = listOfWeightsStep1.get(jAux);
+						listOfWeightsStep1.set(jAux, wAux+w);
+					}
+				}
+			}
+		}
+		ArrayList<String> addlist = this.getTheMostWeightedURLs(nRecos-listOfURLs.size(), listOfURLsStep1, listOfWeightsStep1);
+		for(int i=0; i<addlist.size(); i++){
+			listOfURLs.add(addlist.get(i));
+		}
+		
+		// return
 		return listOfURLs;
 	}
 	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone){

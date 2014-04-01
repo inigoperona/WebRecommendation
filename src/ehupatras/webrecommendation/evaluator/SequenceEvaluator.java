@@ -136,6 +136,23 @@ public class SequenceEvaluator {
 	}
 	
 	
+	
+	// MODULAR APPROACH: CREATOR FUNCTION FOR STs FOR EACH CLUSTER //
+	
+	public SequenceEvaluator(String[] sequence, 
+				ArrayList<SuffixTreeStringArray> suffixtreeAL){
+		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
+		this.constructorST(sequenceAL, suffixtreeAL);
+	}
+	
+	private void constructorST(ArrayList<String> sequence, 
+			ArrayList<SuffixTreeStringArray> suffixtreeAL){
+		m_recommender = new RecommenderClustersSuffixTree(suffixtreeAL);
+		this.constructor2(sequence);
+	}
+	
+	
+	
 	// UTILS //
 	
 	private void constructor2(ArrayList<String> sequence){

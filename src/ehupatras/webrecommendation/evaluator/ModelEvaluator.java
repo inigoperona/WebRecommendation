@@ -681,6 +681,8 @@ public class ModelEvaluator {
 								m_gmedoidsAL.get(i),
 								m_recosAL.get(i),
 								isDistance, rolesW);
+			} else if(m_clustSuffixTreeAL!=null){
+				eval = new TestSetEvaluator(testseqs, m_clustSuffixTreeAL.get(i));
 			} else { // Markov Chain
 				MarkovChain markovchain = m_markovChainAL.get(i);
 				eval = new TestSetEvaluator(testseqs, markovchain);
