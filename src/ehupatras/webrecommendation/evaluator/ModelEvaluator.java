@@ -31,7 +31,7 @@ public class ModelEvaluator {
 	
 	// Hierarchical Clustering
 	private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
-	private int m_pCutDendrogramDiss = 50;
+	private float m_pCutDendrogramDiss = 50f;
 	private ArrayList<int[]> m_clustersAL;
 	
 	// PAM: Partitioning Around Medoids
@@ -99,7 +99,7 @@ public class ModelEvaluator {
 	
 	// HIERARCHICAL CLUSTERING //
 	
-	public void buildClustersH(int pCutDendrogramDiss, String agglemerativeMethodString){
+	public void buildClustersH(float pCutDendrogramDiss, String agglemerativeMethodString){
 		m_pCutDendrogramDiss = pCutDendrogramDiss;
 		m_AgglomerativeMethodClassName = agglemerativeMethodString;
 		this.buildClustersH();
@@ -113,7 +113,7 @@ public class ModelEvaluator {
 		}
 	}
 	
-	public void setCutDendrogramDissimilarityThreshold(int pCutDendrogramDiss){
+	public void setCutDendrogramDissimilarityThreshold(float pCutDendrogramDiss){
 		m_pCutDendrogramDiss = pCutDendrogramDiss;
 	}
 	

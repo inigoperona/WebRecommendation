@@ -33,7 +33,8 @@ public class RecommenderClustersSuffixTree
 		ArrayList<ArrayList<String>> waydoneAL = new ArrayList<ArrayList<String>>(); 
 		for(int i=0; i<m_recSuffixTreeAL.size(); i++){
 			RecommenderSuffixTree rst = m_recSuffixTreeAL.get(i);
-			ArrayList<String> way = rst.update(waydone, newstep, incrWeigh, performFailureFunction);
+			ArrayList<String> waydone2 = (ArrayList<String>)waydone.clone(); 
+			ArrayList<String> way = rst.update(waydone2, newstep, incrWeigh, performFailureFunction);
 			m_recSuffixTreeAL.set(i, rst);
 			waydoneAL.add(way);
 		}
@@ -87,30 +88,35 @@ public class RecommenderClustersSuffixTree
 	
 	private Object[] getNextpossibleSteps(){
 		// compute the support given by each cluster-ST to the actual position
-		int[] supportsA = new int[m_recSuffixTreeAL.size()];
-		int maxsup = -1;
+		float[] supportsA = new float[m_recSuffixTreeAL.size()];
+		float maxsup = -1f;
 		for(int i=0; i<m_recSuffixTreeAL.size(); i++){
 			if(m_validSTs[i]){
 				RecommenderSuffixTree rst = m_recSuffixTreeAL.get(i);
 				SuffixTreeStringArray st = rst.getSuffixTree();
 				ArrayList<Integer> seqs = st.search(m_waydone);
-				int sup = seqs.size();
+				int nseqs = st.getNumberOfConstructionSequences();
+				float sup = (float)seqs.size() / (float)nseqs;
 				if(maxsup<sup){
 					maxsup = sup;
 				}
-				supportsA[i] = seqs.size();
+				supportsA[i] = sup;
 			} else {
-				supportsA[i] = 0;
+				supportsA[i] = 0f;
 			}
 		}
 		
 		// take the biggest supports
 		ArrayList<String> listOfURLs = new ArrayList<String>();
 		ArrayList<Integer> listOfWeights = new ArrayList<Integer>();
+		int sumNseqs = 0;
 		for(int i=0; i<supportsA.length; i++){
 			if(supportsA[i]==maxsup){
+				m_validSTs[i] = true;
+				
 				// get the recommendations
 				RecommenderSuffixTree rst = m_recSuffixTreeAL.get(i);
+				//sumNseqs = sumNseqs + rst.getSuffixTree().getNumberOfConstructionSequences();
 				Object[] objA1 = rst.getNextpossibleSteps();
 				ArrayList<String> listOfURLs1 = (ArrayList<String>)objA1[0];
 				ArrayList<Integer> listOfWeights1 = (ArrayList<Integer>)objA1[1];
@@ -196,14 +202,17 @@ public class RecommenderClustersSuffixTree
 					String url = listOfURLs2.get(j);
 					int w = listOfWeights2.get(j);
 					
-					if(!listOfURLsStep1.contains(url)){
-						listOfURLsStep1.add(url);
-						listOfWeightsStep1.add(w);
-					} else {
-						int jAux = listOfURLsStep1.indexOf(url); 
-						int wAux = listOfWeightsStep1.get(jAux);
-						listOfWeightsStep1.set(jAux, wAux+w);
+					if(!listOfURLs.contains(url)){
+						if(!listOfURLsStep1.contains(url)){
+							listOfURLsStep1.add(url);
+							listOfWeightsStep1.add(w);
+						} else {
+							int jAux = listOfURLsStep1.indexOf(url); 
+							int wAux = listOfWeightsStep1.get(jAux);
+							listOfWeightsStep1.set(jAux, wAux+w);
+						}
 					}
+					
 				}
 			}
 		}

@@ -73,7 +73,8 @@ public class A041MainClassPAM {
 		// Parameters to play with
 
 		// k, number of clusters
-		int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
+		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
+		int[] ks = {40, 30, 20, 10, 5};
 		
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, matrix, trainAL, valAL, testAL);

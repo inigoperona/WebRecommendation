@@ -12,6 +12,7 @@ import ehupatras.webrecommendation.structures.Website;
 public class A053MainClassHclustST {
 	
 	public static void main(String[] args) {
+		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
@@ -27,6 +28,8 @@ public class A053MainClassHclustST {
 		dmWD = args[3];
 		validationWD = args[4];
 		clustWD = args[5];
+		
+		
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -59,30 +62,33 @@ public class A053MainClassHclustST {
 		
 		// HOLD-OUT //
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
-		ho.createParts(validationWD, sampleSessionIDs);
+		//ho.createParts(validationWD, sampleSessionIDs);
+		ho.loadParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
 		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
 		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
 		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
 
-
+		
 		
 		// MODEL VALIDATION //
 	
 		// Parameters to play with
-		int[] cutthA = {10, 15, 20, 25};
+		//int[] cutthA = {10, 15, 20, 25};
+		//int[] cutthA = {1,2,4,6,8};
+		float[] cutthA = {0.1f,0.2f,0.4f,0.6f,0.8f, 1f,2f,4f,6f,8f, 10f,15f,20f,25f};
+		//float[] cutthA = {5f, 10f, 20f, 30f, 40f, 50f, 100f, 150f, 200f, 250f, 300f, 400f, 500f, 750f, 1000f}; 
 		
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
-				
+
 		// MARKOV CHAIN //
 		modelev.buildMarkovChains();
-	
 		
-		// SUFFIX TREE //
+		// SUFFIX TREE for each cluster //
 		
 		// Results' header
 		System.out.print("options," + modelev.getEvaluationHeader());
@@ -90,9 +96,16 @@ public class A053MainClassHclustST {
 		// Start generating and evaluating the model
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<cutthA.length; j++){
-			int cutth = cutthA[j];
-				
-			String esperimentationStr = "agglo" + i + "_cl" + cutth;
+			float cutth = cutthA[j];
+			
+			String cutthstr;
+			if( Math.floor((double)cutth) == Math.ceil((double)cutth) ){
+				cutthstr = String.valueOf((int)cutth);
+			} else {
+				cutthstr = String.valueOf(cutth);
+			}
+			String esperimentationStr = "agglo" + i + "_cl" + cutthstr;
+			//String esperimentationStr = "pam" + (int)cutth;
 			
 			// Load clustering
 			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
@@ -107,13 +120,13 @@ public class A053MainClassHclustST {
 			int[] nrecsWST = new int[]{2,3,4,5,10,20};
 			for(int ind=0; ind<nrecsWST.length; ind++ ){
 				int nrec = nrecsWST[ind];
-				results = modelev.computeEvaluationTest(7, nrec, (long)0, 1, 1000, false, null);
+				results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1000, false, null);
 				System.out.print(esperimentationStr + "_weighted" + nrec + ",");
 				System.out.print(results);
 			}
 
 			// unbounded
-			results = modelev.computeEvaluationTest(6, 1000, (long)0, 1, 1000, false, null);
+			results = modelev.computeEvaluationTest(-1, 1000, (long)0, 1, 1000, false, null);
 			System.out.print(esperimentationStr + "_unbounded,");
 			System.out.print(results);
 		}

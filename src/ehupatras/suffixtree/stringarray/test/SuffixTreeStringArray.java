@@ -16,7 +16,8 @@ public class SuffixTreeStringArray {
     
 	private GeneralizedSuffixTreeStringArray m_gST = new GeneralizedSuffixTreeStringArray();
 	private Hashtable<Node,Integer> m_nodeWeights = new Hashtable<Node,Integer>();
-
+	private int m_nseqs = 0;
+	
 	public void putSequence(String[] seq, int index){
 		ArrayList<String> seqAL = StringToArrayList(seq);
 		putSequence(seqAL, index);
@@ -32,6 +33,7 @@ public class SuffixTreeStringArray {
 	
 	public void putSequence(ArrayList<String> seq, int index){
 		m_gST.put(seq, index);
+		m_nseqs++;
 	}
 	
 	public void printSuffixTree(){
@@ -137,6 +139,11 @@ public class SuffixTreeStringArray {
 			}
 		}
 	}
+	
+	public int getNumberOfConstructionSequences(){
+		return m_nseqs;
+	}
+	
 	
     public static void main(String[] args){
         SuffixTreeStringArray in = new SuffixTreeStringArray();

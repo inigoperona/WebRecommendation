@@ -62,7 +62,7 @@ public class A040MainClassHclust {
 		
 		// HOLD-OUT //
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
-		ho.createParts(validationWD, sampleSessionIDs);
+		ho.loadParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
 		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
 		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
@@ -84,7 +84,9 @@ public class A040MainClassHclust {
 		int i = 5;
 		String linkageClassName = linkages[i];
 		// Cutting the dendrogram
-		int[] cutthA = {10, 15, 20, 25};
+		//int[] cutthA = {10, 15, 20, 25};
+		//int[] cutthA = {1, 2, 4, 6, 8};
+		float[] cutthA = {0.1f, 0.2f, 0.4f, 0.6f, 0.8f};
 		
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, matrix, trainAL, valAL, testAL);
@@ -95,7 +97,7 @@ public class A040MainClassHclust {
 		// HIERARCHICAL CLUSTERING //
 		modelev.resetModels();
 		for(int j=0; j<cutthA.length; j++){ // for each height
-			int cutth = cutthA[j];
+			float cutth = cutthA[j];
 				
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);

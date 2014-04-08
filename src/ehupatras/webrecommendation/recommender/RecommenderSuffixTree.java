@@ -267,6 +267,8 @@ public class RecommenderSuffixTree
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> nextsteps = (ArrayList<String>)objA[0];
 		ArrayList<Integer> freqs = (ArrayList<Integer>)objA[1];
+		// Ok. Here if we want to weight the sequences only with train sequences
+		// no test sequences, fill the ArrayList freqs to 0. 
 		
 		// get the next steps by weights
 		Object[] objA2 = this.getUrlWeights(waydone, nextsteps, freqs);
@@ -431,15 +433,15 @@ public class RecommenderSuffixTree
 		ArrayList<String> nextsteps3 = (ArrayList<String>)objA3[0];
 		ArrayList<Integer> listOfWeights3 = (ArrayList<Integer>)objA3[1];
 		
-		// restore the pointers
-		m_pointerNode = pointerNode;
-		m_pointerEdge = pointerEdge;
-		m_pointerPositionInTheEdge = pointerPositionInTheEdge;
-		
 		// update the weights
 		Object[] objA4 = this.getUrlWeights(waydone1step, nextsteps3, listOfWeights3);
 		ArrayList<String> nextsteps4 = (ArrayList<String>)objA4[0];
 		ArrayList<Integer> listOfWeights4 = (ArrayList<Integer>)objA4[1];
+		
+		// restore the pointers
+		m_pointerNode = pointerNode;
+		m_pointerEdge = pointerEdge;
+		m_pointerPositionInTheEdge = pointerPositionInTheEdge;
 		
 		// return 
 		return objA4;

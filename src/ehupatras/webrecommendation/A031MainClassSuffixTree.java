@@ -58,7 +58,7 @@ public class A031MainClassSuffixTree {
 		
 		// HOLD-OUT //
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
-		ho.createParts(validationWD, sampleSessionIDs);
+		ho.loadParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
 		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
 		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();

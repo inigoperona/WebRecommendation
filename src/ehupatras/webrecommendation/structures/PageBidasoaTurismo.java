@@ -1,6 +1,7 @@
 package ehupatras.webrecommendation.structures;
 
 import java.io.Serializable;
+import java.util.*;
 
 public class PageBidasoaTurismo
 				implements Page, Serializable {
@@ -31,6 +32,9 @@ public class PageBidasoaTurismo
 	
 		// Semantic information of the data
 	private int m_pagerankvalue = 0;
+	
+		// CONTENT DATA
+	private ArrayList<String> m_wordList;
 	
 	public PageBidasoaTurismo(String urlname){
 		m_urlname = urlname;
