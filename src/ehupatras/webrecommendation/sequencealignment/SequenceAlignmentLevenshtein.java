@@ -10,6 +10,13 @@ public class SequenceAlignmentLevenshtein
     					 		   { 0f, 0f, 0f},  // Hub
     					 		   { 0f, 0f, 0f}}; // Content
 	
+    // to work with topics
+	private ArrayList<Integer> m_UrlIDs = null;
+	private float[][] m_UrlsDM = null;
+	private float m_URLsEqualnessTh = 0.6f;
+	
+    // body
+	
 	public float getScore(String[] seqA, String[] seqB) {
 	    // i == 0
 	    float[] costs = new float[seqB.length + 1];
@@ -54,7 +61,7 @@ public class SequenceAlignmentLevenshtein
         }
     }
     
-    private int role2int(String role){
+    protected int role2int(String role){
     	int roli = 0;
     	if(role.equals("U")){ roli = 0; }
     	else if(role.equals("H")){ roli = 1;}
@@ -62,10 +69,38 @@ public class SequenceAlignmentLevenshtein
     	return roli;
     }
 	
+    protected float weight3(String strA, String strB) {
+    	int len = strA.length();
+    	String urlA = strA.substring(0,len-1);
+    	String rolA = strA.substring(len-1,len);
+    	int urlAi = m_UrlIDs.indexOf(Integer.valueOf(urlA));
+    	int rolAi = this.role2int(rolA);
+    	String urlB = strB.substring(0,len-1);
+    	String rolB = strB.substring(len-1,len);
+    	int urlBi = m_UrlIDs.indexOf(Integer.valueOf(urlB));
+    	int rolBi = this.role2int(rolB);
+    	
+    	// urls similarity
+        float wurl = m_UrlsDM[urlAi][urlBi];
+    	// roles
+    	float wrole;
+    	if(wurl<=m_URLsEqualnessTh){
+        	wrole = m_roleW[rolAi][rolBi];
+        } else {
+        	wrole = -1f;
+        }
+        
+    	return wrole*wurl;
+    }
+    
 	public void setRoleWeights(float[][] roleweights){
 		m_roleW = roleweights;
 	}
-	 
+	
+    public void setURLsEqualnessTh(float urlsEqualnessThreshold){
+    	m_URLsEqualnessTh = urlsEqualnessThreshold;
+    }
+	
 	public static void main(String [] args) {
 		
 		String[] seq1 = new String[]{"kU","iU","tU","tU","eU","nU"};

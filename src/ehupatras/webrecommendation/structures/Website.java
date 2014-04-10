@@ -15,6 +15,9 @@ public class Website {
 	private static int m_urlID = 0;
 	private static int m_maxUrlID = 0;
 	
+	// File to save the Website structure
+	private static String m_saveFileName = "/_Website.javaData";
+	
 	
 	public static boolean containsURL(String urlname){
 		return m_url2idHT.containsKey(urlname);
@@ -36,6 +39,10 @@ public class Website {
 		String urlname = m_ID2urlname.get(urlID);
 		Page pag = m_url2idHT.get(urlname);
 		return pag;
+	}
+	
+	public static void setPage(String urlname, Page pag){
+		m_url2idHT.put(urlname, pag);
 	}
 	
 	public static int size(){
@@ -109,12 +116,12 @@ public class Website {
 		Object[] objA = new Object[2];
 		objA[0] = m_url2idHT;
 		objA[1] = m_ID2urlname;
-		slo.save(objA, m_workdirectory + "/_Website.javaData");
+		slo.save(objA, m_workdirectory + m_saveFileName);
 	}
 	
 	public static void load(){
 		SaveLoadObjects slo = new SaveLoadObjects();
-		Object[] objA = (Object[])slo.load(m_workdirectory + "/_Website.javaData");
+		Object[] objA = (Object[])slo.load(m_workdirectory + m_saveFileName);
 		m_url2idHT = (Hashtable<String,Page>)objA[0];
 		m_ID2urlname = (Hashtable<Integer,String>)objA[1];
 		
@@ -129,6 +136,10 @@ public class Website {
 		}
 		m_maxUrlID = maxindex;
 		m_urlID = maxindex;
+	}
+	
+	public static void setSaveFileName(String saveFileName){
+		m_saveFileName = saveFileName;
 	}
 	
 	public static void setWorkDirectory(String workdirectory){

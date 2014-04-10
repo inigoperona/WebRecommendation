@@ -21,4 +21,6 @@ public interface Page {
 	public void setPageRank(int pagerank);
 	public String toStringLongHeader();
 	public String toStringLong();
+	public void setTopicDistribution(float[] topicDistribution);
+	public float[] getTopicDistribution();
 }

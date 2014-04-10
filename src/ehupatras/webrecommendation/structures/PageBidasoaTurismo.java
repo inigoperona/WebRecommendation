@@ -30,8 +30,12 @@ public class PageBidasoaTurismo
 		// if it is a avalid URL
 	private boolean m_isvalid = true;
 	
-		// Semantic information of the data
+	// Semantic information of the data //
+		// pagerank
 	private int m_pagerankvalue = 0;
+		// topic distribution
+	private float[] m_topicDist = null;
+	
 	
 		// CONTENT DATA
 	private ArrayList<String> m_wordList;
@@ -196,6 +200,8 @@ public class PageBidasoaTurismo
 		return urlname5;
 	}
 	
+	
+	
 	// frequency of the page in the Website
 	
 	public void setIsFrequent(boolean isFrequent){
@@ -219,6 +225,8 @@ public class PageBidasoaTurismo
 	public boolean getIsFrequent(){
 		return m_isFrequent;
 	}
+	
+	
 	
 	// Number of periods / staticness of the page in the website
 	
@@ -248,11 +256,27 @@ public class PageBidasoaTurismo
 		m_numPeriod = numPeriod;
 	}
 	
+	
+	
 	// PageRank of the page
 	
 	public void setPageRank(int pagerank){
 		m_pagerankvalue = pagerank;
 	}
+	
+	
+	
+	// Topic distribution
+	
+	public void setTopicDistribution(float[] topicDistribution){
+		m_topicDist = topicDistribution;
+	}
+	
+	public float[] getTopicDistribution(){
+		return m_topicDist;
+	}
+	
+	
 	
 	// Writing the Page information
 	

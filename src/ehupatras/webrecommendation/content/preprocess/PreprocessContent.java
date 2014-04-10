@@ -10,13 +10,22 @@ import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.net.MalformedURLException;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 public class PreprocessContent {
 
+	private ArrayList<String> m_formurls = new ArrayList<String>();
 	private ArrayList<String> m_urlnames = new ArrayList<String>();
 	private ArrayList<Integer> m_urlID = new ArrayList<Integer>();
+	private ArrayList<float[]> m_url2topicDist;
+	private float[][] m_URLsDM;
+	
+	
+	
+	// SELECTING THE URLS TO DOWNLOAD //
 	
 	public void pickupURLsToDownload(){
 		String[] urlnames = Website.getAllFormatedUrlNames();
@@ -26,12 +35,208 @@ public class PreprocessContent {
 			String url = pag.getUrlName();
 			int urlID = pag.getUrlIDusage();
 			if(pag.getIsSuitableToLinkPrediction()){
+				m_formurls.add(formurl);
 				m_urlnames.add(url);
 				m_urlID.add(urlID);
 			}
 		}
 		
 	}
+	
+	public void printURLs(){
+		for(int i=0; i<m_urlnames.size(); i++){
+			String url = m_urlnames.get(i);
+			int urlID = m_urlID.get(i);
+			System.out.println(i + " " + urlID + " " + url);
+		}
+	}
+	
+	public void writeURLs(String filename){
+		File file = new File(filename);
+		try {
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			for(int i=0; i<m_urlnames.size(); i++){
+				bw.write(m_urlID.get(i) + " ");
+				bw.write(m_formurls.get(i) + " ");
+				bw.write(m_urlnames.get(i) + "\n");
+			}
+			bw.close();
+		} catch (IOException ex){
+			System.err.println("Exception at writing the URL list. " + 
+					"[ehupatras.webrecommendation.content.preprocess.PreprocessContent.writeURLs]");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	public void readURLs(String filename){
+		m_urlID = new ArrayList<Integer>();
+		m_formurls = new ArrayList<String>();
+		m_urlnames = new ArrayList<String>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(filename));
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+				String[] line = sCurrentLine.split(" ");
+				m_urlID.add(Integer.valueOf(line[0]));
+				m_formurls.add(line[1]);
+				m_urlnames.add(line[2]);
+			}
+			br.close();
+		} catch (IOException ex){
+			System.err.println("Exception at loading the URL list. " + 
+					"[ehupatras.webrecommendation.content.preprocess.PreprocessContent.loadURLs]");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	
+	
+	// READING URL - TOPIC_DISTRIBUTION FILE //
+	
+	public void readURL2Topic(String filename){
+		// Read topic information
+		m_url2topicDist = new ArrayList<float[]>(m_formurls.size());
+		for(int i=0; i<m_formurls.size(); i++){m_url2topicDist.add(null);}
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(filename));
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+				String[] line = sCurrentLine.split(",");
+				int urlid = Integer.valueOf(line[0]);
+				int index = m_urlID.indexOf(urlid);
+				if(index==-1){continue;}
+				float[] topdist = new float[line.length-1];
+				for(int i=1; i<line.length; i++){
+					String numStr1 = line[i];
+					int startNum = 0;
+					for(int l=startNum; l<numStr1.length(); l++){
+						char c = numStr1.charAt(l);
+						if(Character.isDigit(c)){startNum=l; break;}
+					}
+					int endNum = numStr1.length() - 1;
+					for(int l=endNum; l>=0; l--){
+						char c = numStr1.charAt(l);
+						if(Character.isDigit(c)){endNum=l+1; break;}
+					}
+					String numStr2 = numStr1.substring(startNum, endNum);
+					String res = new BigDecimal(numStr2).toPlainString();
+					float ptopic = Float.parseFloat(res);
+					topdist[i-1] = ptopic;
+				}
+				m_url2topicDist.set(index, topdist);
+			}
+			br.close();
+		} catch (IOException ex){
+			System.err.println("Exception at loading the URL list. " + 
+					"[ehupatras.webrecommendation.content.preprocess.PreprocessContent.readURL2Topic]");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+		
+		// Update Website structure
+		for(int i=0; i<m_formurls.size(); i++){
+			String formurl = m_formurls.get(i);
+			float[] topdist = m_url2topicDist.get(i);
+			Page pag = Website.getPage(formurl);
+			pag.setTopicDistribution(topdist);
+			Website.setPage(formurl, pag);
+		}
+		Website.save();
+	}
+	
+	public void computeUrlTopicSimilarities(){
+		int nUrl = m_formurls.size();
+		
+		// compute the distances among URLs
+		float[][] urlsDM = new float[nUrl][nUrl];
+		for(int i=0; i<nUrl; i++){
+			float[] topicDistribution1 = m_url2topicDist.get(i);
+			for(int j=i; j<nUrl; j++){
+				float[] topicDistribution2 = m_url2topicDist.get(j);
+				float distance = this.euclideanDistance(topicDistribution1, topicDistribution2);
+				urlsDM[i][j] = distance;
+				urlsDM[j][i] = distance;
+			}
+		}
+		
+		// normalize distances
+		m_URLsDM = new float[nUrl][nUrl];
+		for(int i=0; i<nUrl; i++){
+			float min = Float.POSITIVE_INFINITY;
+			float max = Float.NEGATIVE_INFINITY;
+			for(int j=0; j<nUrl; j++){
+				float val = urlsDM[i][j];
+				if(val>max){max=val;}
+				if(val<min){min=val;}
+			}
+			for(int j=0; j<nUrl; j++){
+				float val = urlsDM[i][j];
+				m_URLsDM[i][j] = (val-min)/(max-min);
+			}
+		}
+		
+	}
+	
+	private float euclideanDistance(float[] v1, float[] v2){
+		int l = Math.min(v1.length, v2.length);
+		double sum = 0d;
+		for(int i=0; i<l; i++){
+			double posval = Math.pow( (double)v1[i]-(double)v2[i], 2d);
+			sum = sum + posval;
+		}
+		double result = Math.sqrt(sum);
+		return (float)result;
+	}
+	
+	public float getDistance(String formalizedURL1, String formalizedURL2){
+		int i = m_formurls.indexOf(formalizedURL1);
+		int j = m_formurls.indexOf(formalizedURL2);
+		if(i<j){
+			return m_URLsDM[i][j];
+		} else {
+			return m_URLsDM[j][i];
+		}
+	}
+	
+	public void printUrlDM(){
+		int len = m_formurls.size();
+		for(int i=0; i<len; i++){
+			int urlID = m_urlID.get(i);
+			System.out.print(urlID);
+			for(int j=0; j<len; j++){
+				System.out.print("," + m_URLsDM[i][j]);
+			}
+			System.out.println();
+		}
+	}
+	
+	public void writeUrlDM(String filename){
+		File file = new File(filename);
+		try {
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			int len = m_formurls.size();
+			for(int i=0; i<len; i++){
+				int urlID = m_urlID.get(i);
+				bw.write(String.valueOf(urlID));
+				for(int j=0; j<len; j++){
+					bw.write(" " + m_URLsDM[i][j]);
+				}
+				bw.write("\n");
+			}
+			bw.close();
+		} catch (IOException ex){
+			System.err.println("Exception at writing the URL list. " + 
+					"[ehupatras.webrecommendation.content.preprocess.PreprocessContent.writeURLs]");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	
 	
 	
 	private void downloadURL(String readURL, String writeURL){
@@ -63,18 +268,6 @@ public class PreprocessContent {
 			e.printStackTrace();
 		} catch(IOException e){
 			e.printStackTrace();
-		}
-	}
-	
-	
-	public void printURLs(){
-		for(int i=0; i<m_urlnames.size(); i++){
-			String url = m_urlnames.get(i);
-			int urlID = m_urlID.get(i);
-			System.out.println(i + " " + urlID + " " + url);
-			this.downloadURL("http://www." + url, 
-					"/home/burdinadar/down" + i + ".html");
-			//Thread.sleep(3000);
 		}
 	}
 	

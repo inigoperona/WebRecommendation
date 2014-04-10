@@ -1,5 +1,8 @@
 package ehupatras.webrecommendation.sequencealignment;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class SequenceAlignmentBacktrack 
@@ -19,6 +22,11 @@ public abstract class SequenceAlignmentBacktrack
     					 		   { 1f, 1f, 1f},  // Hub
     					 		   { 1f, 1f, 1f}}; // Content
 
+    // to work with topic distributions
+	protected ArrayList<Integer> m_UrlIDs = null;
+	protected float[][] m_UrlsDM = null;
+	protected float m_URLsEqualnessTh = 0.6f;
+    
     // Functions to get the standard sequence alignment score
     
     protected abstract void init(String[] seqA, String[] seqB);
@@ -64,6 +72,8 @@ public abstract class SequenceAlignmentBacktrack
     		String elemB = m_alignSeqB[i];
     		float w = this.equalURLs(elemA, elemB);
     		if(w>=0){
+    			// match score-weight greater than zero (best 1)
+    			// else score-weight less than zero (worst -1)
     			if(!elemA.equals(m_gap) && !elemB.equals(m_gap)){
     				nmatches = nmatches + w;
     			} else { // gaps
@@ -164,6 +174,9 @@ public abstract class SequenceAlignmentBacktrack
     	return m_alignSeqB;
     }
     
+    
+    // similarity weight of two URLs
+    
     protected int weight(int i, int j) {
         if (mSeqA[i - 1].equals(mSeqB[j - 1])) {
                 return 1;
@@ -192,7 +205,36 @@ public abstract class SequenceAlignmentBacktrack
         }
     }
     
-    private int role2int(String role){
+    protected float weight3(String strA, String strB) {
+    	int len = strA.length();
+    	String urlA = strA.substring(0,len-1);
+    	String rolA = strA.substring(len-1,len);
+    	int urlAi = m_UrlIDs.indexOf(Integer.valueOf(urlA));
+    	int rolAi = this.role2int(rolA);
+    	String urlB = strB.substring(0,len-1);
+    	String rolB = strB.substring(len-1,len);
+    	int urlBi = m_UrlIDs.indexOf(Integer.valueOf(urlB));
+    	int rolBi = this.role2int(rolB);
+    	
+    	// urls distance
+    	float wurl;
+    	if(urlAi==-1 || urlBi==-1){
+    		wurl = 1f;
+    	} else {
+    		wurl = m_UrlsDM[urlAi][urlBi];
+    	}
+    	// roles
+    	float wrole;
+        if(wurl<=m_URLsEqualnessTh){
+        	wrole = m_roleW[rolAi][rolBi];
+        } else {
+        	wrole = -1f;
+        }
+        
+        return wrole*(1-wurl);
+    }
+    
+    protected int role2int(String role){
     	int roli = 0;
     	if(role.equals("U")){ roli = 0; }
     	else if(role.equals("H")){ roli = 1;}
@@ -202,6 +244,10 @@ public abstract class SequenceAlignmentBacktrack
     
     public void setRoleWeights(float[][] roleweights){
     	m_roleW = roleweights;
+    }
+    
+    public void setURLsEqualnessTh(float urlsEqualnessThreshold){
+    	m_URLsEqualnessTh = urlsEqualnessThreshold;
     }
     
 }
