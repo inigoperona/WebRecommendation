@@ -56,7 +56,7 @@ public class RecommenderKnnToClustersTopURLs
 		int[] orderedMedoids = (int[])objAa[0];
 		float[] orderedSims = (float[])objAa[1]; // it can be null
 		
-		// for each medoid take the reccommendations
+		// for each medoid take the recommendations
 		boolean end = false;
 		for(int i=0; i<orderedMedoids.length; i++){
 			int nearesCl = orderedMedoids[i];
@@ -187,7 +187,7 @@ public class RecommenderKnnToClustersTopURLs
 		return recos2;
 	}
 	
-	private Object[] knnSim(){
+	protected Object[] knnSim(){
 		// if we do not know nothing about the navigation
 		// return the most centered medoid in the database
 		if(m_waydone.size()==0){

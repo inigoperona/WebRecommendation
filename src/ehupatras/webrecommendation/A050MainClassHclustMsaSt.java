@@ -72,7 +72,8 @@ public class A050MainClassHclustMsaSt {
 		// MODEL VALIDATION //
 	
 		// Parameters to play with
-		int[] cutthA = {10, 15, 20, 25};
+		//int[] cutthA = {10, 15, 20, 25};
+		float[] cutthA = {25f};
 		float[] seqweights = {0.10f, 0.15f, 0.20f};
 		
 		// initialize the model evaluator
@@ -93,7 +94,7 @@ public class A050MainClassHclustMsaSt {
 		// Start generating and evaluating the model
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<cutthA.length; j++){
-			int cutth = cutthA[j];
+			float cutth = cutthA[j];
 				
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
