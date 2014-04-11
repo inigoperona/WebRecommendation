@@ -1,15 +1,25 @@
 package ehupatras.webrecommendation.distmatrix;
 
 import ehupatras.webrecommendation.utils.*;
+
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class Matrix {
+	
+	// distance matrix data
 	protected float[][] m_matrix;
 	protected ArrayList<Integer> m_names;
 	private String m_savefilename = "/_matrix.javaData";
+	
+	// attributes to work with topics
+	protected ArrayList<Integer> m_UrlIDs = null;
+	protected float[][] m_UrlsDM = null;
+	protected float m_urlsEqualnessThreshold = 0.6f;
 	
 	public abstract void computeMatrix(ArrayList<Integer> names, 
 							ArrayList<String[]> data,
@@ -95,4 +105,38 @@ public abstract class Matrix {
 		m_matrix = (float[][])objA[0];
 		m_names = (ArrayList<Integer>)objA[1];
 	}
+	
+    protected void loadUrlsDM(String urlsDMfile){
+    	// load the distance matrix of URL's similarity
+    	m_UrlIDs = new ArrayList<Integer>();
+    	ArrayList<float[]> urlsDM = new ArrayList<float[]>(); 
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(urlsDMfile));
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+				String[] line = sCurrentLine.split(" ");
+				m_UrlIDs.add(Integer.valueOf(line[0]));
+				int nURLs = line.length-1;
+				float[] urldist = new float[nURLs];
+				for(int i=1; i<line.length; i++){
+					urldist[i-1] = Float.valueOf(line[i]);
+				}
+				urlsDM.add(urldist);
+			}
+			br.close();
+		} catch (IOException ex){
+			System.err.println("Exception at reading URLs' distance matrix. " + 
+					"[ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverse.setUrlsDM]");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+		
+		// convert too float-matrix
+		int nURLs = m_UrlIDs.size();
+		m_UrlsDM = new float[nURLs][nURLs];
+		for(int i=0; i<urlsDM.size(); i++){
+			m_UrlsDM[i] = urlsDM.get(i);
+		}
+    }
+	
 }

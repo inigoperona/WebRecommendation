@@ -11,9 +11,11 @@ public class SequenceAlignmentLevenshtein
     					 		   { 0f, 0f, 0f}}; // Content
 	
     // to work with topics
-	private ArrayList<Integer> m_UrlIDs = null;
-	private float[][] m_UrlsDM = null;
-	private float m_URLsEqualnessTh = 0.6f;
+	protected ArrayList<Integer> m_UrlIDs = null;
+	protected float[][] m_UrlsDM = null;
+	protected float m_URLsEqualnessTh = 0.6f;
+	
+	
 	
     // body
 	
@@ -80,17 +82,22 @@ public class SequenceAlignmentLevenshtein
     	int urlBi = m_UrlIDs.indexOf(Integer.valueOf(urlB));
     	int rolBi = this.role2int(rolB);
     	
-    	// urls similarity
-        float wurl = m_UrlsDM[urlAi][urlBi];
+    	// urls distance
+    	float wurl;
+    	if(urlAi==-1 || urlBi==-1){
+    		wurl = 1f; // maximun distance
+    	} else {
+    		wurl = m_UrlsDM[urlAi][urlBi];
+    	}
     	// roles
     	float wrole;
     	if(wurl<=m_URLsEqualnessTh){
         	wrole = m_roleW[rolAi][rolBi];
         } else {
-        	wrole = -1f;
+        	wrole = 1f;
         }
         
-    	return wrole*wurl;
+    	return wurl*(1f+wrole);
     }
     
 	public void setRoleWeights(float[][] roleweights){

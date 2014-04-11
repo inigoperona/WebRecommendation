@@ -219,7 +219,7 @@ public abstract class SequenceAlignmentBacktrack
     	// urls distance
     	float wurl;
     	if(urlAi==-1 || urlBi==-1){
-    		wurl = 1f;
+    		wurl = 1f; // maximun distance
     	} else {
     		wurl = m_UrlsDM[urlAi][urlBi];
     	}
