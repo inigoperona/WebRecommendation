@@ -57,6 +57,7 @@ public class ModelEvaluator {
 	private ArrayList<ArrayList<String[]>> m_medoidsAL = null;
 	private ArrayList<int[]> m_gmedoidsAL = null;
 	private ArrayList<ArrayList<Object[]>> m_recosAL = null;
+	private int m_knn = 100;
 	
 	// to evaluate the model
 	private ArrayList<ArrayList<Integer>> m_valAL;
@@ -632,6 +633,9 @@ public class ModelEvaluator {
 		return recos;
 	}
 	
+	public void setKnn(int knn){
+		m_knn = knn;
+	}
 	
 	
 	
@@ -675,6 +679,13 @@ public class ModelEvaluator {
 			if(m_suffixtreeAL!=null){ // Suffix Tree
 				suffixtree = m_suffixtreeAL.get(i);
 				eval = new TestSetEvaluator(testseqs, suffixtree);
+			} else if(m_medoidsAL!=null && m_clustSuffixTreeAL!=null){
+				eval = new TestSetEvaluator(testseqs,
+						m_medoidsAL.get(i),
+						m_gmedoidsAL.get(i),
+						m_knn,
+						isDistance, rolesW,
+						m_clustSuffixTreeAL.get(i));
 			} else if(m_medoidsAL!=null) { // Medoids
 				eval = new TestSetEvaluator(testseqs,
 								m_medoidsAL.get(i),

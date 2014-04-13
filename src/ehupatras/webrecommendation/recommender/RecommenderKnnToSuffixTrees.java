@@ -14,7 +14,7 @@ public class RecommenderKnnToSuffixTrees
 	private RecommenderClustersSuffixTree m_recClustersSuffixTree;
 	private RecommenderKnnToClustersTopURLs m_recKnnToClustersTopURLs;
 	
-	private int m_k = 5;
+	private int m_knn = 100;
 	private int m_0recosClusters = 0;
 	private boolean m_isDistance = true;
 	private float[][] m_rolesW = {{ 0f, 0f, 0f},
@@ -26,11 +26,11 @@ public class RecommenderKnnToSuffixTrees
 			ArrayList<SuffixTreeStringArray> stAL,
 			boolean isDistance,
 			float[][] rolesW,
-			int k){
+			int knn){
 		m_waydone = new ArrayList<String>();
 		m_recKnnToClustersTopURLs = new RecommenderKnnToClustersTopURLs(medoids, globalMedoids, null, isDistance, rolesW);
 		m_recClustersSuffixTree = new RecommenderClustersSuffixTree(stAL);
-		m_k = k;
+		m_knn = Math.min(medoids.size(), knn);
 	}
 	
 	public void reset(){
@@ -51,9 +51,6 @@ public class RecommenderKnnToSuffixTrees
 	}
 	
 	private Object[] getNextpossibleSteps(){
-		// the elements we are interested in
-		ArrayList<String> recos = new ArrayList<String>(); 
-		
 		// medoids ordered from the nearest to farthest
 		Object[] objAa = m_recKnnToClustersTopURLs.knnSim();
 		int[] orderedMedoids = (int[])objAa[0];
@@ -62,7 +59,7 @@ public class RecommenderKnnToSuffixTrees
 		// for each medoid take the recommendations
 		boolean[] validClusters = new boolean[orderedMedoids.length];
 		Arrays.fill(validClusters, false);
-		for(int i=0; i<orderedMedoids.length && i<m_k; i++){
+		for(int i=0; i<orderedMedoids.length && i<m_knn; i++){
 			int nearesCl = orderedMedoids[i];
 			validClusters[nearesCl] = true;
 		}

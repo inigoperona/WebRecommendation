@@ -140,14 +140,40 @@ public class SequenceEvaluator {
 	// MODULAR APPROACH: CREATOR FUNCTION FOR STs FOR EACH CLUSTER //
 	
 	public SequenceEvaluator(String[] sequence, 
-				ArrayList<SuffixTreeStringArray> suffixtreeAL){
+			ArrayList<SuffixTreeStringArray> suffixtreeAL){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorST(sequenceAL, suffixtreeAL);
 	}
-	
+
 	private void constructorST(ArrayList<String> sequence, 
 			ArrayList<SuffixTreeStringArray> suffixtreeAL){
 		m_recommender = new RecommenderClustersSuffixTree(suffixtreeAL);
+		this.constructor2(sequence);
+	}
+	
+	
+	
+	// MODULAR APPROACH: K-NN TO THE NEAREST CLUSTER-ST //
+	
+	public SequenceEvaluator(String[] sequence, 
+			ArrayList<String[]> medoids,
+			int[] gMedoids,
+			int k,
+			boolean isDistance,
+			float[][] rolesW,
+			ArrayList<SuffixTreeStringArray> suffixtreeAL){
+		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
+		this.constructorKnnST(sequenceAL, medoids, gMedoids, k, isDistance, rolesW, suffixtreeAL);
+	}
+
+	private void constructorKnnST(ArrayList<String> sequence, 
+				ArrayList<String[]> medoids,
+				int[] gMedoids,
+				int k,
+				boolean isDistance,
+				float[][] rolesW,
+				ArrayList<SuffixTreeStringArray> suffixtreeAL){
+		m_recommender = new RecommenderKnnToSuffixTrees(medoids, gMedoids, suffixtreeAL, isDistance, rolesW, k);
 		this.constructor2(sequence);
 	}
 	

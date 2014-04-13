@@ -23,6 +23,7 @@ public class TestSetEvaluator {
 	private float[][] m_rolesW = {{ 0f, 0f, 0f},
 			  					  { 0f, 0f, 0f},
 			  					  { 0f, 0f, 0f}};
+	private int m_knn = 100;
 	
 	// Model: modular approach of ST for each cluster
 	private ArrayList<SuffixTreeStringArray> m_STAL = null;
@@ -92,6 +93,25 @@ public class TestSetEvaluator {
 	
 	
 	
+	// CREATOR OF MODULAR APPROACH (K-NN TO CLUSTERS-STs) //
+	
+	public TestSetEvaluator(ArrayList<String[]> sequences, 
+			ArrayList<String[]> medoids,
+			int[] gmedoids,
+			int knn,
+			boolean isDistance,
+			float[][] rolesW,
+			ArrayList<SuffixTreeStringArray> suffixtreeAL){
+		m_medoids = medoids;
+		m_gMedoids = gmedoids;
+		m_knn = knn;
+		m_isDistance = isDistance;
+		m_rolesW = rolesW;
+		m_STAL = suffixtreeAL;
+		this.constructor(sequences);
+	}
+	
+	
 	// UTILS //
 	
 	private void constructor(ArrayList<String[]> sequences){
@@ -130,6 +150,10 @@ public class TestSetEvaluator {
 			SequenceEvaluator seqEv = null;
 			if(m_gST!=null){
 				seqEv = new SequenceEvaluator(seq, m_gST, failureMode, maxMemory);
+			} else if(m_medoids!=null && m_STAL!=null){
+				seqEv = new SequenceEvaluator(seq, 
+							m_medoids, m_gMedoids, m_knn, m_isDistance, m_rolesW,
+							m_STAL);
 			} else if(m_medoids!=null){
 				seqEv = new SequenceEvaluator(seq, m_medoids, m_gMedoids, m_recosAL, 
 								m_isDistance, m_rolesW);
