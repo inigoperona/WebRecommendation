@@ -129,7 +129,11 @@ public class SequenceAlignmentLevenshtein
     		if(urlAtopic==-1 || urlBtopic==-1){ // topic no available
     			wurl = 1f; // maximum distance
     		} else {
-    			wurl = m_topicmatch;
+    			if(urlAtopic==urlBtopic){
+    				wurl = m_topicmatch;
+    			} else {
+    				wurl = 1; // maximum distance
+    			}
     		}
     	}
     	
@@ -138,7 +142,7 @@ public class SequenceAlignmentLevenshtein
     	float wrole;
     	if(wurl<=m_topicmatch){
         	wrole = m_roleW[rolAi][rolBi];
-        	dist = wurl * wrole;
+        	dist = wurl * (1+wrole);
         } else {
         	wrole = 1f;
         	dist = 1f;

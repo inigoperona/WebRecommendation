@@ -1,8 +1,5 @@
 package ehupatras.webrecommendation.sequencealignment;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class SequenceAlignmentBacktrack 
@@ -265,7 +262,11 @@ public abstract class SequenceAlignmentBacktrack
     		if(urlAtopic==-1 || urlBtopic==-1){ // topic no available
     			wurl = 1f; // maximum distance
     		} else {
-    			wurl = m_topicmatch;
+    			if(urlAtopic==urlBtopic){
+    				wurl = m_topicmatch;
+    			} else {
+    				wurl = 1; // maximum distance
+    			}
     		}
     	}
     	

@@ -85,7 +85,7 @@ public class A040MainClassHclust {
 		String linkageClassName = linkages[i];
 		// Cutting the dendrogram
 		//int[] cutthA = {10, 15, 20, 25};
-		int[] cutthA = {4};
+		int[] cutthA = {4, 10, 15, 20, 25};
 		//int[] cutthA = {1, 2, 4, 6, 8};
 		//float[] cutthA = {0.1f, 0.2f, 0.4f, 0.6f, 0.8f};
 		
