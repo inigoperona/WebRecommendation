@@ -1,16 +1,15 @@
 package ehupatras.webrecommendation.distmatrix;
 
 import java.util.ArrayList;
-
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
-import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010Topics;
+import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010Topics2;
 
-public class SimilarityMatrixInverseTopics 
+public class SimilarityMatrixInverseTopics2 
 				extends SimilarityMatrixInverse {
-	
-	public SimilarityMatrixInverseTopics(String urlsDMfile, float urlsEqualnessThreshold){
-		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
-		loadUrlsDM(urlsDMfile);
+
+	public SimilarityMatrixInverseTopics2(String urls2topicfile, float topicmatch){
+		m_topicmatch = topicmatch;
+		loadUrlsTopic(urls2topicfile);
 	}
 	
 	public void computeMatrix(ArrayList<Integer> names, 
@@ -30,7 +29,7 @@ public class SimilarityMatrixInverseTopics
 			float minsim = Float.POSITIVE_INFINITY;
 			for(int j=0; j<data.size(); j++){
 				String[] seqB = data.get(j);
-				SequenceAlignment seqalign = new SequenceAlignmentCombineGlobalLocalDimopoulos2010Topics(m_UrlIDs, m_UrlsDM, m_urlsEqualnessThreshold);
+				SequenceAlignment seqalign = new SequenceAlignmentCombineGlobalLocalDimopoulos2010Topics2(m_UrlIDs, m_url2topic, m_topicmatch);
 				seqalign.setRoleWeights(roleWeights);
 				float sim = seqalign.getScore(seqA, seqB);
 				if(sim>maxsim){ maxsim = sim; }
@@ -51,10 +50,6 @@ public class SimilarityMatrixInverseTopics
 				m_matrix[i][j] = 1f - sim; 
 			}
 		}
-	}
-	
-	public void setUrlsEqualnessThreshold(float urlsEqualnessThreshold){
-		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
 	}
 	
 }

@@ -1,13 +1,13 @@
 package ehupatras.webrecommendation;
 
 import java.util.ArrayList;
+
+import ehupatras.webrecommendation.distmatrix.DistanceMatrixEditTopics2;
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.distmatrix.DistanceMatrixEditTopics;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A112MainClassDistanceMatrixEDTopics {
-	
+public class A114MainClassDistanceMatrixEDTopics2 {
 	private Matrix m_matrix;
 	
 	public void createDistanceMatrix(String databaseWD,
@@ -15,15 +15,15 @@ public class A112MainClassDistanceMatrixEDTopics {
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights,
 			String dmFile,
-			float urlsEqualnessThreshold){
-		m_matrix = new DistanceMatrixEditTopics(dmFile, urlsEqualnessThreshold);
+			float topicmatch){
+		m_matrix = new DistanceMatrixEditTopics2(dmFile, topicmatch);
 		m_matrix.computeMatrix(sampleSessionIDs, sequencesUHC, roleWeights);
 		m_matrix.save(databaseWD);
 		m_matrix.writeMatrix(databaseWD + "/distance_matrix.txt");
 	}
 	
 	public void loadDistanceMatrix(String databaseWD){
-		m_matrix = new DistanceMatrixEditTopics(null, 0.6f);
+		m_matrix = new DistanceMatrixEditTopics2(null, 0.5f);
 		m_matrix.load(databaseWD);
 	}
 	
@@ -62,22 +62,23 @@ public class A112MainClassDistanceMatrixEDTopics {
 		
 		
 		// DISTANCE MATRIX //
-		A112MainClassDistanceMatrixEDTopics dm;
+		A114MainClassDistanceMatrixEDTopics2 dm;
 		
 
 		// No role
 		float[][] roleW1 = {{ 0f, 0f, 0f},
 				            { 0f, 0f, 0f},
 				            { 0f, 0f, 0f}};
-		dm = new A112MainClassDistanceMatrixEDTopics();
-		dm.createDistanceMatrix(databaseWD + "/DM_04_edit_dist_topics", 
+		dm = new A114MainClassDistanceMatrixEDTopics2();
+		dm.createDistanceMatrix(databaseWD + "/DM_04_edit_dist_topics2", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW1,
-				preprocessingWD + "/URLs_DM.txt", 0.6f);
+				preprocessingWD + "/URLs_to_topic.txt", 0.5f);
 		
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
 	}
+	
 }

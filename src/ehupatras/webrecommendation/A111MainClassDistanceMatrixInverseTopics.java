@@ -16,9 +16,9 @@ public class A111MainClassDistanceMatrixInverseTopics {
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights,
 			String dmFile,
-			float urlsDMfile){
+			float urlsEqualnessThreshold){
 		System.out.println("DISTANCE MATRIX");
-		m_matrix = new SimilarityMatrixInverseTopics(dmFile, urlsDMfile);
+		m_matrix = new SimilarityMatrixInverseTopics(dmFile, urlsEqualnessThreshold);
 		m_matrix.computeMatrix(sampleSessionIDs, sequencesUHC, roleWeights);
 		m_matrix.save(databaseWD);
 		m_matrix.writeMatrix(databaseWD + "/distance_matrix.txt");

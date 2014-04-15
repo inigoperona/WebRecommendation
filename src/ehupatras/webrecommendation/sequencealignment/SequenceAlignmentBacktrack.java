@@ -24,9 +24,13 @@ public abstract class SequenceAlignmentBacktrack
 
     // to work with topic distributions
 	protected ArrayList<Integer> m_UrlIDs = null;
+	// URL to URL distance
 	protected float[][] m_UrlsDM = null;
 	protected float m_URLsEqualnessTh = 0.6f;
-    
+    // URL to topic
+	protected int[] m_url2topic = null;
+	protected float m_topicmatch = 0.5f;
+	
     // Functions to get the standard sequence alignment score
     
     protected abstract void init(String[] seqA, String[] seqB);
@@ -70,7 +74,7 @@ public abstract class SequenceAlignmentBacktrack
     	for(int i=0; i<alignLen; i++){
     		String elemA = m_alignSeqA[i];
     		String elemB = m_alignSeqB[i];
-    		float w = this.equalURLs(elemA, elemB);
+    		float w = equalURLs(elemA, elemB);
     		if(w>=0){
     			// match score-weight greater than zero (best 1)
     			// else score-weight less than zero (worst -1)
@@ -189,7 +193,7 @@ public abstract class SequenceAlignmentBacktrack
     	return this.equalURLs(mSeqA[i-1], mSeqB[j-1]);
     }
     
-    private float equalURLs(String strA, String strB){
+    protected float equalURLs(String strA, String strB){
     	int len = m_gap.length();
     	String urlA = strA.substring(0,len-1);
     	String rolA = strA.substring(len-1,len);
@@ -232,6 +236,51 @@ public abstract class SequenceAlignmentBacktrack
         }
         
         return wrole*(1-wurl);
+    }
+    
+    protected float weight4(String strA, String strB) {
+    	// ensure that we do not have any gap
+    	if(strA.equals(m_gap) || strB.equals(m_gap)){ return -1; }
+    	
+    	// compare the two elements
+    	int len = strA.length();
+    	String urlA = strA.substring(0,len-1);
+    	String rolA = strA.substring(len-1,len);
+    	int urlAi = m_UrlIDs.indexOf(Integer.valueOf(urlA));
+    	int rolAi = this.role2int(rolA);
+    	String urlB = strB.substring(0,len-1);
+    	String rolB = strB.substring(len-1,len);
+    	int urlBi = m_UrlIDs.indexOf(Integer.valueOf(urlB));
+    	int rolBi = this.role2int(rolB);
+    	
+    	// urls distance
+    	float wurl = 1f; // initialize with maximum distance
+    	if(urlA.equals(urlB)){ // same URL
+    		wurl = 0; // minimum distance
+    	} else if(urlAi==-1 || urlBi==-1){ // a new URL, does not exists
+    		wurl = 1f; // maximum distance
+    	} else { // analyze the topics
+    		int urlAtopic = m_url2topic[urlAi];
+    		int urlBtopic = m_url2topic[urlBi];
+    		if(urlAtopic==-1 || urlBtopic==-1){ // topic no available
+    			wurl = 1f; // maximum distance
+    		} else {
+    			wurl = m_topicmatch;
+    		}
+    	}
+    	
+    	// roles
+    	float score = -1f; // worse score
+    	float wrole;
+        if(wurl<=m_topicmatch){
+        	wrole = m_roleW[rolAi][rolBi];
+        	score = (1f-wurl)*wrole;
+        } else {
+        	wrole = -1f;
+        	score = -1f;
+        }
+        
+        return score;
     }
     
     protected int role2int(String role){

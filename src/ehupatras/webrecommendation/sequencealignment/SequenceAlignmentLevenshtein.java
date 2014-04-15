@@ -12,10 +12,12 @@ public class SequenceAlignmentLevenshtein
 	
     // to work with topics
 	protected ArrayList<Integer> m_UrlIDs = null;
+	// URL to URL distance
 	protected float[][] m_UrlsDM = null;
 	protected float m_URLsEqualnessTh = 0.6f;
-	
-	
+	// URL to topic distance
+	protected int[] m_url2topic = null;
+	protected float m_topicmatch = 0.5f;
 	
     // body
 	
@@ -89,15 +91,60 @@ public class SequenceAlignmentLevenshtein
     	} else {
     		wurl = m_UrlsDM[urlAi][urlBi];
     	}
+    	
     	// roles
+    	float dist = 1f; // maximum distance
     	float wrole;
     	if(wurl<=m_URLsEqualnessTh){
         	wrole = m_roleW[rolAi][rolBi];
+        	dist = wurl * wrole;
         } else {
         	wrole = 1f;
+        	dist = 1f;
         }
         
-    	return wurl*(1f+wrole);
+    	return dist;
+    }
+    
+    protected float weight4(String strA, String strB) {
+    	int len = strA.length();
+    	String urlA = strA.substring(0,len-1);
+    	String rolA = strA.substring(len-1,len);
+    	int urlAi = m_UrlIDs.indexOf(Integer.valueOf(urlA));
+    	int rolAi = this.role2int(rolA);
+    	String urlB = strB.substring(0,len-1);
+    	String rolB = strB.substring(len-1,len);
+    	int urlBi = m_UrlIDs.indexOf(Integer.valueOf(urlB));
+    	int rolBi = this.role2int(rolB);
+    	
+    	// urls distance
+    	float wurl = 1f; // initialize with maximum distance
+    	if(urlA.equals(urlB)){ // same URL
+    		wurl = 0; // minimum distance
+    	} else if(urlAi==-1 || urlBi==-1){ // a new URL, does not exists
+    		wurl = 1f; // maximum distance
+    	} else { // analyze the topics
+    		int urlAtopic = m_url2topic[urlAi];
+    		int urlBtopic = m_url2topic[urlBi];
+    		if(urlAtopic==-1 || urlBtopic==-1){ // topic no available
+    			wurl = 1f; // maximum distance
+    		} else {
+    			wurl = m_topicmatch;
+    		}
+    	}
+    	
+    	// roles distance
+    	float dist = 1f; // maximum distance
+    	float wrole;
+    	if(wurl<=m_topicmatch){
+        	wrole = m_roleW[rolAi][rolBi];
+        	dist = wurl * wrole;
+        } else {
+        	wrole = 1f;
+        	dist = 1f;
+        }
+        
+    	return dist;
     }
     
 	public void setRoleWeights(float[][] roleweights){

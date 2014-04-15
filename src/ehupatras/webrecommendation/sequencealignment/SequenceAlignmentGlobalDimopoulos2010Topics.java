@@ -15,4 +15,8 @@ public class SequenceAlignmentGlobalDimopoulos2010Topics
 		return weight3(mSeqA[i-1], mSeqB[j-1]);
 	}
 	
+    protected float equalURLs(String strA, String strB){
+    	return weight3(strA, strB);
+    }
+	
 }

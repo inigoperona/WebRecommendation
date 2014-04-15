@@ -17,11 +17,15 @@ import java.math.BigDecimal;
 
 public class PreprocessContent {
 
+	// url identification
 	private ArrayList<String> m_formurls = new ArrayList<String>();
 	private ArrayList<String> m_urlnames = new ArrayList<String>();
 	private ArrayList<Integer> m_urlID = new ArrayList<Integer>();
+	
+	// URL identification
 	private ArrayList<float[]> m_url2topicDist;
 	private float[][] m_URLsDM;
+	private int[] m_url2topic;
 	
 	
 	
@@ -96,7 +100,7 @@ public class PreprocessContent {
 	
 	// READING URL - TOPIC_DISTRIBUTION FILE //
 	
-	public void readURL2Topic(String filename){
+	public void readURL2TopicDistribution(String filename){
 		// Read topic information
 		m_url2topicDist = new ArrayList<float[]>(m_formurls.size());
 		for(int i=0; i<m_formurls.size(); i++){m_url2topicDist.add(null);}
@@ -191,7 +195,7 @@ public class PreprocessContent {
 		return (float)result;
 	}
 	
-	public float getDistance(String formalizedURL1, String formalizedURL2){
+	private float getDistance(String formalizedURL1, String formalizedURL2){
 		int i = m_formurls.indexOf(formalizedURL1);
 		int j = m_formurls.indexOf(formalizedURL2);
 		if(i<j){
@@ -236,6 +240,54 @@ public class PreprocessContent {
 		}
 	}
 	
+	public void computeURL2topic(float minsupport){
+		m_url2topic = new int[m_url2topicDist.size()];
+		for(int i=0; i<m_url2topicDist.size(); i++){
+			float[] topdist = m_url2topicDist.get(i);
+			float maxprob = -1f;
+			int maxj = -1;
+			for(int j=0; j<topdist.length; j++){
+				float prob = topdist[j];
+				if(maxprob<prob){
+					maxprob = prob;
+					maxj = j;
+				}
+			}
+			if(maxprob>=minsupport){
+				m_url2topic[i] = maxj;
+			} else {
+				m_url2topic[i] = -1;
+			}
+		}
+	}
+	
+	public void printURL2topic(){
+		for(int i=0; i<m_url2topic.length; i++){
+			System.out.println(	m_urlID.get(i) + " " +
+								m_url2topic[i]);
+		}
+	}
+	
+	public void writeURL2topic(String filename){
+		File file = new File(filename);
+		try {
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			int len = m_formurls.size();
+			for(int i=0; i<len; i++){
+				int urlID = m_urlID.get(i);
+				bw.write(String.valueOf(urlID) + " ");
+				bw.write(String.valueOf(m_url2topic[i]));
+				bw.write("\n");
+			}
+			bw.close();
+		} catch (IOException ex){
+			System.err.println("Exception at writing the URL list. " + 
+					"[ehupatras.webrecommendation.content.preprocess.PreprocessContent.writeURL2topic]");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
 	
 	
 	
