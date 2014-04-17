@@ -15,16 +15,15 @@ public class A011MainClassDistanceMatrixInverse {
 			ArrayList<Integer> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights){
-		System.out.println("DISTANCE MATRIX");
-		m_matrix = new SimilarityMatrixInverse();
-		m_matrix.computeMatrix(sampleSessionIDs, sequencesUHC, roleWeights);
+		m_matrix = new SimilarityMatrixInverse(sampleSessionIDs);
+		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
 		m_matrix.save(databaseWD);
-		m_matrix.writeMatrix(databaseWD + "/distance_matrix.txt");
+		m_matrix.writeMatrix(m_matrix.getMatrix(),
+					databaseWD + "/distance_matrix.txt");
 	}
 	
 	public void loadDistanceMatrix(String databaseWD){
-		System.out.println("DISTANCE MATRIX");
-		m_matrix = new SimilarityMatrixInverse();
+		m_matrix = new SimilarityMatrixInverse(null);
 		m_matrix.load(databaseWD);
 	}
 	

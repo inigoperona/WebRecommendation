@@ -17,14 +17,15 @@ public class A113MainClassDistanceMatrixInverseTopics2 {
 			float[][] roleWeights,
 			String dmFile,
 			float topicmatch){
-		m_matrix = new SimilarityMatrixInverseTopics2(dmFile, topicmatch);
-		m_matrix.computeMatrix(sampleSessionIDs, sequencesUHC, roleWeights);
+		m_matrix = new SimilarityMatrixInverseTopics2(sampleSessionIDs, dmFile, topicmatch);
+		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
 		m_matrix.save(databaseWD);
-		m_matrix.writeMatrix(databaseWD + "/distance_matrix.txt");
+		m_matrix.writeMatrix(m_matrix.getMatrix(),
+					databaseWD + "/distance_matrix.txt");
 	}
 	
 	public void loadDistanceMatrix(String databaseWD){
-		m_matrix = new SimilarityMatrixInverseTopics2(null, 0.5f);
+		m_matrix = new SimilarityMatrixInverseTopics2(null, null, 0.5f);
 		m_matrix.load(databaseWD);
 	}
 	

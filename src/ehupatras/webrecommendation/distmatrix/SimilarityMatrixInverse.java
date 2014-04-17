@@ -8,11 +8,18 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlo
 public class SimilarityMatrixInverse 
 				extends Matrix {
 	
-	public void computeMatrix(ArrayList<Integer> names, 
-						ArrayList<String[]> data,
-						float[][] roleWeights){
+	public SimilarityMatrixInverse(ArrayList<Integer> names){
 		m_names = names;
-		m_matrix = new float[data.size()][data.size()];
+	}
+	
+	public void computeMatrix(ArrayList<String[]> data,
+						float[][] roleWeights,
+						boolean isplit){
+		if(!isplit){
+			m_matrix = new float[data.size()][data.size()];
+		} else {
+			m_matrixSplit = new float[data.size()][data.size()];
+		}
 		
 		float[][] simmatrix = new float[data.size()][data.size()];
 		for(int i=0; i<data.size(); i++){
@@ -43,7 +50,11 @@ public class SimilarityMatrixInverse
 		for(int i=0; i<data.size(); i++){
 			for(int j=0; j<data.size(); j++){
 				float sim = simmatrix[i][j];
-				m_matrix[i][j] = 1f - sim; 
+				if(!isplit){
+					m_matrix[i][j] = 1f - sim;
+				} else {
+					m_matrixSplit[i][j] = 1f - sim;
+				}
 			}
 		}
 	}

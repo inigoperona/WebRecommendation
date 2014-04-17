@@ -24,6 +24,8 @@ public class ModelEvaluator {
 	// database
 	private ArrayList<String[]> m_dataset;
 	private ArrayList<String[]> m_dataset2;
+	private ArrayList<String[]> m_datasetSplit;
+	private ArrayList<String[]> m_datasetSplit2;
 	private Matrix m_distancematrix;
 	
 	// To create the model: trainset

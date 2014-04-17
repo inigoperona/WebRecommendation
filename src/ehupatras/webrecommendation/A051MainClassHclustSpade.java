@@ -75,7 +75,8 @@ public class A051MainClassHclustSpade {
 		float[] cutthA = {4, 10, 15, 20, 25};
 		//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
 		//float[] seqweights = {0.25f, 0.30f, 0.40f, 0.50f};
-		float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
+		//float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
+		float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};
 		float[][] rolesW = {{ 0f, 0f, 0f},
 				  			{ 0f, 0f, 0f},
 				  			{ 0f, 0f, 0f}};

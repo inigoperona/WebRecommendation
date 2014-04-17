@@ -16,14 +16,15 @@ public class A112MainClassDistanceMatrixEDTopics {
 			float[][] roleWeights,
 			String dmFile,
 			float urlsEqualnessThreshold){
-		m_matrix = new DistanceMatrixEditTopics(dmFile, urlsEqualnessThreshold);
-		m_matrix.computeMatrix(sampleSessionIDs, sequencesUHC, roleWeights);
+		m_matrix = new DistanceMatrixEditTopics(sampleSessionIDs, dmFile, urlsEqualnessThreshold);
+		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
 		m_matrix.save(databaseWD);
-		m_matrix.writeMatrix(databaseWD + "/distance_matrix.txt");
+		m_matrix.writeMatrix(m_matrix.getMatrix(),
+					databaseWD + "/distance_matrix.txt");
 	}
 	
 	public void loadDistanceMatrix(String databaseWD){
-		m_matrix = new DistanceMatrixEditTopics(null, 0.6f);
+		m_matrix = new DistanceMatrixEditTopics(null, null, 0.6f);
 		m_matrix.load(databaseWD);
 	}
 	

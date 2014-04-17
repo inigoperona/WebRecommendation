@@ -6,18 +6,21 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtei
 
 public class DistanceMatrixEditTopics 
 				extends DistanceMatrixEdit {
-
-	public DistanceMatrixEditTopics(String urlsDMfile, float urlsEqualnessThreshold){
+	
+	public DistanceMatrixEditTopics(ArrayList<Integer> names, String urlsDMfile, float urlsEqualnessThreshold){
+		super(names);
 		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
 		loadUrlsDM(urlsDMfile);
 	}
 	
-	public void computeMatrix(ArrayList<Integer> names, 
-			ArrayList<String[]> data,
-			float[][] roleWeights){
-		m_names = names;
-		m_matrix = new float[data.size()][data.size()];
-
+	public void computeMatrix(ArrayList<String[]> data,
+							float[][] roleWeights,
+							boolean isplit){
+		if(!isplit){
+			m_matrix = new float[data.size()][data.size()];
+		} else {
+			m_matrixSplit = new float[data.size()][data.size()];
+		}
 		// create the similarity matrix
 		for(int i=0; i<data.size(); i++){
 			System.out.println("  [" + System.currentTimeMillis() + "] Computing distances of row " + i);
@@ -27,7 +30,11 @@ public class DistanceMatrixEditTopics
 				SequenceAlignment seqalign = new SequenceAlignmentLevenshteinTopics(m_UrlIDs, m_UrlsDM, m_urlsEqualnessThreshold);
 				//seqalign.setRoleWeights(roleWeights);
 				float dist = seqalign.getScore(seqA, seqB);
-				m_matrix[i][j] = dist;
+				if(!isplit){
+					m_matrix[i][j] = dist;
+				} else {
+					m_matrixSplit[i][j] = dist;
+				}
 			}
 		}
 	}

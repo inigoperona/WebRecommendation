@@ -6,12 +6,19 @@ import java.util.*;
 public class SimilarityMatrixEuclidean 
 				extends Matrix {
 	
-	public void computeMatrix(ArrayList<Integer> names, 
-							ArrayList<String[]> data,
-							float[][] roleWeights){
+	public SimilarityMatrixEuclidean(ArrayList<Integer> names){
 		m_names = names;
-		m_matrix = new float[data.size()][data.size()];
-
+	}
+	
+	public void computeMatrix(ArrayList<String[]> data,
+							float[][] roleWeights,
+							boolean isplit){
+		if(!isplit){
+			m_matrix = new float[data.size()][data.size()];
+		} else {
+			m_matrixSplit = new float[data.size()][data.size()];
+		}
+		
 		// create the similarity matrix
 		float[][] similaritiesM = new float[data.size()][data.size()];
 		for(int i=0; i<data.size(); i++){
@@ -35,8 +42,13 @@ public class SimilarityMatrixEuclidean
 			for(int j=(i+1); j<data.size(); j++){
 				float[] vectorj = similaritiesM[j];
 				double dist = this.getEuclideanDistance(vectori, vectorj);
-				m_matrix[i][j] = (float)dist;
-				m_matrix[j][i] = (float)dist;
+				if(!isplit){
+					m_matrix[i][j] = (float)dist;
+					m_matrix[j][i] = (float)dist;
+				} else {
+					m_matrixSplit[i][j] = (float)dist;
+					m_matrixSplit[j][i] = (float)dist;
+				}
 			}
 		}
 	}

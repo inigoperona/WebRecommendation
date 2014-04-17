@@ -17,15 +17,15 @@ public class A111MainClassDistanceMatrixInverseTopics {
 			float[][] roleWeights,
 			String dmFile,
 			float urlsEqualnessThreshold){
-		System.out.println("DISTANCE MATRIX");
-		m_matrix = new SimilarityMatrixInverseTopics(dmFile, urlsEqualnessThreshold);
-		m_matrix.computeMatrix(sampleSessionIDs, sequencesUHC, roleWeights);
+		m_matrix = new SimilarityMatrixInverseTopics(sampleSessionIDs, dmFile, urlsEqualnessThreshold);
+		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
 		m_matrix.save(databaseWD);
-		m_matrix.writeMatrix(databaseWD + "/distance_matrix.txt");
+		m_matrix.writeMatrix(m_matrix.getMatrix(),
+					databaseWD + "/distance_matrix.txt");
 	}
 	
 	public void loadDistanceMatrix(String databaseWD){
-		m_matrix = new SimilarityMatrixInverseTopics(null, 0.6f);
+		m_matrix = new SimilarityMatrixInverseTopics(null, null, 0.6f);
 		m_matrix.load(databaseWD);
 	}
 	

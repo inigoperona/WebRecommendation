@@ -7,16 +7,20 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlo
 public class SimilarityMatrixInverseTopics2 
 				extends SimilarityMatrixInverse {
 
-	public SimilarityMatrixInverseTopics2(String urls2topicfile, float topicmatch){
+	public SimilarityMatrixInverseTopics2(ArrayList<Integer> names, String urls2topicfile, float topicmatch){
+		super(names);
 		m_topicmatch = topicmatch;
 		loadUrlsTopic(urls2topicfile);
 	}
 	
-	public void computeMatrix(ArrayList<Integer> names, 
-			ArrayList<String[]> data,
-			float[][] roleWeights){
-		m_names = names;
-		m_matrix = new float[data.size()][data.size()];
+	public void computeMatrix( ArrayList<String[]> data,
+			float[][] roleWeights,
+			boolean isplit){
+		if(!isplit){
+			m_matrix = new float[data.size()][data.size()];
+		} else {
+			m_matrixSplit = new float[data.size()][data.size()];
+		}
 
 		float[][] simmatrix = new float[data.size()][data.size()];
 		for(int i=0; i<data.size(); i++){
@@ -47,7 +51,11 @@ public class SimilarityMatrixInverseTopics2
 		for(int i=0; i<data.size(); i++){
 			for(int j=0; j<data.size(); j++){
 				float sim = simmatrix[i][j];
-				m_matrix[i][j] = 1f - sim; 
+				if(!isplit){
+					m_matrix[i][j] = 1f - sim;
+				} else {
+					m_matrixSplit[i][j] = 1f - sim;
+				}
 			}
 		}
 	}

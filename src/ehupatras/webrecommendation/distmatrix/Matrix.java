@@ -12,9 +12,15 @@ import java.util.ArrayList;
 public abstract class Matrix {
 	
 	// distance matrix data
-	protected float[][] m_matrix;
-	protected ArrayList<Integer> m_names;
+	protected float[][] m_matrix = null;
+	protected ArrayList<Integer> m_names = null;
 	private String m_savefilename = "/_matrix.javaData";
+	
+	// split distance matrix data
+	private int[] m_starters = new int[]{11};
+	private int m_minimumActivity = 3;
+	protected ArrayList<Integer> m_namesSplit = null;
+	protected float[][] m_matrixSplit = null;
 	
 	// attributes to work with topics
 	protected ArrayList<Integer> m_UrlIDs = null;
@@ -27,12 +33,16 @@ public abstract class Matrix {
 	protected float m_topicmatch = 0.5f;
 	
 	
-	public abstract void computeMatrix(ArrayList<Integer> names, 
-							ArrayList<String[]> data,
-							float[][] roleWeights);
+	public abstract void computeMatrix(ArrayList<String[]> data,
+							float[][] roleWeights,
+							boolean isSplit);
 	
 	public float[][] getMatrix(){
 		return m_matrix;
+	}
+	
+	public float[][] getMatrixSplit(){
+		return m_matrixSplit;
 	}
 	
 	public ArrayList<Integer> getNames(){
@@ -58,7 +68,11 @@ public abstract class Matrix {
 		return indexes;
 	}
 	
-	public void writeMatrix(String outfilename){
+	
+	
+	// SAVE & LOAD MATRIX
+	
+	public void writeMatrix(float[][] matrix, String outfilename){
 		// Open the given file
 		BufferedWriter writer = null;
 		try{
@@ -72,10 +86,10 @@ public abstract class Matrix {
 	
 		// Write in a file line by line
 		try{
-			int n = m_matrix.length;
+			int n = matrix.length;
 			for(int i=0; i<n; i++){
 				for(int j=0; j<n; j++){
-					writer.write(m_matrix[i][j] + " ");
+					writer.write(matrix[i][j] + " ");
 				}
 				writer.write("\n");
 			}
@@ -99,9 +113,11 @@ public abstract class Matrix {
 	
 	public void save(String wordirectory){
 		SaveLoadObjects slo = new SaveLoadObjects();
-		Object[] objA = new Object[2];
+		Object[] objA = new Object[4];
 		objA[0] = m_matrix;
 		objA[1] = m_names;
+		objA[2] = m_matrixSplit;
+		objA[3] = m_namesSplit;
 		slo.save(objA, wordirectory + m_savefilename);
 	}
 	
@@ -110,7 +126,13 @@ public abstract class Matrix {
 		Object[] objA = (Object[])slo.load(wordirectory + m_savefilename);
 		m_matrix = (float[][])objA[0];
 		m_names = (ArrayList<Integer>)objA[1];
+		m_matrixSplit = (float[][])objA[2];
+		m_namesSplit = (ArrayList<Integer>)objA[3];
 	}
+	
+	
+	
+	// TOPICS
 	
     protected void loadUrlsDM(String urlsDMfile){
     	// load the distance matrix of URL's similarity
@@ -174,5 +196,83 @@ public abstract class Matrix {
     }
     
     
+    
+    // SPLIT THE SEQUENCES
+    
+    public Object[] splitSequences(ArrayList<String[]> data){
+    	ArrayList<Integer> namesSplit = new ArrayList<Integer>();
+    	ArrayList<String[]> dataSplit = new ArrayList<String[]>();
+    	int nseq = m_names.size();
+    	for(int i=0; i<nseq; i++){
+    		// original session-id and the original sequence
+    		int sesID = m_names.get(i);
+    		String[] seq = data.get(i);
+    		
+    		// put the first element in the new sequence
+    		ArrayList<String> seqSplit = new ArrayList<String>();
+        	seqSplit.add(seq[0]);
+        	
+        	// split the sequence and ensure the minimum activity
+    		int elemLen = seq[0].length();
+    		int subseq = 0;
+    		for(int j=1; j<seq.length; j++){
+            	String urlA = seq[j].substring(0,elemLen-1);
+            	int urlAi = Integer.valueOf(urlA);
+            	if(isStarter(urlAi)){
+            		if(seqSplit.size()>=m_minimumActivity){
+            			// data sequence
+            			String[] seqSplitA = new String[seqSplit.size()];
+            			for(int k=0; k<seqSplitA.length; k++){
+            				seqSplitA[k] = seqSplit.get(k);
+            			}
+            			dataSplit.add(seqSplitA);
+            			// update the subsequence identifier
+            			int subseqID = sesID*100+subseq;
+            			namesSplit.add(subseqID);
+            			// increment the subsequence counter
+            			subseq++;
+            		}
+            		seqSplit = new ArrayList<String>();
+            	}
+            	seqSplit.add(seq[j]);
+    		}
+    		if(seqSplit.size()>=m_minimumActivity){
+    			// data sequence
+    			String[] seqSplitA = new String[seqSplit.size()];
+    			for(int k=0; k<seqSplitA.length; k++){
+    				seqSplitA[k] = seqSplit.get(k);
+    			}
+    			dataSplit.add(seqSplitA);
+    			// update the subsequence identifier
+    			int subseqID = sesID*100+subseq;
+    			namesSplit.add(subseqID);
+    		}
+    		
+    	}
+    	
+    	// return object
+    	Object[] objA = new Object[2];
+    	objA[0] = namesSplit;
+    	objA[1] = dataSplit;
+    	return objA;
+    }
+    
+    private boolean isStarter(int urlID){
+    	for(int i=0; i<m_starters.length; i++){
+    		if(m_starters[i]==urlID){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    public void setSplitParameters(int[] starters, int minimumActivity){
+    	m_starters = starters;
+    	m_minimumActivity = minimumActivity;
+    }
+    
+    public void setNamesSplit(ArrayList<Integer> namesSplit){
+    	m_namesSplit = namesSplit;
+    }
     
 }

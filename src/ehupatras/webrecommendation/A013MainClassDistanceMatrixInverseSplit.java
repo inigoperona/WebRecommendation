@@ -1,29 +1,34 @@
 package ehupatras.webrecommendation;
 
-import ehupatras.webrecommendation.structures.*;
-import ehupatras.webrecommendation.utils.SaveLoadObjects;
-import ehupatras.webrecommendation.distmatrix.*;
-import ehupatras.webrecommendation.modelvalidation.*;
-import ehupatras.webrecommendation.evaluator.*;
-import java.util.*;
+import java.util.ArrayList;
 
-public class A010MainClassDistanceMatrixEuclidean {
+import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverse;
+import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
+import ehupatras.webrecommendation.structures.Website;
 
+public class A013MainClassDistanceMatrixInverseSplit {
+	
 	private Matrix m_matrix;
 	
 	public void createDistanceMatrix(String databaseWD,
 			ArrayList<Integer> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights){
-		m_matrix = new SimilarityMatrixEuclidean(sampleSessionIDs);
-		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
+		m_matrix = new SimilarityMatrixInverse(sampleSessionIDs);
+		m_matrix.setSplitParameters(new int[]{11}, 3);
+		Object[] objA = m_matrix.splitSequences(sequencesUHC);
+		ArrayList<Integer> sesIDsSplit = (ArrayList<Integer>)objA[0];
+		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
+		m_matrix.setNamesSplit(sesIDsSplit);
+		m_matrix.computeMatrix(seqsSplit, roleWeights, true);
 		m_matrix.save(databaseWD);
-		m_matrix.writeMatrix(m_matrix.getMatrix(),
-					databaseWD + "/distance_matrix.txt");
+		m_matrix.writeMatrix(m_matrix.getMatrixSplit(), 
+					databaseWD + "/distance_matrix_split.txt");
 	}
 	
 	public void loadDistanceMatrix(String databaseWD){
-		m_matrix = new SimilarityMatrixEuclidean(null);
+		m_matrix = new SimilarityMatrixInverse(null);
 		m_matrix.load(databaseWD);
 	}
 	
@@ -31,9 +36,6 @@ public class A010MainClassDistanceMatrixEuclidean {
 		return m_matrix;
 	}
 	
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
@@ -74,57 +76,32 @@ public class A010MainClassDistanceMatrixEuclidean {
 		
 		
 		// DISTANCE MATRIX //
-		A010MainClassDistanceMatrixEuclidean dm;
+		A013MainClassDistanceMatrixInverseSplit dm;
 		
 
 		// No role
 		float[][] roleW1 = {{ 1f, 1f, 1f},
 				            { 1f, 1f, 1f},
 				            { 1f, 1f, 1f}};
-		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_00_no_role", 
+		dm = new A013MainClassDistanceMatrixInverseSplit();
+		dm.createDistanceMatrix(databaseWD + "/DM00-no_role-split", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW1);
-		
-		// 3 roles: U & H & C
-		float[][] roleW2 = {{ 1f,-1f,-1f},
-      		    			{-1f, 1f,-1f},
-      		    			{-1f,-1f, 1f}};
-		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_01_U_H_C", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW2);
-		
-		// 2 roles: U & HC
-		float[][] roleW3 = {{ 1f,-1f,-1f},
-      		    			{-1f, 1f, 1f},
-      		    			{-1f, 1f, 1f}};
-		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_02_U_HC", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW3);
-
-		// Treat the role intelligently
-		float[][] roleW4 = {{-1f,   -1f,   -1f},
-	  		    			{-1f,    1f, 0.75f},
-	  		    			{-1f, 0.75f,    1f}};
-		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW4);
 		
 		// Treat the role intelligently2
 		float[][] roleW5 = {{ 0f,    0f,    0f},
 	  		    			{ 0f,    1f, 0.75f},
 	  		    			{ 0f, 0.75f,    1f}};
-		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent2", 
+		dm = new A013MainClassDistanceMatrixInverseSplit();
+		dm.createDistanceMatrix(databaseWD + "/DM03-U_HC2-split", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW5);
+		
+		
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
 	}
-
+	
 }
