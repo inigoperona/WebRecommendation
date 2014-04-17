@@ -97,7 +97,7 @@ public class A051MainClassPAMMsaSt {
 		// Start generating and evaluating the model
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<ks.length; j++){
-			float kcl = ks[j];
+			int kcl = ks[j];
 				
 			String esperimentationStr = "pam" + kcl;
 			

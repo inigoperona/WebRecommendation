@@ -9,15 +9,15 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A053MainClassPamSpade {
-
+public class A053MainClassPamSpadeSplit {
+	
 	public static void main(String[] args) {
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String dmWD = "/DM00-no_role-split";
-		dmWD = "";
+		//dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
 		clustWD = "";
@@ -54,6 +54,9 @@ public class A053MainClassPamSpade {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
+		Object[] objA = matrix.readSeqs(databaseWD + dmWD + "/sequences_split.txt");
+		ArrayList<Integer> namesSplit = (ArrayList<Integer>)objA[0];
+		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
 
 		
 		// HOLD-OUT //
@@ -78,7 +81,7 @@ public class A053MainClassPamSpade {
 				  			{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, seqsSplit, 
 				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};

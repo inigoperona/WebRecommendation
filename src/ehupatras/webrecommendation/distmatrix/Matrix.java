@@ -86,6 +86,43 @@ public abstract class Matrix {
 		return indexes;
 	}
 	
+	public int[] getSessionIDsIndexes2(ArrayList<Integer> sessionIDs, boolean isSplit){
+		ArrayList<Integer> names;
+		if(!isSplit){
+			names = m_names;
+		} else {
+			names = m_namesSplit;
+		}
+		
+		int[] indexes = new int[sessionIDs.size()];
+		for(int i=0; i<sessionIDs.size(); i++){
+			int sesID = sessionIDs.get(i);
+			indexes[i] = names.indexOf(sesID);
+		}
+
+		return indexes;
+	}
+	
+	
+	public ArrayList<Integer> getSessionIDs(ArrayList<Integer> sessionIDs, boolean isSplit){
+		if(!isSplit){
+			return sessionIDs;
+		} else {
+			ArrayList<Integer> sessionIDs2 = new ArrayList<Integer>();
+			for(int i=0; i<sessionIDs.size(); i++){
+				int sesID = sessionIDs.get(i);
+				for(int j=0; j<m_namesSplit.size(); j++){
+					int sesIDSplit = m_namesSplit.get(j);
+					int sesID2 = sesIDSplit / 100;
+					if(sesID==sesID2){
+						sessionIDs2.add(sesIDSplit);
+					}
+				}
+			}
+			return sessionIDs2;
+		}
+	}
+	
 	
 	
 	// SAVE & LOAD MATRIX
@@ -172,7 +209,7 @@ public abstract class Matrix {
 			br.close();
 		} catch (IOException ex){
 			System.err.println("Exception at reading URLs' distance matrix. " + 
-					"[ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverse.loadUrlsDM]");
+					"[ehupatras.webrecommendation.distmatrix.Matrix.loadUrlsDM]");
 			ex.printStackTrace();
 			System.exit(1);
 		}
@@ -200,7 +237,7 @@ public abstract class Matrix {
 			br.close();
 		} catch (IOException ex){
 			System.err.println("Exception at reading URLs' distance matrix. " + 
-					"[ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverse.loadUrlsTopic]");
+					"[ehupatras.webrecommendation.distmatrix.Matrix.loadUrlsTopic]");
 			ex.printStackTrace();
 			System.exit(1);
 		}
@@ -320,6 +357,38 @@ public abstract class Matrix {
 		}
 		
     }
+    
+    public Object[] readSeqs(String inputFilename){
+    	ArrayList<Integer> names = new ArrayList<Integer>();
+    	ArrayList<String[]> seqs = new ArrayList<String[]>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(inputFilename));
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+				String[] line = sCurrentLine.split(",");
+				names.add(Integer.valueOf(line[0]));
+				int nURLs = line.length-1;
+				String[] seq = new String[nURLs];
+				for(int i=1; i<line.length; i++){
+					seq[i-1] = line[i];
+				}
+				seqs.add(seq);
+			}
+			br.close();
+		} catch (IOException ex){
+			System.err.println("Exception at reading URLs' distance matrix. " + 
+					"[ehupatras.webrecommendation.distmatrix.Matrix.readSeqs]");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+		
+		// return value
+		Object[] objA = new Object[2];
+		objA[0] = names;
+		objA[1] = seqs;
+		return objA;
+    }
+    
     
     private boolean isStarter(int urlID){
     	for(int i=0; i<m_starters.length; i++){

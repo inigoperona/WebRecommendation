@@ -9,24 +9,29 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A053MainClassPamSpade {
+public class A051MainClassPAMMsaStSplit {
 
 	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String dmWD = "/DM00-no_role-split";
-		dmWD = "";
+		//dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
+		String profiWD = "/CL_00_no_role";
 		clustWD = "";
+		profiWD = "";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
 		dmWD = args[3];
 		validationWD = args[4];
 		clustWD = args[5];
+		profiWD = args[6];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -54,60 +59,68 @@ public class A053MainClassPamSpade {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
-
+		Object[] objA = matrix.readSeqs(databaseWD + dmWD + "/sequences_split.txt");
+		ArrayList<Integer> namesSplit = (ArrayList<Integer>)objA[0];
+		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
+		
 		
 		// HOLD-OUT //
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
-		ho.createParts(validationWD, sampleSessionIDs);
+		ho.loadParts(validationWD, sampleSessionIDs);
+		//ho.createParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
 		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
 		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
 		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
 
+
 		
 		// MODEL VALIDATION //
-		
+	
 		// Parameters to play with
-		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
 		int[] ks = {150, 200, 250, 300};
-		//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
-		//float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
-		float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};
-		float[][] rolesW = {{ 0f, 0f, 0f},
-				  			{ 0f, 0f, 0f},
-				  			{ 0f, 0f, 0f}};
+		float[] seqweights = {0.10f, 0.15f, 0.20f};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, seqsSplit, 
 				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
+				
+		// MARKOV CHAIN //
 		modelev.buildMarkovChains();
+	
 		
-		
-		// PAM + MySPADE //
+		// SUFFIX TREE //
 		
 		// Results' header
 		System.out.print("options," + modelev.getEvaluationHeader());
 		
 		// Start generating and evaluating the model
+		int i = 5; // Hclust - linkage method
 		for(int j=0; j<ks.length; j++){
-			int k = ks[j];
+			int kcl = ks[j];
 				
-			String esperimentationStr = "pam" + k;
+			String esperimentationStr = "pam" + kcl;
 			
 			// Load clustering
 			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+
+			// Sequence Alignment
+			modelev.clustersSequenceAlignment();
+			modelev.writeAlignments(validationWD + profiWD + "/" + esperimentationStr + "_alignments.txt");
 			
-			// SPADE
-			for(int l=0; l<seqweights.length; l++){
-				float minsup = seqweights[l];
+			// Weighted Sequences
+			for(int k=0; k<seqweights.length; k++){
+				float minsup = seqweights[k];
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
-				
-				// MEDOIDS models //
-				modelev.buildMedoidsModels(minsup);
-				
+				modelev.extractWeightedSequences(minsup);
+				modelev.writeWeightedSequences(validationWD + profiWD + "/" + esperimentationStr2 + ".txt");
+			
+				// Suffix Tree
+				modelev.buildSuffixTrees();
+			
 				// Evaluation
 				String results;
 				
@@ -115,13 +128,13 @@ public class A053MainClassPamSpade {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(2, nrec, (long)0, 1, 1, true, rolesW);
+					results = modelev.computeEvaluationTest(6, nrec, (long)0, 1, 1000, false, null);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
-			
+
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1, true, rolesW);
+				results = modelev.computeEvaluationTest(6, 1000, (long)0, 1, 1000, false, null);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}
@@ -132,7 +145,6 @@ public class A053MainClassPamSpade {
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
-		
 	}
 	
 }

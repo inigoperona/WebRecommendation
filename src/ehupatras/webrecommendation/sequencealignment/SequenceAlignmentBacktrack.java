@@ -191,6 +191,10 @@ public abstract class SequenceAlignmentBacktrack
     }
     
     protected float equalURLs(String strA, String strB){
+    	// ensure that we do not have any gap
+    	if(strA.equals(m_gap) || strB.equals(m_gap)){ return -1; }
+    	
+    	// compare the two elements
     	int len = m_gap.length();
     	String urlA = strA.substring(0,len-1);
     	String rolA = strA.substring(len-1,len);
@@ -207,6 +211,10 @@ public abstract class SequenceAlignmentBacktrack
     }
     
     protected float weight3(String strA, String strB) {
+    	// ensure that we do not have any gap
+    	if(strA.equals(m_gap) || strB.equals(m_gap)){ return -1; }
+    	
+    	// compare the two elements
     	int len = strA.length();
     	String urlA = strA.substring(0,len-1);
     	String rolA = strA.substring(len-1,len);

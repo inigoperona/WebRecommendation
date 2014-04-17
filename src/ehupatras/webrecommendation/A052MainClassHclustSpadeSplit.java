@@ -9,15 +9,17 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A053MainClassPamSpade {
+public class A052MainClassHclustSpadeSplit {
 
 	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String dmWD = "/DM00-no_role-split";
-		dmWD = "";
+		//dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
 		clustWD = "";
@@ -54,6 +56,9 @@ public class A053MainClassPamSpade {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
+		Object[] objA = matrix.readSeqs(databaseWD + dmWD + "/sequences_split.txt");
+		ArrayList<Integer> namesSplit = (ArrayList<Integer>)objA[0];
+		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
 
 		
 		// HOLD-OUT //
@@ -64,13 +69,14 @@ public class A053MainClassPamSpade {
 		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
 		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
 
+
 		
 		// MODEL VALIDATION //
-		
+	
 		// Parameters to play with
-		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
-		int[] ks = {150, 200, 250, 300};
+		float[] cutthA = {4, 10, 15, 20, 25};
 		//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
+		//float[] seqweights = {0.25f, 0.30f, 0.40f, 0.50f};
 		//float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
 		float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};
 		float[][] rolesW = {{ 0f, 0f, 0f},
@@ -78,7 +84,7 @@ public class A053MainClassPamSpade {
 				  			{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, seqsSplit, 
 				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
@@ -86,23 +92,27 @@ public class A053MainClassPamSpade {
 		modelev.buildMarkovChains();
 		
 		
-		// PAM + MySPADE //
+
+	
+		
+		// Hclust + MySPADE //
 		
 		// Results' header
 		System.out.print("options," + modelev.getEvaluationHeader());
 		
 		// Start generating and evaluating the model
-		for(int j=0; j<ks.length; j++){
-			int k = ks[j];
+		int i = 5; // Hclust - linkage method
+		for(int j=0; j<cutthA.length; j++){
+			float cutth = cutthA[j];
 				
-			String esperimentationStr = "pam" + k;
+			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
 			// Load clustering
 			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			
 			// SPADE
-			for(int l=0; l<seqweights.length; l++){
-				float minsup = seqweights[l];
+			for(int k=0; k<seqweights.length; k++){
+				float minsup = seqweights[k];
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 				
 				// MEDOIDS models //
@@ -132,7 +142,6 @@ public class A053MainClassPamSpade {
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
-		
 	}
 	
 }
