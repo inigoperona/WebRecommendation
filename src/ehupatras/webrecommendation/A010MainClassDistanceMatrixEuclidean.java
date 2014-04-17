@@ -18,7 +18,7 @@ public class A010MainClassDistanceMatrixEuclidean {
 		m_matrix = new SimilarityMatrixEuclidean(sampleSessionIDs);
 		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
 		m_matrix.save(databaseWD);
-		m_matrix.writeMatrix(m_matrix.getMatrix(),
+		m_matrix.writeMatrix(m_matrix.getMatrix(false),
 					databaseWD + "/distance_matrix.txt");
 	}
 	

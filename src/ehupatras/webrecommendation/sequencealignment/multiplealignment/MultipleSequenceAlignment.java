@@ -210,7 +210,7 @@ public class MultipleSequenceAlignment {
 		ehupatras.webrecommendation.distmatrix.Matrix dm = 
 				new ehupatras.webrecommendation.distmatrix.SimilarityMatrixEuclidean(namesL);
 		dm.computeMatrix(wasL, roleW1, false);
-		float[][] dmatrix = dm.getMatrix();
+		float[][] dmatrix = dm.getMatrix(false);
 
 		// Perform the multiple sequence alignment
 		MultipleSequenceAlignment malign = new MultipleSequenceAlignment();

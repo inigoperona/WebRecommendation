@@ -1,7 +1,7 @@
 package ehupatras.webrecommendation;
 
 import java.util.ArrayList;
-
+import java.io.File;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverse;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
@@ -14,17 +14,29 @@ public class A013MainClassDistanceMatrixInverseSplit {
 	public void createDistanceMatrix(String databaseWD,
 			ArrayList<Integer> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
-			float[][] roleWeights){
+			float[][] roleWeights,
+			int[] starters){
 		m_matrix = new SimilarityMatrixInverse(sampleSessionIDs);
-		m_matrix.setSplitParameters(new int[]{11}, 3);
+		
+		// create the distance matrix without splitting sequences
+		//m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
+		//m_matrix.writeMatrix(m_matrix.getMatrix(false),
+		//			databaseWD + "/distance_matrix.txt");
+		
+		// split the sequences 
+		m_matrix.setSplitParameters(starters, 3);
 		Object[] objA = m_matrix.splitSequences(sequencesUHC);
 		ArrayList<Integer> sesIDsSplit = (ArrayList<Integer>)objA[0];
 		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
-		m_matrix.setNamesSplit(sesIDsSplit);
+		m_matrix.writeSeqs(databaseWD + "/sequences_split.txt", 
+				sesIDsSplit, seqsSplit);
+		
 		m_matrix.computeMatrix(seqsSplit, roleWeights, true);
-		m_matrix.save(databaseWD);
-		m_matrix.writeMatrix(m_matrix.getMatrixSplit(), 
+		m_matrix.writeMatrix(m_matrix.getMatrix(true), 
 					databaseWD + "/distance_matrix_split.txt");
+		
+		// save all matrix
+		m_matrix.save(databaseWD);
 	}
 	
 	public void loadDistanceMatrix(String databaseWD){
@@ -43,14 +55,9 @@ public class A013MainClassDistanceMatrixInverseSplit {
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_00_no_role";
-		dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -86,7 +93,7 @@ public class A013MainClassDistanceMatrixInverseSplit {
 		dm = new A013MainClassDistanceMatrixInverseSplit();
 		dm.createDistanceMatrix(databaseWD + "/DM00-no_role-split", 
 				sampleSessionIDs, sequencesUHC, 
-				roleW1);
+				roleW1, new int[]{11});
 		
 		// Treat the role intelligently2
 		float[][] roleW5 = {{ 0f,    0f,    0f},
@@ -95,7 +102,7 @@ public class A013MainClassDistanceMatrixInverseSplit {
 		dm = new A013MainClassDistanceMatrixInverseSplit();
 		dm.createDistanceMatrix(databaseWD + "/DM03-U_HC2-split", 
 				sampleSessionIDs, sequencesUHC, 
-				roleW5);
+				roleW5, new int[]{11});
 		
 		
 		

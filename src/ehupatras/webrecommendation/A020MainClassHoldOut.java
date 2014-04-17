@@ -41,11 +41,14 @@ public class A020MainClassHoldOut {
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String dmWD = "/DM_00_no_role";
+		dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
-		validationWD = args[3];
+		dmWD = args[3];
+		validationWD = args[4];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -72,9 +75,8 @@ public class A020MainClassHoldOut {
 		
 		
 		// DISTANCE MATRIX //
-		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
-		Matrix matrix = dm.getMatrix();
-		float[][] distmatrix = matrix.getMatrix();
+		//A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
+		//Matrix matrix = dm.getMatrix();
 
 		
 		// HOLD-OUT //

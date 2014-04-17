@@ -19,7 +19,7 @@ public class A012MainClassDistanceMatrixED {
 		m_matrix = new DistanceMatrixEdit(sampleSessionIDs);
 		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
 		m_matrix.save(databaseWD);
-		m_matrix.writeMatrix(m_matrix.getMatrix(),
+		m_matrix.writeMatrix(m_matrix.getMatrix(false),
 				databaseWD + "/distance_matrix.txt");
 	}
 	
@@ -37,14 +37,9 @@ public class A012MainClassDistanceMatrixED {
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_00_no_role";
-		dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);

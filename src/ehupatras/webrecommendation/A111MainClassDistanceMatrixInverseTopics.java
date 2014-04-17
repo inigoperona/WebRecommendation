@@ -20,7 +20,7 @@ public class A111MainClassDistanceMatrixInverseTopics {
 		m_matrix = new SimilarityMatrixInverseTopics(sampleSessionIDs, dmFile, urlsEqualnessThreshold);
 		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
 		m_matrix.save(databaseWD);
-		m_matrix.writeMatrix(m_matrix.getMatrix(),
+		m_matrix.writeMatrix(m_matrix.getMatrix(false),
 					databaseWD + "/distance_matrix.txt");
 	}
 	
@@ -40,12 +40,9 @@ public class A111MainClassDistanceMatrixInverseTopics {
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_00_no_role";
-		dmWD = "";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
-		dmWD = args[3];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);

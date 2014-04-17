@@ -22,10 +22,10 @@ public class ModelEvaluator {
 	private int m_nFolds;
 	
 	// database
-	private ArrayList<String[]> m_dataset;
-	private ArrayList<String[]> m_dataset2;
-	private ArrayList<String[]> m_datasetSplit;
-	private ArrayList<String[]> m_datasetSplit2;
+	private ArrayList<String[]> m_dataset = null; // without role tag
+	private ArrayList<String[]> m_dataset2 = null; // with role tags
+	private ArrayList<String[]> m_datasetSplit = null;
+	private ArrayList<String[]> m_datasetSplit2 = null;
 	private Matrix m_distancematrix;
 	
 	// To create the model: trainset
@@ -71,13 +71,21 @@ public class ModelEvaluator {
 		 0.50f,0.75f,0.90f,1.00f};
 	private float m_fmeasurebeta = (float)0.5;
 	
+	
+	
+	// CONSTRUCTOR
+	
 	public ModelEvaluator(
 					ArrayList<String[]> dataset,
+					ArrayList<String[]> datasetSplit,
 					Matrix dm,
 					ArrayList<ArrayList<Integer>> trainAL,
 					ArrayList<ArrayList<Integer>> valAL,
 					ArrayList<ArrayList<Integer>> testAL){
 		m_dataset = dataset;
+		m_dataset2 = dataset;
+		m_datasetSplit = datasetSplit;
+		m_datasetSplit2 = datasetSplit;
 		m_distancematrix = dm;
 		m_trainAL = trainAL;
 		m_valAL = valAL;
@@ -89,15 +97,25 @@ public class ModelEvaluator {
 		m_dataset = dataset;
 	}
 	
-	public void setDataSet2(ArrayList<String[]> dataset){
-		m_dataset2 = dataset;
+	protected void setDataSetSplit(ArrayList<String[]> dataset){
+		m_datasetSplit = dataset;
 	}
 	
-	public void resetModels(){
-		m_suffixtreeAL = null;
-		m_markovChainAL = null;
+	private ArrayList<String[]> getDataSet(boolean isSplit){
+		if(!isSplit){
+			return m_dataset;
+		} else {
+			return m_datasetSplit;
+		}
 	}
 	
+	private ArrayList<String[]> getDataSet2(boolean isSplit){
+		if(!isSplit){
+			return m_dataset2;
+		} else {
+			return m_datasetSplit2;
+		}
+	}
 	
 	
 	// HIERARCHICAL CLUSTERING //
@@ -124,8 +142,8 @@ public class ModelEvaluator {
 		ArrayList<Integer> trainnames = m_trainAL.get(indexFold);
 		// hierarchical clustering: http://sape.inf.usi.ch/hac
 		ClusteringHierarchical clustering = new ClusteringHierarchical();
-		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames);
-		float[][] distmatrix = m_distancematrix.getMatrix();
+		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
+		float[][] distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
 		clustering.computeHierarchicalClustering(distmatrix,trainDMindexes,m_AgglomerativeMethodClassName);
 		// cut dendrogram
 		int[] clustersA = clustering.cutDendrogramByDissimilarity(m_pCutDendrogramDiss);
@@ -147,8 +165,8 @@ public class ModelEvaluator {
 	
 	private int[] clusteringPAM(int indexFold){
 		ArrayList<Integer> trainnames = m_trainAL.get(indexFold);
-		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames);
-		float[][] distmatrix = m_distancematrix.getMatrix();
+		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
+		float[][] distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
 		
 		ClusteringPAM pam = new ClusteringPAM(m_k, distmatrix, trainDMindexes);
 		pam.runPAM();
@@ -251,8 +269,10 @@ public class ModelEvaluator {
 					names.add(trainsetnames.get(i));
 				}
 			}
-			int[] clusteri = m_distancematrix.getSessionIDsIndexes(names);
-			malign.msa(clusteri, m_distancematrix.getMatrix(), m_dataset);
+			int[] clusteri = m_distancematrix.getSessionIDsIndexes(names, m_datasetSplit!=null);
+			malign.msa(clusteri, 
+					m_distancematrix.getMatrix(m_datasetSplit!=null), 
+					this.getDataSet(m_datasetSplit!=null));
 			String[][] multAlign = malign.getMultipleSequenceAlignment();
 			multAlignsList.add(multAlign);
 		}
@@ -439,10 +459,12 @@ public class ModelEvaluator {
 	
 	public SuffixTreeStringArray createSuffixTreeFromOriginalSequences(int indexFold){		
 		ArrayList<Integer> trainnames = m_trainAL.get(indexFold);
-		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames);
+		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
 		ArrayList<String[]> sequences = new ArrayList<String[]>(); 
 		for(int i=0; i<trainDMindexes.length; i++){
-			sequences.add(m_dataset.get(i));
+			int index = trainDMindexes[i];
+			String[] seq = (this.getDataSet(m_datasetSplit!=null)).get(index);
+			sequences.add(seq);
 		}
 		return this.createSuffixTree(sequences);
 	}
@@ -468,9 +490,13 @@ public class ModelEvaluator {
 		
 		// take original train sequences to weight the nodes
 		ArrayList<Integer> sessionIDs = m_trainAL.get(indexFold); 
-		int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs);
+		int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs, 
+							m_datasetSplit!=null);
 		ArrayList<String[]> trainseqs = new ArrayList<String[]>();
-		for(int j=0; j<inds.length; j++){ trainseqs.add(m_dataset.get(inds[j])); }
+		for(int j=0; j<inds.length; j++){
+			String[] seq = this.getDataSet(m_datasetSplit!=null).get(inds[j]); 
+			trainseqs.add(seq);
+		}
 
 		// Weight the suffix tree by training sequences
 		suffixtree.weightTheSuffixTree(trainseqs);
@@ -516,10 +542,12 @@ public class ModelEvaluator {
 			}
 			
 			// take the sequences
-			int[] clusterDMind = m_distancematrix.getSessionIDsIndexes(names);
+			int[] clusterDMind = m_distancematrix.getSessionIDsIndexes(names, m_datasetSplit!=null);
 			ArrayList<String[]> sequences = new ArrayList<String[]>(); 
 			for(int i=0; i<clusterDMind.length; i++){
-				sequences.add(m_dataset.get(i));
+				int index = clusterDMind[i];
+				String[] seq = this.getDataSet(m_datasetSplit!=null).get(index);
+				sequences.add(seq);
 			}
 			
 			// create the Suffix Tree
@@ -544,9 +572,14 @@ public class ModelEvaluator {
 	public MarkovChain getMarkovChain(int indexFold){
 		// get the train sequences from sessionIDs
 		ArrayList<Integer> sessionIDs = m_trainAL.get(indexFold); 
-		int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs);
+		int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs, 
+						m_datasetSplit!=null);
 		ArrayList<String[]> trainseqs = new ArrayList<String[]>();
-		for(int j=0; j<inds.length; j++){ trainseqs.add(m_dataset.get(inds[j])); }
+		for(int j=0; j<inds.length; j++){
+			int index = inds[j];
+			String[] seq = this.getDataSet(m_datasetSplit!=null).get(index);
+			trainseqs.add(seq);
+		}
 		MarkovChain mchain = new MarkovChain(trainseqs);
 		return mchain;
 	}
@@ -573,19 +606,19 @@ public class ModelEvaluator {
 	private Object[] getMedoids(int indexFold){
 		// train cases indexes
 		ArrayList<Integer> trSesIDs = m_trainAL.get(indexFold);
-		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs);
+		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
 		
 		// cluster indexes
 		int[] clusters = m_clustersAL.get(indexFold);
 		
 		// get medoids & global medoids
 		CVI cvindex = new CVI(inds,clusters);
-		cvindex.computeMedoids(m_distancematrix.getMatrix());
+		cvindex.computeMedoids(m_distancematrix.getMatrix(m_datasetSplit!=null));
 		// treat medoids
 		int[] medoids = cvindex.getMedoids();
 		ArrayList<String[]> medoidSeqs = new ArrayList<String[]>();
 		for(int i=0; i<medoids.length; i++){
-			String[] medSeq = m_dataset2.get(medoids[i]);
+			String[] medSeq = this.getDataSet2(m_datasetSplit!=null).get(medoids[i]);
 			medoidSeqs.add(medSeq);
 		}
 		// treat global medoids
@@ -601,7 +634,7 @@ public class ModelEvaluator {
 	private ArrayList<Object[]> getRecommendations(int indexFold, float minsup){
 		// train cases indexes
 		ArrayList<Integer> trSesIDs = m_trainAL.get(indexFold);
-		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs);
+		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
 		
 		// cluster indexes
 		int[] clusters = m_clustersAL.get(indexFold);
@@ -621,7 +654,8 @@ public class ModelEvaluator {
 			// get train sequences
 			for(int j=0; j<clusters.length; j++){
 				if(i==clusters[j]){
-					trainseqs.add(m_dataset.get(inds[j]));
+					String[] seq = this.getDataSet(m_datasetSplit!=null).get(inds[j]);
+					trainseqs.add(seq);
 				}
 			}
 			// Frequent patter mining
@@ -671,9 +705,12 @@ public class ModelEvaluator {
 		for(int i=0; i<m_nFolds; i++){
 			// get the test sequences from sessionIDs
 			ArrayList<Integer> sessionIDs = m_testAL.get(i); 
-			int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs);
+			int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs, false);
 			ArrayList<String[]> testseqs = new ArrayList<String[]>();
-			for(int j=0; j<inds.length; j++){ testseqs.add(m_dataset.get(inds[j])); }
+			for(int j=0; j<inds.length; j++){
+				String[] seq = this.getDataSet(false).get(inds[j]);
+				testseqs.add(seq);
+			}
 			
 			// SELECT THE MODEL
 			TestSetEvaluator eval = null;
@@ -713,9 +750,12 @@ public class ModelEvaluator {
 			// METRICS1
 			// get the train sequences from sessionIDs
 			ArrayList<Integer> trsessionIDs = m_trainAL.get(i); 
-			int[] trinds = m_distancematrix.getSessionIDsIndexes(trsessionIDs);
+			int[] trinds = m_distancematrix.getSessionIDsIndexes(trsessionIDs, m_datasetSplit!=null);
 			ArrayList<String[]> trainseqs = new ArrayList<String[]>();
-			for(int j=0; j<trinds.length; j++){ trainseqs.add(m_dataset.get(trinds[j])); }
+			for(int j=0; j<trinds.length; j++){
+				String[] seq = this.getDataSet(m_datasetSplit!=null).get(trinds[j]);
+				trainseqs.add(seq);
+			}
 			for(int j=0; j<trainseqs.size(); j++){ trnURLs = trnURLs + trainseqs.get(j).length; }
 			trnSeqs = trnSeqs + trainseqs.size();
 			

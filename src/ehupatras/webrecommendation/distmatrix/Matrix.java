@@ -37,15 +37,15 @@ public abstract class Matrix {
 							float[][] roleWeights,
 							boolean isSplit);
 	
-	public float[][] getMatrix(){
-		return m_matrix;
+	public float[][] getMatrix(boolean isSplit){
+		if(!isSplit){
+			return m_matrix;
+		} else {
+			return m_matrixSplit;
+		}
 	}
 	
-	public float[][] getMatrixSplit(){
-		return m_matrixSplit;
-	}
-	
-	public ArrayList<Integer> getNames(){
+	public ArrayList<Integer> getNames(boolean isSplit){
 		return m_names;
 	}
 	
@@ -54,16 +54,34 @@ public abstract class Matrix {
 		int colind = m_names.indexOf(colSesID);
 		return m_matrix[rowind][colind];
 	}
-	
-	public int[] getSessionIDsIndexes(){
-		return this.getSessionIDsIndexes(m_names);
-	}
-	
-	public int[] getSessionIDsIndexes(ArrayList<Integer> sessionIDs){
-		int[] indexes = new int[sessionIDs.size()];
-		for(int i=0; i<sessionIDs.size(); i++){
-			int sesID = sessionIDs.get(i);
-			indexes[i] = m_names.indexOf(sesID);
+		
+	public int[] getSessionIDsIndexes(ArrayList<Integer> sessionIDs, boolean isSplit){
+		int[] indexes = null;
+		if(!isSplit){
+			// compute the positions of session-IDs in the distance matrix
+			indexes = new int[sessionIDs.size()];
+			for(int i=0; i<sessionIDs.size(); i++){
+				int sesID = sessionIDs.get(i);
+				indexes[i] = m_names.indexOf(sesID);
+			}
+		} else {
+			// compute the positions of session-IDs in the split distance matrix
+			ArrayList<Integer> indexesAL = new ArrayList<Integer>();
+			for(int i=0; i<sessionIDs.size(); i++){
+				int sesID = sessionIDs.get(i);
+				for(int j=0; j<m_namesSplit.size(); j++){
+					int sesIDSplit = m_namesSplit.get(j);
+					int sesID2 = sesIDSplit / 100;
+					if(sesID==sesID2){
+						indexesAL.add(j);
+					}
+				}
+			}
+			// convert to int[]
+			indexes = new int[indexesAL.size()];
+			for(int i=0; i<indexesAL.size(); i++){
+				indexes[i] = indexesAL.get(i);
+			}
 		}
 		return indexes;
 	}
@@ -251,10 +269,56 @@ public abstract class Matrix {
     	}
     	
     	// return object
+    	m_namesSplit = namesSplit; 
     	Object[] objA = new Object[2];
     	objA[0] = namesSplit;
     	objA[1] = dataSplit;
     	return objA;
+    }
+    
+    public void writeSeqs(String outputFilename, 
+    		ArrayList<Integer> names, 
+    		ArrayList<String[]> seqs){
+    	
+		// Open the given file
+		BufferedWriter writer = null;
+		try{
+			writer = new BufferedWriter(new FileWriter(outputFilename));
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.distmatrix.Matrix.writeSeqs] " +
+					"Not possible to open the file: " + outputFilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+	
+		// Write in a file line by line
+		try{
+			for(int i=0; i<names.size(); i++){
+				int sesID = names.get(i);
+				writer.write(String.valueOf(sesID));
+				String[] seq = seqs.get(i);
+				for(int j=0; j<seq.length; j++){
+					writer.write("," + seq[j]);
+				}
+				writer.write("\n");
+			}
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.distmatrix.Matrix.writeSeqs] " +
+					"Problems writing to the file: " + outputFilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// close the file
+		try{
+			writer.close();
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.distmatrix.Matrix.writeSeqs] " +
+					"Problems at closing the file: " + outputFilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
     }
     
     private boolean isStarter(int urlID){
@@ -269,10 +333,6 @@ public abstract class Matrix {
     public void setSplitParameters(int[] starters, int minimumActivity){
     	m_starters = starters;
     	m_minimumActivity = minimumActivity;
-    }
-    
-    public void setNamesSplit(ArrayList<Integer> namesSplit){
-    	m_namesSplit = namesSplit;
     }
     
 }

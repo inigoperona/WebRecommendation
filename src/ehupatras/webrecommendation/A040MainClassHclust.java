@@ -57,7 +57,6 @@ public class A040MainClassHclust {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
-		float[][] distmatrix = matrix.getMatrix();
 
 		
 		// HOLD-OUT //
@@ -85,18 +84,18 @@ public class A040MainClassHclust {
 		String linkageClassName = linkages[i];
 		// Cutting the dendrogram
 		//int[] cutthA = {10, 15, 20, 25};
-		int[] cutthA = {4, 10, 15, 20, 25};
+		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
 		//int[] cutthA = {1, 2, 4, 6, 8};
 		//float[] cutthA = {0.1f, 0.2f, 0.4f, 0.6f, 0.8f};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, matrix, trainAL, valAL, testAL);
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
+				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);		
 	
 		// HIERARCHICAL CLUSTERING //
-		modelev.resetModels();
 		for(int j=0; j<cutthA.length; j++){ // for each height
 			float cutth = cutthA[j];
 				

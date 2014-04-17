@@ -53,7 +53,6 @@ public class A031MainClassSuffixTree {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
-		float[][] distmatrix = matrix.getMatrix();
 
 		
 		// HOLD-OUT //
@@ -69,7 +68,8 @@ public class A031MainClassSuffixTree {
 
 		// initialize the model evaluator
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
+				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		modelev.setConfusionPoints(confusionPoints);
 		

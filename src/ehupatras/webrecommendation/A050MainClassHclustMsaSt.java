@@ -22,13 +22,16 @@ public class A050MainClassHclustMsaSt {
 		dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
+		String profiWD = "/CL_00_no_role";
 		clustWD = "";
+		profiWD = "";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
 		dmWD = args[3];
 		validationWD = args[4];
 		clustWD = args[5];
+		profiWD = args[6];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -56,12 +59,12 @@ public class A050MainClassHclustMsaSt {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
-		float[][] distmatrix = matrix.getMatrix();
 
 		
 		// HOLD-OUT //
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
-		ho.createParts(validationWD, sampleSessionIDs);
+		ho.loadParts(validationWD, sampleSessionIDs);
+		//ho.createParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
 		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
 		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
@@ -73,11 +76,12 @@ public class A050MainClassHclustMsaSt {
 	
 		// Parameters to play with
 		//int[] cutthA = {10, 15, 20, 25};
-		float[] cutthA = {25f};
+		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
 		float[] seqweights = {0.10f, 0.15f, 0.20f};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
+				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
@@ -103,14 +107,14 @@ public class A050MainClassHclustMsaSt {
 
 			// Sequence Alignment
 			modelev.clustersSequenceAlignment();
-			modelev.writeAlignments(validationWD + clustWD + "/" + esperimentationStr + "_alignments.txt");
+			modelev.writeAlignments(validationWD + profiWD + "/" + esperimentationStr + "_alignments.txt");
 			
 			// Weighted Sequences
 			for(int k=0; k<seqweights.length; k++){
 				float minsup = seqweights[k];
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 				modelev.extractWeightedSequences(minsup);
-				modelev.writeWeightedSequences(validationWD + clustWD + "/" + esperimentationStr2 + ".txt");
+				modelev.writeWeightedSequences(validationWD + profiWD + "/" + esperimentationStr2 + ".txt");
 			
 				// Suffix Tree
 				modelev.buildSuffixTrees();

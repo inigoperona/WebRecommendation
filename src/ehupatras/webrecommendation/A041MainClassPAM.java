@@ -55,12 +55,12 @@ public class A041MainClassPAM {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
-		float[][] distmatrix = matrix.getMatrix();
 
 		
 		// HOLD-OUT //
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
-		ho.createParts(validationWD, sampleSessionIDs);
+		ho.loadParts(validationWD, sampleSessionIDs);
+		//ho.createParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
 		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
 		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
@@ -75,16 +75,16 @@ public class A041MainClassPAM {
 		// k, number of clusters
 		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
 		//int[] ks = {40, 30, 20, 10, 5};
-		int[] ks = {150};
+		int[] ks = {150, 200, 250, 300};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, matrix, trainAL, valAL, testAL);
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
+				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);		
 	
 		// HIERARCHICAL CLUSTERING //
-		modelev.resetModels();
 		for(int j=0; j<ks.length; j++){ // for each height
 			int k = ks[j];
 

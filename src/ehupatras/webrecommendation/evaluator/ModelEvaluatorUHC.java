@@ -8,22 +8,35 @@ public class ModelEvaluatorUHC
 
 	public ModelEvaluatorUHC(
 			ArrayList<String[]> dataset,
+			ArrayList<String[]> datasetSplit,
 			Matrix dm,
 			ArrayList<ArrayList<Integer>> trainAL,
 			ArrayList<ArrayList<Integer>> valAL,
 			ArrayList<ArrayList<Integer>> testAL){
-		super(dataset, dm, trainAL, valAL, testAL);
-		// Remove the role tag to the URL
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+		
+		// Remove the role tag to the URL creating dataset
+		ArrayList<String[]> dataset2 = this.removeUHCTagDB(dataset);
+		super.setDataSet(dataset2);
+		
+		// Remove the role tag to the URL creating datasetSplit
+		if(datasetSplit!=null){
+			ArrayList<String[]> datasetSplit2 = this.removeUHCTagDB(datasetSplit);
+			super.setDataSetSplit(datasetSplit2);
+		}
+	}
+	
+	private ArrayList<String[]> removeUHCTagDB(ArrayList<String[]> dataset){
 		ArrayList<String[]> dataset2 = new ArrayList<String[]>();
 		for(int i=0; i<dataset.size(); i++){
 			String[] strA = dataset.get(i);
-			String[] strB = this.removeUHCtag(strA);
+			String[] strB = this.removeUHCtagSeq(strA);
 			dataset2.add(strB);
 		}
-		super.setDataSet(dataset2);
+		return dataset2; 
 	}
 	
-	private String[] removeUHCtag(String[] seq){
+	private String[] removeUHCtagSeq(String[] seq){
 		String[] seq2 = new String[seq.length];
 		for(int i=0; i<seq.length; i++){
 			String urlRole = seq[i];

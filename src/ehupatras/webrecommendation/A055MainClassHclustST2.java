@@ -9,10 +9,9 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A051MainClassHclustSpade {
-	
+public class A055MainClassHclustST2 {
+
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
@@ -29,6 +28,8 @@ public class A051MainClassHclustSpade {
 		dmWD = args[3];
 		validationWD = args[4];
 		clustWD = args[5];
+		
+		
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -56,44 +57,40 @@ public class A051MainClassHclustSpade {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
-		float[][] distmatrix = matrix.getMatrix();
 
 		
 		// HOLD-OUT //
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
-		ho.createParts(validationWD, sampleSessionIDs);
+		//ho.createParts(validationWD, sampleSessionIDs);
+		ho.loadParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
 		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
 		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
 		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
 
-
+		
 		
 		// MODEL VALIDATION //
 	
 		// Parameters to play with
-		float[] cutthA = {4, 10, 15, 20, 25};
-		//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
-		//float[] seqweights = {0.25f, 0.30f, 0.40f, 0.50f};
-		//float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
-		float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};
-		float[][] rolesW = {{ 0f, 0f, 0f},
-				  			{ 0f, 0f, 0f},
-				  			{ 0f, 0f, 0f}};
+		//float[] cutthA = {10, 15, 20, 25};
+		//int[] cutthA = {1,2,4,6,8};
+		//float[] cutthA = {0.1f,0.2f,0.4f,0.6f,0.8f, 1f,2f,4f,6f,8f, 10f,15f,20f,25f};
+		//float[] cutthA = {5f, 10f, 20f, 30f, 40f, 50f, 100f, 150f, 200f, 250f, 300f, 400f, 500f, 750f, 1000f}; 
+		float[] cutthA = {4f, 10f, 15f};
+		int[] knnA = {1,2,5,10,100};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC,matrix,trainAL,valAL,testAL);
-		modelev.setDataSet2(sequencesUHC); // with UHC
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
+				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
+		
+		// MARKOV CHAIN //
 		modelev.buildMarkovChains();
 		
-		
-
-	
-		
-		// Hclust + MySPADE //
+		// SUFFIX TREE for each cluster //
 		
 		// Results' header
 		System.out.print("options," + modelev.getEvaluationHeader());
@@ -102,41 +99,48 @@ public class A051MainClassHclustSpade {
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<cutthA.length; j++){
 			float cutth = cutthA[j];
-				
-			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
+			// Clustering
+			String cutthstr;
+			if( Math.floor((double)cutth) == Math.ceil((double)cutth) ){
+				cutthstr = String.valueOf((int)cutth);
+			} else {
+				cutthstr = String.valueOf(cutth);
+			}
+			String esperimentationStr = "agglo" + i + "_cl" + cutthstr;
+			//String esperimentationStr = "pam" + (int)cutth;
 			// Load clustering
 			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			
-			// SPADE
-			for(int k=0; k<seqweights.length; k++){
-				float minsup = seqweights[k];
-				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
-				
-				// MEDOIDS models //
-				modelev.buildMedoidsModels(minsup);
-				
+			// Create clusters-STs
+			modelev.buildClustersSuffixTrees();
+			// Create model of medoids
+			modelev.buildMedoidsModels(0.1f);
+			
+			for(int k=0; k<knnA.length; k++){
+				int knn = knnA[k];
+				modelev.setKnn(knnA[k]);
+				String esperimentationStr2 = esperimentationStr + "_knn" + knn;
+			
 				// Evaluation
 				String results;
-				
+			
 				// weighted by construction sequences (test sequences)
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(2, nrec, (long)0, 1, 1, true, rolesW);
+					results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1000, false, null);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
-			
+
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1, true, rolesW);
+				results = modelev.computeEvaluationTest(-1, 1000, (long)0, 1, 1000, false, null);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}
-
 		}
 		
-					
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
