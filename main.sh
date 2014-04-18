@@ -39,11 +39,11 @@ mkdir -p 02_DATABASE_5/DM_04_edit
 # Split sequences by index
 mkdir -p $database/DM00-no_role-split
 mkdir -p $database/DM03-U_HC2-split
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A013MainClassDistanceMatrixInverseSplit \
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A011MainClassDistanceMatrixInverseSplit \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 mkdir -p $database/DM04-edit-split
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A014MainClassDistanceMatrixEDSplit \
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A012MainClassDistanceMatrixEDSplit \
   01_preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 
