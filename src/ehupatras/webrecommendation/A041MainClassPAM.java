@@ -47,7 +47,7 @@ public class A041MainClassPAM {
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		//database.createDatabase(databaseWD);
 		database.loadDatabase(databaseWD);
-		ArrayList<Integer> sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
 		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
 		
 		
@@ -62,9 +62,9 @@ public class A041MainClassPAM {
 		ho.loadParts(validationWD, sampleSessionIDs);
 		//ho.createParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
-		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
-		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
-		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
+		ArrayList<ArrayList<Long>> trainAL = mv.getTrain();
+		ArrayList<ArrayList<Long>> valAL   = mv.getValidation();
+		ArrayList<ArrayList<Long>> testAL  = mv.getTest();
 
 
 		

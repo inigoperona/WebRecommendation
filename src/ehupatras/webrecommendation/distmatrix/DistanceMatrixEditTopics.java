@@ -7,7 +7,7 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtei
 public class DistanceMatrixEditTopics 
 				extends DistanceMatrixEdit {
 	
-	public DistanceMatrixEditTopics(ArrayList<Integer> names, String urlsDMfile, float urlsEqualnessThreshold){
+	public DistanceMatrixEditTopics(ArrayList<Long> names, String urlsDMfile, float urlsEqualnessThreshold){
 		super(names);
 		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
 		loadUrlsDM(urlsDMfile);

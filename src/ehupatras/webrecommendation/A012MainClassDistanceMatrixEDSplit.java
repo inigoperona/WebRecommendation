@@ -7,12 +7,12 @@ import ehupatras.webrecommendation.distmatrix.SimilarityMatrixEuclidean;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A014MainClassDistanceMatrixEDSplit {
+public class A012MainClassDistanceMatrixEDSplit {
 
 	private Matrix m_matrix;
 	
 	public void createDistanceMatrix(String databaseWD,
-			ArrayList<Integer> sampleSessionIDs,
+			ArrayList<Long> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights,
 			int[] starters){
@@ -21,7 +21,7 @@ public class A014MainClassDistanceMatrixEDSplit {
 		// split the sequences 
 		m_matrix.setSplitParameters(starters, 3);
 		Object[] objA = m_matrix.splitSequences(sequencesUHC);
-		ArrayList<Integer> sesIDsSplit = (ArrayList<Integer>)objA[0];
+		ArrayList<Long> sesIDsSplit = (ArrayList<Long>)objA[0];
 		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
 		m_matrix.writeSeqs(databaseWD + "/sequences_split.txt", 
 				sesIDsSplit, seqsSplit);
@@ -71,18 +71,18 @@ public class A014MainClassDistanceMatrixEDSplit {
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		//database.createDatabase(databaseWD);
 		database.loadDatabase(databaseWD);
-		ArrayList<Integer> sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
 		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
 		
 		
 		// DISTANCE MATRIX //
-		A014MainClassDistanceMatrixEDSplit dm;
+		A012MainClassDistanceMatrixEDSplit dm;
 		
 		// No role
 		float[][] roleW1 = {{ 0f, 0f, 0f},
 	            			{ 0f, 0f, 0f},
 	            			{ 0f, 0f, 0f}};
-		dm = new A014MainClassDistanceMatrixEDSplit();
+		dm = new A012MainClassDistanceMatrixEDSplit();
 		dm.createDistanceMatrix(databaseWD + "/DM04-edit-split", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW1, new int[]{11});

@@ -7,7 +7,7 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtei
 public class DistanceMatrixEditTopics2 
 				extends DistanceMatrixEdit {
 
-	public DistanceMatrixEditTopics2(ArrayList<Integer> names, String urls2topicfile, float topicmatch){
+	public DistanceMatrixEditTopics2(ArrayList<Long> names, String urls2topicfile, float topicmatch){
 		super(names);
 		m_topicmatch = topicmatch;
 		loadUrlsTopic(urls2topicfile);

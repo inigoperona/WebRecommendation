@@ -6,7 +6,7 @@ import java.util.*;
 public class SimilarityMatrixEuclidean 
 				extends Matrix {
 	
-	public SimilarityMatrixEuclidean(ArrayList<Integer> names){
+	public SimilarityMatrixEuclidean(ArrayList<Long> names){
 		m_names = names;
 	}
 	

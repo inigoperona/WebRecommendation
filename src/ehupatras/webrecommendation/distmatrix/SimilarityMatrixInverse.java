@@ -8,7 +8,7 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlo
 public class SimilarityMatrixInverse 
 				extends Matrix {
 	
-	public SimilarityMatrixInverse(ArrayList<Integer> names){
+	public SimilarityMatrixInverse(ArrayList<Long> names){
 		m_names = names;
 	}
 	

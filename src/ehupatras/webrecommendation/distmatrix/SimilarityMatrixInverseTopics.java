@@ -8,7 +8,7 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlo
 public class SimilarityMatrixInverseTopics 
 				extends SimilarityMatrixInverse {
 	
-	public SimilarityMatrixInverseTopics(ArrayList<Integer> names, String urlsDMfile, float urlsEqualnessThreshold){
+	public SimilarityMatrixInverseTopics(ArrayList<Long> names, String urlsDMfile, float urlsEqualnessThreshold){
 		super(names);
 		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
 		loadUrlsDM(urlsDMfile);

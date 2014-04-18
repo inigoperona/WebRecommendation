@@ -12,14 +12,15 @@ public class A011MainClassDistanceMatrixInverse {
 	private Matrix m_matrix;
 	
 	public void createDistanceMatrix(String databaseWD,
-			ArrayList<Integer> sampleSessionIDs,
+			ArrayList<Long> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights){
 		m_matrix = new SimilarityMatrixInverse(sampleSessionIDs);
 		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
-		m_matrix.save(databaseWD);
 		m_matrix.writeMatrix(m_matrix.getMatrix(false),
 					databaseWD + "/distance_matrix.txt");
+		
+		m_matrix.save(databaseWD);
 	}
 	
 	public void loadDistanceMatrix(String databaseWD){
@@ -61,7 +62,7 @@ public class A011MainClassDistanceMatrixInverse {
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		//database.createDatabase(databaseWD);
 		database.loadDatabase(databaseWD);
-		ArrayList<Integer> sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
 		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
 		
 		

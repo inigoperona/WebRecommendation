@@ -10,7 +10,7 @@ public class A020MainClassHoldOut {
 	private ModelValidationHoldOut m_parts;
 	
 	public void createParts(String validationWD,
-			ArrayList<Integer> sampleSessionIDs){
+			ArrayList<Long> sampleSessionIDs){
 		System.out.println("HOLD-OUT");
 		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
 		honestmodelval.prepareData(sampleSessionIDs, 70, 0, 30);
@@ -19,7 +19,7 @@ public class A020MainClassHoldOut {
 	}
 	
 	public void loadParts(String validationWD,
-			ArrayList<Integer> sampleSessionIDs){
+			ArrayList<Long> sampleSessionIDs){
 		System.out.println("HOLD-OUT");
 		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
 		honestmodelval.load(validationWD);
@@ -70,7 +70,7 @@ public class A020MainClassHoldOut {
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		//database.createDatabase(databaseWD);
 		database.loadDatabase(databaseWD);
-		ArrayList<Integer> sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
 		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
 		
 		
@@ -83,9 +83,9 @@ public class A020MainClassHoldOut {
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
 		ho.createParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
-		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
-		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
-		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
+		ArrayList<ArrayList<Long>> trainAL = mv.getTrain();
+		ArrayList<ArrayList<Long>> valAL   = mv.getValidation();
+		ArrayList<ArrayList<Long>> testAL  = mv.getTest();
 		
 					
 		// ending the program

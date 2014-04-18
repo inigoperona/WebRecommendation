@@ -10,9 +10,9 @@ public class ModelEvaluatorUHC
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
 			Matrix dm,
-			ArrayList<ArrayList<Integer>> trainAL,
-			ArrayList<ArrayList<Integer>> valAL,
-			ArrayList<ArrayList<Integer>> testAL){
+			ArrayList<ArrayList<Long>> trainAL,
+			ArrayList<ArrayList<Long>> valAL,
+			ArrayList<ArrayList<Long>> testAL){
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
 		
 		// Remove the role tag to the URL creating dataset

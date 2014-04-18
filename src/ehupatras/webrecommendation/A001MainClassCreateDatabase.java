@@ -39,8 +39,12 @@ public class A001MainClassCreateDatabase {
 		m_sequences = (ArrayList<String[]>)soseqs.load(databaseWD + "/_sequencesUHC.javaData");
 	}
 	
-	public ArrayList<Integer> getSessionsIDs(){
-		return m_sessionsIDs;
+	public ArrayList<Long> getSessionsIDs(){
+		ArrayList<Long> ses = new ArrayList<Long>();
+		for(int i=0; i<m_sessionsIDs.size(); i++){
+			ses.add((long)m_sessionsIDs.get(i));
+		}
+		return ses;
 	}
 	
 	public ArrayList<String[]> getInstantiatedSequences(){

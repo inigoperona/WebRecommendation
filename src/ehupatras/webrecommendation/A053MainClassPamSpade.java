@@ -46,7 +46,7 @@ public class A053MainClassPamSpade {
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		//database.createDatabase(databaseWD);
 		database.loadDatabase(databaseWD);
-		ArrayList<Integer> sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
 		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
 		
 		
@@ -60,9 +60,9 @@ public class A053MainClassPamSpade {
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
 		ho.createParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
-		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
-		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
-		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
+		ArrayList<ArrayList<Long>> trainAL = mv.getTrain();
+		ArrayList<ArrayList<Long>> valAL   = mv.getValidation();
+		ArrayList<ArrayList<Long>> testAL  = mv.getTest();
 
 		
 		// MODEL VALIDATION //

@@ -45,7 +45,7 @@ public class A030MainClassMarkovChainSplit {
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		//database.createDatabase(databaseWD);
 		database.loadDatabase(databaseWD);
-		ArrayList<Integer> sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
 		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
 		
 
@@ -54,7 +54,7 @@ public class A030MainClassMarkovChainSplit {
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
 		Object[] objA = matrix.readSeqs(databaseWD + dmWD + "/sequences_split.txt");
-		ArrayList<Integer> namesSplit = (ArrayList<Integer>)objA[0];
+		ArrayList<Long> namesSplit = (ArrayList<Long>)objA[0];
 		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
 		
 		
@@ -63,9 +63,9 @@ public class A030MainClassMarkovChainSplit {
 		ho.loadParts(validationWD, sampleSessionIDs);
 		//ho.createParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
-		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
-		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
-		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
+		ArrayList<ArrayList<Long>> trainAL = mv.getTrain();
+		ArrayList<ArrayList<Long>> valAL   = mv.getValidation();
+		ArrayList<ArrayList<Long>> testAL  = mv.getTest();
 
 
 		// MARKOV CHAIN VALIDATION //

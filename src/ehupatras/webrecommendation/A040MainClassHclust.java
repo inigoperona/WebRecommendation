@@ -20,7 +20,7 @@ public class A040MainClassHclust {
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String dmWD = "/DM_00_no_role";
-		dmWD = "";
+		//dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
 		clustWD = "";
@@ -49,7 +49,7 @@ public class A040MainClassHclust {
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		//database.createDatabase(databaseWD);
 		database.loadDatabase(databaseWD);
-		ArrayList<Integer> sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
 		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
 		
 		
@@ -63,9 +63,9 @@ public class A040MainClassHclust {
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
 		ho.loadParts(validationWD, sampleSessionIDs);
 		ModelValidationHoldOut mv = ho.getParts();
-		ArrayList<ArrayList<Integer>> trainAL = mv.getTrain();
-		ArrayList<ArrayList<Integer>> valAL   = mv.getValidation();
-		ArrayList<ArrayList<Integer>> testAL  = mv.getTest();
+		ArrayList<ArrayList<Long>> trainAL = mv.getTrain();
+		ArrayList<ArrayList<Long>> valAL   = mv.getValidation();
+		ArrayList<ArrayList<Long>> testAL  = mv.getTest();
 
 
 		

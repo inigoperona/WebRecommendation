@@ -6,7 +6,7 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtei
 
 public class DistanceMatrixEdit extends Matrix {
 	
-	public DistanceMatrixEdit(ArrayList<Integer> names){
+	public DistanceMatrixEdit(ArrayList<Long> names){
 		m_names = names;
 	}
 	

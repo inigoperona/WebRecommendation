@@ -7,12 +7,12 @@ import ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverse;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A013MainClassDistanceMatrixInverseSplit {
+public class A011MainClassDistanceMatrixInverseSplit {
 	
 	private Matrix m_matrix;
 	
 	public void createDistanceMatrix(String databaseWD,
-			ArrayList<Integer> sampleSessionIDs,
+			ArrayList<Long> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights,
 			int[] starters){
@@ -26,7 +26,7 @@ public class A013MainClassDistanceMatrixInverseSplit {
 		// split the sequences 
 		m_matrix.setSplitParameters(starters, 3);
 		Object[] objA = m_matrix.splitSequences(sequencesUHC);
-		ArrayList<Integer> sesIDsSplit = (ArrayList<Integer>)objA[0];
+		ArrayList<Long> sesIDsSplit = (ArrayList<Long>)objA[0];
 		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
 		m_matrix.writeSeqs(databaseWD + "/sequences_split.txt", 
 				sesIDsSplit, seqsSplit);
@@ -78,19 +78,19 @@ public class A013MainClassDistanceMatrixInverseSplit {
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		//database.createDatabase(databaseWD);
 		database.loadDatabase(databaseWD);
-		ArrayList<Integer> sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
 		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
 		
 		
 		// DISTANCE MATRIX //
-		A013MainClassDistanceMatrixInverseSplit dm;
+		A011MainClassDistanceMatrixInverseSplit dm;
 		
 
 		// No role
 		float[][] roleW1 = {{ 1f, 1f, 1f},
 				            { 1f, 1f, 1f},
 				            { 1f, 1f, 1f}};
-		dm = new A013MainClassDistanceMatrixInverseSplit();
+		dm = new A011MainClassDistanceMatrixInverseSplit();
 		dm.createDistanceMatrix(databaseWD + "/DM00-no_role-split", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW1, new int[]{11});
@@ -99,7 +99,7 @@ public class A013MainClassDistanceMatrixInverseSplit {
 		float[][] roleW5 = {{ 0f,    0f,    0f},
 	  		    			{ 0f,    1f, 0.75f},
 	  		    			{ 0f, 0.75f,    1f}};
-		dm = new A013MainClassDistanceMatrixInverseSplit();
+		dm = new A011MainClassDistanceMatrixInverseSplit();
 		dm.createDistanceMatrix(databaseWD + "/DM03-U_HC2-split", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW5, new int[]{11});
