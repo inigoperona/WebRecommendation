@@ -41,14 +41,10 @@ public class A010MainClassDistanceMatrixEuclidean {
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_00_no_role";
-		dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
+		
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -82,43 +78,48 @@ public class A010MainClassDistanceMatrixEuclidean {
 				            { 1f, 1f, 1f},
 				            { 1f, 1f, 1f}};
 		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_00_no_role", 
+		dm.createDistanceMatrix(databaseWD + "/DM_00_no_role_data", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW1);
 		
+
 		// 3 roles: U & H & C
 		float[][] roleW2 = {{ 1f,-1f,-1f},
       		    			{-1f, 1f,-1f},
       		    			{-1f,-1f, 1f}};
 		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_01_U_H_C", 
+		dm.createDistanceMatrix(databaseWD + "/DM_01_U_H_C_data", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW2);
 		
+		/*
 		// 2 roles: U & HC
 		float[][] roleW3 = {{ 1f,-1f,-1f},
       		    			{-1f, 1f, 1f},
       		    			{-1f, 1f, 1f}};
 		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_02_U_HC", 
+		dm.createDistanceMatrix(databaseWD + "/DM_02_U_HC_data", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW3);
-
+		*/
+				
+		/*
 		// Treat the role intelligently
 		float[][] roleW4 = {{-1f,   -1f,   -1f},
 	  		    			{-1f,    1f, 0.75f},
 	  		    			{-1f, 0.75f,    1f}};
 		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent", 
+		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent_data", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW4);
+		*/
 		
 		// Treat the role intelligently2
 		float[][] roleW5 = {{ 0f,    0f,    0f},
 	  		    			{ 0f,    1f, 0.75f},
 	  		    			{ 0f, 0.75f,    1f}};
 		dm = new A010MainClassDistanceMatrixEuclidean();
-		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent2", 
+		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent2_data", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW5);
 		

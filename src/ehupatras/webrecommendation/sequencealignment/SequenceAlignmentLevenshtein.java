@@ -33,7 +33,7 @@ public class SequenceAlignmentLevenshtein
 	        float nw = (float)i - 1f;
 	        for(int j=1; j<=seqB.length; j++){
 	        	float cj = Math.min(1f + Math.min(costs[j], costs[j-1]), 
-	        					nw + this.weight2(seqA[i-1],seqB[j-1]));
+	        					nw + weight2(seqA[i-1],seqB[j-1]));
 	            nw = costs[j];
 	            costs[j] = cj;
 	        }
@@ -123,7 +123,8 @@ public class SequenceAlignmentLevenshtein
     		wurl = 0; // minimum distance
     	} else if(urlAi==-1 || urlBi==-1){ // a new URL, does not exists
     		wurl = 1f; // maximum distance
-    	} else { // analyze the topics
+    	} else {
+    		// analyze the topics
     		int urlAtopic = m_url2topic[urlAi];
     		int urlBtopic = m_url2topic[urlBi];
     		if(urlAtopic==-1 || urlBtopic==-1){ // topic no available

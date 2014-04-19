@@ -8,6 +8,7 @@ import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
 public class A114MainClassDistanceMatrixEDTopics2 {
+	
 	private Matrix m_matrix;
 	
 	public void createDistanceMatrix(String databaseWD,
