@@ -1,31 +1,32 @@
 package ehupatras.ncd;
 
-import org.apache.commons.compress.compressors.bzip2.*;
-import org.apache.commons.compress.compressors.gzip.*;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-
-public class NCD {
+public abstract class NCD {
 	
-	private int m_nbytes = 1;
+	// number of bytes we are going to use to represent an integer
+	protected int m_nbytes = 1;
+	
+	// in 1000 bytes we can save, for example 250 integers of 4 bytes
+	protected int m_buffersize = 10000;
 	
 	public NCD(int nbytes){
 		m_nbytes = nbytes;
 	}
 	
+	protected abstract int[] compress(int[] intA);
+	
 	public float getNCD(int[] intA1, int[] intA2){
-		int[] re1 = this.compressBzip2(intA1);
+		int[] re1 = this.compress(intA1);
 		int l1Orig = re1[0];
 		int l1Zip = re1[1];
 		
-		int[] re2 = this.compressBzip2(intA2);
+		int[] re2 = this.compress(intA2);
 		int l2Orig = re2[0];
 		int l2Zip = re2[1];
 		
 		int[] intA12 = new int[intA1.length+intA2.length];
 		for(int i=0; i<intA1.length; i++){ intA12[i] = intA1[i]; }
 		for(int i=0; i<intA2.length; i++){ intA12[intA1.length+i] = intA2[i]; }
-		int[] re12 = this.compressBzip2(intA12);
+		int[] re12 = this.compress(intA12);
 		int l12Orig = re12[0];
 		int l12Zip = re12[1];
 		
@@ -41,7 +42,7 @@ public class NCD {
 	}
 	
 	
-	private byte[] int2byteA(int integer){
+	protected byte[] int2byteA(int integer){
 		//int nbytes = this.intLog(integer, 256);
 		return this.int2byteA(integer, m_nbytes);
 	}
@@ -73,45 +74,10 @@ public class NCD {
 		System.out.println();
 	}
 	
-	private int[] compressBzip2(int[] intA){
-		// save the original size in bytes of intA
-		int origLen = 0;
-		
-		// in 1000 bytes we can save, for example 250 integers of 4 bytes
-		ByteArrayOutputStream out = new ByteArrayOutputStream(1000); 
-		
-		// compress
-		BZip2CompressorOutputStream bzOut = null;		
-		try{
-			bzOut = new BZip2CompressorOutputStream(out);
-			for(int i=0; i<intA.length; i++){
-				int integer = intA[i];
-				byte[] bytes = this.int2byteA(integer);
-				bzOut.write(bytes);
-				origLen = origLen + bytes.length;
-			}
-			out.close();
-			bzOut.close();
-		} catch (IOException ex){
-			System.err.println("IOException at compressing.");
-			ex.printStackTrace();
-			System.exit(1);
-		}
-		
-		// compression rate
-		byte[] bytesA2 = out.toByteArray();
-		int[] re = new int[2];
-		re[0] = origLen;
-		re[1] = bytesA2.length;
-		return re;
-	}
-	
-	
-	
 	public static void main(String[] args){
 		
 		// NCD
-		NCD d = new NCD(1);
+		NCD d = new NcdBzip2(1);
 		
 		// converting integers to bytes
 		for(int i=1000; i<1020; i++){

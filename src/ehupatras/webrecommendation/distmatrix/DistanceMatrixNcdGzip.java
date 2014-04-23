@@ -2,14 +2,15 @@ package ehupatras.webrecommendation.distmatrix;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import ehupatras.ncd.NCD;
-import ehupatras.ncd.NcdBzip2;
 
-public class DistanceMatrixNcdBzip2 extends Matrix {
-	
+import ehupatras.ncd.NCD;
+import ehupatras.ncd.NcdGzip;
+
+public class DistanceMatrixNcdGzip extends Matrix {
+
 	private Hashtable<Integer,Integer> m_dict;
 	
-	public DistanceMatrixNcdBzip2(ArrayList<Long> names){
+	public DistanceMatrixNcdGzip(ArrayList<Long> names){
 		m_names = names;
 	}
 	
@@ -53,7 +54,7 @@ public class DistanceMatrixNcdBzip2 extends Matrix {
 				int[] intAB2 = this.convertDict(intAB);
 				
 				// compute the distance
-				NCD ncDist = new NcdBzip2(1);
+				NCD ncDist = new NcdGzip(1);
 				float dist = ncDist.getNCD(intAA2, intAB2);
 				
 				// fill the matrix

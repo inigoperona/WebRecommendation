@@ -1,20 +1,21 @@
 package ehupatras.webrecommendation;
 
 import java.util.ArrayList;
+
+import ehupatras.webrecommendation.distmatrix.DistanceMatrixNcdGzip;
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.distmatrix.DistanceMatrixNcdBzip2;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A013MainClassDistanceMatrixNcdBzip2 {
-	
+public class A014MainClassDistanceMatrixNcdGzip {
+
 	private Matrix m_matrix;
 	
 	public void createDistanceMatrix(String databaseWD,
 			ArrayList<Long> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights){
-		m_matrix = new DistanceMatrixNcdBzip2(sampleSessionIDs);
+		m_matrix = new DistanceMatrixNcdGzip(sampleSessionIDs);
 		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
 		m_matrix.writeMatrix(m_matrix.getMatrix(false),
 				databaseWD + "/distance_matrix.txt");
@@ -23,7 +24,7 @@ public class A013MainClassDistanceMatrixNcdBzip2 {
 	}
 	
 	public void loadDistanceMatrix(String databaseWD){
-		m_matrix = new DistanceMatrixNcdBzip2(null);
+		m_matrix = new DistanceMatrixNcdGzip(null);
 		m_matrix.load(databaseWD);
 	}
 	
@@ -36,9 +37,9 @@ public class A013MainClassDistanceMatrixNcdBzip2 {
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		preprocessingWD = args[0];
-		logfile = args[1];
-		databaseWD = args[2];
+		//preprocessingWD = args[0];
+		//logfile = args[1];
+		//databaseWD = args[2];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -64,14 +65,14 @@ public class A013MainClassDistanceMatrixNcdBzip2 {
 		
 		
 		// DISTANCE MATRIX //
-		A013MainClassDistanceMatrixNcdBzip2 dm;
+		A014MainClassDistanceMatrixNcdGzip dm;
 		
 		// No role
 		float[][] roleW1 = {{ 0f, 0f, 0f},
 	            			{ 0f, 0f, 0f},
 	            			{ 0f, 0f, 0f}};
-		dm = new A013MainClassDistanceMatrixNcdBzip2();
-		dm.createDistanceMatrix(databaseWD + "/DM_05_ncd_bzip2", 
+		dm = new A014MainClassDistanceMatrixNcdGzip();
+		dm.createDistanceMatrix(databaseWD + "/DM_05_ncd_gzip", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW1);
 		
