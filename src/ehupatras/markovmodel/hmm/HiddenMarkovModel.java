@@ -83,9 +83,9 @@ public class HiddenMarkovModel {
 		System.out.println();
 		
 		// BaumWelch
-		//OpdfIntegerFactory factory = new OpdfIntegerFactory(4);
-		//BaumWelchScaledLearner bwl = new BaumWelchScaledLearner();
-		//Hmm<ObservationInteger> learntHmm = bwl.learn(initHmm , sequences);
+		OpdfIntegerFactory factory = new OpdfIntegerFactory(4);
+		BaumWelchScaledLearner bwl = new BaumWelchScaledLearner();
+		//Hmm<ObservationInteger> learntHmm = bwl.learn(initHmm, sequences);
 	}
 	
 }
