@@ -25,18 +25,37 @@ echo "## PREPROCESS ##"
 
 echo "## DISTANCE MATRIX ##"
 
-# Raw sequences
+## Raw sequences ##
+
+# data - sequence alignment
+#mkdir -p $database/DM_00_no_role_data
+#mkdir -p $database/DM_03_intelligent2_data
+#../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A010MainClassDistanceMatrixEuclidean \
+#  $preprocess /LOGs_from_Jan9_toNov19.log \
+#  $database
+
+# dist - sequence alignment
 mkdir -p $database/DM_00_no_role_dist
 mkdir -p $database/DM_03_intelligent2_dist
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A011MainClassDistanceMatrixInverse \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
-mkdir -p 02_DATABASE_5/DM_04_edit
+mkdir -p $database/DM_04_edit
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A012MainClassDistanceMatrixED \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 
-# Split sequences by index
+# dist - normalized compress distance (NCD)
+mkdir -p $database/DM_05_ncd_bzip2
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A013MainClassDistanceMatrixNcdBzip2 \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
+  $database
+mkdir -p $database/DM_05_ncd_gzip
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A014MainClassDistanceMatrixNcdGzip \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
+  $database
+
+# dist - split sequences by index - sequence alignment
 mkdir -p $database/DM00-no_role-split
 mkdir -p $database/DM03-U_HC2-split
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A011MainClassDistanceMatrixInverseSplit \
@@ -44,10 +63,11 @@ mkdir -p $database/DM03-U_HC2-split
   $database
 mkdir -p $database/DM04-edit-split
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A012MainClassDistanceMatrixEDSplit \
-  01_preprocess /LOGs_from_Jan9_toNov19.log \
+  preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 
-# Introducing topics
+## Introducing topics ##
+
 # URL to URL distance by euclidean distance between topic-histograms (continue value)
 # it expects the file > preprocessingWD + "/URLs_DM.txt"
 mkdir -p $database/DM_00_no_role_dist_topics
@@ -59,6 +79,7 @@ mkdir -p $database/DM_04_edit_dist_topics
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A112MainClassDistanceMatrixEDTopics \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
+
 # Two URLs are the same (0); are from the same topic (0.5); or are different (1) (discrete values)
 # it expects the file > preprocessingWD + "/URLs_to_topic.txt"
 mkdir -p $database/DM_00_no_role_dist_topics2
@@ -86,11 +107,11 @@ mkdir -p 03_VALIDATION
 echo "## MARKOV CHAIN ##"
 
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A030MainClassMarkovChain \
-  01_preprocess /LOGs_from_Jan9_toNov19.log \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
   $database /DM_00_no_role_dist \
   $validation
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A030MainClassMarkovChainSplit \
-  01_preprocess /LOGs_from_Jan9_toNov19.log \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
   $database /DM00-no_role-split \
   $validation
 
@@ -98,11 +119,11 @@ echo "## MARKOV CHAIN ##"
 echo "## GLOBAL SUFFIX TREE ##"
 
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A031MainClassSuffixTree \
-  01_preprocess /LOGs_from_Jan9_toNov19.log \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
   $database /DM_00_no_role_dist \
   $validation
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A031MainClassSuffixTreeSplit \
-  01_preprocess /LOGs_from_Jan9_toNov19.log \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
   $database /DM00-no_role-split \
   $validation
 
@@ -111,7 +132,7 @@ echo "## GLOBAL SUFFIX TREE ##"
 
 echo "## Hclust ##"
 
-for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2"
+for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2" "DM_05_ncd_bzip2" "DM_05_ncd_gzip"
 do
   hclust="/hclust_"$dm
   echo " "$hclust
@@ -136,7 +157,7 @@ done
 
 echo "## PAM ##"
 
-for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2"
+for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2" "DM_05_ncd_bzip2" "DM_05_ncd_gzip"
 do
   pam="/pam_"$dm
   echo " "$pam
@@ -161,7 +182,7 @@ done
 
 echo "## HCLUST+MSA+WSEQ+ST ##"
 
-for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2"
+for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2" "DM_05_ncd_bzip2" "DM_05_ncd_gzip"
 do
   hclust="/hclust_"$dm
   cmsast=$hclust"/msa"
@@ -188,7 +209,7 @@ done
 
 echo "## PAM+MSA+WSEQ+ST ##"
 
-for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2"
+for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2" "DM_05_ncd_bzip2" "DM_05_ncd_gzip"
 do
   pam="/pam_"$dm
   cmsast=$pam"/msa"
@@ -214,7 +235,7 @@ done
 
 echo "## HCLUST+SPADE ##"
 
-for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2"
+for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2" "DM_05_ncd_bzip2" "DM_05_ncd_gzip"
 do
   hclust="/hclust_"$dm
   echo " "$hclust"_spade"
@@ -237,7 +258,7 @@ done
 
 echo "## PAM+SPADE ##"
 
-for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2"
+for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2" "DM_05_ncd_bzip2" "DM_05_ncd_gzip"
 do
   pam="/pam_"$dm
   echo " "$pam"_spade"
@@ -246,7 +267,6 @@ do
     $database "/"$dm \
     $validation $pam
 done
-
 for dm in "DM00-no_role-split" "DM03-U_HC2-split" "DM04-edit-split"
 do
     pam="/pam_"$dm
