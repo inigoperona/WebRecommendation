@@ -37,9 +37,9 @@ public class A014MainClassDistanceMatrixNcdGzip {
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		//preprocessingWD = args[0];
-		//logfile = args[1];
-		//databaseWD = args[2];
+		preprocessingWD = args[0];
+		logfile = args[1];
+		databaseWD = args[2];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
