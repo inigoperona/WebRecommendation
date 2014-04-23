@@ -47,11 +47,11 @@ mkdir -p $database/DM_04_edit
 
 # dist - normalized compress distance (NCD)
 mkdir -p $database/DM_05_ncd_bzip2
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A013MainClassDistanceMatrixNcdBzip2 \
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar;commons-compress-1.8.jar ehupatras.webrecommendation.A013MainClassDistanceMatrixNcdBzip2 \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 mkdir -p $database/DM_05_ncd_gzip
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A014MainClassDistanceMatrixNcdGzip \
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar;commons-compress-1.8.jar ehupatras.webrecommendation.A014MainClassDistanceMatrixNcdGzip \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 
