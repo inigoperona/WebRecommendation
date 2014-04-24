@@ -2,7 +2,6 @@ package ehupatras.markovmodel.hmm;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import be.ac.ulg.montefiore.run.jahmm.Hmm;
 import be.ac.ulg.montefiore.run.jahmm.ObservationInteger;
 import be.ac.ulg.montefiore.run.jahmm.OpdfIntegerFactory;
@@ -23,7 +22,7 @@ public class HiddenMarkovModel {
 	private int m_maxClusterIndex = -1;
 	
 	// dictionary from URLs to HMM indexes
-	private Hashtable<Integer,Integer> m_dictObs; // possible observations
+	private ArrayList<Integer> m_dictObs; // possible observations
 	// dictionary from Cluster-postion to global-position
 	private ArrayList<Integer> m_dictSta;
 	private int m_bufferPositions = 1000;
@@ -41,7 +40,8 @@ public class HiddenMarkovModel {
 	// CREATOR //
 	
 	public HiddenMarkovModel(ArrayList<String[]> dataset, 
-			int[] trainIndexes, int[] clusterAL){
+			int[] trainIndexes,
+			int[] clusterAL){
 		m_dataset = dataset;
 		m_trainIndexes = trainIndexes;
 		m_clusters = clusterAL;
@@ -51,15 +51,13 @@ public class HiddenMarkovModel {
 	}
 	
 	private void createTheDictionary(){
-		int index = 0;
-		m_dictObs = new Hashtable<Integer,Integer>();
+		m_dictObs = new ArrayList<Integer>();
 		for(int i=0; i<m_dataset.size(); i++){
 			String[] seq = m_dataset.get(i);
 			for(int j=0; j<seq.length; j++){
 				int urlID = Integer.valueOf(seq[j]);
-				if(!m_dictObs.containsKey(urlID)){
-					m_dictObs.put(urlID, index);
-					index++;
+				if(!m_dictObs.contains(urlID)){
+					m_dictObs.add(urlID);
 				}
 			}
 		}
@@ -223,14 +221,128 @@ public class HiddenMarkovModel {
 		int[] intA = new int[strA.length];
 		for(int i=0; i<intA.length; i++){
 			int urlID = Integer.valueOf(strA[i]);
-			intA[i] = m_dictObs.get(urlID);
+			intA[i] = m_dictObs.indexOf(urlID);
 		}
 		return intA;
 	}
 	
-	private void printHMM(){
-		System.out.println(m_hmm.toString());		
+	public void printHMM(){
+		System.out.println(m_hmm.toString());
+		System.out.println();
+		
+		System.out.println("States(positions): ");
+		for(int i=0; i<m_dictSta.size(); i++){
+			System.out.println(i + " : " + m_dictSta.get(i));
+		}
+		System.out.println();
+		
+		System.out.println("Observations(URLs): ");
+		for(int i=0; i<m_dictObs.size(); i++){
+			System.out.println(i + " : " + m_dictObs.get(i));
+		}
+		System.out.println();
 	}
+	
+	
+	
+	// PREDICTING THE NEXT STEP //
+	
+	public void getNextUrls(String[] waydone, int nSteps){
+		// where we are
+		int actualState = this.getTheMostProbableState(waydone);
+		
+		// the next steps
+		int[] nextStates = this.getNextStates(actualState, nSteps);
+		
+		// the observations of the next steps
+		double[] obsProbsA = new double[m_dictObs.size()]; 
+		int preSt = -1;
+		double transProb = 1d;
+		for(int i=0; i<nextStates.length; i++){
+			
+			// compute the transition probability
+			int nextSt = nextStates[i];
+			if(preSt==-1){
+				transProb = 1d;
+			} else {
+				transProb = transProb * m_hmm.getAij(preSt, nextSt);
+			}
+			
+			// compute the most probable observations
+			Opdf<ObservationInteger> obs = m_hmm.getOpdf(nextSt);
+			for(int j=0; j<m_dictObs.size(); j++){
+				double prob = obs.probability(new ObservationInteger(j));
+				obsProbsA[j] = obsProbsA[j] + transProb*prob;
+			}
+
+			// update states
+			preSt = nextSt;
+		}
+		
+		
+		
+		
+		// print the observations
+		for(int i=0; i<obsProbsA.length; i++){
+			System.out.println(m_dictObs.get(i) + " : " + obsProbsA[i]);
+		}
+		
+		
+		
+	}
+	
+	private int[] getNextStates(int actualState, int nStates){
+		int[] states = new int[nStates];
+		int actSt = actualState;
+		for(int k=0; k<nStates; k++){
+			double maxprob = Double.NEGATIVE_INFINITY;
+			int maxi = -1;
+			for(int j=0; j<m_hmm.nbStates(); j++){
+				double prob = m_hmm.getAij(actSt, j);
+				if(maxprob<prob){
+					maxprob = prob;
+					maxi = j;
+				}
+			}
+			states[k] = maxi;
+			actSt = maxi;
+		}
+		return states;
+	}
+	
+	private int getTheMostProbableState(String[] waydone){
+		// the way done in proper format to HMM
+		List<ObservationInteger> waydoneObs = new ArrayList<ObservationInteger>();
+		for(int i=0; i<waydone.length; i++){
+			int urli = Integer.valueOf(waydone[i]);
+			int urlInd = m_dictObs.indexOf(urli);
+			ObservationInteger obs = new ObservationInteger(urlInd);
+			waydoneObs.add(obs);
+		}
+		
+		// The most probable way: Viterbi
+		ViterbiCalculator vc = new ViterbiCalculator(waydoneObs, m_hmm);
+		int[] waydoneSt = vc.stateSequence();
+		
+		/*
+		// print the most probable way
+		// HMM's state-symbols
+		for(int i=0; i<waydoneSt.length; i++){
+			System.out.print(waydoneSt[i] + " ");
+		}
+		System.out.println();
+		// In cluster-states symbols 
+		for(int i=0; i<waydoneSt.length; i++){
+			System.out.print(m_dictSta.get(waydoneSt[i]) + " ");
+		}
+		System.out.println();
+		*/
+		
+		// return the last state
+		int lastState = waydoneSt[waydoneSt.length-1];
+		return lastState;
+	}
+	
 	
 	
 	// MAIN_1 //
@@ -316,6 +428,32 @@ public class HiddenMarkovModel {
 		HiddenMarkovModel hmm = new HiddenMarkovModel(database, trainInds, clusters); 
 		hmm.initializeHmmParameters();
 		hmm.printHMM();
+		
+		// The most probable way
+		String[] waydone;
+		int state;
+		
+		/*
+		waydone = new String[]{"4", "5", "6"};
+		state = hmm.getTheMostProbableState(waydone);
+		System.out.println("state1: " + state);
+		
+		waydone = new String[]{"1", "2", "3"};
+		state = hmm.getTheMostProbableState(waydone);
+		System.out.println("state1: " + state);
+		
+		waydone = new String[]{"1", "4", "3"};
+		state = hmm.getTheMostProbableState(waydone);
+		System.out.println("state1: " + state);
+		
+		waydone = new String[]{"1", "4", "2"};
+		state = hmm.getTheMostProbableState(waydone);
+		System.out.println("state1: " + state);
+		*/
+		
+		// The next states
+		waydone = new String[]{"4", "5", "6"};
+		hmm.getNextUrls(waydone, 3);
 	}
 	
 }

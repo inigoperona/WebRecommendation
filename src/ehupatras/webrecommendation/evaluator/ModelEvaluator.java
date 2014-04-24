@@ -8,6 +8,7 @@ import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.weightedsequence.WeightedSequence;
 import ehupatras.markovmodel.MarkovChain;
+import ehupatras.markovmodel.hmm.HiddenMarkovModel;
 import ehupatras.clustering.cvi.CVI;
 import ehupatras.sequentialpatternmining.MySPADE;
 import java.io.BufferedWriter;
@@ -28,20 +29,23 @@ public class ModelEvaluator {
 	private ArrayList<String[]> m_datasetSplit2 = null;
 	private Matrix m_distancematrix;
 	
+	
+	// MODELS //
+	
 	// To create the model: trainset
 	private ArrayList<ArrayList<Long>> m_trainAL;
 	
+	// Clustering
 	// Hierarchical Clustering
 	private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
 	private float m_pCutDendrogramDiss = 50f;
-	private ArrayList<int[]> m_clustersAL;
-	
 	// PAM: Partitioning Around Medoids
 	private int m_k;
+	// store clusters
+	private ArrayList<int[]> m_clustersAL;
 	
 	// Multiple Sequence Alignment
 	private ArrayList<ArrayList<String[][]>> m_msaAL;
-	
 	// Weighted Sequences
 	private float m_minsupport = (float)0.25;
 	private ArrayList<ArrayList<String[]>> m_weightedSequences;
@@ -60,6 +64,12 @@ public class ModelEvaluator {
 	private ArrayList<int[]> m_gmedoidsAL = null;
 	private ArrayList<ArrayList<Object[]>> m_recosAL = null;
 	private int m_knn = 100;
+	
+	// Hidden Markov Model
+	private ArrayList<HiddenMarkovModel> m_hmmAL = null;
+		
+	
+	// EALUATION //
 	
 	// to evaluate the model
 	private ArrayList<ArrayList<Long>> m_valAL;
@@ -118,6 +128,7 @@ public class ModelEvaluator {
 	}
 	
 	
+	
 	// HIERARCHICAL CLUSTERING //
 	
 	public void buildClustersH(float pCutDendrogramDiss, String agglemerativeMethodString){
@@ -149,6 +160,7 @@ public class ModelEvaluator {
 		int[] clustersA = clustering.cutDendrogramByDissimilarity(m_pCutDendrogramDiss);
 		return clustersA;
 	}
+	
 	
 	
 	// PAM CLUSTERING //
@@ -239,6 +251,7 @@ public class ModelEvaluator {
 		SaveLoadObjects so = new SaveLoadObjects();
 		m_clustersAL = (ArrayList<int[]>)so.load(outfilename);
 	}
+	
 	
 	
 	
@@ -363,6 +376,7 @@ public class ModelEvaluator {
 	
 	
 	
+	
 	// WEIGHTED SEQUENCES //
 	
 	public void extractWeightedSequences(float minsupport){
@@ -447,6 +461,7 @@ public class ModelEvaluator {
 
 
 	
+	
 	// GENERALIZED SUFFIX TREE //
 	
 	public void buildSuffixTrees(){
@@ -465,7 +480,7 @@ public class ModelEvaluator {
 		}
 	}
 	
-	public SuffixTreeStringArray createSuffixTreeFromOriginalSequences(int indexFold){		
+	private SuffixTreeStringArray createSuffixTreeFromOriginalSequences(int indexFold){		
 		ArrayList<Long> trainnames = m_trainAL.get(indexFold);
 		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
 		ArrayList<String[]> sequences = new ArrayList<String[]>(); 
@@ -513,6 +528,7 @@ public class ModelEvaluator {
 	
 	
 	
+	
 	// Modular Approach: Cluster-SuffixTree //
 	
 	public void buildClustersSuffixTrees(){
@@ -523,7 +539,7 @@ public class ModelEvaluator {
 		}
 	}
 	
-	public ArrayList<SuffixTreeStringArray> createClustersSuffixTrees(int indexFold){
+	private ArrayList<SuffixTreeStringArray> createClustersSuffixTrees(int indexFold){
 		// train sessions names
 		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
 		ArrayList<Long> trainsetnames2 = 
@@ -569,6 +585,8 @@ public class ModelEvaluator {
 	}
 	
 	
+	
+	
 	// MARKOV CHAIN //
 	
 	public void buildMarkovChains(){
@@ -579,7 +597,7 @@ public class ModelEvaluator {
 		}
 	}
 	
-	public MarkovChain getMarkovChain(int indexFold){
+	private MarkovChain getMarkovChain(int indexFold){
 		// get the train sequences from sessionIDs
 		ArrayList<Long> sessionIDs = m_trainAL.get(indexFold); 
 		int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs, 
@@ -593,6 +611,7 @@ public class ModelEvaluator {
 		MarkovChain mchain = new MarkovChain(trainseqs);
 		return mchain;
 	}
+	
 	
 	
 	
@@ -686,6 +705,37 @@ public class ModelEvaluator {
 	
 	
 	
+	// Hidden Markov Model //
+	
+	public void buildHiddenMarkovModels(){
+		// compute markov chain for each fold
+		m_hmmAL = new ArrayList<HiddenMarkovModel>();
+		for(int i=0; i<m_nFolds; i++){
+			m_hmmAL.add(this.getHMM(i));
+		}
+	}
+	
+	private HiddenMarkovModel getHMM(int indexFold){
+		// train sequences indexes
+		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
+		int[] trInds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
+		
+		// clusters. Assign cluster to each train case
+		int[] clInds = m_clustersAL.get(indexFold);
+		
+		// create the HMM
+		HiddenMarkovModel hmm = 
+				new HiddenMarkovModel(m_dataset, trInds, clInds); 
+		hmm.initializeHmmParameters();
+		hmm.printHMM();
+		
+		return hmm;
+	}
+	
+	
+	
+	
+	///////////////////////////////////////////////////
 	
 	// MODEL EVALUATION //
 	
