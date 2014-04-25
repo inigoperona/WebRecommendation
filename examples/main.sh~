@@ -340,7 +340,7 @@ for dm in "DM00-no_role-split" "DM03-U_HC2-split" "DM04-edit-split"
 do
   hclust="/hclust_"$dm
   echo " "$hclust"_modular1"
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.KKKKKKKKKKKKKKKKK \
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.kkkkkk \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $hclust
@@ -361,10 +361,11 @@ for dm in "DM00-no_role-split" "DM03-U_HC2-split" "DM04-edit-split"
 do
   hclust="/hclust_"$dm
   echo " "$hclust"_modular2"
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.KKKKKKKKKKKKKKKKKKKK \
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.kkkk \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $hclust
 done
 
 
+A054MainClassHclustST
