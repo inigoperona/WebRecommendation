@@ -9,6 +9,7 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.weightedsequence.WeightedSequence;
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.markovmodel.hmm.HiddenMarkovModel;
+import ehupatras.markovmodel.hmm.HiddenMarkovModel000;
 import ehupatras.clustering.cvi.CVI;
 import ehupatras.sequentialpatternmining.MySPADE;
 import java.io.BufferedWriter;
@@ -725,13 +726,18 @@ public class ModelEvaluator {
 		
 		// create the HMM
 		HiddenMarkovModel hmm = 
-				new HiddenMarkovModel(m_dataset, trInds, clInds); 
+				new HiddenMarkovModel000(m_dataset, trInds, clInds); 
 		hmm.initializeHmmParameters();
-		hmm.printHMM();
 		
 		return hmm;
 	}
 	
+	public void writeHMMs(String outfile){
+		for(int i=0; i<m_nFolds; i++){
+			HiddenMarkovModel hmm = m_hmmAL.get(i);
+			hmm.writeHMM(outfile + "_f" + i + ".txt");
+		}
+	}
 	
 	
 	
@@ -739,9 +745,13 @@ public class ModelEvaluator {
 	
 	// MODEL EVALUATION //
 	
-	public String computeEvaluationTest(int mode, int nrecos, long seed,
-			int failuremode, int maxMemory,
-			boolean isDistance, float[][] rolesW){				
+	public String computeEvaluationTest(int mode, 
+					int nrecos,
+					long seed,
+					int failuremode,
+					int maxMemory,
+					boolean isDistance,
+					float[][] rolesW){				
 		// metrics
 		int trnURLs = 0;
 		int trnSeqs = 0;
@@ -772,31 +782,44 @@ public class ModelEvaluator {
 				testseqs.add(seq);
 			}
 			
-			// SELECT THE MODEL
+			
+			
+			// SELECT THE MODEL //
+			
 			TestSetEvaluator eval = null;
 			SuffixTreeStringArray suffixtree = null;
-			if(m_suffixtreeAL!=null){ // Suffix Tree
+			if(m_suffixtreeAL!=null){
+				// GST & clust+MSA+Wseq+ST
 				suffixtree = m_suffixtreeAL.get(i);
 				eval = new TestSetEvaluator(testseqs, suffixtree);
 			} else if(m_medoidsAL!=null && m_clustSuffixTreeAL!=null){
+				// clust+ST+knn
 				eval = new TestSetEvaluator(testseqs,
 						m_medoidsAL.get(i),
 						m_gmedoidsAL.get(i),
 						m_knn,
 						isDistance, rolesW,
 						m_clustSuffixTreeAL.get(i));
-			} else if(m_medoidsAL!=null) { // Medoids
+			} else if(m_clustSuffixTreeAL!=null){
+				// clust+ST+fit
+				eval = new TestSetEvaluator(testseqs, m_clustSuffixTreeAL.get(i));
+			} else if(m_medoidsAL!=null) {
+				// clust+SPADE
 				eval = new TestSetEvaluator(testseqs,
 								m_medoidsAL.get(i),
 								m_gmedoidsAL.get(i),
 								m_recosAL.get(i),
 								isDistance, rolesW);
-			} else if(m_clustSuffixTreeAL!=null){
-				eval = new TestSetEvaluator(testseqs, m_clustSuffixTreeAL.get(i));
-			} else { // Markov Chain
+			} else if(m_hmmAL!=null){
+				// clust+HMM
+				eval = new TestSetEvaluator(testseqs, m_hmmAL.get(i));
+			} else {
+				// Markov Chain
 				MarkovChain markovchain = m_markovChainAL.get(i);
 				eval = new TestSetEvaluator(testseqs, markovchain);
 			}
+			
+			
 			
 			// carry out the evaluation
 			eval.setConfusionPoints(m_confusionPoints);

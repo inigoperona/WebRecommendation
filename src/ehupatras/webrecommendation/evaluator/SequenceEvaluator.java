@@ -1,13 +1,10 @@
 package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.webrecommendation.recommender.*;
-import ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import ehupatras.markovmodel.MarkovChain;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import ehupatras.markovmodel.hmm.HiddenMarkovModel;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class SequenceEvaluator {
 
@@ -28,7 +25,8 @@ public class SequenceEvaluator {
 	
 	// CREATOR FUNCTION FOR SUFFIX TREES //
 	
-	public SequenceEvaluator(String[] sequence, SuffixTreeStringArray suffixtree){
+	public SequenceEvaluator(String[] sequence,
+				SuffixTreeStringArray suffixtree){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorST(sequenceAL, suffixtree, 0);
 	}
@@ -41,27 +39,28 @@ public class SequenceEvaluator {
 	}
 
 	public SequenceEvaluator(String[] sequence, 
-			SuffixTreeStringArray suffixtree,
-			int failuremode,
-			int maxMemory){
+				SuffixTreeStringArray suffixtree,
+				int failuremode,
+				int maxMemory){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorST(sequenceAL, suffixtree, failuremode, maxMemory);
 	}
 
-	public SequenceEvaluator(ArrayList<String> sequence, SuffixTreeStringArray suffixtree){
+	public SequenceEvaluator(ArrayList<String> sequence, 
+				SuffixTreeStringArray suffixtree){
 		this.constructorST(sequence, suffixtree, 0);
 	}
 	
 	public SequenceEvaluator(ArrayList<String> sequence, 
-			SuffixTreeStringArray suffixtree,
-			int failuremode){
+				SuffixTreeStringArray suffixtree,
+				int failuremode){
 		this.constructorST(sequence, suffixtree, failuremode);
 	}
 	
 	public SequenceEvaluator(ArrayList<String> sequence, 
-			SuffixTreeStringArray suffixtree,
-			int failuremode,
-			int maxMemory){
+				SuffixTreeStringArray suffixtree,
+				int failuremode,
+				int maxMemory){
 		this.constructorST(sequence, suffixtree, failuremode, maxMemory);
 	}
 	
@@ -84,17 +83,20 @@ public class SequenceEvaluator {
 	
 	// CREATOR FUNCTION FOR MARKOV CHAIN //
 	
-	public SequenceEvaluator(String[] sequence, MarkovChain markovchain){
+	public SequenceEvaluator(String[] sequence, 
+				MarkovChain markovchain){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorMC(sequenceAL, markovchain);
 	}
 	
-	public SequenceEvaluator(ArrayList<String> sequence, MarkovChain markovchain){
+	public SequenceEvaluator(ArrayList<String> sequence,
+				MarkovChain markovchain){
 		m_recommender = new RecommenderMarkovChain(markovchain);
 		this.constructor2(sequence);
 	}
 	
-	private void constructorMC(ArrayList<String> sequence, MarkovChain markovchain){
+	private void constructorMC(ArrayList<String> sequence,
+					MarkovChain markovchain){
 		m_recommender = new RecommenderMarkovChain(markovchain);
 		this.constructor2(sequence);
 	}
@@ -104,22 +106,22 @@ public class SequenceEvaluator {
 	// CREATOR FUNCTION FOR LIST OF RECOMMENDATIONS FOR EACH CLUSTER //
 	
 	public SequenceEvaluator(String[] sequence, 
-						ArrayList<String[]> medoids,
-						int[] gmedoids,
-						ArrayList<Object[]> medoidsRecos,
-						boolean isDistance,
-						float[][] rolesW){
+				ArrayList<String[]> medoids,
+				int[] gmedoids,
+				ArrayList<Object[]> medoidsRecos,
+				boolean isDistance,
+				float[][] rolesW){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorClRecos(sequenceAL, medoids, gmedoids, medoidsRecos,
 				isDistance, rolesW);
 	}
 	
 	public SequenceEvaluator(ArrayList<String> sequence, 
-			ArrayList<String[]> medoids,
-			int[] gmedoids,
-			ArrayList<Object[]> medoidsRecos,
-			boolean isDistance,
-			float[][] rolesW){
+				ArrayList<String[]> medoids,
+				int[] gmedoids,
+				ArrayList<Object[]> medoidsRecos,
+				boolean isDistance,
+				float[][] rolesW){
 		this.constructorClRecos(sequence, medoids, gmedoids, medoidsRecos,
 				isDistance, rolesW);
 	}
@@ -140,13 +142,13 @@ public class SequenceEvaluator {
 	// MODULAR APPROACH: CREATOR FUNCTION FOR STs FOR EACH CLUSTER //
 	
 	public SequenceEvaluator(String[] sequence, 
-			ArrayList<SuffixTreeStringArray> suffixtreeAL){
+				ArrayList<SuffixTreeStringArray> suffixtreeAL){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorST(sequenceAL, suffixtreeAL);
 	}
 
 	private void constructorST(ArrayList<String> sequence, 
-			ArrayList<SuffixTreeStringArray> suffixtreeAL){
+				ArrayList<SuffixTreeStringArray> suffixtreeAL){
 		m_recommender = new RecommenderClustersSuffixTree(suffixtreeAL);
 		this.constructor2(sequence);
 	}
@@ -156,26 +158,44 @@ public class SequenceEvaluator {
 	// MODULAR APPROACH: K-NN TO THE NEAREST CLUSTER-ST //
 	
 	public SequenceEvaluator(String[] sequence, 
-			ArrayList<String[]> medoids,
-			int[] gMedoids,
-			int k,
-			boolean isDistance,
-			float[][] rolesW,
-			ArrayList<SuffixTreeStringArray> suffixtreeAL){
-		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
-		this.constructorKnnST(sequenceAL, medoids, gMedoids, k, isDistance, rolesW, suffixtreeAL);
-	}
-
-	private void constructorKnnST(ArrayList<String> sequence, 
 				ArrayList<String[]> medoids,
 				int[] gMedoids,
 				int k,
 				boolean isDistance,
 				float[][] rolesW,
 				ArrayList<SuffixTreeStringArray> suffixtreeAL){
+		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
+		this.constructorKnnST(sequenceAL, medoids, gMedoids, k, isDistance, rolesW, suffixtreeAL);
+	}
+
+	private void constructorKnnST(ArrayList<String> sequence, 
+					ArrayList<String[]> medoids,
+					int[] gMedoids,
+					int k,
+					boolean isDistance,
+					float[][] rolesW,
+					ArrayList<SuffixTreeStringArray> suffixtreeAL){
 		m_recommender = new RecommenderKnnToSuffixTrees(medoids, gMedoids, suffixtreeAL, isDistance, rolesW, k);
 		this.constructor2(sequence);
 	}
+	
+	
+	
+	// CREATOR clust+HMM //
+	
+	public SequenceEvaluator(String[] sequence, 
+			HiddenMarkovModel hmm){
+		m_recommender = new RecommenderHMM(hmm);
+		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
+		this.constructor2(sequenceAL);
+	}
+	
+	public SequenceEvaluator(ArrayList<String> sequence, 
+			HiddenMarkovModel hmm){
+		m_recommender = new RecommenderHMM(hmm);
+		this.constructor2(sequence);
+	}
+	
 	
 	
 	

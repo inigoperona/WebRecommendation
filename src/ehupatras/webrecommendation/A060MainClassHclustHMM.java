@@ -24,13 +24,13 @@ public class A060MainClassHclustHMM {
 		String profiWD = "/CL_00_no_role";
 		clustWD = "";
 		profiWD = "";
-		//preprocessingWD = args[0];
-		//logfile = args[1];
-		//databaseWD = args[2];
-		//dmWD = args[3];
-		//validationWD = args[4];
-		//clustWD = args[5];
-		//profiWD = args[6];
+		preprocessingWD = args[0];
+		logfile = args[1];
+		databaseWD = args[2];
+		dmWD = args[3];
+		validationWD = args[4];
+		clustWD = args[5];
+		profiWD = args[6];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -104,9 +104,9 @@ public class A060MainClassHclustHMM {
 			
 			// HMM
 			modelev.buildHiddenMarkovModels();
+			modelev.writeHMMs(validationWD + profiWD + "/" + esperimentationStr + "_hmm");
 			
 			
-			/*
 			// Evaluation
 			String results;
 				
@@ -114,18 +114,17 @@ public class A060MainClassHclustHMM {
 			int[] nrecsWST = new int[]{2,3,4,5,10,20};
 			for(int ind=0; ind<nrecsWST.length; ind++ ){
 				int nrec = nrecsWST[ind];
-				results = modelev.computeEvaluationTest(6, nrec, (long)0, 1, 1000, false, null);
-				System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
+				results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1000, false, null);
+				System.out.print(esperimentationStr + "_weighted" + nrec + ",");
 				System.out.print(results);
 			}
 
 			// unbounded
-			results = modelev.computeEvaluationTest(6, 1000, (long)0, 1, 1000, false, null);
-			System.out.print(esperimentationStr2 + "_unbounded,");
+			results = modelev.computeEvaluationTest(3, 1000, (long)0, 1, 1000, false, null);
+			System.out.print(esperimentationStr + "_unbounded,");
 			System.out.print(results);
-			*/
+			
 		}
-		
 					
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

@@ -75,8 +75,9 @@ public class A054MainClassHclustST {
 		// Parameters to play with
 		//float[] cutthA = {10, 15, 20, 25};
 		//int[] cutthA = {1,2,4,6,8};
-		float[] cutthA = {0.1f,0.2f,0.4f,0.6f,0.8f, 1f,2f,4f,6f,8f, 10f,15f,20f,25f};
+		//float[] cutthA = {0.1f,0.2f,0.4f,0.6f,0.8f, 1f,2f,4f,6f,8f, 10f,15f,20f,25f};
 		//float[] cutthA = {5f, 10f, 20f, 30f, 40f, 50f, 100f, 150f, 200f, 250f, 300f, 400f, 500f, 750f, 1000f}; 
+		float[] cutthA = {4f, 10f, 15f};
 		
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,

@@ -3,6 +3,7 @@ package ehupatras.webrecommendation.evaluator;
 import java.util.ArrayList;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import ehupatras.markovmodel.MarkovChain;
+import ehupatras.markovmodel.hmm.HiddenMarkovModel;
 
 public class TestSetEvaluator {
 
@@ -27,6 +28,9 @@ public class TestSetEvaluator {
 	
 	// Model: modular approach of ST for each cluster
 	private ArrayList<SuffixTreeStringArray> m_STAL = null;
+	
+	// Model: clust+HMM
+	private HiddenMarkovModel m_hmm = null;
 	
 	// Validation metrics
 	private float[] m_points = {(float)0.0, (float)0.10, (float)0.25, 
@@ -112,6 +116,17 @@ public class TestSetEvaluator {
 	}
 	
 	
+	
+	// CREATOR clust+HMM //
+	
+	public TestSetEvaluator(ArrayList<String[]> sequences, 
+			HiddenMarkovModel hmm){
+		m_hmm = hmm;
+		this.constructor(sequences);
+	}
+	
+	
+	
 	// UTILS //
 	
 	private void constructor(ArrayList<String[]> sequences){
@@ -146,24 +161,38 @@ public class TestSetEvaluator {
 		for(int i=0; i<m_sequences.size(); i++){
 			String[] seq = m_sequences.get(i);
 			
+			
+			
 			// select the model
 			SequenceEvaluator seqEv = null;
 			if(m_gST!=null){
+				// GST & clust+MSA+Wseq+ST
 				seqEv = new SequenceEvaluator(seq, m_gST, failureMode, maxMemory);
 			} else if(m_medoids!=null && m_STAL!=null){
+				// clust+ST+knn
 				seqEv = new SequenceEvaluator(seq, 
 							m_medoids, m_gMedoids, m_knn, m_isDistance, m_rolesW,
 							m_STAL);
+			} else if(m_STAL!=null){
+				// clust+ST+fit
+				seqEv = new SequenceEvaluator(seq, m_STAL); 
 			} else if(m_medoids!=null){
+				// clust+SPADE
 				seqEv = new SequenceEvaluator(seq, m_medoids, m_gMedoids, m_recosAL, 
 								m_isDistance, m_rolesW);
-			} else if(m_STAL!=null){
-				seqEv = new SequenceEvaluator(seq, m_STAL);
-			} else { // markov chain
+			} else if(m_hmm!=null){
+				// clust+HMM
+				seqEv = new SequenceEvaluator(seq, m_hmm);
+			} else {
+				// Markov Chain
 				seqEv = new SequenceEvaluator(seq, m_markovchain);
 			}
 			
+			
+			// compute METRICS
 			seqEv.computeSequenceMetrics(mode, nrecos, seed, markovchain);
+			
+			
 			// Statistics
 			numberOfRecommendationsRatio = numberOfRecommendationsRatio + seqEv.getNumberOfRecommendationsRatio();
 			// Failure functions
