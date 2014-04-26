@@ -469,8 +469,14 @@ public class RecommenderClustersSuffixTree
 		for(int i=0; i<m_recSuffixTreeAL.size(); i++){
 			if(m_validSTs[i]){
 				RecommenderSuffixTree rst = m_recSuffixTreeAL.get(i);
-				String laststep = m_waydone.get(m_waydone.size()-1);
-				Object[] objA2 = rst.getStep1Recommendations(laststep);
+				Object[] objA2;
+				if(m_waydone.size()>0){ // we have some performable way in the actual ST so propose:
+					String laststep = m_waydone.get(m_waydone.size()-1);
+					objA2 = rst.getStep1Recommendations(laststep);
+				} else { // we do not have any performable way, so propose from the root
+					rst.reset();
+					objA2 = rst.getNextpossibleSteps();
+				}
 				ArrayList<String> listOfURLs2 = (ArrayList<String>)objA2[0];
 				ArrayList<Integer> listOfWeights2 = (ArrayList<Integer>)objA2[1];
 				

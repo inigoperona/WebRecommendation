@@ -569,7 +569,7 @@ public class ModelEvaluator {
 			}
 			
 			// take the sequences
-			int[] clusterDMind = m_distancematrix.getSessionIDsIndexes(names, m_datasetSplit!=null);
+			int[] clusterDMind = m_distancematrix.getSessionIDsIndexes2(names, m_datasetSplit!=null);
 			ArrayList<String[]> sequences = new ArrayList<String[]>(); 
 			for(int i=0; i<clusterDMind.length; i++){
 				int index = clusterDMind[i];
@@ -708,15 +708,15 @@ public class ModelEvaluator {
 	
 	// Hidden Markov Model //
 	
-	public void buildHiddenMarkovModels(){
+	public void buildHiddenMarkovModels(String outfilename){
 		// compute markov chain for each fold
 		m_hmmAL = new ArrayList<HiddenMarkovModel>();
 		for(int i=0; i<m_nFolds; i++){
-			m_hmmAL.add(this.getHMM(i));
+			m_hmmAL.add(this.getHMM(i, outfilename));
 		}
 	}
 	
-	private HiddenMarkovModel getHMM(int indexFold){
+	private HiddenMarkovModel getHMM(int indexFold, String outfilename){
 		// train sequences indexes
 		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
 		int[] trInds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
@@ -725,17 +725,20 @@ public class ModelEvaluator {
 		int[] clInds = m_clustersAL.get(indexFold);
 		
 		// create the HMM
-		HiddenMarkovModel hmm = 
+		HiddenMarkovModel initHmm = 
 				new HiddenMarkovModel000(m_dataset, trInds, clInds); 
-		hmm.initializeHmmParameters();
+		initHmm.initializeHmmParameters();
+		this.writeHMMs(initHmm, outfilename + "_f" + indexFold + "_initHmm.txt");
 		
-		return hmm;
+		return initHmm;
+		//HiddenMarkovModel learntHmm = initHmm.baumWelch();
+		//this.writeHMMs(learntHmm, outfilename + "_f" + indexFold + "_learntHmm.txt");
+		//return learntHmm;
 	}
 	
-	public void writeHMMs(String outfile){
+	private void writeHMMs(HiddenMarkovModel hmm, String outfile){
 		for(int i=0; i<m_nFolds; i++){
-			HiddenMarkovModel hmm = m_hmmAL.get(i);
-			hmm.writeHMM(outfile + "_f" + i + ".txt");
+			hmm.writeHMM(outfile);
 		}
 	}
 	

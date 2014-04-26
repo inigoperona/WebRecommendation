@@ -97,6 +97,31 @@ public abstract class HiddenMarkovModel {
 	
 	
 	
+	// TRAIN THE INIT HMM //
+	
+	public HiddenMarkovModel baumWelch(){
+		List<List<ObservationInteger>> sequences = new ArrayList<List<ObservationInteger>>();
+		for(int i=0; i<m_trainIndexes.length; i++){
+			String[] seq = m_dataset.get(m_trainIndexes[i]);
+			int[] seqInt = convertUrlsDict(seq);
+			List<ObservationInteger> oseq = new ArrayList<ObservationInteger>();
+			for(int j=0; j<seqInt.length; j++){
+				int obsInt = seqInt[j];
+				ObservationInteger obs = new ObservationInteger(obsInt);
+				oseq.add(obs);
+			}
+			sequences.add(oseq);
+		}
+		
+		// execute the BaumWelch algorithm
+		BaumWelchScaledLearner bwl = new BaumWelchScaledLearner();
+		Hmm<ObservationInteger> learntHmm = bwl.learn(m_hmm, sequences);
+		m_hmm = learntHmm;
+		return this;
+	}
+	
+	
+	
 	// PREDICTING THE NEXT STEP //
 	
 	public Object[] getNextUrls(ArrayList<String> waydone, int nSteps){
@@ -275,7 +300,7 @@ public abstract class HiddenMarkovModel {
 	
 	
 	
-	public static void main1(String[] args){
+	public static void main(String[] args){
 		// number of states and observations
 		Hmm<ObservationInteger> hmm = new Hmm<ObservationInteger>(2, new OpdfIntegerFactory(2));
 		
@@ -295,14 +320,28 @@ public abstract class HiddenMarkovModel {
 		hmm.setAij(1, 0, 0.1);
 		hmm.setAij(1, 1, 0.9);
 		
+		// print the hmm
+		System.out.println("inithmm");
+		System.out.println(hmm.toString());
+		System.out.println();
+		
 		// create a sequence
 		ObservationInteger o1 = new ObservationInteger(0);
-		ObservationInteger o2 = new ObservationInteger(2);
+		ObservationInteger o2 = new ObservationInteger(1);
 		List<ObservationInteger> oseq1 = new ArrayList<ObservationInteger>();
 		oseq1.add(o1);
 		oseq1.add(o2);
 		oseq1.add(o2);
 		oseq1.add(o2);
+		List<ObservationInteger> oseq2 = new ArrayList<ObservationInteger>();
+		oseq2.add(o2);
+		oseq2.add(o2);
+		oseq2.add(o1);
+		oseq2.add(o1);
+		List<List<ObservationInteger>> sequences = new ArrayList<List<ObservationInteger>>();
+		sequences.add(oseq1);
+		sequences.add(oseq2);
+
 		
 		// probability of a sequence of observations
 		System.out.println("FB_prob");
@@ -325,11 +364,16 @@ public abstract class HiddenMarkovModel {
 		int[] sseq2 = vc.stateSequence();
 		for(int i=0; i<sseq2.length; i++){ System.out.print(sseq2[i] + " ");}
 		System.out.println();
+		System.out.println();
 		
 		// BaumWelch
-		OpdfIntegerFactory factory = new OpdfIntegerFactory(4);
-		BaumWelchScaledLearner bwl = new BaumWelchScaledLearner();
+		//OpdfIntegerFactory factory = new OpdfIntegerFactory(4);
+		//BaumWelchScaledLearner bwl = new BaumWelchScaledLearner();
 		//Hmm<ObservationInteger> learntHmm = bwl.learn(initHmm, sequences);
+		System.out.println("BaumWelch");
+		BaumWelchScaledLearner bwl = new BaumWelchScaledLearner();
+		Hmm<ObservationInteger> learntHmm = bwl.learn(hmm, sequences);
+		System.out.println(learntHmm.toString());
 	}
 
 	

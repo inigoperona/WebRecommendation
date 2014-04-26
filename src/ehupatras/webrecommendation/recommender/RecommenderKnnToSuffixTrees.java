@@ -45,6 +45,7 @@ public class RecommenderKnnToSuffixTrees
 	
 	public ArrayList<String> update(ArrayList<String> waydone, String laststep, 
 			boolean incrWeigh, boolean performFailureFunction){
+		m_recKnnToClustersTopURLs.update(waydone, laststep, incrWeigh, performFailureFunction);
 		m_recClustersSuffixTree.update(waydone, laststep, incrWeigh, performFailureFunction);
 		m_waydone.add(laststep);
 		return m_waydone;
@@ -107,6 +108,7 @@ public class RecommenderKnnToSuffixTrees
 		}
 		
 		// else add URLs from step1
+		if(waydone.size()==0){ return listOfURLs; }
 		// add step1 recommendations
 		Object[] objA2 = m_recClustersSuffixTree.getStep1Recommendations(listOfURLs);
 		ArrayList<String> listOfURLsStep1 = (ArrayList<String>)objA2[0];

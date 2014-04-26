@@ -103,8 +103,7 @@ public class A060MainClassHclustHMM {
 
 			
 			// HMM
-			modelev.buildHiddenMarkovModels();
-			modelev.writeHMMs(validationWD + profiWD + "/" + esperimentationStr + "_hmm");
+			modelev.buildHiddenMarkovModels(validationWD + profiWD + "/" + esperimentationStr);
 			
 			
 			// Evaluation

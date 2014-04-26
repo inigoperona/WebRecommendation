@@ -17,8 +17,8 @@ public class A055MainClassHclustST2 {
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_00_no_role";
-		dmWD = "";
+		String dmWD = "/DM_03_intelligent2_dist";
+		//dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
 		clustWD = "";
@@ -101,21 +101,16 @@ public class A055MainClassHclustST2 {
 			float cutth = cutthA[j];
 			
 			// Clustering
-			String cutthstr;
-			if( Math.floor((double)cutth) == Math.ceil((double)cutth) ){
-				cutthstr = String.valueOf((int)cutth);
-			} else {
-				cutthstr = String.valueOf(cutth);
-			}
-			String esperimentationStr = "agglo" + i + "_cl" + cutthstr;
+			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			//String esperimentationStr = "pam" + (int)cutth;
+			
 			// Load clustering
 			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			
 			// Create clusters-STs
 			modelev.buildClustersSuffixTrees();
 			// Create model of medoids
-			modelev.buildMedoidsModels(0.1f);
+			modelev.buildMedoidsModels(0.5f);
 			
 			for(int k=0; k<knnA.length; k++){
 				int knn = knnA[k];
