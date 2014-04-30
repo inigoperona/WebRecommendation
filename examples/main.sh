@@ -138,6 +138,10 @@ echo "## GLOBAL SUFFIX TREE ##"
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database /DM00-no_role-split \
   $validation
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A031MainClassSuffixTreeNorm1 \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
+  $database /DM_00_no_role_dist \
+  $validation
 
 
 
@@ -218,6 +222,17 @@ do
   echo " "$cmsast
   mkdir -p $validation""$cmsast
   ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A050MainClassHclustMsaStSplit \
+    $preprocess /LOGs_from_Jan9_toNov19.log \
+    $database "/"$dm \
+    $validation $hclust $cmsast
+done
+for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2" "DM_05_ncd_bzip2" "DM_05_ncd_gzip"
+do
+  hclust="/hclust_"$dm
+  cmsast=$hclust"/msa"
+  echo " "$cmsast
+  mkdir -p $validation""$cmsast
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A050MainClassHclustMsaStNorm1 \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $hclust $cmsast
@@ -340,11 +355,13 @@ for dm in "DM00-no_role-split" "DM03-U_HC2-split" "DM04-edit-split"
 do
   hclust="/hclust_"$dm
   echo " "$hclust"_modular1"
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.KKKKKKKKKKKKKKKKK \
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A054MainClassHclustSTSplit \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $hclust
 done
+
+
 
 echo "### Hclust+ST+knn (Modular approach 2) ###"
 
@@ -361,7 +378,7 @@ for dm in "DM00-no_role-split" "DM03-U_HC2-split" "DM04-edit-split"
 do
   hclust="/hclust_"$dm
   echo " "$hclust"_modular2"
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.KKKKKKKKKKKKKKKKKKKK \
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A055MainClassHclustST2Split \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $hclust
