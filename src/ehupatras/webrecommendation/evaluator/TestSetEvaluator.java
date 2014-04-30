@@ -2,6 +2,7 @@ package ehupatras.webrecommendation.evaluator;
 
 import java.util.ArrayList;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
+import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.markovmodel.hmm.HiddenMarkovModel;
 
@@ -12,6 +13,7 @@ public class TestSetEvaluator {
 	
 	// Model: Suffix Tree
 	private SuffixTreeStringArray m_gST = null;
+	private MySuffixTree m_st = null;
 	
 	// Model: Markov Chain
 	private MarkovChain m_markovchain = null;
@@ -53,8 +55,10 @@ public class TestSetEvaluator {
 	
 	// CREATOR SUFFIX TREE //
 	
-	public TestSetEvaluator(ArrayList<String[]> sequences, SuffixTreeStringArray suffixtree){
-		m_gST = suffixtree;
+	public TestSetEvaluator(
+				ArrayList<String[]> sequences, 
+				MySuffixTree suffixtree){
+		m_st = suffixtree;
 		this.constructor(sequences);
 	}
 	
@@ -165,9 +169,9 @@ public class TestSetEvaluator {
 			
 			// select the model
 			SequenceEvaluator seqEv = null;
-			if(m_gST!=null){
+			if(m_st!=null){
 				// GST & clust+MSA+Wseq+ST
-				seqEv = new SequenceEvaluator(seq, m_gST, failureMode, maxMemory);
+				seqEv = new SequenceEvaluator(seq, m_st, failureMode, maxMemory);
 			} else if(m_medoids!=null && m_STAL!=null){
 				// clust+ST+knn
 				seqEv = new SequenceEvaluator(seq, 

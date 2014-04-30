@@ -1,18 +1,17 @@
 package ehupatras.webrecommendation.evaluator;
 
 import java.util.ArrayList;
-
-import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
+import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 
 public class SequenceEvaluatorUHC 
 				extends SequenceEvaluator {
 
-	public SequenceEvaluatorUHC(String[] sequence, SuffixTreeStringArray suffixtree){
+	public SequenceEvaluatorUHC(String[] sequence, MySuffixTree suffixtree){
 		super(sequence, suffixtree);
 		m_sequenceURL = this.removeLastUHC(m_sequence);
 	}
 	
-	public SequenceEvaluatorUHC(ArrayList<String> sequence, SuffixTreeStringArray suffixtree){
+	public SequenceEvaluatorUHC(ArrayList<String> sequence, MySuffixTree suffixtree){
 		super(sequence, suffixtree);
 		m_sequenceURL = this.removeLastUHC(m_sequence);
 	}
@@ -62,13 +61,16 @@ public class SequenceEvaluatorUHC
 	
 	public static void main(String[] args){
 		// create the suffix tree
-		SuffixTreeStringArray st = new SuffixTreeStringArray();
         String[] word1 = {"01U", "02H", "03C", "01H", "02U"};
         String[] word2 = {"01C", "02U", "02H", "01C", "02C", "03U"};
         String[] word3 = {"01U", "02H", "03H", "01H"};
-        st.putSequence(word1, 0);
-        st.putSequence(word2, 1);
-        st.putSequence(word3, 2);
+        ArrayList<String[]> sequences = new ArrayList<String[]>();
+        sequences.add(word1);
+        sequences.add(word2);
+        sequences.add(word3);
+
+        // create suffix tree
+        MySuffixTree st = new MySuffixTree(sequences);
         st.printSuffixTree();
         
         // sequence to test

@@ -2,6 +2,7 @@ package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.webrecommendation.recommender.*;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
+import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.markovmodel.hmm.HiddenMarkovModel;
 import java.util.ArrayList;
@@ -25,21 +26,23 @@ public class SequenceEvaluator {
 	
 	// CREATOR FUNCTION FOR SUFFIX TREES //
 	
-	public SequenceEvaluator(String[] sequence,
-				SuffixTreeStringArray suffixtree){
+	public SequenceEvaluator(
+				String[] sequence,
+				MySuffixTree suffixtree){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorST(sequenceAL, suffixtree, 0);
 	}
 
-	public SequenceEvaluator(String[] sequence, 
-				SuffixTreeStringArray suffixtree,
+	public SequenceEvaluator(
+				String[] sequence, 
+				MySuffixTree suffixtree,
 				int failuremode){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorST(sequenceAL, suffixtree, failuremode);
 	}
 
 	public SequenceEvaluator(String[] sequence, 
-				SuffixTreeStringArray suffixtree,
+				MySuffixTree suffixtree,
 				int failuremode,
 				int maxMemory){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
@@ -47,35 +50,35 @@ public class SequenceEvaluator {
 	}
 
 	public SequenceEvaluator(ArrayList<String> sequence, 
-				SuffixTreeStringArray suffixtree){
+				MySuffixTree suffixtree){
 		this.constructorST(sequence, suffixtree, 0);
 	}
 	
 	public SequenceEvaluator(ArrayList<String> sequence, 
-				SuffixTreeStringArray suffixtree,
+				MySuffixTree suffixtree,
 				int failuremode){
 		this.constructorST(sequence, suffixtree, failuremode);
 	}
 	
 	public SequenceEvaluator(ArrayList<String> sequence, 
-				SuffixTreeStringArray suffixtree,
+				MySuffixTree suffixtree,
 				int failuremode,
 				int maxMemory){
 		this.constructorST(sequence, suffixtree, failuremode, maxMemory);
 	}
 	
 	private void constructorST(ArrayList<String> sequence, 
-					SuffixTreeStringArray suffixtree,
+					MySuffixTree suffixtree,
 					int failuremode){
-		m_recommender = new RecommenderSuffixTree(suffixtree, failuremode);
+		m_recommender = new RecommenderSuffixTree2(suffixtree, failuremode);
 		this.constructor2(sequence);
 	}
 	
 	private void constructorST(ArrayList<String> sequence, 
-					SuffixTreeStringArray suffixtree,
+					MySuffixTree suffixtree,
 					int failuremode,
 					int maxMemory){
-		m_recommender = new RecommenderSuffixTree(suffixtree, failuremode, maxMemory);
+		m_recommender = new RecommenderSuffixTree2(suffixtree, failuremode, maxMemory);
 		this.constructor2(sequence);
 	}
 	
@@ -141,7 +144,8 @@ public class SequenceEvaluator {
 	
 	// MODULAR APPROACH: CREATOR FUNCTION FOR STs FOR EACH CLUSTER //
 	
-	public SequenceEvaluator(String[] sequence, 
+	public SequenceEvaluator(
+				String[] sequence, 
 				ArrayList<SuffixTreeStringArray> suffixtreeAL){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorST(sequenceAL, suffixtreeAL);
@@ -511,15 +515,18 @@ public class SequenceEvaluator {
 	
 	public static void main(String[] args){
 		// create the suffix tree
-		SuffixTreeStringArray st = new SuffixTreeStringArray();
         String[] word1 = {"c", "a", "c", "a", "o"};
         String[] word2 = {"b", "a", "n", "a", "n", "a"};
         String[] word3 = {"m", "i", "l", "o"};
         String[] word4 = {"c", "a", "r"};
-        st.putSequence(word1, 0);
-        st.putSequence(word2, 1);
-        st.putSequence(word3, 2);
-        st.putSequence(word4, 3);
+        ArrayList<String[]> sequences = new ArrayList<String[]>();
+        sequences.add(word1);
+        sequences.add(word2);
+        sequences.add(word3);
+        sequences.add(word4);
+        
+        // create ST
+        MySuffixTree st = new MySuffixTree(sequences);
         st.printSuffixTree();
         
         // sequence to test

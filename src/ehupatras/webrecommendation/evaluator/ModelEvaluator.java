@@ -3,6 +3,7 @@ package ehupatras.webrecommendation.evaluator;
 import ehupatras.clustering.ClusteringHierarchical;
 import ehupatras.clustering.ClusteringPAM;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
+import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.sequencealignment.multiplealignment.MultipleSequenceAlignment;
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.distmatrix.Matrix;
@@ -52,7 +53,8 @@ public class ModelEvaluator {
 	private ArrayList<ArrayList<String[]>> m_weightedSequences;
 	
 	// Generalized Suffix tree
-	private ArrayList<SuffixTreeStringArray> m_suffixtreeAL = null;
+	//private ArrayList<SuffixTreeStringArray> m_suffixtreeAL = null;
+	private ArrayList<MySuffixTree> m_suffixtreeAL = null;
 	
 	// Modular approach Cluster-ST version
 	private ArrayList<ArrayList<SuffixTreeStringArray>> m_clustSuffixTreeAL = null;
@@ -467,7 +469,7 @@ public class ModelEvaluator {
 	
 	public void buildSuffixTrees(){
 		// Build Suffix Trees for each fold
-		m_suffixtreeAL = new ArrayList<SuffixTreeStringArray>();
+		m_suffixtreeAL = new ArrayList<MySuffixTree>();
 		for(int i=0; i<m_nFolds; i++){
 			m_suffixtreeAL.add(this.createSuffixTreeNoWeights(i));
 		}
@@ -475,13 +477,13 @@ public class ModelEvaluator {
 
 	public void buildSuffixTreesFromOriginalSequences(){
 		// Build Suffix Trees for each fold
-		m_suffixtreeAL = new ArrayList<SuffixTreeStringArray>();
+		m_suffixtreeAL = new ArrayList<MySuffixTree>();
 		for(int i=0; i<m_nFolds; i++){
 			m_suffixtreeAL.add(this.createSuffixTreeFromOriginalSequences(i));
 		}
 	}
 	
-	private SuffixTreeStringArray createSuffixTreeFromOriginalSequences(int indexFold){		
+	private MySuffixTree createSuffixTreeFromOriginalSequences(int indexFold){		
 		ArrayList<Long> trainnames = m_trainAL.get(indexFold);
 		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
 		ArrayList<String[]> sequences = new ArrayList<String[]>(); 
@@ -490,8 +492,10 @@ public class ModelEvaluator {
 			String[] seq = (this.getDataSet(m_datasetSplit!=null)).get(index);
 			sequences.add(seq);
 		}
-		return this.createSuffixTree(sequences);
+		MySuffixTree st = new MySuffixTree(sequences);
+		return st;
 	}
+	
 	
 	private SuffixTreeStringArray createSuffixTree(ArrayList<String[]> sequences){
 		SuffixTreeStringArray suffixtree = new SuffixTreeStringArray();
@@ -501,12 +505,14 @@ public class ModelEvaluator {
 		return suffixtree;
 	}
 	
-	private SuffixTreeStringArray createSuffixTreeNoWeights(int indexFold){
+	
+	private MySuffixTree createSuffixTreeNoWeights(int indexFold){
 		ArrayList<String[]> sequences = m_weightedSequences.get(indexFold);
-		SuffixTreeStringArray suffixtree = this.createSuffixTree(sequences);
+		MySuffixTree suffixtree = new MySuffixTree(sequences);
 		return suffixtree;
 	}
 	
+	/*
 	private SuffixTreeStringArray createSuffixTreePlusWeights(int indexFold){
 		// create the suffix tree without weight
 		ArrayList<String[]> sequences = m_weightedSequences.get(indexFold);
@@ -526,6 +532,7 @@ public class ModelEvaluator {
 		suffixtree.weightTheSuffixTree(trainseqs);
 		return suffixtree;
 	}
+	*/
 	
 	
 	
@@ -790,7 +797,7 @@ public class ModelEvaluator {
 			// SELECT THE MODEL //
 			
 			TestSetEvaluator eval = null;
-			SuffixTreeStringArray suffixtree = null;
+			MySuffixTree suffixtree = null;
 			if(m_suffixtreeAL!=null){
 				// GST & clust+MSA+Wseq+ST
 				suffixtree = m_suffixtreeAL.get(i);
