@@ -147,10 +147,12 @@ public class TestSetEvaluator {
 	
 	// BODY //
 	
-	public void computeEvaluation(int mode, int nrecos, long seed, 
+	public void computeEvaluation(
+			int mode, int nrecos, long seed, 
 			MarkovChain markovchain,
 			int failureMode,
-			int maxMemory){
+			int maxMemory,
+			int normMode){
 		float numberOfRecommendationsRatio = 0f;
 		int numberOfFailures = 0;
 		int[] failuresHist = new int[m_failuresHist.length]; 
@@ -171,7 +173,7 @@ public class TestSetEvaluator {
 			SequenceEvaluator seqEv = null;
 			if(m_st!=null){
 				// GST & clust+MSA+Wseq+ST
-				seqEv = new SequenceEvaluator(seq, m_st, failureMode, maxMemory);
+				seqEv = new SequenceEvaluator(seq, m_st, failureMode, maxMemory, normMode);
 			} else if(m_medoids!=null && m_STAL!=null){
 				// clust+ST+knn
 				seqEv = new SequenceEvaluator(seq, 

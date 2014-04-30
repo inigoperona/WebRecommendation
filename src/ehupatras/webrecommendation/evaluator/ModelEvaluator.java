@@ -474,6 +474,12 @@ public class ModelEvaluator {
 			m_suffixtreeAL.add(this.createSuffixTreeNoWeights(i));
 		}
 	}
+	
+	private MySuffixTree createSuffixTreeNoWeights(int indexFold){
+		ArrayList<String[]> sequences = m_weightedSequences.get(indexFold);
+		MySuffixTree suffixtree = new MySuffixTree(sequences);
+		return suffixtree;
+	}
 
 	public void buildSuffixTreesFromOriginalSequences(){
 		// Build Suffix Trees for each fold
@@ -495,44 +501,6 @@ public class ModelEvaluator {
 		MySuffixTree st = new MySuffixTree(sequences);
 		return st;
 	}
-	
-	
-	private SuffixTreeStringArray createSuffixTree(ArrayList<String[]> sequences){
-		SuffixTreeStringArray suffixtree = new SuffixTreeStringArray();
-		for(int i=0; i<sequences.size(); i++){
-			suffixtree.putSequence(sequences.get(i), i);
-		}
-		return suffixtree;
-	}
-	
-	
-	private MySuffixTree createSuffixTreeNoWeights(int indexFold){
-		ArrayList<String[]> sequences = m_weightedSequences.get(indexFold);
-		MySuffixTree suffixtree = new MySuffixTree(sequences);
-		return suffixtree;
-	}
-	
-	/*
-	private SuffixTreeStringArray createSuffixTreePlusWeights(int indexFold){
-		// create the suffix tree without weight
-		ArrayList<String[]> sequences = m_weightedSequences.get(indexFold);
-		SuffixTreeStringArray suffixtree = this.createSuffixTree(sequences);
-		
-		// take original train sequences to weight the nodes
-		ArrayList<Long> sessionIDs = m_trainAL.get(indexFold); 
-		int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs, 
-							m_datasetSplit!=null);
-		ArrayList<String[]> trainseqs = new ArrayList<String[]>();
-		for(int j=0; j<inds.length; j++){
-			String[] seq = this.getDataSet(m_datasetSplit!=null).get(inds[j]); 
-			trainseqs.add(seq);
-		}
-
-		// Weight the suffix tree by training sequences
-		suffixtree.weightTheSuffixTree(trainseqs);
-		return suffixtree;
-	}
-	*/
 	
 	
 	
@@ -590,6 +558,14 @@ public class ModelEvaluator {
 		}
 		
 		return stAL;
+	}
+	
+	private SuffixTreeStringArray createSuffixTree(ArrayList<String[]> sequences){
+		SuffixTreeStringArray suffixtree = new SuffixTreeStringArray();
+		for(int i=0; i<sequences.size(); i++){
+			suffixtree.putSequence(sequences.get(i), i);
+		}
+		return suffixtree;
 	}
 	
 	
@@ -760,6 +736,7 @@ public class ModelEvaluator {
 					long seed,
 					int failuremode,
 					int maxMemory,
+					int normMode,
 					boolean isDistance,
 					float[][] rolesW){				
 		// metrics
@@ -834,10 +811,12 @@ public class ModelEvaluator {
 			// carry out the evaluation
 			eval.setConfusionPoints(m_confusionPoints);
 			eval.setFmeasureBeta(m_fmeasurebeta);
-			eval.computeEvaluation(mode, nrecos, seed, 
+			eval.computeEvaluation(
+					mode, nrecos, seed, 
 					m_markovChainAL.get(i),
 					failuremode,
-					maxMemory);
+					maxMemory,
+					normMode);
 			//eval.writeResults();
 			
 			// METRICS1

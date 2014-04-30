@@ -18,15 +18,18 @@ public class RecommenderSuffixTree2 implements Recommender {
 	private int m_failureMode = 1;
 	private int m_maxMemory = 1000;
 	private int m_nFailures = 0;
+	private int m_normalizationMode = 0;
 	
 	// creators
 	public RecommenderSuffixTree2(
 				MySuffixTree st, 
 				int failuremode, 
-				int maxMemory){
+				int maxMemory,
+				int normalizationMode){
 		m_st = st;
 		m_failureMode = failuremode;
 		m_maxMemory = maxMemory;
+		m_normalizationMode = normalizationMode;
 	}
 	
 	public RecommenderSuffixTree2(
@@ -35,6 +38,7 @@ public class RecommenderSuffixTree2 implements Recommender {
 		m_st = st;
 		m_failureMode = failuremode;
 		m_maxMemory = 1000;
+		m_normalizationMode = 0;
 	}
 	
 	// update method
@@ -158,13 +162,18 @@ public class RecommenderSuffixTree2 implements Recommender {
 	
 	// RECOMMENDATIONS
 	
-	private Object[] getNextpossibleSteps(){
+	protected Object[] getNextpossibleSteps(){
 		return this.getNextpossibleSteps(m_pointerNode, m_pointerLabel);
-		//return this.getNextpossibleStepsNorm1(m_pointerNode, m_pointerLabel);
 	}
 	
-	private Object[] getNextpossibleSteps(int pointerNode, int pointerLabel){
-		return m_st.getNextpossibleStepsFrequencies(pointerNode, pointerLabel);
+	protected Object[] getNextpossibleSteps(int pointerNode, int pointerLabel){
+		if(m_normalizationMode==1){ // norm1
+			return m_st.getNextpossibleStepsNorm1(m_pointerNode, m_pointerLabel);
+		} else if(m_normalizationMode==2){ // norm2, creating new edges
+			return m_st.getNextpossibleStepsNorm2(m_pointerNode, m_pointerLabel);
+		} else { // frequencies
+			return m_st.getNextpossibleStepsFrequencies(pointerNode, pointerLabel);
+		}
 	}
 	
 	public ArrayList<String> getNextpossibleStepsUnbounded(){
@@ -302,7 +311,7 @@ public class RecommenderSuffixTree2 implements Recommender {
 		return recos;
 	}
 	
-	private ArrayList<String> getTheMostWeightedURLs(
+	protected ArrayList<String> getTheMostWeightedURLs(
 				int nrec, 
 				ArrayList<String> list, 
 				ArrayList<Float> frequencies){
@@ -333,6 +342,10 @@ public class RecommenderSuffixTree2 implements Recommender {
 			}
 		}	
 		return recos;
+	}
+	
+	public MySuffixTree getSuffixTree(){
+		return m_st;
 	}
 	
 }

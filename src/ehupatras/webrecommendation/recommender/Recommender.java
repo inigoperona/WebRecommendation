@@ -3,9 +3,16 @@ package ehupatras.webrecommendation.recommender;
 import java.util.ArrayList;
 
 public interface Recommender {
-	public ArrayList<String> update(ArrayList<String> waydone, String newstep, boolean incrWeigh, boolean performFailureFunction);
+	
+	public ArrayList<String> update(
+				ArrayList<String> waydone,
+				String newstep,
+				boolean incrWeigh, 
+				boolean performFailureFunction);
+	
 	public void reset();
 	public int getNumberOfFailures();
+	
 	public ArrayList<String> getNextpossibleStepsUnbounded();
 	public ArrayList<String> getNextpossibleStepsRandom(int nReco, long seed);
 	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone);
@@ -14,4 +21,5 @@ public interface Recommender {
 	public ArrayList<String> getNextpossibleStepsMarkov(int nRecos, ArrayList<String> waydone, ArrayList<String> listMarkov);
 	public ArrayList<String> getNextpossibleStepsWeightedByOriginalSequences(int nRecos);
 	public ArrayList<String> getNextpossibleStepsWeightedEnrichWithStep1(int nRecos, ArrayList<String> waydone);
+
 }

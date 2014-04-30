@@ -41,15 +41,18 @@ public class SequenceEvaluator {
 		this.constructorST(sequenceAL, suffixtree, failuremode);
 	}
 
-	public SequenceEvaluator(String[] sequence, 
+	public SequenceEvaluator(
+				String[] sequence, 
 				MySuffixTree suffixtree,
 				int failuremode,
-				int maxMemory){
+				int maxMemory,
+				int normMode){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
-		this.constructorST(sequenceAL, suffixtree, failuremode, maxMemory);
+		this.constructorST(sequenceAL, suffixtree, failuremode, maxMemory, normMode);
 	}
 
-	public SequenceEvaluator(ArrayList<String> sequence, 
+	public SequenceEvaluator(
+				ArrayList<String> sequence, 
 				MySuffixTree suffixtree){
 		this.constructorST(sequence, suffixtree, 0);
 	}
@@ -63,8 +66,9 @@ public class SequenceEvaluator {
 	public SequenceEvaluator(ArrayList<String> sequence, 
 				MySuffixTree suffixtree,
 				int failuremode,
-				int maxMemory){
-		this.constructorST(sequence, suffixtree, failuremode, maxMemory);
+				int maxMemory,
+				int normMode){
+		this.constructorST(sequence, suffixtree, failuremode, maxMemory, normMode);
 	}
 	
 	private void constructorST(ArrayList<String> sequence, 
@@ -77,8 +81,9 @@ public class SequenceEvaluator {
 	private void constructorST(ArrayList<String> sequence, 
 					MySuffixTree suffixtree,
 					int failuremode,
-					int maxMemory){
-		m_recommender = new RecommenderSuffixTree2(suffixtree, failuremode, maxMemory);
+					int maxMemory,
+					int normMode){
+		m_recommender = new RecommenderSuffixTree2(suffixtree, failuremode, maxMemory, normMode);
 		this.constructor2(sequence);
 	}
 	

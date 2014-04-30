@@ -19,6 +19,8 @@ public class MySuffixTree {
 	private ArrayList<ArrayList<String>> m_paths;
 	private float[] m_frequencies;
 	private float[] m_norm1;
+	private float[] m_norm2;
+	private ArrayList<ArrayList<Integer>> m_childrenAL2;
 	
 	// database info
 	private int m_nSequences = 0;
@@ -36,6 +38,7 @@ public class MySuffixTree {
 		
 		// initialize
 		this.init();
+		m_suffixtreeSA = null;
 	}
 	
 	private void init(){
@@ -223,6 +226,7 @@ public class MySuffixTree {
 		}
 	}
 	
+	
 	private ArrayList<Integer> findAllSuffixes(ArrayList<String> path){
 		ArrayList<Integer> findInds = new ArrayList<Integer>();
 		
@@ -356,6 +360,10 @@ public class MySuffixTree {
 	}
 	
 	public Object[] getNextpossibleStepsNorm1(int actualNodeInd, int actualLabelInd){
+		return this.getNextpossibleSteps(actualNodeInd, actualLabelInd, m_norm1);
+	}
+	
+	public Object[] getNextpossibleStepsNorm2(int actualNodeInd, int actualLabelInd){
 		return this.getNextpossibleSteps(actualNodeInd, actualLabelInd, m_norm1);
 	}
 	

@@ -27,13 +27,16 @@ public class RecommenderClustersSuffixTree
 		Arrays.fill(m_validSTs, true);
 	}
 	
-	public ArrayList<String> update(ArrayList<String> waydone, String newstep, 
-			boolean incrWeigh, boolean performFailureFunction){
+	public ArrayList<String> update(
+				ArrayList<String> waydone,
+				String newstep,
+				boolean incrWeigh, 
+				boolean performFailureFunction){
 		// run the way in all suffix trees
 		ArrayList<ArrayList<String>> waydoneAL = new ArrayList<ArrayList<String>>(); 
 		for(int i=0; i<m_recSuffixTreeAL.size(); i++){
 			RecommenderSuffixTree rst = m_recSuffixTreeAL.get(i);
-			ArrayList<String> waydone2 = (ArrayList<String>)waydone.clone(); 
+			ArrayList<String> waydone2 = (ArrayList<String>)waydone.clone();
 			ArrayList<String> way = rst.update(waydone2, newstep, incrWeigh, performFailureFunction);
 			m_recSuffixTreeAL.set(i, rst);
 			waydoneAL.add(way);

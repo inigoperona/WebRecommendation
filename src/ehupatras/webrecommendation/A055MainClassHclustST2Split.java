@@ -127,13 +127,13 @@ public class A055MainClassHclustST2Split {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1000, false, null);
+					results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1000, 0, false, null);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, 1000, (long)0, 1, 1000, false, null);
+				results = modelev.computeEvaluationTest(-1, 1000, (long)0, 1, 1000, 0, false, null);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}

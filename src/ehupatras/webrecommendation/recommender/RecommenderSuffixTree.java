@@ -104,7 +104,15 @@ public class RecommenderSuffixTree
 	
 	
 	
-	// FAILURE FUNCTIONS //
+	// UPDATE & FAILURE FUNCTIONS //
+	
+	public ArrayList<String> update(
+			ArrayList<String> waydone,
+			String newstep, 
+			boolean incrWeigh,
+			boolean performFailureFunction){
+		return this.updatePointer(waydone, newstep, incrWeigh, performFailureFunction);
+	}
 	
 	private ArrayList<String> updatefailure(ArrayList<String> waydone, String nextstep, int failuremode){
 		ArrayList<String> wayInST = new ArrayList<String>();
@@ -127,11 +135,6 @@ public class RecommenderSuffixTree
 		m_pointerEdge = null;
 		m_pointerPositionInTheEdge = 0;
 		return (new ArrayList<String>());
-	}
-	
-	public ArrayList<String> update(ArrayList<String> waydone, String newstep, 
-					boolean incrWeigh, boolean performFailureFunction){
-		return this.updatePointer(waydone, newstep, incrWeigh, performFailureFunction);
 	}
 	
 	private ArrayList<String> gotoLongestSuffixes(ArrayList<String> waydone, String newstep){
