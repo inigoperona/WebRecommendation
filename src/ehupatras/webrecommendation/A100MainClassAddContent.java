@@ -10,7 +10,16 @@ public class A100MainClassAddContent {
 		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA/20140228_v6";
-		//preprocessingWD = args[0];
+		String contentWD = "/home/burdinadar/Desktop/ehupatras/CONTENT";
+		String infileUrl2topicDist = "/topicTestuakBatera-document-topic-distributuions1_v2.csv";
+		String outfileUrlDM = "/URLs_DM.txt";
+		String outfileUrl2topic = "/URLs_to_topic.txt";
+		preprocessingWD = args[0];
+		contentWD = args[1];
+		infileUrl2topicDist = args[2];
+		outfileUrlDM = args[3];
+		outfileUrl2topic = args[4];
+		
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -25,21 +34,21 @@ public class A100MainClassAddContent {
 		// Reading and preprocessing content data
 		PreprocessContent pc = new PreprocessContent();
 		pc.pickupURLsToDownload();
-		pc.writeURLs(preprocessingWD + "/URLsToDownload.txt");
+		pc.writeURLs(contentWD + "/URLsToDownload.txt");
 			//pc.readURLs(preprocessingWD + "/URLsToDownload.txt");
 			//pc.printURLs();
 		
 		// Compute the distance among the URLs
 		Website.setSaveFileName("/_Website2.javaData");
-		pc.readURL2TopicDistribution("/home/burdinadar/Desktop/ehupatras/CONTENT/document-topic-distributions1_v2.csv");
+		pc.readURL2TopicDistribution(contentWD + infileUrl2topicDist);
 		pc.computeUrlTopicSimilarities();
-		//pc.printUrlDM();
-		pc.writeUrlDM("/home/burdinadar/Desktop/ehupatras/CONTENT/URLs_DM.txt");
+			//pc.printUrlDM();
+		pc.writeUrlDM(contentWD + outfileUrlDM);
 		
 		// Compute the topic of each URL
 		pc.computeURL2topic(0.4f);
 		//pc.printURL2topic();
-		pc.writeURL2topic("/home/burdinadar/Desktop/ehupatras/CONTENT/URLs_to_topic.txt");
+		pc.writeURL2topic(contentWD + outfileUrl2topic);
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

@@ -202,10 +202,6 @@ public class MySuffixTree {
 		// initialize normalized array
 		m_norm1 = new float[m_labelsAL.size()];
 		
-		// add the root node to analyze
-		ArrayList<Integer> analyzeInds = new ArrayList<Integer>();
-		analyzeInds.add(0);
-		
 		// for each node path
 		for(int i=0; i<m_paths.size(); i++){
 			ArrayList<String> path = m_paths.get(i);
@@ -242,7 +238,9 @@ public class MySuffixTree {
 			for(int j=0; j<m_paths.size(); j++){
 				ArrayList<String> pathi = m_paths.get(j);
 				if(suffix.equals(pathi)){
-					findInds.add(j);
+					if(!findInds.contains(j)){
+						findInds.add(j);
+					}
 					break;
 				}
 			}
@@ -268,6 +266,9 @@ public class MySuffixTree {
 			for(int j=0; j<depth; j++){
 				System.out.print(" ");
 			}
+			
+			// print the index
+			System.out.print(ind + ":");
 			
 			// label
 			System.out.print("Label");
@@ -403,12 +404,17 @@ public class MySuffixTree {
 	}
 	
 	public float getNumberOfEdges(){
-		float sum = 0f;
+		int sum = 0;
+		int cont = 0;
 		for(int i=0; i<m_childrenAL.size(); i++){
 			ArrayList<Integer> children = m_childrenAL.get(i);
-			sum = sum + (float)children.size();
+			if(children.size()>0){
+				sum = sum + children.size();
+				cont++;
+			}
 		}
-		return (sum / (float)m_childrenAL.size());
+		float avg = (float)sum / (float)cont;
+		return avg;
 	}
 	
 	public static void main(String[] args){
@@ -422,6 +428,7 @@ public class MySuffixTree {
         sequences.add(word2);
         sequences.add(word3);
         sequences.add(word4);
+        sequences.add(word1);
         
         // create our suffix tree
         MySuffixTree st = new MySuffixTree(sequences);

@@ -167,13 +167,15 @@ public class RecommenderSuffixTree2 implements Recommender {
 	}
 	
 	protected Object[] getNextpossibleSteps(int pointerNode, int pointerLabel){
+		Object[] result;
 		if(m_normalizationMode==1){ // norm1
-			return m_st.getNextpossibleStepsNorm1(m_pointerNode, m_pointerLabel);
+			result = m_st.getNextpossibleStepsNorm1(pointerNode, pointerLabel);
 		} else if(m_normalizationMode==2){ // norm2, creating new edges
-			return m_st.getNextpossibleStepsNorm2(m_pointerNode, m_pointerLabel);
+			result = m_st.getNextpossibleStepsNorm2(pointerNode, pointerLabel);
 		} else { // frequencies
-			return m_st.getNextpossibleStepsFrequencies(pointerNode, pointerLabel);
-		}
+			result = m_st.getNextpossibleStepsFrequencies(pointerNode, pointerLabel);
+		}		
+		return result;
 	}
 	
 	public ArrayList<String> getNextpossibleStepsUnbounded(){
@@ -265,7 +267,6 @@ public class RecommenderSuffixTree2 implements Recommender {
 	
 	public ArrayList<String> getNextpossibleStepsWeightedEnrichWithStep1(int nRecos, ArrayList<String> waydone){
 		// RECOMMENDATIONS DEPTH IN THE SUFFIX TREE //
-		
 		Object[] objA1 = this.getNextpossibleSteps();
 		ArrayList<String> nextsteps1 = (ArrayList<String>)objA1[0];
 		ArrayList<Float> listOfWeights1 = (ArrayList<Float>)objA1[1];

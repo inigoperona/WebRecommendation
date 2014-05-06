@@ -13,6 +13,8 @@ import be.ac.ulg.montefiore.run.jahmm.ForwardBackwardScaledCalculator;
 import be.ac.ulg.montefiore.run.jahmm.ViterbiCalculator;
 import be.ac.ulg.montefiore.run.jahmm.learn.BaumWelchScaledLearner;
 import be.ac.ulg.montefiore.run.jahmm.Opdf;
+import be.ac.ulg.montefiore.run.jahmm.toolbox.MarkovGenerator;
+import be.ac.ulg.montefiore.run.jahmm.draw.GenericHmmDrawerDot;
 
 public abstract class HiddenMarkovModel {
 
@@ -374,6 +376,30 @@ public abstract class HiddenMarkovModel {
 		BaumWelchScaledLearner bwl = new BaumWelchScaledLearner();
 		Hmm<ObservationInteger> learntHmm = bwl.learn(hmm, sequences);
 		System.out.println(learntHmm.toString());
+		
+		// sequence generator
+		MarkovGenerator<ObservationInteger> mg = new MarkovGenerator<ObservationInteger>(hmm);
+		List<List<ObservationInteger>> newSequences = new ArrayList<List<ObservationInteger>>();
+		for(int i=0; i<10; i++){
+			// we have to determine the length
+			newSequences.add(mg.observationSequence(10));
+		}
+		System.out.println("Generate Sequences");
+		for(int i=0; i<newSequences.size(); i++){
+			String str = (newSequences.get(i)).toString();
+			System.out.println(str);
+		}
+		
+		// drawing
+		GenericHmmDrawerDot hmmDrawer1 = new GenericHmmDrawerDot();
+		try {
+			hmmDrawer1.write(hmm, "hmm-generate.dot");
+		}
+		catch (IOException e) {
+			System.err.println("Error at drawing the HMM.");
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	
