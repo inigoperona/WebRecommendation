@@ -9,16 +9,15 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A031MainClassSuffixTreeSplit {
+public class A0313MainClassSuffixTreeGoToLength1Suffix {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM00-no_role-split";
+		String dmWD = "/DM_00_no_role";
 		//dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		preprocessingWD = args[0];
@@ -53,9 +52,6 @@ public class A031MainClassSuffixTreeSplit {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
-		Object[] objA = matrix.readSeqs(databaseWD + dmWD + "/sequences_split.txt");
-		ArrayList<Long> namesSplit = (ArrayList<Long>)objA[0];
-		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
 
 		
 		// HOLD-OUT //
@@ -71,7 +67,7 @@ public class A031MainClassSuffixTreeSplit {
 
 		// initialize the model evaluator
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, seqsSplit,
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
 				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		modelev.setConfusionPoints(confusionPoints);
@@ -93,13 +89,13 @@ public class A031MainClassSuffixTreeSplit {
 		String results;
 
 		//int[] failmodesA = new int[]{0, 1, 2};
-		int[] failmodesA = new int[]{1};
+		int[] failmodesA = new int[]{1}; // GoToLongestSuffix
 		for(int fmodei=0; fmodei<failmodesA.length; fmodei++){
 			int fmode = failmodesA[fmodei];
 			String esperimentationStr2 = esperimentationStr + "_failure" + fmode;
 			
 			//int[] goToMemA = new int[]{1,2,3,4,5, 100};
-			int[] goToMemA = new int[]{1000};
+			int[] goToMemA = new int[]{1}; // Length1
 			for(int gt=0; gt<goToMemA.length; gt++){
 				int gtmem = goToMemA[gt];
 				String esperimentationStr3 = esperimentationStr2 + "_gt" + gtmem;
@@ -109,18 +105,17 @@ public class A031MainClassSuffixTreeSplit {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(6, nrec, (long)0, fmode, gtmem, 0, false, null);
+					results = modelev.computeEvaluationTest(1, nrec, (long)0, fmode, gtmem, 0, false, null);
 					System.out.print(esperimentationStr3 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(6, 1000, (long)0, fmode, gtmem, 0, false, null);
+				results = modelev.computeEvaluationTest(1, 1000, (long)0, fmode, gtmem, 0, false, null);
 				System.out.print(esperimentationStr3 + "_unbounded,");
 				System.out.print(results);
 			}
-		}
-					
+		}		
 					
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

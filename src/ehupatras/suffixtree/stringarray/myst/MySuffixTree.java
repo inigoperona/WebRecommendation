@@ -239,6 +239,16 @@ public class MySuffixTree {
 				ArrayList<String> pathi = m_paths.get(j);
 				if(suffix.equals(pathi)){
 					if(!findInds.contains(j)){
+						int len1 = suffix.size();
+						int k;
+						for(k=0; k<findInds.size(); k++){
+							// put ordered. shortest to longest
+							int ind2 = findInds.get(k);
+							int len2 = m_paths.get(ind2).size();
+							if(len1<len2){
+								break;
+							}
+						}
 						findInds.add(j);
 					}
 					break;
@@ -376,7 +386,7 @@ public class MySuffixTree {
 		ArrayList<String> actualLabel = m_labelsAL.get(actualNodeInd);
 		if(actualLabelInd<actualLabel.size()){
 			// check the next element in the label
-			float freq = m_frequencies[actualNodeInd];
+			float freq = weights[actualNodeInd];
 			String elem = actualLabel.get(actualLabelInd);
 			urlsAL.add(elem);
 			weightsAL.add(freq);
@@ -387,7 +397,7 @@ public class MySuffixTree {
 				int ind = children.get(i);
 				ArrayList<String> label = m_labelsAL.get(ind);
 				String elem = label.get(0);
-				float freq = m_frequencies[ind];
+				float freq = weights[ind];
 				urlsAL.add(elem);
 				weightsAL.add((float)freq);
 			}

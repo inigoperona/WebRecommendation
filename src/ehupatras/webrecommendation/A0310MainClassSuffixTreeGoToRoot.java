@@ -9,9 +9,10 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A031MainClassSuffixTreeNorm1 {
-
+public class A0310MainClassSuffixTreeGoToRoot {
+	
 	public static void main(String[] args) {
+		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
@@ -88,7 +89,7 @@ public class A031MainClassSuffixTreeNorm1 {
 		String results;
 
 		//int[] failmodesA = new int[]{0, 1, 2};
-		int[] failmodesA = new int[]{1};
+		int[] failmodesA = new int[]{0}; // GoToRoot
 		for(int fmodei=0; fmodei<failmodesA.length; fmodei++){
 			int fmode = failmodesA[fmodei];
 			String esperimentationStr2 = esperimentationStr + "_failure" + fmode;
@@ -104,21 +105,20 @@ public class A031MainClassSuffixTreeNorm1 {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(6, nrec, (long)0, fmode, gtmem, 1, false, null);
+					results = modelev.computeEvaluationTest(1, nrec, (long)0, fmode, gtmem, 0, false, null);
 					System.out.print(esperimentationStr3 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(6, 1000, (long)0, fmode, gtmem, 1, false, null);
+				results = modelev.computeEvaluationTest(1, 1000, (long)0, fmode, gtmem, 0, false, null);
 				System.out.print(esperimentationStr3 + "_unbounded,");
 				System.out.print(results);
 			}
-		}			
+		}		
 					
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
 	}
-	
 }
