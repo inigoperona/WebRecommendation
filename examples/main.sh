@@ -15,7 +15,7 @@ mkdir -p $validation
 
 
 
-echo "## PREPROCESS ##"
+echo "## PREPROCESING LOGS ##"
 
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A000MainClassPreprocess \
   $preprocess /LOGs_from_Jan9_toNov19.log
@@ -24,6 +24,17 @@ echo "## PREPROCESS ##"
   $database
 
 
+
+
+
+echo "## PREPROCESSING CONTENTS ##"
+
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A100MainClassAddContent \
+  $preprocess \
+  $preprocess \
+  "/document-topic-distributions1_v2.csv" \
+  "/URLs_DM.txt" \
+  "/URLs_to_topic.txt"
 
 
 
@@ -128,22 +139,42 @@ echo "## MARKOV CHAIN ##"
   $validation
 
 
+
+
+
 echo "## GLOBAL SUFFIX TREE ##"
 
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A031MainClassSuffixTree \
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A0310MainClassSuffixTreeGoToRoot \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database /DM_00_no_role_dist \
   $validation
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A031MainClassSuffixTreeSplit \
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A0311MainClassSuffixTreeGoToLongestSuffix \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database /DM00-no_role-split \
   $validation
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A031MainClassSuffixTreeNorm1 \
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A0312MainClassSuffixTreeGoToLongestPrefix \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database /DM_00_no_role_dist \
   $validation
-
-
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A0313MainClassSuffixTreeGoToLength1Suffix \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
+  $database /DM_00_no_role_dist \
+  $validation
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar \
+  ehupatras.webrecommendation.A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffix \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
+  $database /DM_00_no_role_dist \
+  $validation
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar \
+  ehupatras.webrecommendation.A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1SuffixNorm1 \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
+  $database /DM_00_no_role_dist \
+  $validation
+../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar \
+  ehupatras.webrecommendation.A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1SuffixSplit \
+  $preprocess /LOGs_from_Jan9_toNov19.log \
+  $database /DM_00_no_role_dist \
+  $validation
 
 
 
@@ -333,7 +364,7 @@ do
     $database "/"$dm \
     $validation $hclust $hmm
 done
-
+# dot -Tps hmm-generate.dot -o outfile.ps
 
 
 
