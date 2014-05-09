@@ -9,7 +9,7 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A055MainClassHclustST2Split {
+public class A056MainClassModularHclustSpadeST {
 
 	public static void main(String[] args) {
 		
@@ -17,7 +17,7 @@ public class A055MainClassHclustST2Split {
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM00-no_role-split";
+		String dmWD = "/DM_03_intelligent2_dist";
 		//dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
@@ -57,9 +57,6 @@ public class A055MainClassHclustST2Split {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
-		Object[] objA = matrix.readSeqs(databaseWD + dmWD + "/sequences_split.txt");
-		ArrayList<Long> namesSplit = (ArrayList<Long>)objA[0];
-		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
 
 		
 		// HOLD-OUT //
@@ -80,11 +77,12 @@ public class A055MainClassHclustST2Split {
 		//int[] cutthA = {1,2,4,6,8};
 		//float[] cutthA = {0.1f,0.2f,0.4f,0.6f,0.8f, 1f,2f,4f,6f,8f, 10f,15f,20f,25f};
 		//float[] cutthA = {5f, 10f, 20f, 30f, 40f, 50f, 100f, 150f, 200f, 250f, 300f, 400f, 500f, 750f, 1000f}; 
-		float[] cutthA = {4f, 10f, 15f};
-		int[] knnA = {1,2,5,10,100};
+		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
+		//int[] knnA = {1,2,5,10,100};
+		int[] knnA = {100};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, seqsSplit,
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
 				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
@@ -105,15 +103,14 @@ public class A055MainClassHclustST2Split {
 			
 			// Clustering
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
-			//String esperimentationStr = "pam" + (int)cutth;
 			
 			// Load clustering
 			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			
-			// Create clusters-STs
-			modelev.buildClustersSuffixTrees();
 			// Create model of medoids
 			modelev.buildMedoidsModels(0.5f);
+			// Create clusters-SPADE-STs
+			modelev.buildClustersSpadeSuffixTrees();
 			
 			for(int k=0; k<knnA.length; k++){
 				int knn = knnA[k];
