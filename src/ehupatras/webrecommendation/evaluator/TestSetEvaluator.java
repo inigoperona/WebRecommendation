@@ -29,7 +29,8 @@ public class TestSetEvaluator {
 	private int m_knn = 100;
 	
 	// Model: modular approach of ST for each cluster
-	private ArrayList<SuffixTreeStringArray> m_STAL = null;
+	//private ArrayList<SuffixTreeStringArray> m_STAL = null;
+	private ArrayList<MySuffixTree> m_STAL = null;
 	
 	// Model: clust+HMM
 	private HiddenMarkovModel m_hmm = null;
@@ -94,7 +95,7 @@ public class TestSetEvaluator {
 	// CREATOR OF MODULAR APPROACH (CLUSTERS+ST) //
 	
 	public TestSetEvaluator(ArrayList<String[]> sequences, 
-				ArrayList<SuffixTreeStringArray> suffixtreeAL){
+				ArrayList<MySuffixTree> suffixtreeAL){
 		m_STAL = suffixtreeAL;
 		this.constructor(sequences);
 	}
@@ -109,7 +110,7 @@ public class TestSetEvaluator {
 			int knn,
 			boolean isDistance,
 			float[][] rolesW,
-			ArrayList<SuffixTreeStringArray> suffixtreeAL){
+			ArrayList<MySuffixTree> suffixtreeAL){
 		m_medoids = medoids;
 		m_gMedoids = gmedoids;
 		m_knn = knn;

@@ -151,14 +151,14 @@ public class SequenceEvaluator {
 	
 	public SequenceEvaluator(
 				String[] sequence, 
-				ArrayList<SuffixTreeStringArray> suffixtreeAL){
+				ArrayList<MySuffixTree> suffixtreeAL){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorST(sequenceAL, suffixtreeAL);
 	}
 
 	private void constructorST(ArrayList<String> sequence, 
-				ArrayList<SuffixTreeStringArray> suffixtreeAL){
-		m_recommender = new RecommenderClustersSuffixTree(suffixtreeAL);
+				ArrayList<MySuffixTree> suffixtreeAL){
+		m_recommender = new RecommenderClustersSuffixTree2(suffixtreeAL);
 		this.constructor2(sequence);
 	}
 	
@@ -172,7 +172,7 @@ public class SequenceEvaluator {
 				int k,
 				boolean isDistance,
 				float[][] rolesW,
-				ArrayList<SuffixTreeStringArray> suffixtreeAL){
+				ArrayList<MySuffixTree> suffixtreeAL){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructorKnnST(sequenceAL, medoids, gMedoids, k, isDistance, rolesW, suffixtreeAL);
 	}
@@ -183,8 +183,8 @@ public class SequenceEvaluator {
 					int k,
 					boolean isDistance,
 					float[][] rolesW,
-					ArrayList<SuffixTreeStringArray> suffixtreeAL){
-		m_recommender = new RecommenderKnnToSuffixTrees(medoids, gMedoids, suffixtreeAL, isDistance, rolesW, k);
+					ArrayList<MySuffixTree> suffixtreeAL){
+		m_recommender = new RecommenderKnnToSuffixTrees2(medoids, gMedoids, suffixtreeAL, isDistance, rolesW, k);
 		this.constructor2(sequence);
 	}
 	

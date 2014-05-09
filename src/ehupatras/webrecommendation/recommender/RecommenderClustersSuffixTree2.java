@@ -1,7 +1,6 @@
 package ehupatras.webrecommendation.recommender;
 
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -34,6 +33,7 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 
 	// UPDATE FUNCTION
 	
+	// Select STs with longest suffix runnable path
 	public ArrayList<String> update(
 				ArrayList<String> waydone,
 				String newstep, 
@@ -100,18 +100,19 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 	
 	// GET RECOMMENDATIONS //
 	
-	private Object[] getNextpossibleSteps(){
+	// Mix evenly all valid STs' recommendations
+	protected Object[] getNextpossibleSteps(){
 		// take the biggest supports
 		ArrayList<ArrayList<String>> alllistOfURLs = new ArrayList<ArrayList<String>>();
 		for(int i=0; i<m_validSTs.length; i++){
-			if(m_validSTs[i]){	
+			if(m_validSTs[i]){
 				// get the recommendations
 				RecommenderSuffixTree2 rst = m_recSuffixTreeAL.get(i);
 				Object[] objA1 = rst.getNextpossibleSteps();
 				ArrayList<String> listOfURLs1 = (ArrayList<String>)objA1[0];
 				ArrayList<Float> listOfWeights1 = (ArrayList<Float>)objA1[1];
 				// save the list
-				ArrayList<String> listOfURLsOrdered = rst.getTheMostWeightedURLs(1000, listOfURLs1, listOfWeights1);
+				ArrayList<String> listOfURLsOrdered = RecommenderSuffixTree2.getTheMostWeightedFloatURLs(1000, listOfURLs1, listOfWeights1);
 				alllistOfURLs.add(listOfURLsOrdered);
 			}
 		}
@@ -180,8 +181,7 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 		ArrayList<Float> weig = (ArrayList<Float>)objA[1];
 		
 		// get the most weighted URLs
-		RecommenderSuffixTree2 rst2 = m_recSuffixTreeAL.get(0);
-		ArrayList<String> listOfURLs = rst2.getTheMostWeightedURLs(nRecos, list, weig);
+		ArrayList<String> listOfURLs = RecommenderSuffixTree2.getTheMostWeightedFloatURLs(nRecos, list, weig);
 		if(listOfURLs.size()>=nRecos){
 			return listOfURLs;
 		}
@@ -191,7 +191,7 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 		Object[] objA2 = this.getStep1Recommendations(listOfURLs);
 		ArrayList<String> listOfURLsStep1 = (ArrayList<String>)objA2[0];
 		ArrayList<Float> listOfWeightsStep1 = (ArrayList<Float>)objA2[1];
-		ArrayList<String> addlist = rst2.getTheMostWeightedURLs(nRecos-listOfURLs.size(), listOfURLsStep1, listOfWeightsStep1);
+		ArrayList<String> addlist = RecommenderSuffixTree2.getTheMostWeightedFloatURLs(nRecos-listOfURLs.size(), listOfURLsStep1, listOfWeightsStep1);
 		for(int i=0; i<addlist.size(); i++){
 			listOfURLs.add(addlist.get(i));
 		}
@@ -216,7 +216,7 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 	}
 	
 	
-	private Object[] getStep1Recommendations(ArrayList<String> listOfURLs){
+	protected Object[] getStep1Recommendations(ArrayList<String> listOfURLs){
 		ArrayList<String> listOfURLsStep1 = new ArrayList<String>();
 		ArrayList<Float> listOfWeightsStep1 = new ArrayList<Float>();
 		for(int i=0; i<m_recSuffixTreeAL.size(); i++){
@@ -231,7 +231,12 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 					int[] pointers = st.doStep(0, 0, laststep);
 					int pointerNode = pointers[0];
 					int pointerLabel = pointers[1];
-					objA2 = rst.getNextpossibleSteps(pointerNode, pointerLabel);
+					if(pointerNode!=-1){
+						objA2 = rst.getNextpossibleSteps(pointerNode, pointerLabel);
+					} else {
+						rst.reset();
+						objA2 = rst.getNextpossibleSteps();
+					}
 				} else { // we do not have any performable way, so propose from the root
 					rst.reset();
 					objA2 = rst.getNextpossibleSteps();
@@ -264,6 +269,10 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 		objA[0] = listOfURLsStep1;
 		objA[1] = listOfWeightsStep1;
 		return objA;
+	}
+	
+	public void setValidSTs(boolean[] validSTs){
+		m_validSTs =  validSTs;
 	}
 	
 }

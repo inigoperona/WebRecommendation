@@ -204,7 +204,7 @@ public class RecommenderSuffixTree2 implements Recommender {
 		
 		// order the frequencies of searched sequences of the way
 		int realNreco = Math.min(nRecos, nextsteps.size());
-		ArrayList<String> recos = this.getTheMostWeightedURLs(realNreco, nextsteps, freqs);		
+		ArrayList<String> recos = RecommenderSuffixTree2.getTheMostWeightedFloatURLs(realNreco, nextsteps, freqs);		
 		
 		// return the most weighted sequences
 		return recos;
@@ -259,7 +259,7 @@ public class RecommenderSuffixTree2 implements Recommender {
 		// select the most weighted sequences
 		// order the frequencies of searched sequences of the way
 		int realNreco = Math.min(nRecos, nextsteps.size());
-		ArrayList<String> recos = this.getTheMostWeightedURLs(realNreco, nextsteps, listOfWeightsAL);
+		ArrayList<String> recos = RecommenderSuffixTree2.getTheMostWeightedFloatURLs(realNreco, nextsteps, listOfWeightsAL);
 		
 		// return the most weighted sequences
 		return recos;
@@ -274,7 +274,7 @@ public class RecommenderSuffixTree2 implements Recommender {
 		// select the most weighted sequences
 		// order the frequencies of searched sequences of the way
 		int realNreco = Math.min(nRecos, nextsteps1.size());
-		ArrayList<String> recos = this.getTheMostWeightedURLs(realNreco, nextsteps1, listOfWeights1);
+		ArrayList<String> recos = RecommenderSuffixTree2.getTheMostWeightedFloatURLs(realNreco, nextsteps1, listOfWeights1);
 		
 		
 		// RECOMMENDATIONS SHALLOW (1-step) IN THE SUFFIX TREE //
@@ -291,7 +291,7 @@ public class RecommenderSuffixTree2 implements Recommender {
 			ArrayList<Float> listOfWeights3 = (ArrayList<Float>)objA3[1];
 			
 			// get the recommendations ordered
-			ArrayList<String> recos3 = this.getTheMostWeightedURLs(1000, nextsteps3, listOfWeights3);
+			ArrayList<String> recos3 = RecommenderSuffixTree2.getTheMostWeightedFloatURLs(1000, nextsteps3, listOfWeights3);
 		
 			// ADD THE RECOMMENDATIONS TO THE LIST //
 			int i = 0;
@@ -312,7 +312,20 @@ public class RecommenderSuffixTree2 implements Recommender {
 		return recos;
 	}
 	
-	protected ArrayList<String> getTheMostWeightedURLs(
+	protected static ArrayList<String> getTheMostWeightedIntURLs(
+			int nrec, 
+			ArrayList<String> list, 
+			ArrayList<Integer> frequencies){
+		ArrayList<Float> freqs = new ArrayList<Float>();
+		for(int i=0; i<frequencies.size(); i++){
+			int valI = frequencies.get(i).intValue();
+			float valF = (float)valI;
+			freqs.add(valF);
+		}
+		return RecommenderSuffixTree2.getTheMostWeightedFloatURLs(nrec, list, freqs);
+	}
+	
+	protected static ArrayList<String> getTheMostWeightedFloatURLs(
 				int nrec, 
 				ArrayList<String> list, 
 				ArrayList<Float> frequencies){

@@ -2,7 +2,7 @@ package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.clustering.ClusteringHierarchical;
 import ehupatras.clustering.ClusteringPAM;
-import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
+//import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.sequencealignment.multiplealignment.MultipleSequenceAlignment;
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
@@ -57,8 +57,8 @@ public class ModelEvaluator {
 	private ArrayList<MySuffixTree> m_suffixtreeAL = null;
 	
 	// Modular approach Cluster-ST version
-	private ArrayList<ArrayList<SuffixTreeStringArray>> m_clustSuffixTreeAL = null;
-	//private ArrayList<ArrayList<MySuffixTree>> m_clustSuffixTreeAL = null;
+	//private ArrayList<ArrayList<SuffixTreeStringArray>> m_clustSuffixTreeAL = null;
+	private ArrayList<ArrayList<MySuffixTree>> m_clustSuffixTreeAL = null;
 	
 	// Markov Chain
 	private ArrayList<MarkovChain> m_markovChainAL = null;
@@ -509,13 +509,13 @@ public class ModelEvaluator {
 	
 	public void buildClustersSuffixTrees(){
 		// Build Cluster-SuffixTrees for each fold
-		m_clustSuffixTreeAL = new ArrayList<ArrayList<SuffixTreeStringArray>>();
+		m_clustSuffixTreeAL = new ArrayList<ArrayList<MySuffixTree>>();
 		for(int i=0; i<m_nFolds; i++){
 			m_clustSuffixTreeAL.add(this.createClustersSuffixTrees(i));
 		}
 	}
 	
-	private ArrayList<SuffixTreeStringArray> createClustersSuffixTrees(int indexFold){
+	private ArrayList<MySuffixTree> createClustersSuffixTrees(int indexFold){
 		// train sessions names
 		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
 		ArrayList<Long> trainsetnames2 = 
@@ -533,7 +533,7 @@ public class ModelEvaluator {
 		}
 		
 		// for each cluster
-		ArrayList<SuffixTreeStringArray> stAL = new ArrayList<SuffixTreeStringArray>(); 
+		ArrayList<MySuffixTree> stAL = new ArrayList<MySuffixTree>(); 
 		for(int cli=0; cli<=climax; cli++){
 			// take the sessions we are interested in
 			ArrayList<Long> names = new ArrayList<Long>();
@@ -553,7 +553,7 @@ public class ModelEvaluator {
 			}
 			
 			// create the Suffix Tree
-			SuffixTreeStringArray st = this.createSuffixTree(sequences);
+			MySuffixTree st = new MySuffixTree(sequences);
 			stAL.add(st);
 		}
 		
@@ -567,13 +567,13 @@ public class ModelEvaluator {
 	
 	public void buildClustersSpadeSuffixTrees(){
 		// Build Cluster-SuffixTrees for each fold
-		m_clustSuffixTreeAL = new ArrayList<ArrayList<SuffixTreeStringArray>>();
+		m_clustSuffixTreeAL = new ArrayList<ArrayList<MySuffixTree>>();
 		for(int i=0; i<m_nFolds; i++){
 			m_clustSuffixTreeAL.add(this.createClustersSPADESuffixTrees(i));
 		}
 	}
 	
-	private ArrayList<SuffixTreeStringArray> createClustersSPADESuffixTrees(int indexFold){
+	private ArrayList<MySuffixTree> createClustersSPADESuffixTrees(int indexFold){
 		// train sessions names
 		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
 		ArrayList<Long> trainsetnames2 = 
@@ -591,7 +591,7 @@ public class ModelEvaluator {
 		}
 		
 		// for each cluster
-		ArrayList<SuffixTreeStringArray> stAL = new ArrayList<SuffixTreeStringArray>(); 
+		ArrayList<MySuffixTree> stAL = new ArrayList<MySuffixTree>(); 
 		for(int cli=0; cli<=climax; cli++){
 			// take the sessions we are interested in
 			ArrayList<Long> names = new ArrayList<Long>();
@@ -617,19 +617,11 @@ public class ModelEvaluator {
 			//ArrayList<Integer> freqSups = (ArrayList<Integer>)objA[1];
 			
 			// create the Suffix Tree
-			SuffixTreeStringArray st = this.createSuffixTree(freqSeqs);
+			MySuffixTree st = new MySuffixTree(freqSeqs);
 			stAL.add(st);
 		}
 		
 		return stAL;
-	}
-	
-	private SuffixTreeStringArray createSuffixTree(ArrayList<String[]> sequences){
-		SuffixTreeStringArray suffixtree = new SuffixTreeStringArray();
-		for(int i=0; i<sequences.size(); i++){
-			suffixtree.putSequence(sequences.get(i), i);
-		}
-		return suffixtree;
 	}
 	
 	
