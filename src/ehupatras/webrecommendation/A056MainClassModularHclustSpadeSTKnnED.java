@@ -112,7 +112,7 @@ public class A056MainClassModularHclustSpadeSTKnnED {
 			// Create model of medoids
 			modelev.buildMedoidsModels(0.5f);
 			// Create clusters-SPADE-STs
-			modelev.buildClustersSpadeSuffixTrees();
+			modelev.buildClustersSpadeSuffixTrees(0.5f);
 			
 			for(int k=0; k<knnA.length; k++){
 				int knn = knnA[k];

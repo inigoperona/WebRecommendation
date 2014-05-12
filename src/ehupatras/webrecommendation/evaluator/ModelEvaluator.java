@@ -614,7 +614,9 @@ public class ModelEvaluator {
 	
 	// Modular Approach: Cluster-SuffixTree //
 	
-	public void buildClustersSpadeSuffixTrees(){
+	public void buildClustersSpadeSuffixTrees(float minsup){
+		m_minsupport = minsup;
+		
 		// Build Cluster-SuffixTrees for each fold
 		m_clustSuffixTreeAL = new ArrayList<ArrayList<MySuffixTree>>();
 		for(int i=0; i<m_nFolds; i++){

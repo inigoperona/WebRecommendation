@@ -136,8 +136,9 @@ public class MySPADE {
     	}
     	System.out.println("  myspade: initial iteration: " + 
     				seqstrim.size() + "/" + m_nSeqs);
-    	
+    	System.gc();
  
+    	
     	// add URLs as a length-1 sequences
     	ArrayList<String[]> seqs = new ArrayList<String[]>();
     	ArrayList<Integer> seqSups = new ArrayList<Integer>();
