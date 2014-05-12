@@ -505,6 +505,55 @@ public class ModelEvaluator {
 	
 	
 	
+	// SPADE + ST //
+	
+	public void buildSpadeSuffixTrees(float minsup){
+		m_minsupport = minsup;
+		
+		// Build Suffix Trees for each fold
+		m_suffixtreeAL = new ArrayList<MySuffixTree>();
+		for(int i=0; i<m_nFolds; i++){
+			m_suffixtreeAL.add(this.createSpadeSuffixTreeNoWeights(i));
+		}
+	}
+	
+	private MySuffixTree createSpadeSuffixTreeNoWeights(int indexFold){
+		// train sessions names
+		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
+		ArrayList<Long> trainsetnames2 = 
+				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
+		
+		// assignment to each case
+		int[] clindexes = m_clustersAL.get(indexFold);
+		
+		// maximum cluster index
+		int climax = this.getMaxIndex(clindexes);
+		
+		// for each cluster
+		ArrayList<String[]> seqs = new ArrayList<String[]>(); 
+		for(int cli=0; cli<=climax; cli++){
+			// take the sessions we are interested in
+			ArrayList<Long> names = new ArrayList<Long>();
+			for(int i=0; i<clindexes.length; i++){
+				if(cli==clindexes[i]){
+					names.add(trainsetnames2.get(i));
+				}
+			}
+			
+			// get SPADE sequences and add to the general list
+			ArrayList<String[]> freqSeqs = this.getSpadeSequences(names);
+			for(int i=0; i<freqSeqs.size(); i++){
+				seqs.add(freqSeqs.get(i));
+			}
+		}
+		
+		// create the Suffix Tree
+		MySuffixTree st = new MySuffixTree(seqs);
+		return st;
+	}
+	
+	
+	
 	// Modular Approach: Cluster-SuffixTree //
 	
 	public void buildClustersSuffixTrees(){
@@ -581,14 +630,9 @@ public class ModelEvaluator {
 		
 		// assignment to each case
 		int[] clindexes = m_clustersAL.get(indexFold);
+		
 		// maximum cluster index
-		int climax = Integer.MIN_VALUE;
-		for(int i=0; i<clindexes.length; i++){
-			int cli = clindexes[i];
-			if(cli>climax){
-				climax = cli;
-			}
-		}
+		int climax = this.getMaxIndex(clindexes);
 		
 		// for each cluster
 		ArrayList<MySuffixTree> stAL = new ArrayList<MySuffixTree>(); 
@@ -601,20 +645,7 @@ public class ModelEvaluator {
 				}
 			}
 			
-			// take the sequences
-			int[] clusterDMind = m_distancematrix.getSessionIDsIndexes2(names, m_datasetSplit!=null);
-			ArrayList<String[]> sequences = new ArrayList<String[]>(); 
-			for(int i=0; i<clusterDMind.length; i++){
-				int index = clusterDMind[i];
-				String[] seq = this.getDataSet(m_datasetSplit!=null).get(index);
-				sequences.add(seq);
-			}
-			
-			// Create SPADE sequences
-			MySPADE mspade = new MySPADE(sequences, m_minsupport);
-			Object[] objA = mspade.getFrequentSequencess();
-			ArrayList<String[]> freqSeqs = (ArrayList<String[]>)objA[0];
-			//ArrayList<Integer> freqSups = (ArrayList<Integer>)objA[1];
+			ArrayList<String[]> freqSeqs = this.getSpadeSequences(names);
 			
 			// create the Suffix Tree
 			MySuffixTree st = new MySuffixTree(freqSeqs);
@@ -624,6 +655,36 @@ public class ModelEvaluator {
 		return stAL;
 	}
 	
+	
+	private ArrayList<String[]> getSpadeSequences(ArrayList<Long> sesIDs){
+		// take the sequences
+		int[] clusterDMind = m_distancematrix.getSessionIDsIndexes2(sesIDs, m_datasetSplit!=null);
+		ArrayList<String[]> sequences = new ArrayList<String[]>(); 
+		for(int i=0; i<clusterDMind.length; i++){
+			int index = clusterDMind[i];
+			String[] seq = this.getDataSet(m_datasetSplit!=null).get(index);
+			sequences.add(seq);
+		}
+		
+		// Create SPADE sequences
+		MySPADE mspade = new MySPADE(sequences, m_minsupport);
+		Object[] objA = mspade.getFrequentSequencess();
+		ArrayList<String[]> freqSeqs = (ArrayList<String[]>)objA[0];
+		//ArrayList<Integer> freqSups = (ArrayList<Integer>)objA[1];
+		
+		return freqSeqs;
+	}
+	
+	private int getMaxIndex(int[] intArray){
+		int climax = Integer.MIN_VALUE;
+		for(int i=0; i<intArray.length; i++){
+			int cli = intArray[i];
+			if(cli>climax){
+				climax = cli;
+			}
+		}
+		return climax;
+	}
 	
 	
 	

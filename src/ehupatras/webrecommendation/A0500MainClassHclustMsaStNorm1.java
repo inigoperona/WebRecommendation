@@ -9,7 +9,7 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A050MainClassHclustMsaStNorm1 {
+public class A0500MainClassHclustMsaStNorm1 {
 
 	public static void main(String[] args) {
 		// Parameter control

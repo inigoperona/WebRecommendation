@@ -9,29 +9,25 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A050MainClassHclustMsaStSplit {
+public class A0501MainClassHclustSpadeSt {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/kk.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM00-no_role-split";
+		String dmWD = "/DM_00_no_role";
 		//dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
 		String profiWD = "/CL_00_no_role";
 		clustWD = "";
-		profiWD = "";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
 		dmWD = args[3];
 		validationWD = args[4];
 		clustWD = args[5];
-		profiWD = args[6];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -59,10 +55,7 @@ public class A050MainClassHclustMsaStSplit {
 		A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
 		dm.loadDistanceMatrix(databaseWD + dmWD);
 		Matrix matrix = dm.getMatrix();
-		Object[] objA = matrix.readSeqs(databaseWD + dmWD + "/sequences_split.txt");
-		ArrayList<Long> namesSplit = (ArrayList<Long>)objA[0];
-		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
-		
+
 		
 		// HOLD-OUT //
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
@@ -83,7 +76,7 @@ public class A050MainClassHclustMsaStSplit {
 		float[] seqweights = {0.10f, 0.15f, 0.20f};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, seqsSplit, 
+		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
 				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
@@ -108,19 +101,13 @@ public class A050MainClassHclustMsaStSplit {
 			// Load clustering
 			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 
-			// Sequence Alignment
-			modelev.clustersSequenceAlignment();
-			modelev.writeAlignments(validationWD + profiWD + "/" + esperimentationStr + "_alignments.txt");
-			
 			// Weighted Sequences
 			for(int k=0; k<seqweights.length; k++){
 				float minsup = seqweights[k];
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
-				modelev.extractWeightedSequences(minsup);
-				modelev.writeWeightedSequences(validationWD + profiWD + "/" + esperimentationStr2 + ".txt");
 			
 				// Suffix Tree
-				modelev.buildSuffixTrees();
+				modelev.buildSpadeSuffixTrees(minsup);
 			
 				// Evaluation
 				String results;

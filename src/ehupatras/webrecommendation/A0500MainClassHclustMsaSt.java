@@ -6,7 +6,7 @@ import ehupatras.webrecommendation.modelvalidation.*;
 import ehupatras.webrecommendation.evaluator.*;
 import java.util.*;
 
-public class A050MainClassHclustMsaSt {
+public class A0500MainClassHclustMsaSt {
 
 	/**
 	 * @param args
