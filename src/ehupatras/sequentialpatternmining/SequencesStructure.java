@@ -8,25 +8,31 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import ehupatras.webrecommendation.structures.Request;
-
 public class SequencesStructure {
 
+	// The data of the class
 	private ArrayList<String[]> m_seqs = new ArrayList<String[]>();
 	private ArrayList<Integer> m_seqSups = new ArrayList<Integer>();
 	private ArrayList<int[]> m_indsAL = new ArrayList<int[]>();
 	
-	private String m_workdir;
+	// information to write in disk
+	private String m_workdir = "/home/burdinadar/eclipse_workdirectory/DATA";
 	private String m_basenamejavadata = "spade.javaData";
+	
+	// indexes to write
 	private int m_writtenModulus = 0;
 	private int m_actualModulusInMemory = 0;
 	private int m_actualLoadedSequence = 0;
-	private int m_maxLoadedSequences = 100;
+	private int m_maxLoadedSequences = 10000;
 	private int m_lastModulusLastIndex = 0;
+	
+	public SequencesStructure(String workdir){
+		m_workdir = workdir;
+	}
 	
 	public void add(String[] sequence, int support, int[] indexes){
 		
-		// we are not in the last mosulus to add
+		// we are not in the last modulus to add
 		if(m_writtenModulus>m_actualModulusInMemory){
 			this.saveModulus(m_actualModulusInMemory);
 			this.loadModulus(m_writtenModulus);
@@ -35,15 +41,15 @@ public class SequencesStructure {
 		// we are in the last modulus, but it is full
 		if(m_actualLoadedSequence>=m_maxLoadedSequences){
 			this.saveModulus(m_writtenModulus);
-			// update counters
-			m_writtenModulus++;
-			m_actualLoadedSequence++;
 			// initialize parameters
 			m_actualLoadedSequence = 0;
 			m_seqs = new ArrayList<String[]>();
 			m_seqSups = new ArrayList<Integer>();
 			m_indsAL = new ArrayList<int[]>();
 			System.gc();
+			// update counters
+			m_writtenModulus++;
+			m_actualModulusInMemory++;
 		}
 		
 		// add the new sequence
@@ -54,6 +60,45 @@ public class SequencesStructure {
 		
 		// save the last modulus last index
 		m_lastModulusLastIndex = m_actualLoadedSequence;
+	}
+	
+	public Object[] getSequence(int i) {
+		int imodulus = i / m_maxLoadedSequences;
+		int iindex = i % m_maxLoadedSequences;
+		if(m_actualModulusInMemory!=imodulus){
+			int oldmod = m_actualModulusInMemory;
+			this.saveModulus(m_actualModulusInMemory);
+			this.loadModulus(imodulus);
+		}
+		Object[] objA = new Object[3];
+		objA[0] = m_seqs.get(iindex);
+		objA[1] = m_seqSups.get(iindex);
+		objA[2] = m_indsAL.get(iindex);
+		return objA;
+	}
+	
+	public int size() {
+		return m_writtenModulus*m_maxLoadedSequences + m_lastModulusLastIndex;
+	}
+	
+	public ArrayList<String[]> getSequences(){
+		ArrayList<String[]> seqs = new ArrayList<String[]>();
+		for(int i=0; i<this.size(); i++){
+			Object[] objA = this.getSequence(i);
+			String[] seq = (String[])objA[0];
+			seqs.add(seq);
+		}
+		return seqs;
+	}
+	
+	public ArrayList<Integer> getSequencesSupports(){
+		ArrayList<Integer> sups = new ArrayList<Integer>();
+		for(int i=0; i<this.size(); i++){
+			Object[] objA = this.getSequence(i);
+			int sup = (int)objA[1];
+			sups.add(sup);
+		}
+		return sups;
 	}
 	
 	
@@ -117,7 +162,7 @@ public class SequencesStructure {
 			Object[] objA = (Object[])ois.readObject();
 			m_seqs = (ArrayList<String[]>)objA[0];
 			m_seqSups= (ArrayList<Integer>)objA[1];
-			m_indsAL = (ArrayList<int[]>)objA[3];
+			m_indsAL = (ArrayList<int[]>)objA[2];
 		} catch(IOException ex){
 			System.err.println("[ehupatras.sequentialpatternmining.SequencesStructure.loadModulus] " +
 					"Problems at reading the file: " + outputfilename);

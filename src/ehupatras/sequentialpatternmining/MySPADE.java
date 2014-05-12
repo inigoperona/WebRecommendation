@@ -105,7 +105,7 @@ public class MySPADE {
 	}
 	
 	
-	public Object[] getFrequentSequencess(){
+	public Object[] getFrequentSequences(String wordir){
 		// get frequent URLs
 		Object[] objA = this.getFrequentSequencesLength1();
 		ArrayList<String> urls = (ArrayList<String>)objA[0];
@@ -140,27 +140,30 @@ public class MySPADE {
  
     	
     	// add URLs as a length-1 sequences
-    	ArrayList<String[]> seqs = new ArrayList<String[]>();
-    	ArrayList<Integer> seqSups = new ArrayList<Integer>();
-    	ArrayList<int[]> indsAL = new ArrayList<int[]>();
+    	SequencesStructure ss = new SequencesStructure(wordir);
     	for(int i=0; i<urls.size(); i++){
+    		// url1-seq
     		String url = urls.get(i);
     		String[] seq = new String[1];
     		seq[0] = url;
-    		seqs.add(seq);
-    		seqSups.add(urlSups.get(i));
+    		// support
+    		int sup = urlSups.get(i);
+    		// find indexes
     		int[] inds = new int[seqstrim.size()];
     		for(int j=0; j<seqstrim.size(); j++){
     			int ind = seqstrim.get(j).indexOf(url);
     			inds[j] = ind;
     		}
-    		indsAL.add(inds);
+    		// add the sequence
+    		ss.add(seq, sup, inds);
     	}
     	
-    	// create new sequences using frequent URLs
-    	for(int i=0; i<seqs.size(); i++){
-    		String[] seq = seqs.get(i);
-    		int[] inds = indsAL.get(i);
+    	// create new sequences using frequent URLs 
+    	for(int i=0; i<ss.size(); i++){
+    		Object[] seqInf = ss.getSequence(i);
+    		String[] seq = (String[])seqInf[0];
+    		int sup = (int)seqInf[1];
+    		int[] inds = (int[])seqInf[2];
     		
     		// add frequent URL and count
     		for(int j=0; j<urls.size(); j++){
@@ -190,9 +193,7 @@ public class MySPADE {
     					newseq[k] = seq[k];
     				}
     				newseq[k] = url;
-    				seqs.add(newseq);
-    				seqSups.add(freq);
-    				indsAL.add(inds2);
+    				ss.add(newseq, freq, inds2);
     				System.out.println("  myspade: " + i + "x" + j + " iteration: " +
     							freq + "/" + m_nSeqs);
     			}
@@ -201,8 +202,8 @@ public class MySPADE {
     	
     	// prepare the sequences to return
     	Object[] objRe = new Object[2];
-    	objRe[0] = seqs;
-    	objRe[1] = seqSups;
+    	objRe[0] = ss.getSequences();
+    	objRe[1] = ss.getSequencesSupports();
     	return objRe;
 	}
 	
@@ -255,7 +256,7 @@ public class MySPADE {
 		
 		// frequent sequences
 		System.out.println("--- Frequent Sequences ---");
-		Object[] objA2 = msp.getFrequentSequencess();
+		Object[] objA2 = msp.getFrequentSequences("/home/burdinadar/eclipse_workdirectory/DATA");
 		ArrayList<String[]> freqSeqs = (ArrayList<String[]>)objA2[0];
 		ArrayList<Integer> freqSups = (ArrayList<Integer>)objA2[1];
 		for(int i=0; i<freqSeqs.size(); i++){

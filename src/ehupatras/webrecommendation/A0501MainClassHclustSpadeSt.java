@@ -20,14 +20,16 @@ public class A0501MainClassHclustSpadeSt {
 		//dmWD = "";
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
-		String profiWD = "/CL_00_no_role";
 		clustWD = "";
+		String profiWD = "/CL_00_no_role";
+		profiWD = "";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
 		dmWD = args[3];
 		validationWD = args[4];
 		clustWD = args[5];
+		profiWD = args[6];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -107,7 +109,7 @@ public class A0501MainClassHclustSpadeSt {
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 			
 				// Suffix Tree
-				modelev.buildSpadeSuffixTrees(minsup);
+				modelev.buildSpadeSuffixTrees(minsup, validationWD + profiWD);
 			
 				// Evaluation
 				String results;

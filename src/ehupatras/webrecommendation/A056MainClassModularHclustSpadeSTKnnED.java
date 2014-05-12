@@ -22,12 +22,15 @@ public class A056MainClassModularHclustSpadeSTKnnED {
 		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String clustWD = "/CL_00_no_role";
 		clustWD = "";
+		String profiWD = "/CL_00_no_role";
+		profiWD = "";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
 		dmWD = args[3];
 		validationWD = args[4];
 		clustWD = args[5];
+		profiWD = args[6];
 		
 		
 		
@@ -112,7 +115,7 @@ public class A056MainClassModularHclustSpadeSTKnnED {
 			// Create model of medoids
 			modelev.buildMedoidsModels(0.5f);
 			// Create clusters-SPADE-STs
-			modelev.buildClustersSpadeSuffixTrees(0.5f);
+			modelev.buildClustersSpadeSuffixTrees(0.5f, validationWD + profiWD);
 			
 			for(int k=0; k<knnA.length; k++){
 				int knn = knnA[k];
