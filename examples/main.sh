@@ -173,9 +173,8 @@ echo "## GLOBAL SUFFIX TREE ##"
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar \
   ehupatras.webrecommendation.A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1SuffixSplit \
   $preprocess /LOGs_from_Jan9_toNov19.log \
-  $database /DM_00_no_role_dist \
+  $database /DM00-no_role-split \
   $validation
-
 
 
 
@@ -303,20 +302,20 @@ done
 
 echo "## HCLUST+SPADE ##"
 
-for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2" "DM_05_ncd_bzip2" "DM_05_ncd_gzip"
+for dm in "DM_04_edit"
 do
   hclust="/hclust_"$dm
   echo " "$hclust"_spade"
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A052MainClassHclustSpade \
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A052MainClassHclustSpadeKnnED \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $hclust
 done
-for dm in "DM00-no_role-split" "DM03-U_HC2-split" "DM04-edit-split"
+for dm in "DM04-edit-split"
 do
   hclust="/hclust_"$dm
   echo " "$hclust"_spade"
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A052MainClassHclustSpadeSplit \
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A052MainClassHclustSpadeKnnEDSplit \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $hclust
@@ -326,7 +325,7 @@ done
 
 echo "## PAM+SPADE ##"
 
-for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2" "DM_05_ncd_bzip2" "DM_05_ncd_gzip"
+for dm in "DM_04_edit"
 do
   pam="/pam_"$dm
   echo " "$pam"_spade"
@@ -335,7 +334,7 @@ do
     $database "/"$dm \
     $validation $pam
 done
-for dm in "DM00-no_role-split" "DM03-U_HC2-split" "DM04-edit-split"
+for dm in "DM04-edit-split"
 do
     pam="/pam_"$dm
   echo " "$pam"_spade"
@@ -396,20 +395,20 @@ done
 
 echo "### Hclust+ST+knn (Modular approach 2) ###"
 
-for dm in "DM_00_no_role_dist" "DM_03_intelligent2_dist" "DM_04_edit" "DM_00_no_role_dist_topics" "DM_03_intelligent2_dist_topics" "DM_04_edit_dist_topics" "DM_00_no_role_dist_topics2" "DM_03_intelligent2_dist_topics2" "DM_04_edit_dist_topics2" "DM_05_ncd_bzip2" "DM_05_ncd_gzip"
+for dm in "DM_04_edit"
 do
   hclust="/hclust_"$dm
   echo " "$hclust"_modular2"
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A055MainClassHclustST2 \
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A055MainClassModularHclustST2KnnED \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $hclust
 done
-for dm in "DM00-no_role-split" "DM03-U_HC2-split" "DM04-edit-split"
+for dm in "DM04-edit-split"
 do
   hclust="/hclust_"$dm
   echo " "$hclust"_modular2"
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A055MainClassHclustST2Split \
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A055MainClassModularHclustST2KnnEDSplit \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $hclust
