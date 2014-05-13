@@ -11,7 +11,7 @@ public class MySPADE {
 	private int m_nSeqs;
 	
 	// frequency of URLs
-	private double m_minsupport = 0.5d;
+	private float m_minsupport = 0.5f;
 	private String[] m_urls;
 	private int[] m_freqs;
 	private int m_minfreq;
@@ -111,6 +111,8 @@ public class MySPADE {
 		ArrayList<String> urls = (ArrayList<String>)objA[0];
     	ArrayList<Integer> urlSups = (ArrayList<Integer>)objA[1];
     	
+    	// take time
+    	long starttime = System.currentTimeMillis();
     	
     	// remove those no frequent URLs
     	ArrayList<ArrayList<String>> seqstrim = new ArrayList<ArrayList<String>>(); 
@@ -135,7 +137,7 @@ public class MySPADE {
     		}
     	}
     	System.out.println("  myspade: initial iteration: " + 
-    				seqstrim.size() + "/" + m_nSeqs);
+    				seqstrim.size() + "/" + m_nSeqs + " reduction.");
     	System.gc();
  
     	
@@ -157,9 +159,16 @@ public class MySPADE {
     		// add the sequence
     		ss.add(seq, sup, inds);
     	}
+    	System.out.println("  myspade: " + ss.size() + " 1-length sequences created.");
     	
     	// create new sequences using frequent URLs 
     	for(int i=0; i<ss.size(); i++){
+    		// verbose
+    		if(i % 1000 == 0){
+    			System.out.println("  myspade: " + i + "/" + ss.size() + "  sequences created.");
+    		}
+    		
+    		// get the request we want
     		Object[] seqInf = ss.getSequence(i);
     		String[] seq = (String[])seqInf[0];
     		int sup = (int)seqInf[1];
@@ -194,11 +203,19 @@ public class MySPADE {
     				}
     				newseq[k] = url;
     				ss.add(newseq, freq, inds2);
+    				/*
     				System.out.println("  myspade: " + i + "x" + j + " iteration: " +
     							freq + "/" + m_nSeqs);
+    				*/
     			}
     		}
     	}
+    	
+    	// verbose
+    	long endtime = System.currentTimeMillis();
+    	long secs = (endtime - starttime) / 1000;
+    	System.out.println("  myspade: " + ss.size() + " SPADE sequences created. " + 
+    				secs + " seconds needed.");
     	
     	// prepare the sequences to return
     	Object[] objRe = new Object[2];

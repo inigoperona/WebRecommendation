@@ -11,69 +11,75 @@ import java.util.ArrayList;
 public class SequencesStructure {
 
 	// The data of the class
-	private ArrayList<String[]> m_seqs = new ArrayList<String[]>();
-	private ArrayList<Integer> m_seqSups = new ArrayList<Integer>();
-	private ArrayList<int[]> m_indsAL = new ArrayList<int[]>();
-	
+	// WRITE
+	private ArrayList<String[]> m_seqsW = new ArrayList<String[]>();
+	private ArrayList<Integer> m_seqSupsW = new ArrayList<Integer>();
+	private ArrayList<int[]> m_indsALW = new ArrayList<int[]>();
+	// READ
+	private ArrayList<String[]> m_seqsR = null;
+	private ArrayList<Integer> m_seqSupsR = null;
+	private ArrayList<int[]> m_indsALR = null;
+
 	// information to write in disk
 	private String m_workdir = "/home/burdinadar/eclipse_workdirectory/DATA";
 	private String m_basenamejavadata = "spade.javaData";
 	
-	// indexes to write
+	// indexes
+	private int m_maxLoadedSequences = 1000;
+	// indexes related with saving modulus
 	private int m_writtenModulus = 0;
-	private int m_actualModulusInMemory = 0;
-	private int m_actualLoadedSequence = 0;
-	private int m_maxLoadedSequences = 10000;
 	private int m_lastModulusLastIndex = 0;
+	// indexes related with reading modulus
+	private int m_actualModulusInMemory = -1;
+	
 	
 	public SequencesStructure(String workdir){
 		m_workdir = workdir;
 	}
 	
 	public void add(String[] sequence, int support, int[] indexes){
-		
-		// we are not in the last modulus to add
-		if(m_writtenModulus>m_actualModulusInMemory){
-			this.saveModulus(m_actualModulusInMemory);
-			this.loadModulus(m_writtenModulus);
-		}
-		
 		// we are in the last modulus, but it is full
-		if(m_actualLoadedSequence>=m_maxLoadedSequences){
+		if(m_lastModulusLastIndex>=m_maxLoadedSequences){
 			this.saveModulus(m_writtenModulus);
 			// initialize parameters
-			m_actualLoadedSequence = 0;
-			m_seqs = new ArrayList<String[]>();
-			m_seqSups = new ArrayList<Integer>();
-			m_indsAL = new ArrayList<int[]>();
+			m_lastModulusLastIndex = 0;
+			m_seqsW = new ArrayList<String[]>();
+			m_seqSupsW = new ArrayList<Integer>();
+			m_indsALW = new ArrayList<int[]>();
 			System.gc();
 			// update counters
 			m_writtenModulus++;
-			m_actualModulusInMemory++;
 		}
-		
 		// add the new sequence
-		m_seqs.add(sequence);
-		m_seqSups.add(support);
-		m_indsAL.add(indexes);
-		m_actualLoadedSequence++;
-		
-		// save the last modulus last index
-		m_lastModulusLastIndex = m_actualLoadedSequence;
+		m_seqsW.add(sequence);
+		m_seqSupsW.add(support);
+		m_indsALW.add(indexes);
+		m_lastModulusLastIndex++;		
 	}
 	
 	public Object[] getSequence(int i) {
+		// compute modulus indexes
 		int imodulus = i / m_maxLoadedSequences;
 		int iindex = i % m_maxLoadedSequences;
-		if(m_actualModulusInMemory!=imodulus){
-			int oldmod = m_actualModulusInMemory;
-			this.saveModulus(m_actualModulusInMemory);
-			this.loadModulus(imodulus);
-		}
+		
+		// the structure we are going to return
 		Object[] objA = new Object[3];
-		objA[0] = m_seqs.get(iindex);
-		objA[1] = m_seqSups.get(iindex);
-		objA[2] = m_indsAL.get(iindex);
+
+		// if we want data from the last modul take from the write-structure
+		if(imodulus==m_writtenModulus){
+			objA[0] = m_seqsW.get(iindex);
+			objA[1] = m_seqSupsW.get(iindex);
+			objA[2] = m_indsALW.get(iindex);
+		} else {
+			if(imodulus!=m_actualModulusInMemory){
+				this.loadModulus(imodulus);
+			}
+			objA[0] = m_seqsR.get(iindex);
+			objA[1] = m_seqSupsR.get(iindex);
+			objA[2] = m_indsALR.get(iindex);
+		}
+		
+		// return structure
 		return objA;
 	}
 	
@@ -122,9 +128,9 @@ public class SequencesStructure {
 		ObjectOutputStream oos = null;
 		try{
 			Object[] objA = new Object[3];
-			objA[0] = m_seqs;
-			objA[1] = m_seqSups;
-			objA[2] = m_indsAL;
+			objA[0] = m_seqsW;
+			objA[1] = m_seqSupsW;
+			objA[2] = m_indsALW;
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(objA);
 		} catch (IOException ex){
@@ -160,9 +166,9 @@ public class SequencesStructure {
 		try{
 			ois = new ObjectInputStream(fis);
 			Object[] objA = (Object[])ois.readObject();
-			m_seqs = (ArrayList<String[]>)objA[0];
-			m_seqSups= (ArrayList<Integer>)objA[1];
-			m_indsAL = (ArrayList<int[]>)objA[2];
+			m_seqsR = (ArrayList<String[]>)objA[0];
+			m_seqSupsR = (ArrayList<Integer>)objA[1];
+			m_indsALR = (ArrayList<int[]>)objA[2];
 		} catch(IOException ex){
 			System.err.println("[ehupatras.sequentialpatternmining.SequencesStructure.loadModulus] " +
 					"Problems at reading the file: " + outputfilename);
