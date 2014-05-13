@@ -189,7 +189,7 @@ public class TestSetEvaluator {
 								m_isDistance, m_rolesW);
 			} else if(m_hmm!=null){
 				// clust+HMM
-				seqEv = new SequenceEvaluator(seq, m_hmm);
+				seqEv = new SequenceEvaluator(seq, m_hmm, maxMemory);
 			} else {
 				// Markov Chain
 				seqEv = new SequenceEvaluator(seq, m_markovchain);

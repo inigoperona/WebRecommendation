@@ -21,6 +21,9 @@ public class MySPADE {
 		m_nSeqs = sequences.size();
 		m_minsupport = minsup;
 		m_minfreq = (int)Math.ceil( (float)m_nSeqs*m_minsupport );
+		if(m_minfreq<3){ // ensure a minimum amount of repetitions
+			m_minfreq = 3;
+		}
 		
 		Hashtable<String,Integer> frequencies = new Hashtable<String,Integer>();
 		for(int i=0; i<sequences.size(); i++){
@@ -160,12 +163,14 @@ public class MySPADE {
     		ss.add(seq, sup, inds);
     	}
     	System.out.println("  myspade: " + ss.size() + " 1-length sequences created.");
+    	System.out.println("  myspade: minsup=" + m_minsupport + "; " +
+    								"minfreq=" + m_minfreq);
     	
     	// create new sequences using frequent URLs 
     	for(int i=0; i<ss.size(); i++){
     		// verbose
-    		if(i % 1000 == 0){
-    			System.out.println("  myspade: " + i + "/" + ss.size() + "  sequences created.");
+    		if(i%1000 == 0){
+    			System.out.println("  myspade: " + i + "/" + ss.size() + " sequences created.");
     		}
     		
     		// get the request we want

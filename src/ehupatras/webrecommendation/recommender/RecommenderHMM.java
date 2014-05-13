@@ -11,9 +11,11 @@ public class RecommenderHMM implements Recommender {
 	private HiddenMarkovModel m_hmm = null;
 	private ArrayList<String> m_waydone = new ArrayList<String>();
 	private int m_0recos = 0;
+	private int m_nNextSteps = 3;
 
-	public RecommenderHMM(HiddenMarkovModel hmm){
+	public RecommenderHMM(HiddenMarkovModel hmm, int nNextSteps){
 		m_hmm = hmm;
+		m_nNextSteps = nNextSteps;
 	}
 	
 	public void reset(){
@@ -31,7 +33,7 @@ public class RecommenderHMM implements Recommender {
 	}
 	
 	private ArrayList<String> getNextpossibleSteps(int nRecos){
-		Object[] objA = m_hmm.getNextUrls(m_waydone, 3);
+		Object[] objA = m_hmm.getNextUrls(m_waydone, m_nNextSteps);
 		ArrayList<String> urls = (ArrayList<String>)objA[0];
 		ArrayList<Float> supports = (ArrayList<Float>)objA[1];
 		ArrayList<String> recos = this.getTheMostWeightedURLs(nRecos, urls, supports);

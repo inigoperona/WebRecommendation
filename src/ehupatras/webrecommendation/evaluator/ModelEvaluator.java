@@ -11,6 +11,7 @@ import ehupatras.weightedsequence.WeightedSequence;
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.markovmodel.hmm.HiddenMarkovModel;
 import ehupatras.markovmodel.hmm.HiddenMarkovModel000;
+import ehupatras.markovmodel.hmm.HiddenMarkovModel001;
 import ehupatras.clustering.cvi.CVI;
 import ehupatras.sequentialpatternmining.MySPADE;
 import java.io.BufferedWriter;
@@ -809,15 +810,15 @@ public class ModelEvaluator {
 	
 	// Hidden Markov Model //
 	
-	public void buildHiddenMarkovModels(String outfilename){
+	public void buildHiddenMarkovModels(String outfilename, int hmmMode){
 		// compute markov chain for each fold
 		m_hmmAL = new ArrayList<HiddenMarkovModel>();
 		for(int i=0; i<m_nFolds; i++){
-			m_hmmAL.add(this.getHMM(i, outfilename));
+			m_hmmAL.add(this.getHMM(i, outfilename, hmmMode));
 		}
 	}
 	
-	private HiddenMarkovModel getHMM(int indexFold, String outfilename){
+	private HiddenMarkovModel getHMM(int indexFold, String outfilename, int hmmMode){
 		// train sequences indexes
 		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
 		int[] trInds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
@@ -826,22 +827,45 @@ public class ModelEvaluator {
 		int[] clInds = m_clustersAL.get(indexFold);
 		
 		// create the HMM
-		HiddenMarkovModel initHmm = 
-				new HiddenMarkovModel000(m_dataset, trInds, clInds); 
+		HiddenMarkovModel initHmm;
+		if(hmmMode==0){
+			initHmm = new HiddenMarkovModel000(m_dataset, trInds, clInds);
+		} else { // hmmMode==1
+			initHmm = new HiddenMarkovModel001(m_dataset, trInds, clInds);
+		}
 		initHmm.initializeHmmParameters();
-		this.writeHMMs(initHmm, outfilename + "_f" + indexFold + "_initHmm.txt");
+		this.writeHMMsTXT(initHmm, outfilename + "_f" + indexFold + "_initHmm.txt");
+		this.writeHMMsDOT(initHmm, outfilename + "_f" + indexFold + "_initHmm.dot");
 		
 		return initHmm;
-		//HiddenMarkovModel learntHmm = initHmm.baumWelch();
-		//this.writeHMMs(learntHmm, outfilename + "_f" + indexFold + "_learntHmm.txt");
-		//return learntHmm;
 	}
 	
-	private void writeHMMs(HiddenMarkovModel hmm, String outfile){
+	private HiddenMarkovModel getTrainnedHMM(int indexFold, String outfilename, int hmmMode){		
+		// create the HMM
+		HiddenMarkovModel initHmm = this.getHMM(indexFold, outfilename, hmmMode); 
+		initHmm.initializeHmmParameters();
+		this.writeHMMsTXT(initHmm, outfilename + "_f" + indexFold + "_initHmm.txt");
+		this.writeHMMsDOT(initHmm, outfilename + "_f" + indexFold + "_initHmm.dot");
+		
+		// Train it
+		HiddenMarkovModel learntHmm = initHmm.baumWelch();
+		this.writeHMMsTXT(learntHmm, outfilename + "_f" + indexFold + "_learntHmm.txt");
+		this.writeHMMsDOT(learntHmm, outfilename + "_f" + indexFold + "_learntHmm.dot");
+		return learntHmm;
+	}
+	
+	private void writeHMMsTXT(HiddenMarkovModel hmm, String outfile){
 		for(int i=0; i<m_nFolds; i++){
-			hmm.writeHMM(outfile);
+			hmm.writeHMMtxt(outfile);
 		}
 	}
+	
+	private void writeHMMsDOT(HiddenMarkovModel hmm, String outfile){
+		for(int i=0; i<m_nFolds; i++){
+			hmm.writeHMMdot(outfile);
+		}
+	}
+	
 	
 	
 	

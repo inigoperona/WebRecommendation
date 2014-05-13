@@ -193,15 +193,17 @@ public class SequenceEvaluator {
 	// CREATOR clust+HMM //
 	
 	public SequenceEvaluator(String[] sequence, 
-			HiddenMarkovModel hmm){
-		m_recommender = new RecommenderHMM(hmm);
+			HiddenMarkovModel hmm,
+			int nNextSteps){
+		m_recommender = new RecommenderHMM(hmm, nNextSteps);
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructor2(sequenceAL);
 	}
 	
 	public SequenceEvaluator(ArrayList<String> sequence, 
-			HiddenMarkovModel hmm){
-		m_recommender = new RecommenderHMM(hmm);
+			HiddenMarkovModel hmm,
+			int nNextSteps){
+		m_recommender = new RecommenderHMM(hmm, nNextSteps);
 		this.constructor2(sequence);
 	}
 	

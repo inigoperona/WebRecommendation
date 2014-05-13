@@ -86,7 +86,129 @@ public abstract class HiddenMarkovModel {
 	
 	// INITIALIZATION //
 	
-	public abstract void initializeHmmParameters();
+	protected abstract void createHMM(int nStates, double[] initProbs, ArrayList<double[]> emissions);
+	
+	public void initializeHmmParameters(){
+		// State & emissions information
+		int globalpos = 0;
+		m_dictSta = new ArrayList<Integer>();
+		ArrayList<double[]> emissions = new ArrayList<double[]>();
+		ArrayList<Integer> initPiFreq = new ArrayList<Integer>();
+		int nPi = 0;
+		
+		// for each cluster
+		for(int cli=0; cli<=m_maxClusterIndex; cli++){
+			
+			// take cluster's sequences
+			int longestSeqLength = -1;
+			ArrayList<int[]> cluster = new ArrayList<int[]>();  
+			for(int j=0; j<m_clusters.length; j++){
+				int clj = m_clusters[j];
+				if(cli==clj){
+					String[] seq = m_dataset.get(m_trainIndexes[j]);
+					int[] seqInt = convertUrlsDict(seq);
+					cluster.add(seqInt);
+					if(longestSeqLength<seqInt.length){
+						longestSeqLength = seqInt.length;
+					}
+				}
+			}
+			
+			// for each position
+			for(int pos=0; pos<longestSeqLength; pos++){
+				int posName = cli*m_bufferPositions + pos;
+				
+				// compute the frequencies of URLs in each position
+				int[] ePosFreqs = new int[m_dictObs.size()];
+				int nE = 0;
+				for(int k=0; k<cluster.size(); k++){
+					int[] seq = cluster.get(k);
+					if(pos<seq.length){
+						// update emissions
+						int url = seq[pos];
+						ePosFreqs[url]++;
+						nE++;
+					}
+				}
+				
+				// convert emission frequencies to probabilities
+				double[] ePosProbs = new double[ePosFreqs.length];
+				for(int k=0; k<ePosFreqs.length; k++){
+					ePosProbs[k] = (double)ePosFreqs[k] / (double)nE;
+				}
+				
+				// save the state-emissions vector
+				emissions.add(ePosProbs);
+				// update the initial states probabilities
+				if(pos==0){
+					int sizeCl = cluster.size();
+					initPiFreq.add(sizeCl);
+					nPi = nPi + sizeCl;
+				} else {
+					initPiFreq.add(0);
+				}
+				// update the global position indexes
+				m_dictSta.add(posName);
+				globalpos++;
+			}
+		}
+		
+		// convert emission frequencies to probabilities
+		double[] initPiProb = new double[initPiFreq.size()];
+		for(int k=0; k<initPiFreq.size(); k++){
+			initPiProb[k] = (double)initPiFreq.get(k) / (double)nPi;
+		}
+
+		
+		// CREATE THE HMM //
+		this.createHMM(globalpos, initPiProb, emissions);
+	}
+	
+	
+	protected int getNextStateByStateInd(int stateInd, int n){
+		// actual cluster identification
+		int actual = m_dictSta.get(stateInd);
+		int actualCl = actual / m_bufferPositions;
+		
+		// the next position exists?
+		int nextCl = this.getNextPositionCluster(stateInd, n);
+
+		// and the next position is in the same cluster-sequence?
+		int nextPos;
+		if(actualCl==nextCl){
+			// the next element is the same cluster-sequence
+			nextPos = stateInd+n;
+		} else {
+			// the next element is in another cluster,
+			// so tie it with the first element
+			nextPos = this.getFirstStateInd(actualCl);
+		}
+		
+		return nextPos;
+	}
+	
+	protected int getNextPositionCluster(int stateInd, int position){
+		// the next position exists?
+		int nextCl = -1;
+		if((stateInd+position)<m_dictSta.size()){
+			int next = m_dictSta.get(stateInd+position);
+			nextCl = next / m_bufferPositions;
+		}
+		return nextCl;
+	}
+	
+	protected int getFirstStateInd(int clusterId){
+		int firstPos = -1;
+		for(int i=0; i<m_dictSta.size(); i++){
+			int stId = m_dictSta.get(i);
+			int clId = stId / m_bufferPositions;
+			if(clusterId==clId){
+				firstPos = i;
+				break;
+			}
+		}
+		return firstPos;
+	}
 	
 	protected int[] convertUrlsDict(String[] strA){
 		int[] intA = new int[strA.length];
@@ -284,7 +406,7 @@ public abstract class HiddenMarkovModel {
 		return out;
 	}
 	
-	public void writeHMM(String outfile){
+	public void writeHMMtxt(String outfile){
 		BufferedWriter writer = null;
 		try{
 			writer = new BufferedWriter(new FileWriter(outfile));
@@ -298,7 +420,18 @@ public abstract class HiddenMarkovModel {
 		}
 	}
 	
-	
+	public void writeHMMdot(String outfile){
+		// drawing
+		GenericHmmDrawerDot hmmDrawer1 = new GenericHmmDrawerDot();
+		try {
+			hmmDrawer1.write(m_hmm, outfile);
+		}
+		catch (IOException e) {
+			System.err.println("Error at drawing the HMM.");
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 	
 	
 	

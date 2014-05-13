@@ -14,90 +14,15 @@ public class HiddenMarkovModel000 extends HiddenMarkovModel {
 			int[] clusterAL){
 		super(dataset, trainIndexes, clusterAL);
 	}
-	
-	public void initializeHmmParameters(){
-		// State & emissions information
-		int globalpos = 0;
-		m_dictSta = new ArrayList<Integer>();
-		ArrayList<double[]> emissions = new ArrayList<double[]>();
-		ArrayList<Integer> initPiFreq = new ArrayList<Integer>();
-		int nPi = 0;
 		
-		// for each cluster
-		for(int cli=0; cli<=m_maxClusterIndex; cli++){
-			
-			// take cluster's sequences
-			int longestSeqLength = -1;
-			ArrayList<int[]> cluster = new ArrayList<int[]>();  
-			for(int j=0; j<m_clusters.length; j++){
-				int clj = m_clusters[j];
-				if(cli==clj){
-					String[] seq = m_dataset.get(m_trainIndexes[j]);
-					int[] seqInt = convertUrlsDict(seq);
-					cluster.add(seqInt);
-					if(longestSeqLength<seqInt.length){
-						longestSeqLength = seqInt.length;
-					}
-				}
-			}
-			
-			// for each position
-			for(int pos=0; pos<longestSeqLength; pos++){
-				int posName = cli*m_bufferPositions + pos;
-				
-				// compute the frequencies of URLs in each position
-				int[] ePosFreqs = new int[m_dictObs.size()];
-				int nE = 0;
-				for(int k=0; k<cluster.size(); k++){
-					int[] seq = cluster.get(k);
-					if(pos<seq.length){
-						// update emissions
-						int url = seq[pos];
-						ePosFreqs[url]++;
-						nE++;
-					}
-				}
-				
-				// convert emission frequencies to probabilities
-				double[] ePosProbs = new double[ePosFreqs.length];
-				for(int k=0; k<ePosFreqs.length; k++){
-					ePosProbs[k] = (double)ePosFreqs[k] / (double)nE;
-				}
-				
-				// save the state-emissions vector
-				emissions.add(ePosProbs);
-				// update the initial states probabilities
-				if(pos==0){
-					int sizeCl = cluster.size();
-					initPiFreq.add(sizeCl);
-					nPi = nPi + sizeCl;
-				} else {
-					initPiFreq.add(0);
-				}
-				// update the global position indexes
-				m_dictSta.add(posName);
-				globalpos++;
-			}
-		}
-		
-		// convert emission frequencies to probabilities
-		double[] initPiProb = new double[initPiFreq.size()];
-		for(int k=0; k<initPiFreq.size(); k++){
-			initPiProb[k] = (double)initPiFreq.get(k) / (double)nPi;
-		}
-
-		
-		
-		// CREATE THE HMM //
-		
+	protected void createHMM(int nStates, double[] initProbs, ArrayList<double[]> emissions){
 		// init
-		int nStates = globalpos;
 		int nEmissions = m_dictObs.size();
 		m_hmm = new Hmm<ObservationInteger>(nStates, new OpdfIntegerFactory(nEmissions));
 		
 		// initial probabilities (for each URL)
-		for(int i=0; i<initPiProb.length; i++){
-			m_hmm.setPi(i, initPiProb[i]);
+		for(int i=0; i<initProbs.length; i++){
+			m_hmm.setPi(i, initProbs[i]);
 		}
 		
 		// emission probabilities (for each URL and state)
@@ -114,43 +39,15 @@ public class HiddenMarkovModel000 extends HiddenMarkovModel {
 			}
 		}
 		// the transitions we are interested in
-		int oldCl = -1;
-		int firstPos = -1;
 		int nextPos = -1;
 		for(int i=0; i<m_dictSta.size(); i++){
-			// actual position
-			int actual = m_dictSta.get(i);
-			int actualCl = actual / m_bufferPositions;
-			
-			// compare with the previous position
-			if(oldCl!=actualCl){
-				// Starts a new cluster's sequence
-				firstPos = i;
-			}
-			oldCl = actualCl;
-
-			// the next position exists
-			int nextCl = -1;
-			if(i+1<m_dictSta.size()){
-				int next = m_dictSta.get(i+1);
-				nextCl = next / m_bufferPositions;
-			}
-
-			// and the next position is in the same cluster-sequence?
-			if(actualCl==nextCl){
-				// the next element is the same cluster-sequence
-				nextPos = i+1;
-			} else {
-				// the next element is in another cluster,
-				// so tie it with the first element
-				nextPos = firstPos;
-			}
+			// get the next position
+			nextPos = this.getNextStateByStateInd(i, 1);
 			
 			// update the transition matrix between states
 			m_hmm.setAij(i, i,       0.25);
 			m_hmm.setAij(i, nextPos, 0.75);
 		}
-		
 	}
 	
 	

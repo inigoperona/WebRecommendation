@@ -9,7 +9,7 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A060MainClassHclustHMM {
+public class A0600MainClassHclustHMM {
 
 	public static void main(String[] args) {
 		
@@ -103,7 +103,7 @@ public class A060MainClassHclustHMM {
 
 			
 			// HMM
-			modelev.buildHiddenMarkovModels(validationWD + profiWD + "/" + esperimentationStr);
+			modelev.buildHiddenMarkovModels(validationWD + profiWD + "/" + esperimentationStr, 0);
 			
 			
 			// Evaluation
@@ -113,13 +113,13 @@ public class A060MainClassHclustHMM {
 			int[] nrecsWST = new int[]{2,3,4,5,10,20};
 			for(int ind=0; ind<nrecsWST.length; ind++ ){
 				int nrec = nrecsWST[ind];
-				results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1000, 0, false, null);
+				results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 3, 0, false, null);
 				System.out.print(esperimentationStr + "_weighted" + nrec + ",");
 				System.out.print(results);
 			}
 
 			// unbounded
-			results = modelev.computeEvaluationTest(3, 1000, (long)0, 1, 1000, 0, false, null);
+			results = modelev.computeEvaluationTest(3, 1000, (long)0, 1, 3, 0, false, null);
 			System.out.print(esperimentationStr + "_unbounded,");
 			System.out.print(results);
 			

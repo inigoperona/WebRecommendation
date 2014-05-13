@@ -64,11 +64,13 @@ mkdir -p $database/DM_04_edit
 
 # dist - normalized compress distance (NCD)
 mkdir -p $database/DM_05_ncd_bzip2
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar;commons-compress-1.8.jar ehupatras.webrecommendation.A013MainClassDistanceMatrixNcdBzip2 \
+../jre1.7.0_51/bin/java -Xmx2048m -cp "ehupatraWebReco.jar:commons-compress-1.8.jar" \
+  ehupatras.webrecommendation.A013MainClassDistanceMatrixNcdBzip2 \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 mkdir -p $database/DM_05_ncd_gzip
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar;commons-compress-1.8.jar ehupatras.webrecommendation.A014MainClassDistanceMatrixNcdGzip \
+../jre1.7.0_51/bin/java -Xmx2048m -cp "ehupatraWebReco.jar:commons-compress-1.8.jar" \
+  ehupatras.webrecommendation.A014MainClassDistanceMatrixNcdGzip \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 
@@ -375,16 +377,26 @@ echo "## Hclust+HMM ##"
 for dm in "DM_04_edit"
 do
   hclust="/hclust_"$dm
-  hmm=$hclust"/hmm"
+  hmm=$hclust"/hmm_0"
   echo " "$hmm
   mkdir -p $validation""$hmm
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A060MainClassHclustHMM \
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp "ehupatraWebReco.jar:jahmm-0.6.1.jar" ehupatras.webrecommendation.A0600MainClassHclustHMM \
+    $preprocess /LOGs_from_Jan9_toNov19.log \
+    $database "/"$dm \
+    $validation $hclust $hmm
+done
+for dm in "DM_04_edit"
+do
+  hclust="/hclust_"$dm
+  hmm=$hclust"/hmm_1"
+  echo " "$hmm
+  mkdir -p $validation""$hmm
+  ../jre1.7.0_51/bin/java -Xmx2048m -cp "ehupatraWebReco.jar:jahmm-0.6.1.jar" ehupatras.webrecommendation.A0601MainClassHclustHMM \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $hclust $hmm
 done
 # dot -Tps hmm-generate.dot -o outfile.ps
-
 
 
 
@@ -441,11 +453,13 @@ echo "### Hclust+SPADE+ST+knnED (Modular approach 3) ###"
 for dm in "DM_04_edit"
 do
   hclust="/hclust_"$dm
-  echo " "$hclust"_modular3"
+  spade=$hclust"/spade"
+  echo " "$spade"_modular3"
+  mkdir -p $validation""$spade
   ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A056MainClassModularHclustSpadeSTKnnED \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
-    $validation $hclust
+    $validation $hclust $spade
 done
 
 
