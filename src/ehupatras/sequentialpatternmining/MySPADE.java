@@ -10,19 +10,31 @@ public class MySPADE {
 	private ArrayList<String[]> m_sequences;
 	private int m_nSeqs;
 	
-	// frequency of URLs
+	// frequency of URLs. supports.
 	private float m_minsupport = 0.5f;
 	private String[] m_urls;
 	private int[] m_freqs;
 	private int m_minfreq;
+	private int m_minminfreq = 3;
+	
+	// to cut the spade sequence generating if it is getting too many
+	private int m_maxSequences = 1000;
+	private int m_maxstep = 5;
 	
 	public MySPADE(ArrayList<String[]> sequences, float minsup){
+		this(sequences, minsup, 1000, 5);
+	}
+	
+	public MySPADE(ArrayList<String[]> sequences, 
+					float minsup, 
+					int maxseq, 
+					int maxstep){
 		m_sequences = sequences;
 		m_nSeqs = sequences.size();
 		m_minsupport = minsup;
 		m_minfreq = (int)Math.ceil( (float)m_nSeqs*m_minsupport );
-		if(m_minfreq<3){ // ensure a minimum amount of repetitions
-			m_minfreq = 3;
+		if(m_minfreq<m_minminfreq){ // ensure a minimum amount of repetitions
+			m_minfreq = m_minminfreq;
 		}
 		
 		Hashtable<String,Integer> frequencies = new Hashtable<String,Integer>();
@@ -168,6 +180,9 @@ public class MySPADE {
     	
     	// create new sequences using frequent URLs 
     	for(int i=0; i<ss.size(); i++){
+    		// if we extract enough sequences break
+    		if(i>m_maxSequences){ break;}
+    		
     		// verbose
     		if(i%1000 == 0){
     			System.out.println("  myspade: " + i + "/" + ss.size() + " sequences created.");
@@ -195,7 +210,9 @@ public class MySPADE {
         			}
         			inds2[k] = find;
         			if(find!=-1){
-        				freq++;
+        				if(find-from<=m_maxstep){
+        					freq++;
+        				}
         			}
         		}
         		
