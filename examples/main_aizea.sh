@@ -33,7 +33,7 @@ echo "## DISTANCE MATRIX ##"
 
 # dist - sequence alignment
 mkdir -p $database/DM_04_edit
-../jre1.7.0_51/bin/java -Xmx2048m -cp webreco.jar ehupatras.webrecommendation.A012MainClassDistanceMatrixED \
+../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A012MainClassDistanceMatrixED \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 
@@ -61,7 +61,7 @@ do
   pam="/pam_"$dm
   echo " "$pam
   mkdir -p $validation""$pam
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A041MainClassPAM \
+  ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A041MainClassPAM \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $pam
@@ -76,7 +76,7 @@ for dm in "DM_04_edit"
 do
   pam="/pam_"$dm
   echo " "$pam"_spade"
-  ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A053MainClassPamSpadeKnnED \
+  ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A053MainClassPamSpadeKnnED \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $pam
