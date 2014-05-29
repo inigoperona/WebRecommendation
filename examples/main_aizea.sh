@@ -17,9 +17,11 @@ mkdir -p $validation
 
 echo "## PREPROCESING LOGS ##"
 
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A000MainClassPreprocess \
+mkdir -p $preprocess
+../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A000MainClassPreprocess \
   $preprocess /LOGs_from_Jan9_toNov19.log
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A001MainClassCreateDatabase \
+mkdir -p $database
+../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A001MainClassCreateDatabase \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 
@@ -31,7 +33,7 @@ echo "## DISTANCE MATRIX ##"
 
 # dist - sequence alignment
 mkdir -p $database/DM_04_edit
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A012MainClassDistanceMatrixED \
+../jre1.7.0_51/bin/java -Xmx2048m -cp webreco.jar ehupatras.webrecommendation.A012MainClassDistanceMatrixED \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database
 
@@ -42,8 +44,8 @@ mkdir -p $database/DM_04_edit
 
 echo "## EVALUATION BASED ON DATABASE: HOLD-OUT ##"
 
-mkdir -p 03_VALIDATION
-../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A020MainClassHoldOut \
+mkdir -p $validation
+../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A020MainClassHoldOut \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database "distance_matrix" \
   $validation
