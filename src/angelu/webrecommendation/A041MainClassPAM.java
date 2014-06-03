@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.ModelEvaluator;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorUHC;
+import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -58,13 +59,22 @@ public class A041MainClassPAM {
 
 		
 		// HOLD-OUT //
-		A020MainClassHoldOut ho = new A020MainClassHoldOut();
+		A021MainClassCrossValidation ho = new A021MainClassCrossValidation();
 		ho.loadParts(validationWD, sampleSessionIDs);
 		//ho.createParts(validationWD, sampleSessionIDs);
-		ModelValidationHoldOut mv = ho.getParts();
-		ArrayList<ArrayList<Long>> trainAL = mv.getTrain();
-		ArrayList<ArrayList<Long>> valAL   = mv.getValidation();
-		ArrayList<ArrayList<Long>> testAL  = mv.getTest();
+		ModelValidationCrossValidation mv = ho.getParts();
+		
+		ArrayList<ArrayList<Long>> trainALaux = mv.getTrain();
+		ArrayList<ArrayList<Long>> trainAL = new ArrayList<ArrayList<Long>>();
+		trainAL.add(trainALaux.get(0));
+		
+		ArrayList<ArrayList<Long>> valALaux  = mv.getValidation();
+		ArrayList<ArrayList<Long>> valAL  = new ArrayList<ArrayList<Long>>();
+		valAL.add(new ArrayList<Long>());
+		
+		ArrayList<ArrayList<Long>> testALaux  = mv.getTest();
+		ArrayList<ArrayList<Long>> testAL = new ArrayList<ArrayList<Long>>();
+		testAL.add(testALaux.get(0));
 
 
 		

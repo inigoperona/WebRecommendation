@@ -1,11 +1,11 @@
 package ehupatras.webrecommendation.modelvalidation;
 
 import ehupatras.webrecommendation.utils.*;
+
 import java.util.*;
 
-public class ModelValidationHoldOut {
+public class ModelValidationHoldOut extends ModelValidation {
 
-	private String m_workdirectory = ".";
 	private ArrayList<Long> m_trainList = new ArrayList<Long>();
 	private ArrayList<Long> m_validationList = new ArrayList<Long>();
 	private ArrayList<Long> m_testList = new ArrayList<Long>();

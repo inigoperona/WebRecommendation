@@ -3,6 +3,7 @@ package angelu.webrecommendation;
 import ehupatras.webrecommendation.structures.*;
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.modelvalidation.*;
+
 import java.util.*;
 
 public class A001MainClassCreateDatabase {
@@ -16,7 +17,8 @@ public class A001MainClassCreateDatabase {
 		
 		// Sampling
 		Sampling samp = new Sampling();
-		m_sessionsIDs = samp.getSample(8000, (long)0, false);
+		int nseq = WebAccessSequences.getSequencesIDs().size();
+		m_sessionsIDs = samp.getSample(nseq, (long)0, false);
 		// Save
 		SaveLoadObjects sosess = new SaveLoadObjects();
 		sosess.save(m_sessionsIDs, databaseWD + "/_sessionIDs.javaData");
