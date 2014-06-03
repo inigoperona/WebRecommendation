@@ -38,7 +38,7 @@ public class ModelEvaluator {
 	// To create the model: trainset
 	private ArrayList<ArrayList<Long>> m_trainAL;
 	
-	// Clustering
+	// CLUSTERING //
 	// Hierarchical Clustering
 	private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
 	private float m_pCutDendrogramDiss = 50f;
@@ -47,6 +47,7 @@ public class ModelEvaluator {
 	// store clusters
 	private ArrayList<int[]> m_clustersAL;
 	
+	// MSA + Wseq or SPADE //
 	// Multiple Sequence Alignment
 	private ArrayList<ArrayList<String[][]>> m_msaAL;
 	// Weighted Sequences
@@ -82,8 +83,7 @@ public class ModelEvaluator {
 	
 	// metrics
 	private float[] m_confusionPoints = 
-		{0.00f,0.10f,0.25f,
-		 0.50f,0.75f,0.90f,1.00f};
+		{0.10f,0.25f,0.50f,0.75f,0.90f};
 	private float m_fmeasurebeta = (float)0.5;
 	
 	

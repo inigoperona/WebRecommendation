@@ -36,8 +36,7 @@ public class TestSetEvaluator {
 	private HiddenMarkovModel m_hmm = null;
 	
 	// Validation metrics
-	private float[] m_points = {(float)0.0, (float)0.10, (float)0.25, 
-			(float)0.50, (float)0.75, (float)0.90, (float)1.00};
+	private float[] m_points = {0.10f, 0.25f, 0.50f, 0.75f, 0.90f};
 	private float m_beta = (float)0.5;
 	
 	private float m_numberOfRecommendationsRatio = (float)0;
