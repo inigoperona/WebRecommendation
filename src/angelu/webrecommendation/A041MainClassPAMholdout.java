@@ -86,7 +86,7 @@ public class A041MainClassPAMholdout {
 		// k, number of clusters
 		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
 		//int[] ks = {40, 30, 20, 10, 5};
-		int[] ks = {150, 200, 250, 300};
+		int[] ks = {10, 20, 40, 60, 90, 100, 150, 200, 250, 350};
 		
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
