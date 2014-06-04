@@ -11,7 +11,7 @@ public class ModelValidationCrossValidation extends ModelValidation {
 	private ArrayList<ArrayList<Long>> m_testList = new ArrayList<ArrayList<Long>>();
 	private int m_nFold = 10;
 	
-	public void prepareData(ArrayList<Long> sessionsID, int ptrain, int pvalidation, int ptest, int nFold){
+	public void prepareData(ArrayList<Long> sessionsID, int nftrain, int nfvalidation, int nftest, int nFold){
 		m_nFold = nFold;
 		
 		// number of cases we have in the database
@@ -37,7 +37,7 @@ public class ModelValidationCrossValidation extends ModelValidation {
 			
 			// train
 			ArrayList<Long> trL = new ArrayList<Long>();
-			for(int j=0; j<9; j++){
+			for(int j=0; j<nftrain; j++){
 				ArrayList<Long> fo = folds.get(start2);
 				for(int k=0; k<fo.size(); k++){
 					trL.add(fo.get(k));
@@ -45,9 +45,19 @@ public class ModelValidationCrossValidation extends ModelValidation {
 				start2 = this.getNextFold(start2);
 			}
 			
+			// validation
+			ArrayList<Long> vaL = new ArrayList<Long>();
+			for(int j=0; j<nfvalidation; j++){
+				ArrayList<Long> fo = folds.get(start2);
+				for(int k=0; k<fo.size(); k++){
+					vaL.add(fo.get(k));
+				}
+				start2 = this.getNextFold(start2);
+			}
+			
 			// test
 			ArrayList<Long> tsL = new ArrayList<Long>();
-			for(int j=0; j<1; j++){
+			for(int j=0; j<nftest; j++){
 				ArrayList<Long> fo = folds.get(start2);
 				for(int k=0; k<fo.size(); k++){
 					tsL.add(fo.get(k));
@@ -57,6 +67,7 @@ public class ModelValidationCrossValidation extends ModelValidation {
 			
 			// save the sessions indexes
 			m_trainList.add(trL);
+			m_validationList.add(vaL);
 			m_testList.add(tsL);
 			
 			// update the circular

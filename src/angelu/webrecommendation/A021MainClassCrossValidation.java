@@ -13,7 +13,7 @@ public class A021MainClassCrossValidation {
 			ArrayList<Long> sampleSessionIDs){
 		System.out.println("CROSS VALIDATION");
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
-		honestmodelval.prepareData(sampleSessionIDs, 70, 0, 30, 10);
+		honestmodelval.prepareData(sampleSessionIDs, 7, 2, 1, 10);
 		honestmodelval.save(validationWD);
 		m_parts = honestmodelval;
 	}

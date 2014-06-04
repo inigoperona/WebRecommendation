@@ -10,18 +10,18 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A053MainClassPamSpadeKnnED {
+public class A053MainClassPamSpadeKnnEDholdout {
 
 	public static void main(String[] args) {
+		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/kk.log";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM00-no_role-split";
-		dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String clustWD = "/CL_00_no_role";
-		clustWD = "";
+		String databaseWD = base + "/02_DATABASE_5";
+		String dmWD = "/DM_04_edit";
+		String validationWD = base + "/03_VALIDATION_5";
+		String clustWD = "/pam_DM_04_edit";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
@@ -68,7 +68,7 @@ public class A053MainClassPamSpadeKnnED {
 		
 		ArrayList<ArrayList<Long>> valALaux  = mv.getValidation();
 		ArrayList<ArrayList<Long>> valAL  = new ArrayList<ArrayList<Long>>();
-		valAL.add(new ArrayList<Long>());
+		valAL.add(valALaux.get(0));
 		
 		ArrayList<ArrayList<Long>> testALaux  = mv.getTest();
 		ArrayList<ArrayList<Long>> testAL = new ArrayList<ArrayList<Long>>();
@@ -93,7 +93,7 @@ public class A053MainClassPamSpadeKnnED {
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
-		//modelev.buildMarkovChains();
+		modelev.buildMarkovChains();
 		
 		
 		// PAM + MySPADE //
@@ -121,19 +121,42 @@ public class A053MainClassPamSpadeKnnED {
 				// Evaluation
 				String results;
 				
+				
+				
+				// VALIDATION //
+				
+				// weighted by construction sequences (test sequences)
+				int[] nrecsWSTv = new int[]{2,3,4,5,10,20};
+				for(int ind=0; ind<nrecsWSTv.length; ind++ ){
+					int nrec = nrecsWSTv[ind];
+					results = modelev.computeEvaluationVal(2, nrec, (long)0, 1, 1, 0, true, rolesW);
+					System.out.print(esperimentationStr2 + "_weighted" + nrec + "_val,");
+					System.out.print(results);
+				}
+			
+				// unbounded
+				results = modelev.computeEvaluationVal(-1, -1, (long)0, 1, 1, 0, true, rolesW);
+				System.out.print(esperimentationStr2 + "_unbounded_val,");
+				System.out.print(results);
+				
+				
+				
+				// TEST //
+				
 				// weighted by construction sequences (test sequences)
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					results = modelev.computeEvaluationTest(2, nrec, (long)0, 1, 1, 0, true, rolesW);
-					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
+					System.out.print(esperimentationStr2 + "_weighted" + nrec + "_test,");
 					System.out.print(results);
 				}
 			
 				// unbounded
 				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1, 0, true, rolesW);
-				System.out.print(esperimentationStr2 + "_unbounded,");
+				System.out.print(esperimentationStr2 + "_unbounded_test,");
 				System.out.print(results);
+				
 			}
 
 		}

@@ -874,6 +874,30 @@ public class ModelEvaluator {
 	// MODEL EVALUATION //
 	
 	public String computeEvaluationTest(int mode, 
+			int nrecos,
+			long seed,
+			int failuremode,
+			int maxMemory,
+			int normMode,
+			boolean isDistance,
+			float[][] rolesW){
+		return this.computeEvaluation(m_testAL, mode, nrecos, seed, failuremode, maxMemory, normMode, isDistance, rolesW);
+	}
+	
+	public String computeEvaluationVal(int mode, 
+			int nrecos,
+			long seed,
+			int failuremode,
+			int maxMemory,
+			int normMode,
+			boolean isDistance,
+			float[][] rolesW){
+		return this.computeEvaluation(m_valAL, mode, nrecos, seed, failuremode, maxMemory, normMode, isDistance, rolesW);
+	}
+	
+	private String computeEvaluation(
+					ArrayList<ArrayList<Long>> evalAL,
+					int mode, 
 					int nrecos,
 					long seed,
 					int failuremode,
@@ -903,7 +927,7 @@ public class ModelEvaluator {
 		// for each fold obtain the metrics
 		for(int i=0; i<m_nFolds; i++){
 			// get the test sequences from sessionIDs
-			ArrayList<Long> sessionIDs = m_testAL.get(i); 
+			ArrayList<Long> sessionIDs = evalAL.get(i); 
 			int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs, false);
 			ArrayList<String[]> testseqs = new ArrayList<String[]>();
 			for(int j=0; j<inds.length; j++){

@@ -42,10 +42,10 @@ mkdir -p $database/DM_04_edit
 
 
 
-echo "## EVALUATION BASED ON DATABASE: HOLD-OUT ##"
+echo "## EVALUATION BASED ON DATABASE: CROSS VALIDATION ##"
 
 mkdir -p $validation
-../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A020MainClassHoldOut \
+../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A021MainClassCrossValidation \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database "distance_matrix" \
   $validation
@@ -53,34 +53,55 @@ mkdir -p $validation
 
 
 
+### HOLD-OUT ###
 
 echo "## PAM ##"
-
 for dm in "DM_04_edit"
 do
   pam="/pam_"$dm
   echo " "$pam
   mkdir -p $validation""$pam
-  ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A041MainClassPAM \
+  ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A041MainClassPAMholdout \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $pam
 done
 
-
-
-
 echo "## PAM+SPADE ##"
-
 for dm in "DM_04_edit"
 do
   pam="/pam_"$dm
   echo " "$pam"_spade"
-  ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A053MainClassPamSpadeKnnED \
+  ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A053MainClassPamSpadeKnnEDholdout \
     $preprocess /LOGs_from_Jan9_toNov19.log \
     $database "/"$dm \
     $validation $pam
 done
 
 
+
+### CROSS-VALIDATION ###
+
+echo "## PAM ##"
+for dm in "DM_04_edit"
+do
+  pam="/pam_"$dm
+  echo " "$pam
+  mkdir -p $validation""$pam
+  ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A041MainClassPAMcv \
+    $preprocess /LOGs_from_Jan9_toNov19.log \
+    $database "/"$dm \
+    $validation $pam
+done
+
+echo "## PAM+SPADE ##"
+for dm in "DM_04_edit"
+do
+  pam="/pam_"$dm
+  echo " "$pam"_spade"
+  ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A053MainClassPamSpadeKnnEDcv \
+    $preprocess /LOGs_from_Jan9_toNov19.log \
+    $database "/"$dm \
+    $validation $pam
+done
 
