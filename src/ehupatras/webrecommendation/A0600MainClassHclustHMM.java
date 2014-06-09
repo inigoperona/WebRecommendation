@@ -14,16 +14,14 @@ public class A0600MainClassHclustHMM {
 	public static void main(String[] args) {
 		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String logfile = "/kk.log";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_00_no_role";
-		//dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String clustWD = "/CL_00_no_role";
-		String profiWD = "/CL_00_no_role";
-		clustWD = "";
-		profiWD = "";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String preprocessingWD = base + "/01_preprocess";
+		String logfile = "/log20000.log";
+		String databaseWD = base + "/02_DATABASE_5";
+		String dmWD = "/DM_04_edit";
+		String validationWD = base + "/03_VALIDATION_5";
+		String clustWD = "/hclust_DM_04_edit";
+		String profiWD = "/hclust_DM_04_edit/hmm";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];

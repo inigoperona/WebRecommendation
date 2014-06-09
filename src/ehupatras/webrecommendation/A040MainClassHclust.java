@@ -16,14 +16,13 @@ public class A040MainClassHclust {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String logfile = "/kk.log";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM00-no_role-split";
-		//dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String clustWD = "/CL_00_no_role";
-		clustWD = "";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String preprocessingWD = base + "/01_preprocess";
+		String logfile = "/log20000.log";
+		String databaseWD = base + "/02_DATABASE_5";
+		String dmWD = "/DM_04_edit";
+		String validationWD = base + "/03_VALIDATION_5";
+		String clustWD = "/hclust_DM_04_edit";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];

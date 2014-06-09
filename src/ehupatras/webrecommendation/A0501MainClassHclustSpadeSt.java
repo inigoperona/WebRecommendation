@@ -75,7 +75,8 @@ public class A0501MainClassHclustSpadeSt {
 		// Parameters to play with
 		//int[] cutthA = {10, 15, 20, 25};
 		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
-		float[] seqweights = {0.25f, 0.50f};
+		//float[] seqweights = {0.25f, 0.50f};
+		float[] seqweights = {0.10f, 0.15f, 0.20f, 0.25f, 0.50f};
 		
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
