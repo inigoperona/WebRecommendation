@@ -9,18 +9,32 @@ import java.util.ArrayList;
 
 public class SequenceEvaluator {
 
+	// Classes that simulates the navigation of the user
 	protected Recommender m_recommender = null;
 	protected ArrayList<String> m_sequence = null;
 	protected ArrayList<String> m_sequenceURL = null;
 	
+	// Metrics
 	protected int m_numberOfRecommendations = 0;
 	private int m_nFailures = 0;
+	
+	// URL level metrics
 	private int m_hitscore = 0;
 	private int m_clicksoonscore = 0;
 	private float[] m_precision;
 	private float[] m_recall;
 	private float[] m_precisionModel;
 	private float[] m_recallModel;
+	
+	// TOPIC level metrics
+	private int[] m_url2topic = null;
+	private float m_topicmatch = 0.5f;
+	private float m_hitscoreTop = 0;
+	private float m_clicksoonscoreTop = 0;
+	private float[] m_precisionTop;
+	private float[] m_recallTop;
+	private float[] m_precisionModelTop;
+	private float[] m_recallModelTop;
 	
 	
 	
@@ -265,6 +279,7 @@ public class SequenceEvaluator {
 			list = m_recommender.getNextpossibleStepsWeightedEnrichWithStep1(nrecos, waydone);
 		}
 		for(int i=0; i<m_sequence.size(); i++){
+			// update the prediction indicators
 			this.computeStepMetrics(i, list);
 			
 			// do the step
@@ -295,13 +310,28 @@ public class SequenceEvaluator {
 		m_nFailures = m_recommender.getNumberOfFailures();
 	}
 	
+	
+	
+	// Main function to measure the prediction ability
+	
 	protected void computeStepMetrics(int stepIndex, ArrayList<String> recommendatios){		
 		String step = m_sequenceURL.get(stepIndex);
 		m_numberOfRecommendations = m_numberOfRecommendations + recommendatios.size();
+		
+		// URL level
 		this.computeHitScore(step, recommendatios);
 		this.computeClickSoonScore(stepIndex, recommendatios);
 		this.computeConfusionMatrix(stepIndex, recommendatios);
+		
+		// TOPIC level
+		this.computeHitScoreTop(step, recommendatios);
+		this.computeClickSoonScoreTop(stepIndex, recommendatios);
+		this.computeConfusionMatrixTop(stepIndex, recommendatios);
 	}
+	
+	
+	
+	// URL level functions
 	
 	protected void computeHitScore(String step, ArrayList<String> recommendatios){
 		for(int i=0; i<recommendatios.size(); i++){
@@ -395,6 +425,174 @@ public class SequenceEvaluator {
 		}
 	}
 	
+	
+	
+	// TOPIC level functions
+	
+	protected void computeHitScoreTop(String step, ArrayList<String> recommendatios){
+		// for each recommendations
+		boolean hitURL = false;
+		boolean hitTopic = false;
+		for(int i=0; i<recommendatios.size(); i++){
+			String rec = recommendatios.get(i);
+			int stepInt = Integer.valueOf(step);
+			int recInt = Integer.valueOf(rec);
+			int stepTop = m_url2topic[stepInt];
+			int recTop = m_url2topic[recInt];
+			if(stepInt == recInt){
+				hitURL = true;
+				break;
+			} else{
+				if(stepTop == recTop){
+					hitTopic = true;
+				}
+			}
+		}
+		
+		// update the m_hitscoreTop
+		if(hitURL){
+			m_hitscoreTop = m_hitscoreTop + 1f;
+		} else if(hitTopic){
+			m_hitscoreTop = m_hitscoreTop + m_topicmatch;
+		}
+	}
+	
+	protected void computeClickSoonScoreTop(int stepIndex, ArrayList<String> recommendatios){
+		boolean hitURL = false;
+		boolean hitTopic = false;		
+		for(int i=0; i<recommendatios.size(); i++){
+			String onereco = recommendatios.get(i);
+			int onerecoInt = Integer.valueOf(onereco);
+			int onerecoTop =  m_url2topic[onerecoInt];
+			
+			for(int j=stepIndex; j<m_sequenceURL.size(); j++){
+				String realstep = m_sequenceURL.get(j);
+				int realstepInt = Integer.valueOf(realstep);
+				int realstepTop = m_url2topic[realstepInt];
+				
+				if(onerecoInt == realstepInt){
+					hitURL = true;
+					break;
+				} else {
+					if(onerecoTop == realstepTop){
+						hitTopic = true;
+					}
+				}
+			}
+			if(hitURL){break;}
+		}
+		
+		// update the m_clicksoonscoreTop
+		if(hitURL){
+			m_clicksoonscoreTop = m_clicksoonscoreTop + 1f;
+		} else if(hitTopic){
+			m_hitscoreTop = m_hitscoreTop + m_topicmatch;
+		}
+	}
+	
+	protected void computeConfusionMatrixTop(int stepIndex, ArrayList<String> recommendatios){
+		float pr = this.computePrecisionTop(stepIndex, recommendatios);
+		float re = this.computeRecallTop(stepIndex, recommendatios);
+		m_precisionTop[stepIndex] = pr;
+		m_recallTop[stepIndex] = re;
+		float prModel = this.computePrecisionTop(0, recommendatios);
+		float reModel = this.computeRecallTop(0, recommendatios);
+		m_precisionModelTop[stepIndex] = prModel;
+		m_recallModelTop[stepIndex] = reModel;
+	}
+	
+	private float computePrecisionTop(int stepIndex, ArrayList<String> recommendatios){
+		float prTP = 0;
+		float prFP = 0;
+		
+		// compute precision related variables
+		for(int i=0; i<recommendatios.size(); i++){
+			boolean hitURL = false;
+			boolean hitTopic = false;
+			
+			String onereco = recommendatios.get(i);
+			int onerecoInt = Integer.valueOf(onereco);
+			int onerecoTop =  m_url2topic[onerecoInt];
+			
+			for(int j=stepIndex; j<m_sequenceURL.size(); j++){
+				String realstep = m_sequenceURL.get(j);
+				int realstepInt = Integer.valueOf(realstep);
+				int realstepTop = m_url2topic[realstepInt];
+				
+				if(onerecoInt == realstepInt){
+					hitURL = true;
+					break;
+				} else {
+					if(onerecoTop == realstepTop){
+						hitTopic = true;
+					}
+				}
+			}
+			
+			if(hitURL){
+				prTP = prTP + 1f;
+			} else if(hitTopic){				
+				prTP = prTP + m_topicmatch;
+			} else {
+				prFP = prFP + 1f;
+			}
+		}
+		
+		if(prTP==0f && prFP==0f){
+			return 0f;
+		} else {
+			return prTP/(prTP+prFP);
+		}
+	}
+	
+	private float computeRecallTop(int stepIndex, ArrayList<String> recommendatios){
+		float reTP = 0;
+		float reFN = 0;
+		
+		// compute precision related variables
+		for(int i=stepIndex; i<m_sequenceURL.size(); i++){
+			boolean hitURL = false;
+			boolean hitTopic = false;
+			
+			String realstep = m_sequenceURL.get(i);
+			int realstepInt = Integer.valueOf(realstep);
+			int realstepTop = m_url2topic[realstepInt];
+			
+			for(int j=0; j<recommendatios.size(); j++){
+				String onereco = recommendatios.get(j);
+				int onerecoInt = Integer.valueOf(onereco);
+				int onerecoTop =  m_url2topic[onerecoInt];
+				
+				if(realstepInt == onerecoInt){
+					hitURL = true;
+					break;
+				} else {
+					if(onerecoTop == realstepTop){
+						hitTopic = true;
+					}
+				}
+			}
+			
+			if(hitURL){
+				reTP = reTP + 1f;
+			} else if(hitTopic){
+				reTP = reTP + m_topicmatch;
+			} else {
+				reFN = reFN + 1f;
+			}
+		}
+		
+		if(reTP==0f && reFN==0f){
+			return 0f;
+		} else {
+			return reTP/(reTP+reFN);
+		}
+	}
+	
+	
+	
+	// GET parameters/metrics of this class
+	
 	public float getNumberOfRecommendationsRatio(){
 		return (float)m_numberOfRecommendations / (float)m_sequence.size();
 	}
@@ -402,6 +600,8 @@ public class SequenceEvaluator {
 	public int getNumberOfFailures(){
 		return m_nFailures;
 	}
+	
+	// URL level metrics
 	
 	public float getHitRatio(){
 		return (float)m_hitscore/(float)m_sequence.size();
@@ -428,33 +628,11 @@ public class SequenceEvaluator {
 	}
 	
 	public float[] getFmeasures(float beta){
-		float[] fmeasure = new float[m_precision.length];
-		for(int i=0; i<m_precision.length; i++){
-			float b2 = (float)Math.pow(beta, 2);
-			float pr = m_precision[i];
-			float re = m_recall[i];
-			if(pr==(float)0 && re==(float)0){
-				fmeasure[i] = (float)0;
-			} else {
-				fmeasure[i] = ((float)1+b2) * (pr*re) / ((b2*pr)+re);
-			}
-		}
-		return fmeasure;
+		return this.getFmeasures(beta, m_precision, m_recall);
 	}
 	
 	public float[] getFmeasuresModel(float beta){
-		float[] fmeasure = new float[m_precisionModel.length];
-		for(int i=0; i<m_precisionModel.length; i++){
-			float b2 = (float)Math.pow(beta, 2);
-			float pr = m_precisionModel[i];
-			float re = m_recallModel[i];
-			if(pr==(float)0 && re==(float)0){
-				fmeasure[i] = (float)0;
-			} else {
-				fmeasure[i] = ((float)1+b2) * (pr*re) / ((b2*pr)+re);
-			}
-		}
-		return fmeasure;
+		return this.getFmeasures(beta, m_precisionModel, m_recallModel);		
 	}
 	
 	protected void printPrecision(){
@@ -514,11 +692,105 @@ public class SequenceEvaluator {
 		return fmeasure[index];
 	}
 	
+	// TOPIC level metrics
+	
+	public void setTopicParameters(int[] url2topic, float topicmatch){
+		m_url2topic = url2topic;
+		m_topicmatch = topicmatch;
+	}
+	
+	public float getHitRatioTop(){
+		return (float)m_hitscoreTop/(float)m_sequence.size();
+	}
+	
+	public float getClickSoonRatioTop(){
+		return (float)m_clicksoonscoreTop/(float)m_sequence.size();
+	}
+	
+	public float[] getPrecissionsTop(){
+		return m_precisionTop;
+	}
+	
+	public float[] getRecallsTop(){
+		return m_recallTop;
+	}
+	
+	public float[] getPrecissionsModelTop(){
+		return m_precisionModelTop;
+	}
+	
+	public float[] getRecallsModelTop(){
+		return m_recallModelTop;
+	}
+	
+	public float[] getFmeasuresTop(float beta){
+		return this.getFmeasures(beta, m_precisionTop, m_recallTop);		
+	}
+	
+	public float[] getFmeasuresModelTop(float beta){		
+		return this.getFmeasures(beta, m_precisionModelTop, m_recallModelTop);		
+	}
+	
+	public float getPrecisionTopAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_precisionTop[index];
+	}
+	
+	public float getRecallTopAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_recallTop[index];
+	}
+	
+	public float getFmeasureTopAtPoint(float beta, float point){
+		float[] fmeasure = this.getFmeasuresTop(beta);
+		int index = this.getPosition(point);
+		return fmeasure[index];
+	}
+	
+	public float getPrecisionModelTopAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_precisionModelTop[index];
+	}
+	
+	public float getRecallModelTopAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_recallModelTop[index];
+	}
+	
+	public float getFmeasureModelTopAtPoint(float beta, float point){
+		float[] fmeasure = this.getFmeasuresModelTop(beta);
+		int index = this.getPosition(point);
+		return fmeasure[index];
+	}
+	
+	
+	
+	// Utilities
+	
 	private int getPosition(float point){
 		float len = (float)m_precision.length - (float)1;
 		float index = len * point;
 		return (int)Math.round(index);
 	}
+	
+	private float[] getFmeasures(float beta, float[] prA, float[] reA){
+		float[] fmeasure = new float[prA.length];
+		for(int i=0; i<prA.length; i++){
+			float b2 = (float)Math.pow(beta, 2);
+			float pr = prA[i];
+			float re = reA[i];
+			if(pr==(float)0 && re==(float)0){
+				fmeasure[i] = (float)0;
+			} else {
+				fmeasure[i] = ((float)1+b2) * (pr*re) / ((b2*pr)+re);
+			}
+		}
+		return fmeasure;
+	}
+	
+	
+	
+	// The main class to test it
 	
 	public static void main(String[] args){
 		// create the suffix tree

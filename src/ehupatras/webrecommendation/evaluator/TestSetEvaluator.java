@@ -29,7 +29,7 @@ public class TestSetEvaluator {
 	private int m_knn = 100;
 	
 	// Model: modular approach of ST for each cluster
-	//private ArrayList<SuffixTreeStringArray> m_STAL = null;
+	// private ArrayList<SuffixTreeStringArray> m_STAL = null;
 	private ArrayList<MySuffixTree> m_STAL = null;
 	
 	// Model: clust+HMM
@@ -42,14 +42,28 @@ public class TestSetEvaluator {
 	private float m_numberOfRecommendationsRatio = (float)0;
 	private int m_numberOfFailures = 0;
 	private float[] m_failuresHist = new float[12]; 
-	private float m_hitratio = (float)0;
-	private float m_clicksoonratio = (float)0;
+	
+	// URL level metrics
+	private float m_hitratio = 0f;
+	private float m_clicksoonratio = 0f;
 	private float[] m_precision;
 	private float[] m_recall;
 	private float[] m_fmeasure;
 	private float[] m_ModelPrecision;
 	private float[] m_ModelRecall;
 	private float[] m_ModelFmeasure;
+	
+	// Topic level metrics
+	private int[] m_url2topic = null;
+	private float m_topicmatch = 0.5f;
+	private float m_hitratioTop = 0f;
+	private float m_clicksoonratioTop = 0f;
+	private float[] m_precisionTop;
+	private float[] m_recallTop;
+	private float[] m_fmeasureTop;
+	private float[] m_ModelPrecisionTop;
+	private float[] m_ModelRecallTop;
+	private float[] m_ModelFmeasureTop;
 	
 	
 	
@@ -153,9 +167,12 @@ public class TestSetEvaluator {
 			int failureMode,
 			int maxMemory,
 			int normMode){
+		
 		float numberOfRecommendationsRatio = 0f;
 		int numberOfFailures = 0;
-		int[] failuresHist = new int[m_failuresHist.length]; 
+		int[] failuresHist = new int[m_failuresHist.length];
+		
+		// URL level metrics
 		float hitratio = 0f;
 		float clicksoonratio = 0f;
 		float[] precission = new float[m_points.length];
@@ -164,6 +181,18 @@ public class TestSetEvaluator {
 		float[] modelPrecision = new float[m_points.length];
 		float[] modelRecall = new float[m_points.length];
 		float[] modelFmeasure = new float[m_points.length];
+		
+		// TOPIC level metrics
+		float hitratioTop = 0f;
+		float clicksoonratioTop = 0f;
+		float[] precissionTop = new float[m_points.length];
+		float[] recallTop = new float[m_points.length];
+		float[] fmeasureTop = new float[m_points.length];
+		float[] modelPrecisionTop = new float[m_points.length];
+		float[] modelRecallTop = new float[m_points.length];
+		float[] modelFmeasureTop = new float[m_points.length];
+		
+		
 		for(int i=0; i<m_sequences.size(); i++){
 			String[] seq = m_sequences.get(i);
 			
@@ -195,13 +224,15 @@ public class TestSetEvaluator {
 			}
 			
 			
-			// compute METRICS
+			// METRICS //
+			seqEv.setTopicParameters(m_url2topic, m_topicmatch);
 			seqEv.computeSequenceMetrics(mode, nrecos, seed, markovchain);
 			
-			
-			// Statistics
+	
+			// number of recommendations
 			numberOfRecommendationsRatio = numberOfRecommendationsRatio + seqEv.getNumberOfRecommendationsRatio();
-			// Failure functions
+			
+			// failure functions
 			int nfails = seqEv.getNumberOfFailures();
 			numberOfFailures = numberOfFailures + nfails;
 			switch(nfails){
@@ -230,7 +261,8 @@ public class TestSetEvaluator {
 				default: failuresHist[11]++;
 						break;
 			}
-			// Metrics
+			
+			// URL level metrics
 			hitratio = hitratio + seqEv.getHitRatio();
 			clicksoonratio = clicksoonratio + seqEv.getClickSoonRatio();
 			for(int j=0; j<m_points.length; j++){
@@ -241,16 +273,31 @@ public class TestSetEvaluator {
 				modelRecall[j] = modelRecall[j] + seqEv.getRecallModelAtPoint(m_points[j]);
 				modelFmeasure[j] = modelFmeasure[j] + seqEv.getFmeasureModelAtPoint(m_beta, m_points[j]);
 			}
+			
+			// TOPIC level metrics
+			hitratioTop = hitratioTop + seqEv.getHitRatioTop();
+			clicksoonratioTop = clicksoonratioTop + seqEv.getClickSoonRatioTop();
+			for(int j=0; j<m_points.length; j++){
+				precissionTop[j] = precissionTop[j] + seqEv.getPrecisionTopAtPoint(m_points[j]);
+				recallTop[j] = recallTop[j] + seqEv.getRecallTopAtPoint(m_points[j]);
+				fmeasureTop[j] = fmeasureTop[j] + seqEv.getFmeasureTopAtPoint(m_beta, m_points[j]);
+				modelPrecisionTop[j] = modelPrecisionTop[j] + seqEv.getPrecisionModelTopAtPoint(m_points[j]);
+				modelRecallTop[j] = modelRecallTop[j] + seqEv.getRecallModelTopAtPoint(m_points[j]);
+				modelFmeasureTop[j] = modelFmeasureTop[j] + seqEv.getFmeasureModelTopAtPoint(m_beta, m_points[j]);
+			}
+			
 		}
 		
 		// Compute the average values
 		m_numberOfRecommendationsRatio = numberOfRecommendationsRatio/(float)m_sequences.size();
+		
 		// Failure functions
 		m_numberOfFailures = numberOfFailures;
 		for(int j=0; j<failuresHist.length; j++){
 			m_failuresHist[j] = (float)failuresHist[j] / (float)m_sequences.size();
 		}
-		// Metrics
+		
+		// URL level metrics
 		m_hitratio = hitratio/(float)m_sequences.size();
 		m_clicksoonratio = clicksoonratio/(float)m_sequences.size();
 		for(int j=0; j<m_points.length; j++){
@@ -261,37 +308,24 @@ public class TestSetEvaluator {
 			m_ModelRecall[j] = modelRecall[j]/(float)m_sequences.size();
 			m_ModelFmeasure[j] = modelFmeasure[j]/(float)m_sequences.size();
 		}
+		
+		// TOPIC level metrics
+		m_hitratioTop = hitratioTop/(float)m_sequences.size();
+		m_clicksoonratioTop = clicksoonratioTop/(float)m_sequences.size();
+		for(int j=0; j<m_points.length; j++){
+			m_precisionTop[j] = precissionTop[j]/(float)m_sequences.size();
+			m_recallTop[j] = recallTop[j]/(float)m_sequences.size();
+			m_fmeasureTop[j] = fmeasureTop[j]/(float)m_sequences.size();
+			m_ModelPrecisionTop[j] = modelPrecisionTop[j]/(float)m_sequences.size();
+			m_ModelRecallTop[j] = modelRecallTop[j]/(float)m_sequences.size();
+			m_ModelFmeasureTop[j] = modelFmeasureTop[j]/(float)m_sequences.size();
+		}
+
 	}
 	
-	public void writeResults(){
-		// write headers
-		System.out.print("numberOfRecommendationsRatio,hitratio,clicksoonratio");
-		for(int i=0; i<m_points.length; i++){
-			System.out.print(",pr_" + m_points[i]);
-		}
-		for(int i=0; i<m_points.length; i++){
-			System.out.print(",re_" + m_points[i]);
-		}
-		for(int i=0; i<m_points.length; i++){
-			System.out.print(",fm" + m_beta + "_" + m_points[i]);
-		}
-		System.out.println();
-		
-		// wirte results
-		System.out.print(m_numberOfRecommendationsRatio);
-		System.out.print("," + m_hitratio);
-		System.out.print("," + m_clicksoonratio);
-		for(int i=0; i<m_points.length; i++){
-			System.out.print("," + m_precision[i]);
-		}
-		for(int i=0; i<m_points.length; i++){
-			System.out.print("," + m_recall[i]);
-		}
-		for(int i=0; i<m_points.length; i++){
-			System.out.print("," + m_fmeasure[i]);
-		}
-		System.out.println();
-	}
+	
+	
+	// SET class attributes
 	
 	public void setConfusionPoints(float[] confusionPoints){
 		m_points = confusionPoints;
@@ -299,7 +333,13 @@ public class TestSetEvaluator {
 	public void setFmeasureBeta(float beta){
 		m_beta = beta;
 	}
+	public void setTopicParameters(int[] url2topic, float topicmatch){
+		m_url2topic = url2topic;
+		m_topicmatch = topicmatch;
+	}
 	
+	
+	// GET class attributes
 	
 	public int getNumberOfSequences(){
 		return m_sequences.size();
@@ -320,6 +360,10 @@ public class TestSetEvaluator {
 	public float[] getFailuresHistogram(){
 		return m_failuresHist;
 	}
+	
+	
+	// URL level attributes
+	
 	public float getHitRatio(){
 		return m_hitratio;
 	}
@@ -343,5 +387,66 @@ public class TestSetEvaluator {
 	}
 	public float[] getModelFmeasures(){
 		return m_ModelFmeasure;
+	}
+	
+	
+	// TOPIC level attributes
+	
+	public float getHitRatioTop(){
+		return m_hitratioTop;
+	}
+	public float getClickSoonRatioTop(){
+		return m_clicksoonratioTop;
+	}
+	public float[] getPrecisionsTop(){
+		return m_precisionTop;
+	}
+	public float[] getRecallsTop(){
+		return m_recallTop;
+	}
+	public float[] getFmeasuresTop(){
+		return m_fmeasureTop;
+	}
+	public float[] getModelPrecisionsTop(){
+		return m_ModelPrecisionTop;
+	}
+	public float[] getModelRecallsTop(){
+		return m_ModelRecallTop;
+	}
+	public float[] getModelFmeasuresTop(){
+		return m_ModelFmeasureTop;
+	}
+	
+	
+	// Utilities
+	
+	public void writeResults(){
+		// write headers
+		System.out.print("numberOfRecommendationsRatio,hitratio,clicksoonratio");
+		for(int i=0; i<m_points.length; i++){
+			System.out.print(",pr_" + m_points[i]);
+		}
+		for(int i=0; i<m_points.length; i++){
+			System.out.print(",re_" + m_points[i]);
+		}
+		for(int i=0; i<m_points.length; i++){
+			System.out.print(",fm" + m_beta + "_" + m_points[i]);
+		}
+		System.out.println();
+		
+		// write results
+		System.out.print(m_numberOfRecommendationsRatio);
+		System.out.print("," + m_hitratio);
+		System.out.print("," + m_clicksoonratio);
+		for(int i=0; i<m_points.length; i++){
+			System.out.print("," + m_precision[i]);
+		}
+		for(int i=0; i<m_points.length; i++){
+			System.out.print("," + m_recall[i]);
+		}
+		for(int i=0; i<m_points.length; i++){
+			System.out.print("," + m_fmeasure[i]);
+		}
+		System.out.println();
 	}
 }

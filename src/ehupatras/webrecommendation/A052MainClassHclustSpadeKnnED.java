@@ -15,14 +15,13 @@ public class A052MainClassHclustSpadeKnnED {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/kk.log";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_00_no_role";
-		dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String clustWD = "/CL_00_no_role";
-		clustWD = "";
+		String databaseWD = base + "/02_DATABASE_5";
+		String dmWD = "/DM_04_edit";
+		String validationWD = base + "/03_VALIDATION_5";
+		String clustWD = "/hclust_DM_04_edit";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
@@ -83,7 +82,7 @@ public class A052MainClassHclustSpadeKnnED {
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
 				matrix, trainAL, valAL, testAL);
-		modelev.setFmeasureBeta(0.5f);
+		modelev.setFmeasureBeta(1f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
 		modelev.buildMarkovChains();
