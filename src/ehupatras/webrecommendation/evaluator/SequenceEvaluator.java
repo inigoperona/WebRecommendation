@@ -27,6 +27,7 @@ public class SequenceEvaluator {
 	private float[] m_recallModel;
 	
 	// TOPIC level metrics
+	private ArrayList<Integer> m_urlIds = null;
 	private int[] m_url2topic = null;
 	private float m_topicmatch = 0.5f;
 	private float m_hitscoreTop = 0;
@@ -229,10 +230,16 @@ public class SequenceEvaluator {
 	private void constructor2(ArrayList<String> sequence){
 		m_sequence = sequence;
 		m_sequenceURL = sequence;
+		
 		m_precision = new float[sequence.size()];
 		m_recall = new float[sequence.size()];
 		m_precisionModel = new float[sequence.size()];
 		m_recallModel = new float[sequence.size()];
+		
+		m_precisionTop = new float[sequence.size()];
+		m_recallTop = new float[sequence.size()];
+		m_precisionModelTop = new float[sequence.size()];
+		m_recallModelTop = new float[sequence.size()];
 	}
 	
 	private ArrayList<String> convertToArrayList(String[] strA){
@@ -437,8 +444,10 @@ public class SequenceEvaluator {
 			String rec = recommendatios.get(i);
 			int stepInt = Integer.valueOf(step);
 			int recInt = Integer.valueOf(rec);
-			int stepTop = m_url2topic[stepInt];
-			int recTop = m_url2topic[recInt];
+			int stepInt2 = m_urlIds.indexOf(stepInt);
+			int recInt2 = m_urlIds.indexOf(recInt);
+			int stepTop = m_url2topic[stepInt2];
+			int recTop = m_url2topic[recInt2];
 			if(stepInt == recInt){
 				hitURL = true;
 				break;
@@ -463,12 +472,14 @@ public class SequenceEvaluator {
 		for(int i=0; i<recommendatios.size(); i++){
 			String onereco = recommendatios.get(i);
 			int onerecoInt = Integer.valueOf(onereco);
-			int onerecoTop =  m_url2topic[onerecoInt];
+			int onerecoInt2 = m_urlIds.indexOf(onerecoInt);
+			int onerecoTop =  m_url2topic[onerecoInt2];
 			
 			for(int j=stepIndex; j<m_sequenceURL.size(); j++){
 				String realstep = m_sequenceURL.get(j);
 				int realstepInt = Integer.valueOf(realstep);
-				int realstepTop = m_url2topic[realstepInt];
+				int realstepInt2 = m_urlIds.indexOf(realstepInt);
+				int realstepTop = m_url2topic[realstepInt2];
 				
 				if(onerecoInt == realstepInt){
 					hitURL = true;
@@ -486,7 +497,7 @@ public class SequenceEvaluator {
 		if(hitURL){
 			m_clicksoonscoreTop = m_clicksoonscoreTop + 1f;
 		} else if(hitTopic){
-			m_hitscoreTop = m_hitscoreTop + m_topicmatch;
+			m_clicksoonscoreTop = m_clicksoonscoreTop + m_topicmatch;
 		}
 	}
 	
@@ -512,12 +523,14 @@ public class SequenceEvaluator {
 			
 			String onereco = recommendatios.get(i);
 			int onerecoInt = Integer.valueOf(onereco);
-			int onerecoTop =  m_url2topic[onerecoInt];
+			int onerecoInt2 = m_urlIds.indexOf(onerecoInt);
+			int onerecoTop =  m_url2topic[onerecoInt2];
 			
 			for(int j=stepIndex; j<m_sequenceURL.size(); j++){
 				String realstep = m_sequenceURL.get(j);
 				int realstepInt = Integer.valueOf(realstep);
-				int realstepTop = m_url2topic[realstepInt];
+				int realstepInt2 = m_urlIds.indexOf(realstepInt);
+				int realstepTop = m_url2topic[realstepInt2];
 				
 				if(onerecoInt == realstepInt){
 					hitURL = true;
@@ -556,12 +569,14 @@ public class SequenceEvaluator {
 			
 			String realstep = m_sequenceURL.get(i);
 			int realstepInt = Integer.valueOf(realstep);
-			int realstepTop = m_url2topic[realstepInt];
+			int realstepInt2 = m_urlIds.indexOf(realstepInt);
+			int realstepTop = m_url2topic[realstepInt2];
 			
 			for(int j=0; j<recommendatios.size(); j++){
 				String onereco = recommendatios.get(j);
 				int onerecoInt = Integer.valueOf(onereco);
-				int onerecoTop =  m_url2topic[onerecoInt];
+				int onerecoInt2 = m_urlIds.indexOf(onerecoInt);
+				int onerecoTop =  m_url2topic[onerecoInt2];
 				
 				if(realstepInt == onerecoInt){
 					hitURL = true;
@@ -694,7 +709,8 @@ public class SequenceEvaluator {
 	
 	// TOPIC level metrics
 	
-	public void setTopicParameters(int[] url2topic, float topicmatch){
+	public void setTopicParameters(ArrayList<Integer> urlIds, int[] url2topic, float topicmatch){
+		m_urlIds = urlIds;
 		m_url2topic = url2topic;
 		m_topicmatch = topicmatch;
 	}

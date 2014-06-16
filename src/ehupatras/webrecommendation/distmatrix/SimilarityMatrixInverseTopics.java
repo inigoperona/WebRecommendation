@@ -2,6 +2,7 @@ package ehupatras.webrecommendation.distmatrix;
 
 import java.util.ArrayList;
 
+import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010Topics;
 
@@ -11,7 +12,12 @@ public class SimilarityMatrixInverseTopics
 	public SimilarityMatrixInverseTopics(ArrayList<Long> names, String urlsDMfile, float urlsEqualnessThreshold){
 		super(names);
 		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
-		loadUrlsDM(urlsDMfile);
+		
+		// load topics
+		A100MainClassAddContent cont = new A100MainClassAddContent();
+		Object[] objA = cont.loadUrlsDM(urlsDMfile);
+		m_UrlIDs = (ArrayList<Integer>)objA[0];
+		m_UrlsDM = (float[][])objA[1];
 	}
 	
 	public void computeMatrix(ArrayList<String[]> data,

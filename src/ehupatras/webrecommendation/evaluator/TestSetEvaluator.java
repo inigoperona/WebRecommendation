@@ -54,6 +54,7 @@ public class TestSetEvaluator {
 	private float[] m_ModelFmeasure;
 	
 	// Topic level metrics
+	private ArrayList<Integer> m_urlIds = null;
 	private int[] m_url2topic = null;
 	private float m_topicmatch = 0.5f;
 	private float m_hitratioTop = 0f;
@@ -149,12 +150,20 @@ public class TestSetEvaluator {
 	
 	private void constructor(ArrayList<String[]> sequences){
 		m_sequences = sequences;
+		
 		m_precision = new float[m_points.length];
 		m_recall = new float[m_points.length];
 		m_fmeasure = new float[m_points.length];
 		m_ModelPrecision = new float[m_points.length];
 		m_ModelRecall = new float[m_points.length];
 		m_ModelFmeasure = new float[m_points.length];
+		
+		m_precisionTop = new float[m_points.length];
+		m_recallTop = new float[m_points.length];
+		m_fmeasureTop = new float[m_points.length];
+		m_ModelPrecisionTop = new float[m_points.length];
+		m_ModelRecallTop = new float[m_points.length];
+		m_ModelFmeasureTop = new float[m_points.length];
 	}
 	
 	
@@ -225,7 +234,7 @@ public class TestSetEvaluator {
 			
 			
 			// METRICS //
-			seqEv.setTopicParameters(m_url2topic, m_topicmatch);
+			seqEv.setTopicParameters(m_urlIds, m_url2topic, m_topicmatch);
 			seqEv.computeSequenceMetrics(mode, nrecos, seed, markovchain);
 			
 	
@@ -333,7 +342,8 @@ public class TestSetEvaluator {
 	public void setFmeasureBeta(float beta){
 		m_beta = beta;
 	}
-	public void setTopicParameters(int[] url2topic, float topicmatch){
+	public void setTopicParameters(ArrayList<Integer> urlIds, int[] url2topic, float topicmatch){
+		m_urlIds = urlIds;
 		m_url2topic = url2topic;
 		m_topicmatch = topicmatch;
 	}

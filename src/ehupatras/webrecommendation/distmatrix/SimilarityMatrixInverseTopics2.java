@@ -1,6 +1,8 @@
 package ehupatras.webrecommendation.distmatrix;
 
 import java.util.ArrayList;
+
+import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010Topics2;
 
@@ -10,7 +12,12 @@ public class SimilarityMatrixInverseTopics2
 	public SimilarityMatrixInverseTopics2(ArrayList<Long> names, String urls2topicfile, float topicmatch){
 		super(names);
 		m_topicmatch = topicmatch;
-		loadUrlsTopic(urls2topicfile);
+		
+		// load topics
+		A100MainClassAddContent cont = new A100MainClassAddContent();
+		Object[] objA = cont.loadUrlsTopic(urls2topicfile);
+		m_UrlIDs = (ArrayList<Integer>)objA[0];
+		m_url2topic = (int[])objA[1];
 	}
 	
 	public void computeMatrix( ArrayList<String[]> data,

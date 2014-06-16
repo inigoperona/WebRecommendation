@@ -178,13 +178,25 @@ public class PreprocessContent {
 			}
 			for(int j=0; j<nUrl; j++){
 				float val = urlsDM[i][j];
-				m_URLsDM[i][j] = (val-min)/(max-min);
+				float val1 = val-min;
+				float val2 = max-min;
+				if(val2>0){
+					m_URLsDM[i][j] = val1/val2;
+				} else {
+					m_URLsDM[i][j] = 1;
+				}
 			}
 		}
 		
 	}
 	
 	private float euclideanDistance(float[] v1, float[] v2){
+		if(v1==null || v2==null){
+			// the maximum distance is 1,
+			// because we are measuring the distance between distributions
+			return 1f;
+		}
+		
 		int l = Math.min(v1.length, v2.length);
 		double sum = 0d;
 		for(int i=0; i<l; i++){
@@ -244,15 +256,17 @@ public class PreprocessContent {
 		m_url2topic = new int[m_url2topicDist.size()];
 		for(int i=0; i<m_url2topicDist.size(); i++){
 			float[] topdist = m_url2topicDist.get(i);
+			
 			float maxprob = -1f;
 			int maxj = -1;
-			for(int j=0; j<topdist.length; j++){
+			for(int j=0; topdist!=null && j<topdist.length; j++){
 				float prob = topdist[j];
 				if(maxprob<prob){
 					maxprob = prob;
 					maxj = j;
 				}
 			}
+			
 			if(maxprob>=minsupport){
 				m_url2topic[i] = maxj;
 			} else {

@@ -87,6 +87,7 @@ public class ModelEvaluator {
 	private float m_fmeasurebeta = (float)0.5;
 	
 	// topic related parameters
+	private ArrayList<Integer> m_urlIds = null;
 	private int[] m_url2topic = null;
 	private float m_topicmatch = 0.5f;
 	
@@ -998,7 +999,7 @@ public class ModelEvaluator {
 			// carry out the evaluation
 			eval.setConfusionPoints(m_confusionPoints);
 			eval.setFmeasureBeta(m_fmeasurebeta);
-			eval.setTopicParameters(m_url2topic, m_topicmatch);
+			eval.setTopicParameters(m_urlIds, m_url2topic, m_topicmatch);
 			eval.computeEvaluation(
 					mode, nrecos, seed, 
 					m_markovChainAL.get(i),
@@ -1219,7 +1220,8 @@ public class ModelEvaluator {
 	public void setFmeasureBeta(float fmeasurebeta){
 		m_fmeasurebeta = fmeasurebeta;
 	}
-	public void setTopicParameters(int[] url2topic, float topicmatch){
+	public void setTopicParameters(ArrayList<Integer> urlIds, int[] url2topic, float topicmatch){
+		m_urlIds = urlIds;
 		m_url2topic = url2topic;
 		m_topicmatch = topicmatch;
 	}
