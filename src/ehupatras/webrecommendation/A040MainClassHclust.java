@@ -92,7 +92,7 @@ public class A040MainClassHclust {
 				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
-		modelev.setConfusionPoints(confusionPoints);		
+		modelev.setConfusionPoints(confusionPoints);	
 	
 		// HIERARCHICAL CLUSTERING //
 		for(int j=0; j<cutthA.length; j++){ // for each height

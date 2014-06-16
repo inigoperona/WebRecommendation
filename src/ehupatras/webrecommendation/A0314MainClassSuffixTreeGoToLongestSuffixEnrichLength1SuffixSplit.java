@@ -76,6 +76,13 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1SuffixSplit {
 		modelev.setFmeasureBeta(0.5f);
 		modelev.setConfusionPoints(confusionPoints);
 		
+		// load topic information
+		A100MainClassAddContent cont = new A100MainClassAddContent();
+		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
+		int[] url2topic = (int[])objAA[1];
+		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
+		
 		// Markov Chain uses one of failure functions
 		// so just in case we computed it
 		modelev.buildMarkovChains();

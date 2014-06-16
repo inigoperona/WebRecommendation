@@ -76,6 +76,15 @@ public class A030MainClassMarkovChainSplit {
 				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		modelev.setConfusionPoints(confusionPoints);
+		
+		// load topic information
+		A100MainClassAddContent cont = new A100MainClassAddContent();
+		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
+		int[] url2topic = (int[])objAA[1];
+		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
+		
+		// write result headers
 		System.out.print("options," + modelev.getEvaluationHeader());
 		
 		// compute markov chain

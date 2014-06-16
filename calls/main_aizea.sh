@@ -52,6 +52,20 @@ mkdir -p $validation
 
 
 
+### PROCESSING THE URLxTopicDistribution file ###
+
+echo "## PREPROCESSING CONTENTS ##"
+
+../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar ehupatras.webrecommendation.A100MainClassAddContent \
+  $preprocess \
+  $preprocess \
+  "/document-topic-distributuions1_usageID.csv" \
+  "/URLs_DM.txt" \
+  "/URLs_to_topic.txt"
+
+
+
+
 
 ### HOLD-OUT ###
 

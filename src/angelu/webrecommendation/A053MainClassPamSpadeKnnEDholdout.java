@@ -2,6 +2,7 @@ package angelu.webrecommendation;
 
 import java.util.ArrayList;
 
+import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.ModelEvaluator;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorUHC;
@@ -90,6 +91,15 @@ public class A053MainClassPamSpadeKnnEDholdout {
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
 				matrix, trainAL, valAL, testAL);
+		
+		// load topic information
+		A100MainClassAddContent cont = new A100MainClassAddContent();
+		Object[] objA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
+		int[] url2topic = (int[])objA[1];
+		modelev.setTopicParameters(urlIDs, url2topic, 1f);
+		
+		// initialize parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);

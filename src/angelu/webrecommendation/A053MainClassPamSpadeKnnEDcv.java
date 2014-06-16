@@ -2,6 +2,7 @@ package angelu.webrecommendation;
 
 import java.util.ArrayList;
 
+import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.ModelEvaluator;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorUHC;
@@ -12,15 +13,15 @@ import ehupatras.webrecommendation.structures.Website;
 public class A053MainClassPamSpadeKnnEDcv {
 
 	public static void main(String[] args) {
+		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/kk.log";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM00-no_role-split";
-		dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String clustWD = "/CL_00_no_role";
-		clustWD = "";
+		String databaseWD = base + "/02_DATABASE_5";
+		String dmWD = "/DM_04_edit";
+		String validationWD = base + "/03_VALIDATION_5";
+		String clustWD = "/pam_DM_04_edit";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
@@ -80,6 +81,15 @@ public class A053MainClassPamSpadeKnnEDcv {
 		// initialize the model evaluator
 		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
 				matrix, trainAL, valAL, testAL);
+		
+		// load topic information
+		A100MainClassAddContent cont = new A100MainClassAddContent();
+		Object[] objA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
+		int[] url2topic = (int[])objA[1];
+		modelev.setTopicParameters(urlIDs, url2topic, 1f);
+		
+		// initialize parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);

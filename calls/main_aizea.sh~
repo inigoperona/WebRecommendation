@@ -52,6 +52,18 @@ mkdir -p $validation
 
 
 
+### 
+
+java -Xmx2048m -cp webreco.jar ehupatras.webrecommendation.A100MainClassAddContent \
+  $preprocess \
+  $preprocess \
+  "/document-topic-distributuions1_usageID.csv" \
+  "/URLs_DM.txt" \
+  "/URLs_to_topic.txt"
+
+
+
+
 
 ### HOLD-OUT ###
 
@@ -77,6 +89,7 @@ do
     $database "/"$dm \
     $validation $pam
 done
+
 
 
 ### CROSS-VALIDATION ###
