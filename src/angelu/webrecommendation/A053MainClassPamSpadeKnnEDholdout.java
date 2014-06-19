@@ -80,7 +80,7 @@ public class A053MainClassPamSpadeKnnEDholdout {
 		
 		// Parameters to play with
 		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
-		int[] ks = {150, 200, 250, 300};
+		int[] ks = {10, 20, 40, 60, 90, 100, 150, 200, 250, 350};
 		//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
 		//float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
 		float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};
@@ -100,7 +100,7 @@ public class A053MainClassPamSpadeKnnEDholdout {
 		modelev.setTopicParameters(urlIDs, url2topic, 1f);
 		
 		// initialize parameters
-		modelev.setFmeasureBeta(0.5f);
+		modelev.setFmeasureBeta(1f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
 		modelev.buildMarkovChains();
