@@ -90,7 +90,7 @@ public class A100MainClassAddContent {
 		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
 		String preprocessingWD = base + "/01_preprocess";
 		String contentWD = base + "/01_preprocess";
-		String infileUrl2topicDist = "/document-topic-distributuions1_v2.csv";
+		String infileUrl2topicDist = "/topicTestuakBatera-document-topic-distributuionsTestuhutsa_usageID.csv";
 		String outfileUrlDM = "/URLs_DM.txt";
 		String outfileUrl2topic = "/URLs_to_topic.txt";
 		preprocessingWD = args[0];
@@ -98,7 +98,6 @@ public class A100MainClassAddContent {
 		infileUrl2topicDist = args[2];
 		outfileUrlDM = args[3];
 		outfileUrl2topic = args[4];
-		
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);

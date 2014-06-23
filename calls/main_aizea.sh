@@ -84,13 +84,28 @@ done
 echo "## PAM+SPADE ##"
 for dm in "DM_04_edit"
 do
-  pam="/pam_"$dm
-  echo " "$pam"_spade"
-  ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A053MainClassPamSpadeKnnEDholdout \
-    $preprocess /LOGs_from_Jan9_toNov19.log \
-    $database "/"$dm \
-    $validation $pam
+  for top in "/URLs_to_topic.txt" "/URLs_to_topicModua0.txt" "/URLs_to_topicModua1.txt" "/URLs_to_topicModua2.txt"
+  do
+    # same topic score in results 0.5 
+    pam="/pam_"$dm
+    echo " "$pam"_spade_top05"
+    ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A053MainClassPamSpadeKnnEDholdoutTop05 \
+      $preprocess /LOGs_from_Jan9_toNov19.log $top \
+      $database "/"$dm \
+      $validation $pam
+
+    # same topic score in results 1
+    pam="/pam_"$dm
+    echo " "$pam"_spade_top1"
+    ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar angelu.webrecommendation.A053MainClassPamSpadeKnnEDholdoutTop1 \
+      $preprocess /LOGs_from_Jan9_toNov19.log $top \
+      $database "/"$dm \
+      $validation $pam
+  done
 done
+
+
+
 
 
 

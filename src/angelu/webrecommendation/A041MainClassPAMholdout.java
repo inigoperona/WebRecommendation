@@ -20,10 +20,8 @@ public class A041MainClassPAMholdout {
 		String logfile = "/kk.log";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
-		dmWD = "";
 		String validationWD = base + "/03_VALIDATION_5";
 		String clustWD = "/pam_DM_04_edit";
-		clustWD = "";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
