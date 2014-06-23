@@ -11,7 +11,7 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A053MainClassPamSpadeKnnEDholdout {
+public class A53MainClassPamSpadeKnnEDholdout110 {
 
 	public static void main(String[] args) {
 		
@@ -97,7 +97,7 @@ public class A053MainClassPamSpadeKnnEDholdout {
 		Object[] objA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
 		int[] url2topic = (int[])objA[1];
-		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
+		modelev.setTopicParameters(urlIDs, url2topic, 1f);
 		
 		// initialize parameters
 		modelev.setFmeasureBeta(1f);
