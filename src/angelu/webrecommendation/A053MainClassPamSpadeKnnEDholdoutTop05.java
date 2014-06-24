@@ -16,7 +16,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 	public static void main(String[] args) {
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_angelu/experiments";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/kk.log";
 		String url2topicFile = "/URLs_to_topic.txt";
@@ -99,7 +99,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 		Object[] objA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
 		int[] url2topic = (int[])objA[1];
-		modelev.setTopicParameters(urlIDs, url2topic, 1f);
+		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
 		
 		// initialize parameters
 		modelev.setFmeasureBeta(1f);
