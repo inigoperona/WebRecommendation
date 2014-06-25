@@ -87,17 +87,24 @@ public class A100MainClassAddContent {
 	public static void main(String args[]){
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_angelu/experiments";
 		String preprocessingWD = base + "/01_preprocess";
 		String contentWD = base + "/01_preprocess";
-		String infileUrl2topicDist = "/topicTestuakBatera-document-topic-distributuionsTestuhutsa_usageID.csv";
+		String infileUrl2topicDist = "/document-topic-distributions1_IDhutsa_usageID.csv";
+		String topicThStr = "0";
 		String outfileUrlDM = "/URLs_DM.txt";
 		String outfileUrl2topic = "/URLs_to_topic.txt";
+		
 		preprocessingWD = args[0];
 		contentWD = args[1];
 		infileUrl2topicDist = args[2];
-		outfileUrlDM = args[3];
-		outfileUrl2topic = args[4];
+		topicThStr = args[3];
+		outfileUrlDM = args[4];
+		outfileUrl2topic = args[5];
+		
+		float topicTh = Float.parseFloat(topicThStr);
+		
+		
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -124,7 +131,7 @@ public class A100MainClassAddContent {
 		pc.writeUrlDM(contentWD + outfileUrlDM);
 		
 		// Compute the topic of each URL
-		pc.computeURL2topic(0.4f);
+		pc.computeURL2topic(topicTh);
 		//pc.printURL2topic();
 		pc.writeURL2topic(contentWD + outfileUrl2topic);
 		
