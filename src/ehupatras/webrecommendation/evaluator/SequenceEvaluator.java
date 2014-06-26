@@ -448,11 +448,13 @@ public class SequenceEvaluator {
 			int recInt2 = m_urlIds.indexOf(recInt);
 			int stepTop = m_url2topic[stepInt2];
 			int recTop = m_url2topic[recInt2];
+			
 			if(stepInt == recInt){
 				hitURL = true;
 				break;
 			} else{
-				if(stepTop == recTop){
+				if(stepTop!=-1 && recTop!=-1 && 
+						stepTop == recTop){
 					hitTopic = true;
 				}
 			}
@@ -485,7 +487,8 @@ public class SequenceEvaluator {
 					hitURL = true;
 					break;
 				} else {
-					if(onerecoTop == realstepTop){
+					if(onerecoTop!=-1 && realstepTop!=-1 && 
+							onerecoTop == realstepTop){
 						hitTopic = true;
 					}
 				}
@@ -536,7 +539,8 @@ public class SequenceEvaluator {
 					hitURL = true;
 					break;
 				} else {
-					if(onerecoTop == realstepTop){
+					if(onerecoTop!=-1 && realstepTop!=-1 &&
+							onerecoTop == realstepTop){
 						hitTopic = true;
 					}
 				}
@@ -582,7 +586,8 @@ public class SequenceEvaluator {
 					hitURL = true;
 					break;
 				} else {
-					if(onerecoTop == realstepTop){
+					if(onerecoTop!=-1 && realstepTop!=-1 &&
+							onerecoTop == realstepTop){
 						hitTopic = true;
 					}
 				}

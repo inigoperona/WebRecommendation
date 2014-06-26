@@ -85,6 +85,7 @@ done
 ### HOLD-OUT ###
 ################
 
+
 echo "## PAM ##"
 for dm in "DM_04_edit"
 do
@@ -96,6 +97,7 @@ do
     $database "/"$dm \
     $validation $pam
 done
+
 
 
 echo "## PAM+SPADE ##"

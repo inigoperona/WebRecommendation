@@ -91,7 +91,7 @@ public class A100MainClassAddContent {
 		String preprocessingWD = base + "/01_preprocess";
 		String contentWD = base + "/01_preprocess";
 		String infileUrl2topicDist = "/document-topic-distributions1_IDhutsa_usageID.csv";
-		String topicThStr = "0";
+		String topicThStr = "0.4";
 		String outfileUrlDM = "/URLs_DM.txt";
 		String outfileUrl2topic = "/URLs_to_topic.txt";
 		
