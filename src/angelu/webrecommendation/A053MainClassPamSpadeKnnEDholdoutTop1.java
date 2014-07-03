@@ -1,5 +1,8 @@
 package angelu.webrecommendation;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import ehupatras.webrecommendation.A100MainClassAddContent;
@@ -24,6 +27,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
 		String clustWD = "/pam_DM_04_edit";
+		String evalFile = "/evaluation.txt";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		url2topicFile = args[2];
@@ -31,6 +35,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 		dmWD = args[4];
 		validationWD = args[5];
 		clustWD = args[6];
+		evalFile = args[7];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -113,6 +118,17 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 		// Results' header
 		System.out.print("options," + modelev.getEvaluationHeader());
 		
+		// open the file in which we save the evaluation process
+		BufferedWriter evalWriter = null;
+		try{
+			evalWriter = new BufferedWriter(new FileWriter(validationWD + evalFile));
+		} catch(IOException ex){
+			System.err.println("[angelu.webrecommendation.A053MainClassPamSpadeKnnEDholdoutTop05] " +
+					"Not possible to open the file: " + evalFile);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
 		// Start generating and evaluating the model
 		for(int j=0; j<ks.length; j++){
 			int k = ks[j];
@@ -136,19 +152,25 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 				
 				
 				// VALIDATION //
+				String resultInfo;
 				
 				// weighted by construction sequences (test sequences)
 				int[] nrecsWSTv = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWSTv.length; ind++ ){
 					int nrec = nrecsWSTv[ind];
+					// Write recommendations
+					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val"; 
+					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					results = modelev.computeEvaluationVal(2, nrec, (long)0, 1, 1, 0, true, rolesW);
-					System.out.print(esperimentationStr2 + "_weighted" + nrec + "_val,");
+					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
+				resultInfo = esperimentationStr2 + "_unbounded_val";
+				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				results = modelev.computeEvaluationVal(-1, -1, (long)0, 1, 1, 0, true, rolesW);
-				System.out.print(esperimentationStr2 + "_unbounded_val,");
+				System.out.print(resultInfo + ",");
 				System.out.print(results);
 				
 				
@@ -159,20 +181,33 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
+					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";
+					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					results = modelev.computeEvaluationTest(2, nrec, (long)0, 1, 1, 0, true, rolesW);
-					System.out.print(esperimentationStr2 + "_weighted" + nrec + "_test,");
+					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
+				resultInfo = esperimentationStr2 + "_unbounded_test";
+				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1, 0, true, rolesW);
-				System.out.print(esperimentationStr2 + "_unbounded_test,");
+				System.out.print(resultInfo + ",");
 				System.out.print(results);
 				
 			}
 
 		}
 		
+		// close the file in which we save the evaluation process
+		try{
+			evalWriter.close();
+		} catch (IOException ex){
+			System.err.println("[[angelu.webrecommendation.A053MainClassPamSpadeKnnEDholdoutTop05]] " +
+					"Problems at closing the file: " + evalFile);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
 					
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

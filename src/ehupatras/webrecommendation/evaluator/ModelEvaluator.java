@@ -75,7 +75,7 @@ public class ModelEvaluator {
 	private ArrayList<HiddenMarkovModel> m_hmmAL = null;
 		
 	
-	// EALUATION //
+	// EVALUATION //
 	
 	// datasets to evaluate the model
 	private ArrayList<ArrayList<Long>> m_valAL;
@@ -90,6 +90,13 @@ public class ModelEvaluator {
 	private ArrayList<Integer> m_urlIds = null;
 	private int[] m_url2topic = null;
 	private float m_topicmatch = 0.5f;
+	
+		
+	// Write the recommendations
+	private String m_lineHeader = null;
+	private BufferedWriter m_evalWriter = null;
+	
+	
 	
 	
 	
@@ -995,6 +1002,12 @@ public class ModelEvaluator {
 			}
 			
 			
+			// if we have to write the recommendations
+			if(m_lineHeader!=null){
+				eval.setLineHeader(m_lineHeader + "f" + i + ";",
+						m_evalWriter);
+			}
+			
 			
 			// carry out the evaluation
 			eval.setConfusionPoints(m_confusionPoints);
@@ -1167,6 +1180,11 @@ public class ModelEvaluator {
 		return results;
 	}
 	
+	// set line header, to write done recommendations
+	public void setLineHeader(String lineHeader, BufferedWriter evalWriter){
+		m_lineHeader = lineHeader;
+		m_evalWriter = evalWriter;
+	}
 	
 	
 	// HEADER of results 

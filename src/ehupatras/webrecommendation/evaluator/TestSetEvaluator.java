@@ -1,5 +1,6 @@
 package ehupatras.webrecommendation.evaluator;
 
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
@@ -65,6 +66,10 @@ public class TestSetEvaluator {
 	private float[] m_ModelPrecisionTop;
 	private float[] m_ModelRecallTop;
 	private float[] m_ModelFmeasureTop;
+	
+	// To write recommendations
+	private String m_lineHeader = null;
+	private BufferedWriter m_evalWriter = null;
 	
 	
 	
@@ -232,6 +237,18 @@ public class TestSetEvaluator {
 				seqEv = new SequenceEvaluator(seq, m_markovchain);
 			}
 			
+			// if we want to write recommendations
+			if(m_lineHeader!=null){
+				String seqStr = "-";
+				if(seq.length>0){
+					seqStr = seq[0];
+				}
+				for(int j=1; j<seq.length; j++){
+					seqStr = seqStr + "," + seq[j];
+				}
+				seqEv.setLineHeader(m_lineHeader + i + ":" + seqStr + ";",
+						m_evalWriter);
+			}
 			
 			// METRICS //
 			seqEv.setTopicParameters(m_urlIds, m_url2topic, m_topicmatch);
@@ -347,7 +364,10 @@ public class TestSetEvaluator {
 		m_url2topic = url2topic;
 		m_topicmatch = topicmatch;
 	}
-	
+	public void setLineHeader(String lineHeader, BufferedWriter evalWriter){
+		m_lineHeader = lineHeader;
+		m_evalWriter = evalWriter;
+	}
 	
 	// GET class attributes
 	

@@ -5,6 +5,9 @@ import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.markovmodel.hmm.HiddenMarkovModel;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class SequenceEvaluator {
@@ -36,6 +39,10 @@ public class SequenceEvaluator {
 	private float[] m_recallTop;
 	private float[] m_precisionModelTop;
 	private float[] m_recallModelTop;
+	
+	// write the recommendations done in each step
+	private String m_lineHeader = null;
+	private BufferedWriter m_evalWriter = null;
 	
 	
 	
@@ -266,6 +273,7 @@ public class SequenceEvaluator {
 		Recommender recM = null;
 		ArrayList<String> waydone = new ArrayList<String>();
 		ArrayList<String> list = null;
+		
 		if(mode==-1){ // Unbounded
 			list = m_recommender.getNextpossibleStepsUnbounded();
 		} else if(mode==0){ // Random
@@ -288,6 +296,26 @@ public class SequenceEvaluator {
 		for(int i=0; i<m_sequence.size(); i++){
 			// update the prediction indicators
 			this.computeStepMetrics(i, list);
+			
+			// if we want to write recommendations
+			// write the done recommendations in each step.
+			if(m_lineHeader!=null){
+				try{
+					m_evalWriter.write(m_lineHeader + i + ":");
+					if(list.size()>0){
+						m_evalWriter.write(list.get(0));
+					}
+					for(int j=1; j<list.size(); j++){
+						m_evalWriter.write("," + list.get(1));
+					}
+					m_evalWriter.write("\n");
+				} catch(IOException ex){
+					System.err.println("[ehupatras.webrecommendation.evaluator.SequenceEvaluator.computeSequenceMetrics] " +
+							"Problems writing in the evaluation file.");
+					System.err.println(ex.getMessage());
+					System.exit(1);
+				}
+			}
 			
 			// do the step
 			String nextstep = m_sequence.get(i);
@@ -315,6 +343,11 @@ public class SequenceEvaluator {
 			}
 		}
 		m_nFailures = m_recommender.getNumberOfFailures();
+	}
+	
+	public void setLineHeader(String lineHeader, BufferedWriter evalWriter){
+		m_lineHeader = lineHeader;
+		m_evalWriter = evalWriter;
 	}
 	
 	
@@ -808,7 +841,6 @@ public class SequenceEvaluator {
 		}
 		return fmeasure;
 	}
-	
 	
 	
 	// The main class to test it
