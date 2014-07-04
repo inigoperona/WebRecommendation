@@ -4,6 +4,7 @@ import ehupatras.webrecommendation.structures.*;
 import ehupatras.webrecommendation.distmatrix.*;
 import ehupatras.webrecommendation.modelvalidation.*;
 import ehupatras.webrecommendation.evaluator.*;
+
 import java.util.*;
 
 public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffix {
@@ -12,17 +13,20 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffix {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String logfile = "/kk.log";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_00_no_role";
-		//dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
+		String preprocessingWD = base + "/01_preprocess";
+		String logfile = "/log20000.log";
+		String url2topicFile = "/URLs_to_topic.txt";
+		String databaseWD = base + "/02_DATABASE_5";
+		String dmWD = "/DM_04_edit";
+		String validationWD = base + "/03_VALIDATION_5";
 		preprocessingWD = args[0];
 		logfile = args[1];
-		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
+		url2topicFile = args[2];
+		databaseWD = args[3];
+		dmWD = args[4];
+		validationWD = args[5];
+
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -63,26 +67,24 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffix {
 		
 		// MODEL VALIDATION //
 
-		// initialize the model evaluator
+		// build model: GST
+		ModelEvaluator modelev = new ModelEvaluatorSuffixTreeGlobal(
+				sequencesUHC, null,
+				matrix,
+				trainAL, valAL, testAL);
+		modelev.buildModel();
+		
+		// validation parameters
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
-				matrix, trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		modelev.setConfusionPoints(confusionPoints);
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
 		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
-		
-		// Markov Chain uses one of failure functions
-		// so just in case we computed it
-		modelev.buildMarkovChains();
-		
-		// SUFFIX TREE //
-		modelev.buildSuffixTreesFromOriginalSequences();		
 		
 		// Results' header
 		System.out.print("options," + modelev.getEvaluationHeader());

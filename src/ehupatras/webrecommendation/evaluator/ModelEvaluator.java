@@ -2,7 +2,6 @@ package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.clustering.ClusteringHierarchical;
 import ehupatras.clustering.ClusteringPAM;
-//import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.sequencealignment.multiplealignment.MultipleSequenceAlignment;
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
@@ -23,30 +22,27 @@ import java.util.ArrayList;
 public class ModelEvaluator {
 
 	// Number of folds
-	private int m_nFolds;
+	protected int m_nFolds;
 	
 	// database
-	private ArrayList<String[]> m_dataset = null; // without role tag
-	private ArrayList<String[]> m_dataset2 = null; // with role tags
-	private ArrayList<String[]> m_datasetSplit = null;
-	private ArrayList<String[]> m_datasetSplit2 = null;
-	private Matrix m_distancematrix;
+	protected ArrayList<String[]> m_dataset = null; // without role tag
+	protected ArrayList<String[]> m_datasetUHC = null; // with role tags
+	protected ArrayList<String[]> m_datasetSplit = null;
+	protected ArrayList<String[]> m_datasetSplitUHC = null;
+	protected Matrix m_distancematrix;
+	// To do the evaluation based on the database
+	protected ArrayList<ArrayList<Long>> m_trainAL;
+	protected ArrayList<ArrayList<Long>> m_valAL;
+	protected ArrayList<ArrayList<Long>> m_testAL;
+	
+	
+	
+	
+	
 	
 	
 	// MODELS //
-	
-	// To create the model: trainset
-	private ArrayList<ArrayList<Long>> m_trainAL;
-	
-	// CLUSTERING //
-	// Hierarchical Clustering
-	private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
-	private float m_pCutDendrogramDiss = 50f;
-	// PAM: Partitioning Around Medoids
-	private int m_k;
-	// store clusters
-	private ArrayList<int[]> m_clustersAL;
-	
+
 	// MSA + Wseq or SPADE //
 	// Multiple Sequence Alignment
 	private ArrayList<ArrayList<String[][]>> m_msaAL;
@@ -62,9 +58,6 @@ public class ModelEvaluator {
 	//private ArrayList<ArrayList<SuffixTreeStringArray>> m_clustSuffixTreeAL = null;
 	private ArrayList<ArrayList<MySuffixTree>> m_clustSuffixTreeAL = null;
 	
-	// Markov Chain
-	private ArrayList<MarkovChain> m_markovChainAL = null;
-	
 	// Medoids of clusters with each recommendations
 	private ArrayList<ArrayList<String[]>> m_medoidsAL = null;
 	private ArrayList<int[]> m_gmedoidsAL = null;
@@ -76,10 +69,6 @@ public class ModelEvaluator {
 		
 	
 	// EVALUATION //
-	
-	// datasets to evaluate the model
-	private ArrayList<ArrayList<Long>> m_valAL;
-	private ArrayList<ArrayList<Long>> m_testAL;
 	
 	// metrics' parameters
 	private float[] m_confusionPoints = 
@@ -109,16 +98,48 @@ public class ModelEvaluator {
 					ArrayList<ArrayList<Long>> trainAL,
 					ArrayList<ArrayList<Long>> valAL,
 					ArrayList<ArrayList<Long>> testAL){
-		m_dataset = dataset;
-		m_dataset2 = dataset;
-		m_datasetSplit = datasetSplit;
-		m_datasetSplit2 = datasetSplit;
+		m_dataset = this.removeUHCTagDB(dataset);
+		m_datasetUHC = dataset;
+		if(datasetSplit!=null){
+			m_datasetSplit = this.removeUHCTagDB(datasetSplit);
+			m_datasetSplitUHC = datasetSplit;
+		}
+		
 		m_distancematrix = dm;
+		
 		m_trainAL = trainAL;
 		m_valAL = valAL;
 		m_testAL = testAL;
+		
 		m_nFolds = m_trainAL.size();
 	}
+	
+	public void buildModel(){}
+	public TestSetEvaluator createTestSetEvaluator(int iFold, ArrayList<String[]> testseqs){return null;}
+	
+	
+	
+	
+	
+	private ArrayList<String[]> removeUHCTagDB(ArrayList<String[]> dataset){
+		ArrayList<String[]> dataset2 = new ArrayList<String[]>();
+		for(int i=0; i<dataset.size(); i++){
+			String[] strA = dataset.get(i);
+			String[] strB = this.removeUHCtagSeq(strA);
+			dataset2.add(strB);
+		}
+		return dataset2; 
+	}
+	
+	private String[] removeUHCtagSeq(String[] seq){
+		String[] seq2 = new String[seq.length];
+		for(int i=0; i<seq.length; i++){
+			String urlRole = seq[i];
+			String url = urlRole.substring(0, urlRole.length()-1);
+			seq2[i] = url;
+		}
+		return seq2;
+	}	
 	
 	protected void setDataSet(ArrayList<String[]> dataset){
 		m_dataset = dataset;
@@ -128,7 +149,7 @@ public class ModelEvaluator {
 		m_datasetSplit = dataset;
 	}
 	
-	private ArrayList<String[]> getDataSet(boolean isSplit){
+	protected ArrayList<String[]> getDataSet(boolean isSplit){
 		if(!isSplit){
 			return m_dataset;
 		} else {
@@ -138,382 +159,23 @@ public class ModelEvaluator {
 	
 	private ArrayList<String[]> getDataSet2(boolean isSplit){
 		if(!isSplit){
-			return m_dataset2;
+			return m_datasetUHC;
 		} else {
-			return m_datasetSplit2;
+			return m_datasetSplitUHC;
 		}
 	}
 	
-	
-	
-	// HIERARCHICAL CLUSTERING //
-	
-	public void buildClustersH(float pCutDendrogramDiss, String agglemerativeMethodString){
-		m_pCutDendrogramDiss = pCutDendrogramDiss;
-		m_AgglomerativeMethodClassName = agglemerativeMethodString;
-		this.buildClustersH();
-	}
-	
-	public void buildClustersH(){
-		// Clustering for each fold
-		m_clustersAL = new ArrayList<int[]>();
-		for(int i=0; i<m_nFolds; i++){
-			m_clustersAL.add(this.clusteringH(i));
-		}
-	}
-	
-	public void setCutDendrogramDissimilarityThreshold(float pCutDendrogramDiss){
-		m_pCutDendrogramDiss = pCutDendrogramDiss;
-	}
-	
-	private int[] clusteringH(int indexFold){
-		ArrayList<Long> trainnames = m_trainAL.get(indexFold);
-		// hierarchical clustering: http://sape.inf.usi.ch/hac
-		ClusteringHierarchical clustering = new ClusteringHierarchical();
-		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
-		float[][] distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
-		clustering.computeHierarchicalClustering(distmatrix,trainDMindexes,m_AgglomerativeMethodClassName);
-		// cut dendrogram
-		int[] clustersA = clustering.cutDendrogramByDissimilarity(m_pCutDendrogramDiss);
-		return clustersA;
-	}
-	
-	
-	
-	// PAM CLUSTERING //
-	
-	public void buildClustersPAM(int k){
-		m_k = k;
-		
-		// Clustering for each fold
-		m_clustersAL = new ArrayList<int[]>();
-		for(int i=0; i<m_nFolds; i++){
-			m_clustersAL.add(this.clusteringPAM(i));
-		}
-	}
-	
-	private int[] clusteringPAM(int indexFold){
-		ArrayList<Long> trainnames = m_trainAL.get(indexFold);
-		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
-		float[][] distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
-		
-		ClusteringPAM pam = new ClusteringPAM(m_k, distmatrix, trainDMindexes);
-		pam.runPAM();
-		
-		return pam.getMedoidAssignment();
-	}
-	
-	
-	// Clustering UTILS //
-	
-	public void writeClusters(String outfilename){
-		// Open the given file
-		BufferedWriter writer = null;
-		try{
-			writer = new BufferedWriter(new FileWriter(outfilename));
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
-					"Not possible to open the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// Write the sequences in a file line by line
-		try{
-			for(int i=0; i<m_nFolds; i++){
-				String[] clusteringStrA = this.clusteringToString(i);
-				for(int j=0; j<clusteringStrA.length; j++){
-					String line = clusteringStrA[j];
-					writer.write(String.valueOf(line));
-				}
-			}
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeFilteredLog] " +
-					"Problems writing to the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// close the file
-		try{
-			writer.close();
-		} catch (IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
-					"Problems at closing the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-	}
 
-	private String[] clusteringToString(int indexFold){
-		int[] clustersID = m_clustersAL.get(indexFold);
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
-				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
-		
-		String[] strA = new String[clustersID.length];
-		for(int i=0; i<clustersID.length; i++){
-			strA[i] = "fold:" + indexFold + ":" + 
-			trainsetnames2.get(i) + ":" + clustersID[i] + "\n";
-		}
-		return strA;
-	}
 	
-	public void saveClusters(String outfilename){
-		SaveLoadObjects so = new SaveLoadObjects();
-		so.save(m_clustersAL, outfilename);
-	}
-	
-	public void loadClusters(String outfilename){
-		SaveLoadObjects so = new SaveLoadObjects();
-		m_clustersAL = (ArrayList<int[]>)so.load(outfilename);
-	}
-	
-	
-	
-	
-	// MULTIPLE SEQUENCE ALIGNMENT //
-	
-	public void clustersSequenceAlignment(){
-		// Multiple Sequence Alignment for each fold
-		m_msaAL = new ArrayList<ArrayList<String[][]>>();
-		for(int i=0; i<m_nFolds; i++){
-			m_msaAL.add(this.msa(i));
-		}
-	}
-	
-	private ArrayList<String[][]> msa(int indexFold){
-		// Web Access Sequences (WAS)
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
-				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
-		
-		// Cluster-IDs for each WAS
-		int[] clusters = m_clustersAL.get(indexFold);
-		int[] clustersCopy = clusters.clone();
-		Arrays.sort(clustersCopy);
-		int maxcluster = clustersCopy[clusters.length-1];
-		
-		// Multiple Sequence Alignment
-		ArrayList<String[][]> multAlignsList = new ArrayList<String[][]>(); 
-		MultipleSequenceAlignment malign = new MultipleSequenceAlignment();
-		for(int cli=0; cli<=maxcluster; cli++){
-			ArrayList<Long> names = new ArrayList<Long>();
-			for(int i=0; i<clusters.length; i++){
-				if(cli==clusters[i]){
-					names.add(trainsetnames2.get(i));
-				}
-			}
-			int[] clusteri = m_distancematrix.getSessionIDsIndexes2(names, m_datasetSplit!=null);
-			malign.msa(clusteri, 
-					m_distancematrix.getMatrix(m_datasetSplit!=null), 
-					this.getDataSet(m_datasetSplit!=null));
-			String[][] multAlign = malign.getMultipleSequenceAlignment();
-			multAlignsList.add(multAlign);
-		}
-		return multAlignsList;
-	}
-	
-	public void writeAlignments(String outfilename){
-		// Open the given file
-		BufferedWriter writer = null;
-		try{
-			writer = new BufferedWriter(new FileWriter(outfilename));
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
-					"Not possible to open the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// Write the sequences in a file line by line
-		try{
-			for(int i=0; i<m_nFolds; i++){
-				String[] strA = this.alignmentToString(i);
-				for(int j=0; j<strA.length; j++){
-					String line = strA[j];
-					writer.write(String.valueOf(line));
-				}
-			}
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeFilteredLog] " +
-					"Problems writing to the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// close the file
-		try{
-			writer.close();
-		} catch (IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
-					"Problems at closing the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-	}
-	
-	private String[] alignmentToString(int indexFold){
-		ArrayList<String[][]> mAligns = m_msaAL.get(indexFold);
-		int[] clustersID = m_clustersAL.get(indexFold);
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
-				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
-		
-		String[] strA = new String[clustersID.length];
-		for(int cli=0; cli<mAligns.size(); cli++){
-			int index = 0;
-			String[][] clusterAlign = mAligns.get(cli);
-			for(int j=0; j<clustersID.length; j++){
-				if(clustersID[j]==cli){
-					String str = "fold:" + indexFold + ":" +
-							trainsetnames2.get(j) + ":" + 
-							clustersID[j];
-					String align = clusterAlign[index][0];
-					for(int k=1; k<clusterAlign[index].length-1; k++){
-						align = align + "," + clusterAlign[index][k];
-					}
-					strA[j] = str + ":" + align + "\n";
-					index++;
-				}
-			}
-		}
-		return strA;
-	}
-	
-	public void saveAlignments(String outfilename){
-		SaveLoadObjects so = new SaveLoadObjects();
-		so.save(m_msaAL, outfilename);
-	}
-	
-	public void loadAlignments(String outfilename){
-		SaveLoadObjects so = new SaveLoadObjects();
-		m_msaAL = (ArrayList<ArrayList<String[][]>>)so.load(outfilename);
-	}
-	
-	
-	
-	
-	// WEIGHTED SEQUENCES //
-	
-	public void extractWeightedSequences(float minsupport){
-		m_minsupport = minsupport;
-		
-		// Extract Weighted Sequences for each fold
-		m_weightedSequences = new ArrayList<ArrayList<String[]>>();
-		for(int i=0; i<m_nFolds; i++){
-			m_weightedSequences.add(this.extractWeightedSequencesFold(i));
-		}
-	}
-	
-	private ArrayList<String[]> extractWeightedSequencesFold(int indexFold){
-		ArrayList<String[]> seqList = new ArrayList<String[]>();
-		ArrayList<String[][]> alignseqs = m_msaAL.get(indexFold);
-		for(int i=0; i<alignseqs.size(); i++){ // for each cluster
-			String[][] alignseqsi = alignseqs.get(i);
-			WeightedSequence ws = new WeightedSequence(alignseqsi, m_minsupport);
-			try{
-				ws.process();
-			} catch (Exception ex){
-				System.err.append("Exception in extracting Weighted Sequences. " +
-						"[ehupatras.webrecommendation.evaluator.ModelEvaluator.extractWeightedSequencesFold]");
-				System.err.println(ex.getMessage());
-				System.exit(1);
-			}
-			ArrayList<String[]> generatedStrings = ws.getGeneratedSequences();
-			
-			// insert generated sequences in all sequences list
-			for(int j=0; j<generatedStrings.size(); j++){
-				String[] seq = generatedStrings.get(j);
-				seqList.add(seq);
-			}
-		}
-		return seqList;
-	}
-	
-	public void writeWeightedSequences(String outfilename){
-		// Open the given file
-		BufferedWriter writer = null;
-		try{
-			writer = new BufferedWriter(new FileWriter(outfilename));
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
-					"Not possible to open the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// Write the sequences in a file line by line
-		try{
-			for(int i=0; i<m_nFolds; i++){
-				ArrayList<String[]> wsFold = m_weightedSequences.get(i); 
-				for(int j=0; j<wsFold.size(); j++){
-					String[] seq = wsFold.get(j);
-					String line = "fold:" + i + ":";
-					line = line + seq[0];
-					for(int k=1; k<seq.length; k++){
-						line = line + "," + seq[k];
-					}
-					line = line + "\n";
-					writer.write(line);
-				}
-			}
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeFilteredLog] " +
-					"Problems writing to the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// close the file
-		try{
-			writer.close();
-		} catch (IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences] " +
-					"Problems at closing the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-	}
 
 	
 	
-	// GENERALIZED SUFFIX TREE //
 	
-	public void buildSuffixTrees(){
-		// Build Suffix Trees for each fold
-		m_suffixtreeAL = new ArrayList<MySuffixTree>();
-		for(int i=0; i<m_nFolds; i++){
-			m_suffixtreeAL.add(this.createSuffixTreeNoWeights(i));
-		}
-	}
 	
-	private MySuffixTree createSuffixTreeNoWeights(int indexFold){
-		ArrayList<String[]> sequences = m_weightedSequences.get(indexFold);
-		MySuffixTree suffixtree = new MySuffixTree(sequences);
-		return suffixtree;
-	}
+	
+	
+	
 
-	public void buildSuffixTreesFromOriginalSequences(){
-		// Build Suffix Trees for each fold
-		m_suffixtreeAL = new ArrayList<MySuffixTree>();
-		for(int i=0; i<m_nFolds; i++){
-			m_suffixtreeAL.add(this.createSuffixTreeFromOriginalSequences(i));
-		}
-	}
-	
-	private MySuffixTree createSuffixTreeFromOriginalSequences(int indexFold){		
-		ArrayList<Long> trainnames = m_trainAL.get(indexFold);
-		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
-		ArrayList<String[]> sequences = new ArrayList<String[]>(); 
-		for(int i=0; i<trainDMindexes.length; i++){
-			int index = trainDMindexes[i];
-			String[] seq = (this.getDataSet(m_datasetSplit!=null)).get(index);
-			sequences.add(seq);
-		}
-		MySuffixTree st = new MySuffixTree(sequences);
-		return st;
-	}
 	
 	
 	
@@ -702,30 +364,10 @@ public class ModelEvaluator {
 	
 	
 	
-	// MARKOV CHAIN //
+
 	
-	public void buildMarkovChains(){
-		// compute markov chain for each fold
-		m_markovChainAL = new ArrayList<MarkovChain>();
-		for(int i=0; i<m_nFolds; i++){
-			m_markovChainAL.add(this.getMarkovChain(i));
-		}
-	}
+
 	
-	private MarkovChain getMarkovChain(int indexFold){
-		// get the train sequences from sessionIDs
-		ArrayList<Long> sessionIDs = m_trainAL.get(indexFold); 
-		int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs, 
-						m_datasetSplit!=null);
-		ArrayList<String[]> trainseqs = new ArrayList<String[]>();
-		for(int j=0; j<inds.length; j++){
-			int index = inds[j];
-			String[] seq = this.getDataSet(m_datasetSplit!=null).get(index);
-			trainseqs.add(seq);
-		}
-		MarkovChain mchain = new MarkovChain(trainseqs);
-		return mchain;
-	}
 	
 	
 	
@@ -919,7 +561,8 @@ public class ModelEvaluator {
 					int maxMemory,
 					int normMode,
 					boolean isDistance,
-					float[][] rolesW){				
+					float[][] rolesW){
+		
 		// METRICS //
 		int trnURLs = 0;
 		int trnSeqs = 0;
@@ -951,6 +594,12 @@ public class ModelEvaluator {
 		float[] moReATop = new float[m_confusionPoints.length];
 		float[] moFmATop = new float[m_confusionPoints.length];
 		
+		// Create a markov chain
+		ModelEvaluatorMarkovChain modelMC = new ModelEvaluatorMarkovChain(
+				m_datasetUHC, m_datasetSplitUHC, 
+				m_distancematrix, 
+				m_trainAL, m_valAL, m_testAL);
+		modelMC.buildModel();
 		
 		// for each fold obtain the metrics
 		for(int i=0; i<m_nFolds; i++){
@@ -967,9 +616,9 @@ public class ModelEvaluator {
 			
 			
 			// SELECT THE MODEL //
-			
-			TestSetEvaluator eval = null;
+			TestSetEvaluator eval = this.createTestSetEvaluator(i, testseqs);
 			MySuffixTree suffixtree = null;
+			/*
 			if(m_suffixtreeAL!=null){
 				// GST & clust+MSA+Wseq+ST
 				suffixtree = m_suffixtreeAL.get(i);
@@ -997,10 +646,10 @@ public class ModelEvaluator {
 				eval = new TestSetEvaluator(testseqs, m_hmmAL.get(i));
 			} else {
 				// Markov Chain
-				MarkovChain markovchain = m_markovChainAL.get(i);
+				MarkovChain markovchain = modelMC.getMarkovChain(i);
 				eval = new TestSetEvaluator(testseqs, markovchain);
 			}
-			
+			*/
 			
 			// if we have to write the recommendations
 			if(m_lineHeader!=null){
@@ -1015,7 +664,7 @@ public class ModelEvaluator {
 			eval.setTopicParameters(m_urlIds, m_url2topic, m_topicmatch);
 			eval.computeEvaluation(
 					mode, nrecos, seed, 
-					m_markovChainAL.get(i),
+					modelMC.getMarkovChain(i),
 					failuremode,
 					maxMemory,
 					normMode);

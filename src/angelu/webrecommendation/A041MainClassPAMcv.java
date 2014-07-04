@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.ModelEvaluator;
-import ehupatras.webrecommendation.evaluator.ModelEvaluatorUHC;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -15,7 +14,7 @@ public class A041MainClassPAMcv {
 		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String logfile = "/kk.log";
+		String logfile = "/log20000.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String dmWD = "/DM_00_no_role";
 		dmWD = "";
@@ -60,7 +59,6 @@ public class A041MainClassPAMcv {
 		// CROSS VALIDATION //
 		A021MainClassCrossValidation ho = new A021MainClassCrossValidation();
 		ho.loadParts(validationWD, sampleSessionIDs);
-		//ho.createParts(validationWD, sampleSessionIDs);
 		ModelValidationCrossValidation mv = ho.getParts();
 		ArrayList<ArrayList<Long>> trainAL = mv.getTrain();
 		ArrayList<ArrayList<Long>> valAL  = mv.getValidation();
@@ -70,20 +68,21 @@ public class A041MainClassPAMcv {
 		// MODEL VALIDATION //
 	
 		// Parameters to play with
-
 		// k, number of clusters
 		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
 		//int[] ks = {40, 30, 20, 10, 5};
 		int[] ks = {150, 200, 250, 300};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
-				matrix, trainAL, valAL, testAL);
+		ModelEvaluator modelev = new ModelEvaluator(
+				sequencesUHC, null,
+				matrix,
+				trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);	
 	
-		// HIERARCHICAL CLUSTERING //
+		// PAM CLUSTERING //
 		for(int j=0; j<ks.length; j++){ // for each height
 			int k = ks[j];
 

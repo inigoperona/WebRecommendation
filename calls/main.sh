@@ -134,11 +134,11 @@ mkdir -p $validation
 echo "## MARKOV CHAIN ##"
 
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A030MainClassMarkovChain \
-  $preprocess /LOGs_from_Jan9_toNov19.log \
+  $preprocess /LOGs_from_Jan9_toNov19.log /URLs_to_topic.txt \
   $database /DM_00_no_role_dist \
   $validation
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A030MainClassMarkovChainSplit \
-  $preprocess /LOGs_from_Jan9_toNov19.log \
+  $preprocess /LOGs_from_Jan9_toNov19.log /URLs_to_topic.txt \
   $database /DM00-no_role-split \
   $validation
 

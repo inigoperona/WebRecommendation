@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.ModelEvaluator;
-import ehupatras.webrecommendation.evaluator.ModelEvaluatorUHC;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorClust;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustPAM;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -15,7 +16,7 @@ public class A041MainClassPAMSplit {
 		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String logfile = "/kk.log";
+		String logfile = "/log20000.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String dmWD = "/DM00-no_role-split";
 		//dmWD = "";
@@ -78,14 +79,7 @@ public class A041MainClassPAMSplit {
 		// k, number of clusters
 		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
 		//int[] ks = {40, 30, 20, 10, 5};
-		int[] ks = {150, 200, 250, 300};
-		
-		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, seqsSplit,
-				matrix, trainAL, valAL, testAL);
-		modelev.setFmeasureBeta(0.5f);
-		float[] confusionPoints = {0.25f,0.50f,0.75f};
-		modelev.setConfusionPoints(confusionPoints);		
+		int[] ks = {150, 200, 250, 300};		
 	
 		// HIERARCHICAL CLUSTERING //
 		for(int j=0; j<ks.length; j++){ // for each height
@@ -95,10 +89,13 @@ public class A041MainClassPAMSplit {
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			
 			// Clustering
-			modelev.buildClustersPAM(k);
+			ModelEvaluatorClust modelev = new ModelEvaluatorClustPAM(
+					sequencesUHC, seqsSplit,
+					matrix,
+					trainAL, valAL, testAL,
+					k);
 			modelev.saveClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			modelev.writeClusters(validationWD + clustWD + "/" + esperimentationStr + ".txt");
-			//modelev.loadClusters(validationWD + "/" + esperimentationStr + ".javaData");
 		}
 					
 			

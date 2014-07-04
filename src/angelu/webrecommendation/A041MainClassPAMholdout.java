@@ -4,9 +4,7 @@ import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.ModelEvaluator;
-import ehupatras.webrecommendation.evaluator.ModelEvaluatorUHC;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
-import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
@@ -17,7 +15,7 @@ public class A041MainClassPAMholdout {
 		// Parameter control
 		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
 		String preprocessingWD = base + "/01_preprocess";
-		String logfile = "/kk.log";
+		String logfile = "/log20000.log";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
@@ -60,7 +58,6 @@ public class A041MainClassPAMholdout {
 		// HOLD-OUT //
 		A021MainClassCrossValidation ho = new A021MainClassCrossValidation();
 		ho.loadParts(validationWD, sampleSessionIDs);
-		//ho.createParts(validationWD, sampleSessionIDs);
 		ModelValidationCrossValidation mv = ho.getParts();
 		
 		ArrayList<ArrayList<Long>> trainALaux = mv.getTrain();
@@ -80,20 +77,21 @@ public class A041MainClassPAMholdout {
 		// MODEL VALIDATION //
 	
 		// Parameters to play with
-
 		// k, number of clusters
 		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
 		//int[] ks = {40, 30, 20, 10, 5};
 		int[] ks = {10, 20, 40, 60, 90, 100, 150, 200, 250, 350};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
-				matrix, trainAL, valAL, testAL);
+		ModelEvaluator modelev = new ModelEvaluator(
+				sequencesUHC, null,
+				matrix,
+				trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);		
 	
-		// HIERARCHICAL CLUSTERING //
+		// PAM CLUSTERING //
 		for(int j=0; j<ks.length; j++){ // for each height
 			int k = ks[j];
 

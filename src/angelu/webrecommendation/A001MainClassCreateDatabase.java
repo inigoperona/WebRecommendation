@@ -61,7 +61,7 @@ public class A001MainClassCreateDatabase {
 		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String logfile = "/kk.log";
+		String logfile = "/log20000.log";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];

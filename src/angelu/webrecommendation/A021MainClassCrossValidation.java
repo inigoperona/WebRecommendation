@@ -39,7 +39,7 @@ public class A021MainClassCrossValidation {
 		
 		// Parameter control
 		String preprocessingWD = "/home/aizea/ecplipse20140529/experiments/01_preprocess";
-		String logfile = "/kk.log";
+		String logfile = "/log20000.log";
 		String databaseWD = "/home/aizea/ecplipse20140529/experiments/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
 		dmWD = "";

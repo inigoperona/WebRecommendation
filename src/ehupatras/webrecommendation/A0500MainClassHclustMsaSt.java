@@ -16,7 +16,8 @@ public class A0500MainClassHclustMsaSt {
 		
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String logfile = "/kk.log";
+		String logfile = "/log20000.log";
+		String url2topicFile = "/URLs_to_topic.txt";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String dmWD = "/DM_00_no_role";
 		//dmWD = "";
@@ -79,9 +80,7 @@ public class A0500MainClassHclustMsaSt {
 		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
 		float[] seqweights = {0.10f, 0.15f, 0.20f};
 		
-		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
-				matrix, trainAL, valAL, testAL);
+
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
@@ -92,10 +91,6 @@ public class A0500MainClassHclustMsaSt {
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
 		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
-		
-		// MARKOV CHAIN //
-		modelev.buildMarkovChains();
-	
 		
 		// SUFFIX TREE //
 		
@@ -109,22 +104,28 @@ public class A0500MainClassHclustMsaSt {
 				
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
-			// Load clustering
-			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
-
-			// Sequence Alignment
-			modelev.clustersSequenceAlignment();
-			modelev.writeAlignments(validationWD + profiWD + "/" + esperimentationStr + "_alignments.txt");
+			// To load clustering
+			String clustFile = validationWD + clustWD + "/" + esperimentationStr + ".javaData";
+			
+			// to save MSA
+			String msaFileTxt = validationWD + profiWD + "/" + esperimentationStr + "_alignments.txt";
+			String msaFileJav = validationWD + profiWD + "/" + esperimentationStr + "_alignments.javaData";
 			
 			// Weighted Sequences
 			for(int k=0; k<seqweights.length; k++){
 				float minsup = seqweights[k];
+				
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
-				modelev.extractWeightedSequences(minsup);
-				modelev.writeWeightedSequences(validationWD + profiWD + "/" + esperimentationStr2 + ".txt");
-			
-				// Suffix Tree
-				modelev.buildSuffixTrees();
+				String wseqFile1 = validationWD + profiWD + "/" + esperimentationStr2 + ".txt";
+				String wseqFile2 = validationWD + profiWD + "/" + esperimentationStr2 + ".javaData";
+				
+				ModelEvaluatorSeqMin modelev = new ModelEvaluatorSeqMinMSAWseq(
+						sequencesUHC, null, 
+						matrix,
+						trainAL, valAL, testAL,
+						clustFile,
+						msaFileTxt, msaFileJav,
+						minsup, wseqFile1, wseqFile2);
 			
 				// Evaluation
 				String results;

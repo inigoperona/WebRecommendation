@@ -81,19 +81,17 @@ public class A040MainClassHclust {
 			 "ehupatras.clustering.sapehac.agglomeration.WardLinkage"};
 		int i = 5;
 		String linkageClassName = linkages[i];
-		// Cutting the dendrogram
-		//int[] cutthA = {10, 15, 20, 25};
-		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
-		//int[] cutthA = {1, 2, 4, 6, 8};
-		//float[] cutthA = {0.1f, 0.2f, 0.4f, 0.6f, 0.8f};
 		
-		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null,
-				matrix, trainAL, valAL, testAL);
-		modelev.setFmeasureBeta(0.5f);
-		float[] confusionPoints = {0.25f,0.50f,0.75f};
-		modelev.setConfusionPoints(confusionPoints);	
+		// Cutting the dendrogram
+		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
+		//float[] cutthA = {0.1f, 0.2f, 0.4f, 0.6f, 0.8f};	
 	
+		// build model
+		ModelEvaluatorClustHclust modelev = new ModelEvaluatorClustHclust(
+				sequencesUHC, null,
+				matrix, 
+				trainAL, valAL, testAL);
+		
 		// HIERARCHICAL CLUSTERING //
 		for(int j=0; j<cutthA.length; j++){ // for each height
 			float cutth = cutthA[j];
@@ -102,10 +100,10 @@ public class A040MainClassHclust {
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			
 			// Clustering
-			modelev.buildClustersH(cutth, linkageClassName);
+			modelev.buildDendrograms();
+			modelev.cutDendrograms(pCutDendrogramDiss);
 			modelev.saveClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			modelev.writeClusters(validationWD + clustWD + "/" + esperimentationStr + ".txt");
-			//modelev.loadClusters(validationWD + "/" + esperimentationStr + ".javaData");
 		}
 					
 			

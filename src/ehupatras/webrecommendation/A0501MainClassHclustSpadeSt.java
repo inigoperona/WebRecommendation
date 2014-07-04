@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.ModelEvaluator;
-import ehupatras.webrecommendation.evaluator.ModelEvaluatorUHC;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -14,7 +13,8 @@ public class A0501MainClassHclustSpadeSt {
 	public static void main(String[] args) {
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String logfile = "/kk.log";
+		String logfile = "/log20000.log";
+		String url2topicFile = "/URLs_to_topic.txt";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String dmWD = "/DM_00_no_role";
 		//dmWD = "";
@@ -79,8 +79,10 @@ public class A0501MainClassHclustSpadeSt {
 		float[] seqweights = {0.10f, 0.15f, 0.20f, 0.25f, 0.50f};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
-				matrix, trainAL, valAL, testAL);
+		ModelEvaluator modelev = new ModelEvaluator(
+				sequencesUHC, null, 
+				matrix,
+				trainAL, valAL, testAL);
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
@@ -91,10 +93,6 @@ public class A0501MainClassHclustSpadeSt {
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
 		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
-		
-		// MARKOV CHAIN //
-		modelev.buildMarkovChains();
-	
 		
 		// SUFFIX TREE //
 		

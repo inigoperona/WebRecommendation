@@ -120,7 +120,7 @@ mkdir -p $database/DM_04_edit_dist_topics2
 
 echo "## EVALUATION BASED ON DATABASE: HOLD-OUT ##"
 
-mkdir -p 03_VALIDATION
+mkdir -p $validation
 ../jre1.7.0_51/bin/java -Xmx2048m -cp ehupatraWebReco.jar ehupatras.webrecommendation.A020MainClassHoldOut \
   $preprocess /LOGs_from_Jan9_toNov19.log \
   $database "distance_matrix" \

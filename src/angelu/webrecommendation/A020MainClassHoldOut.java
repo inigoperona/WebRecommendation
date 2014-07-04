@@ -40,7 +40,7 @@ public class A020MainClassHoldOut {
 		// Parameter control
 		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
 		String preprocessingWD = base + "/01_preprocess";
-		String logfile = "/kk.log";
+		String logfile = "/log20000.log";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.ModelEvaluator;
-import ehupatras.webrecommendation.evaluator.ModelEvaluatorUHC;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -17,7 +16,7 @@ public class A053MainClassPamSpadeKnnEDcv {
 		// Parameter control
 		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
 		String preprocessingWD = base + "/01_preprocess";
-		String logfile = "/kk.log";
+		String logfile = "/log20000.log";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
@@ -79,8 +78,10 @@ public class A053MainClassPamSpadeKnnEDcv {
 				  			{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluatorUHC(sequencesUHC, null, 
-				matrix, trainAL, valAL, testAL);
+		ModelEvaluator modelev = new ModelEvaluator(
+				sequencesUHC, null, 
+				matrix,
+				trainAL, valAL, testAL);
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
@@ -93,7 +94,6 @@ public class A053MainClassPamSpadeKnnEDcv {
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
-		modelev.buildMarkovChains();
 		
 		
 		// PAM + MySPADE //

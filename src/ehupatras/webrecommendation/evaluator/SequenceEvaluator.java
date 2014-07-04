@@ -479,8 +479,8 @@ public class SequenceEvaluator {
 			int recInt = Integer.valueOf(rec);
 			int stepInt2 = m_urlIds.indexOf(stepInt);
 			int recInt2 = m_urlIds.indexOf(recInt);
-			int stepTop = m_url2topic[stepInt2];
-			int recTop = m_url2topic[recInt2];
+			int stepTop = stepInt2==-1 ? -1 : m_url2topic[stepInt2];
+			int recTop = recInt2==-1 ? -1 : m_url2topic[recInt2];
 			
 			if(stepInt == recInt){
 				hitURL = true;
@@ -508,13 +508,13 @@ public class SequenceEvaluator {
 			String onereco = recommendatios.get(i);
 			int onerecoInt = Integer.valueOf(onereco);
 			int onerecoInt2 = m_urlIds.indexOf(onerecoInt);
-			int onerecoTop =  m_url2topic[onerecoInt2];
+			int onerecoTop = onerecoInt2==-1 ? -1 : m_url2topic[onerecoInt2];
 			
 			for(int j=stepIndex; j<m_sequenceURL.size(); j++){
 				String realstep = m_sequenceURL.get(j);
 				int realstepInt = Integer.valueOf(realstep);
 				int realstepInt2 = m_urlIds.indexOf(realstepInt);
-				int realstepTop = m_url2topic[realstepInt2];
+				int realstepTop = realstepInt2==-1 ? -1 : m_url2topic[realstepInt2];
 				
 				if(onerecoInt == realstepInt){
 					hitURL = true;
@@ -560,13 +560,13 @@ public class SequenceEvaluator {
 			String onereco = recommendatios.get(i);
 			int onerecoInt = Integer.valueOf(onereco);
 			int onerecoInt2 = m_urlIds.indexOf(onerecoInt);
-			int onerecoTop =  m_url2topic[onerecoInt2];
+			int onerecoTop =  onerecoInt2==-1 ? -1 : m_url2topic[onerecoInt2];
 			
 			for(int j=stepIndex; j<m_sequenceURL.size(); j++){
 				String realstep = m_sequenceURL.get(j);
 				int realstepInt = Integer.valueOf(realstep);
 				int realstepInt2 = m_urlIds.indexOf(realstepInt);
-				int realstepTop = m_url2topic[realstepInt2];
+				int realstepTop = realstepInt2==-1 ? -1 : m_url2topic[realstepInt2];
 				
 				if(onerecoInt == realstepInt){
 					hitURL = true;
@@ -607,13 +607,13 @@ public class SequenceEvaluator {
 			String realstep = m_sequenceURL.get(i);
 			int realstepInt = Integer.valueOf(realstep);
 			int realstepInt2 = m_urlIds.indexOf(realstepInt);
-			int realstepTop = m_url2topic[realstepInt2];
+			int realstepTop = realstepInt2==-1 ? -1 : m_url2topic[realstepInt2];
 			
 			for(int j=0; j<recommendatios.size(); j++){
 				String onereco = recommendatios.get(j);
 				int onerecoInt = Integer.valueOf(onereco);
 				int onerecoInt2 = m_urlIds.indexOf(onerecoInt);
-				int onerecoTop =  m_url2topic[onerecoInt2];
+				int onerecoTop =  onerecoInt2==-1 ? -1 : m_url2topic[onerecoInt2];
 				
 				if(realstepInt == onerecoInt){
 					hitURL = true;

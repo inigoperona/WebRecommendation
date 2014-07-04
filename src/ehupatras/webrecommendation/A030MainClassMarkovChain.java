@@ -16,17 +16,19 @@ public class A030MainClassMarkovChain {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
 		String preprocessingWD = base + "/01_preprocess";
-		String logfile = "/kk.log";
+		String logfile = "/log20000.log";
+		String url2topicFile = "/URLs_to_topic.txt";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
 		preprocessingWD = args[0];
 		logfile = args[1];
-		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
+		url2topicFile = args[2];
+		databaseWD = args[3];
+		dmWD = args[4];
+		validationWD = args[5];
 		
 		
 		// initialize the data structure
@@ -67,28 +69,29 @@ public class A030MainClassMarkovChain {
 		ArrayList<ArrayList<Long>> testAL  = mv.getTest();
 
 
-		// MARKOV CHAIN VALIDATION //
-
-		// initialize the model evaluator
-		float[] confusionPoints = {0.25f,0.50f,0.75f};
-		ModelEvaluator modelev = 
-				new ModelEvaluatorUHC(sequencesUHC, null, 
-						matrix, trainAL, valAL, testAL);
+		// build model: MC
+		ModelEvaluator modelev = new ModelEvaluatorMarkovChain(
+				sequencesUHC, null, 
+				matrix, 
+				trainAL, valAL, testAL);
+		modelev.buildModel();
+		
+		
+		// Evaluation parameters
 		modelev.setFmeasureBeta(0.5f);
+		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
 		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
 		
+		
 		// write result headers
 		System.out.print("options," + modelev.getEvaluationHeader());
-		
-		// compute markov chain
-		modelev.buildMarkovChains();
 
 		// compute results
 		String resultsMarkov;

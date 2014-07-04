@@ -21,5 +21,4 @@ public interface Recommender {
 	public ArrayList<String> getNextpossibleStepsMarkov(int nRecos, ArrayList<String> waydone, ArrayList<String> listMarkov);
 	public ArrayList<String> getNextpossibleStepsWeightedByOriginalSequences(int nRecos);
 	public ArrayList<String> getNextpossibleStepsWeightedEnrichWithStep1(int nRecos, ArrayList<String> waydone);
-
 }
