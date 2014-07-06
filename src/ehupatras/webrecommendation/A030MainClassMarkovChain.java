@@ -70,12 +70,11 @@ public class A030MainClassMarkovChain {
 
 
 		// build model: MC
-		ModelEvaluator modelev = new ModelEvaluatorMarkovChain(
+		ModelEvaluatorMarkovChain modelev = new ModelEvaluatorMarkovChain(
 				sequencesUHC, null, 
 				matrix, 
 				trainAL, valAL, testAL);
-		modelev.buildModel();
-		
+		modelev.buildMC();
 		
 		// Evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

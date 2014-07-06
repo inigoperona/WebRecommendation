@@ -69,11 +69,11 @@ public class A0313MainClassSuffixTreeGoToLength1Suffix {
 		// MODEL VALIDATION //
 
 		// build model: GST
-		ModelEvaluator modelev = new ModelEvaluatorSuffixTreeGlobal(
+		ModelEvaluatorSuffixTreeGlobal modelev = new ModelEvaluatorSuffixTreeGlobal(
 				sequencesUHC, null,
-				matrix,
+				matrix, 
 				trainAL, valAL, testAL);
-		modelev.buildModel();
+		modelev.buildGST();
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

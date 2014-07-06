@@ -45,14 +45,14 @@ public class ModelEvaluator {
 
 	// MSA + Wseq or SPADE //
 	// Multiple Sequence Alignment
-	private ArrayList<ArrayList<String[][]>> m_msaAL;
+//	private ArrayList<ArrayList<String[][]>> m_msaAL;
 	// Weighted Sequences
-	private float m_minsupport = (float)0.25;
-	private ArrayList<ArrayList<String[]>> m_weightedSequences;
+//	private float m_minsupport = (float)0.25;
+//	private ArrayList<ArrayList<String[]>> m_weightedSequences;
 	
 	// Generalized Suffix tree
 	//private ArrayList<SuffixTreeStringArray> m_suffixtreeAL = null;
-	private ArrayList<MySuffixTree> m_suffixtreeAL = null;
+//	private ArrayList<MySuffixTree> m_suffixtreeAL = null;
 	
 	// Modular approach Cluster-ST version
 	//private ArrayList<ArrayList<SuffixTreeStringArray>> m_clustSuffixTreeAL = null;
@@ -114,8 +114,24 @@ public class ModelEvaluator {
 		m_nFolds = m_trainAL.size();
 	}
 	
-	public void buildModel(){}
-	public TestSetEvaluator createTestSetEvaluator(int iFold, ArrayList<String[]> testseqs){return null;}
+	//public void buildModel(){}
+	//public TestSetEvaluator createTestSetEvaluator(int iFold, ArrayList<String[]> testseqs){return null;}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -157,7 +173,7 @@ public class ModelEvaluator {
 		}
 	}
 	
-	private ArrayList<String[]> getDataSet2(boolean isSplit){
+	protected ArrayList<String[]> getDataSetUHC(boolean isSplit){
 		if(!isSplit){
 			return m_datasetUHC;
 		} else {
@@ -177,55 +193,12 @@ public class ModelEvaluator {
 	
 
 	
-	
-	
-	
-	// SPADE + ST //
-	
-	public void buildSpadeSuffixTrees(float minsup, String workdir){
-		m_minsupport = minsup;
-		
-		// Build Suffix Trees for each fold
-		m_suffixtreeAL = new ArrayList<MySuffixTree>();
-		for(int i=0; i<m_nFolds; i++){
-			m_suffixtreeAL.add(this.createSpadeSuffixTreeNoWeights(i, workdir));
-		}
+	public void setKnn(int knn){
+		m_knn = knn;
 	}
 	
-	private MySuffixTree createSpadeSuffixTreeNoWeights(int indexFold, String workdir){
-		// train sessions names
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
-				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
-		
-		// assignment to each case
-		int[] clindexes = m_clustersAL.get(indexFold);
-		
-		// maximum cluster index
-		int climax = this.getMaxIndex(clindexes);
-		
-		// for each cluster
-		ArrayList<String[]> seqs = new ArrayList<String[]>(); 
-		for(int cli=0; cli<=climax; cli++){
-			// take the sessions we are interested in
-			ArrayList<Long> names = new ArrayList<Long>();
-			for(int i=0; i<clindexes.length; i++){
-				if(cli==clindexes[i]){
-					names.add(trainsetnames2.get(i));
-				}
-			}
-			
-			// get SPADE sequences and add to the general list
-			ArrayList<String[]> freqSeqs = this.getSpadeSequences(names, workdir);
-			for(int i=0; i<freqSeqs.size(); i++){
-				seqs.add(freqSeqs.get(i));
-			}
-		}
-		
-		// create the Suffix Tree
-		MySuffixTree st = new MySuffixTree(seqs);
-		return st;
-	}
+	
+
 	
 	
 	
@@ -332,35 +305,9 @@ public class ModelEvaluator {
 		return stAL;
 	}	
 	
-	private ArrayList<String[]> getSpadeSequences(ArrayList<Long> sesIDs, String workdir){
-		// take the sequences
-		int[] clusterDMind = m_distancematrix.getSessionIDsIndexes2(sesIDs, m_datasetSplit!=null);
-		ArrayList<String[]> sequences = new ArrayList<String[]>(); 
-		for(int i=0; i<clusterDMind.length; i++){
-			int index = clusterDMind[i];
-			String[] seq = this.getDataSet(m_datasetSplit!=null).get(index);
-			sequences.add(seq);
-		}
-		
-		// Create SPADE sequences
-		MySPADE mspade = new MySPADE(sequences, m_minsupport);
-		Object[] objA = mspade.getFrequentSequences(workdir);
-		ArrayList<String[]> freqSeqs = (ArrayList<String[]>)objA[0];
-		//ArrayList<Integer> freqSups = (ArrayList<Integer>)objA[1];
-		
-		return freqSeqs;
-	}
+
 	
-	private int getMaxIndex(int[] intArray){
-		int climax = Integer.MIN_VALUE;
-		for(int i=0; i<intArray.length; i++){
-			int cli = intArray[i];
-			if(cli>climax){
-				climax = cli;
-			}
-		}
-		return climax;
-	}
+
 	
 	
 	
@@ -370,94 +317,7 @@ public class ModelEvaluator {
 	
 	
 	
-	
-	
-	// MEDOIDS and its recommendations //
-	
-	public void buildMedoidsModels(float minsup){
-		// compute medoids for each fold
-		m_medoidsAL = new ArrayList<ArrayList<String[]>>();
-		m_gmedoidsAL = new ArrayList<int[]>();
-		m_recosAL = new ArrayList<ArrayList<Object[]>>();
-		for(int i=0; i<m_nFolds; i++){
-			Object[] medObjA = this.getMedoids(i);
-			ArrayList<String[]> medoids = (ArrayList<String[]>)medObjA[0];
-			int[] gmedoids = (int[])medObjA[1];
-			m_medoidsAL.add(medoids);
-			m_gmedoidsAL.add(gmedoids);
-			m_recosAL.add(this.getRecommendations(i, minsup));
-		}
-	}
-	
-	private Object[] getMedoids(int indexFold){
-		// train cases indexes
-		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
-		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
-		
-		// cluster indexes
-		int[] clusters = m_clustersAL.get(indexFold);
-		
-		// get medoids & global medoids
-		CVI cvindex = new CVI(inds,clusters);
-		cvindex.computeMedoids(m_distancematrix.getMatrix(m_datasetSplit!=null));
-		// treat medoids
-		int[] medoids = cvindex.getMedoids();
-		ArrayList<String[]> medoidSeqs = new ArrayList<String[]>();
-		for(int i=0; i<medoids.length; i++){
-			String[] medSeq = this.getDataSet2(m_datasetSplit!=null).get(medoids[i]);
-			medoidSeqs.add(medSeq);
-		}
-		// treat global medoids
-		int[] gmedoids = cvindex.getGlobalMedoids();
-		
-		// Return medoids
-		Object[] objA = new Object[2];
-		objA[0] = medoidSeqs;
-		objA[1] = gmedoids;
-		return objA;
-	}
-	
-	private ArrayList<Object[]> getRecommendations(int indexFold, float minsup){
-		// train cases indexes
-		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
-		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
-		
-		// cluster indexes
-		int[] clusters = m_clustersAL.get(indexFold);
-		// find the maximum index
-		int max = Integer.MIN_VALUE;
-		for(int i=0; i<clusters.length; i++){
-			int clInd = clusters[i];
-			if(max<clInd){
-				max = clInd;
-			}
-		}
-		
-		// for each cluster extract the most common URLs
-		ArrayList<Object[]> recos = new ArrayList<Object[]>();
-		for(int i=0; i<=max; i++){
-			ArrayList<String[]> trainseqs = new ArrayList<String[]>();
-			// get train sequences
-			for(int j=0; j<clusters.length; j++){
-				if(i==clusters[j]){
-					String[] seq = this.getDataSet(m_datasetSplit!=null).get(inds[j]);
-					trainseqs.add(seq);
-				}
-			}
-			// Frequent patter mining
-			MySPADE sp = new MySPADE(trainseqs, minsup);
-			Object[] objA = sp.getFrequentSequencesLength1();
-			//ArrayList<String> freqseqs1 = (ArrayList<String>)objA[0];
-			//ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
-			recos.add(objA);
-		}
-		
-		return recos;
-	}
-	
-	public void setKnn(int knn){
-		m_knn = knn;
-	}
+
 	
 	
 	
@@ -599,7 +459,7 @@ public class ModelEvaluator {
 				m_datasetUHC, m_datasetSplitUHC, 
 				m_distancematrix, 
 				m_trainAL, m_valAL, m_testAL);
-		modelMC.buildModel();
+		modelMC.buildMC();
 		
 		// for each fold obtain the metrics
 		for(int i=0; i<m_nFolds; i++){

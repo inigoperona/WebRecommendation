@@ -21,7 +21,7 @@ public class ModelEvaluatorSuffixTreeGlobal
 	
 	// BUILD MODEL
 	
-	public void buildModel(){
+	public void buildGST(){
 		// Build Suffix Trees for each fold
 		m_suffixtreeAL = new ArrayList<MySuffixTree>();
 		for(int i=0; i<m_nFolds; i++){
@@ -38,7 +38,8 @@ public class ModelEvaluatorSuffixTreeGlobal
 			String[] seq = (getDataSet(m_datasetSplit!=null)).get(index);
 			sequences.add(seq);
 		}
-		return createST(sequences);
+		MySuffixTree st = new MySuffixTree(sequences);
+		return st;
 	}
 	
 }

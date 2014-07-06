@@ -69,11 +69,11 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1SuffixNorm1 {
 		// MODEL VALIDATION //
 
 		// validation parameters: GST
-		ModelEvaluator modelev = new ModelEvaluatorSuffixTreeGlobal(
+		ModelEvaluatorSuffixTreeGlobal modelev = new ModelEvaluatorSuffixTreeGlobal(
 				sequencesUHC, null,
-				matrix,
+				matrix, 
 				trainAL, valAL, testAL);
-		modelev.buildModel();
+		modelev.buildGST();
 		
 		// validation parameters
 		modelev.setFmeasureBeta(0.5f);

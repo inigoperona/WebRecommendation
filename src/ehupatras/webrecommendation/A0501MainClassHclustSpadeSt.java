@@ -3,7 +3,7 @@ package ehupatras.webrecommendation;
 import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorSeqMinSPADE;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -79,17 +79,19 @@ public class A0501MainClassHclustSpadeSt {
 		float[] seqweights = {0.10f, 0.15f, 0.20f, 0.25f, 0.50f};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluator(
+		ModelEvaluatorSeqMinSPADE modelev = new ModelEvaluatorSeqMinSPADE(
 				sequencesUHC, null, 
 				matrix,
 				trainAL, valAL, testAL);
+		
+		// Evaluation parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
 		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
@@ -102,21 +104,27 @@ public class A0501MainClassHclustSpadeSt {
 		// Start generating and evaluating the model
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<cutthA.length; j++){
-			float cutth = cutthA[j];
-				
+			float cutth = cutthA[j];				
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
-			// Load clustering
-			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+			// load clustering
+			String clustFile = validationWD + clustWD + "/" + esperimentationStr + ".javaData";
+			modelev.loadClusters(clustFile);
 
-			// Weighted Sequences
+			// SPADE
 			for(int k=0; k<seqweights.length; k++){
 				float minsup = seqweights[k];
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 			
-				// Suffix Tree
-				modelev.buildSpadeSuffixTrees(minsup, validationWD + profiWD);
-			
+				// SPADE
+				String spadeFileTxt = validationWD + profiWD + "/" + esperimentationStr2 + ".txt";
+				String spadeFileJav = validationWD + profiWD + "/" + esperimentationStr2 + ".javaData";
+				modelev.spade(minsup, validationWD + profiWD, spadeFileTxt, spadeFileJav);
+				
+				// build suffix tree
+				modelev.buildST();
+				
+				
 				// Evaluation
 				String results;
 				

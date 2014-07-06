@@ -88,6 +88,12 @@ public class A040MainClassHclustSplit {
 		// Cutting the dendrogram
 		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
 		//float[] cutthA = {0.1f, 0.2f, 0.4f, 0.6f, 0.8f};
+		
+		// build model
+		ModelEvaluatorClustHclust modelev = new ModelEvaluatorClustHclust(
+				sequencesUHC, seqsSplit,
+				matrix,
+				trainAL, valAL, testAL);
 	
 		// HIERARCHICAL CLUSTERING //
 		for(int j=0; j<cutthA.length; j++){ // for each height
@@ -97,12 +103,8 @@ public class A040MainClassHclustSplit {
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			
 			// Clustering
-			ModelEvaluatorClust modelev = new ModelEvaluatorClustHclust(
-					sequencesUHC, seqsSplit,
-					matrix,
-					trainAL, valAL, testAL,
-					cutth, linkageClassName);
-			modelev.buildModel();
+			modelev.buildDendrograms(linkageClassName);
+			modelev.cutDendrograms(cutth);
 			modelev.saveClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			modelev.writeClusters(validationWD + clustWD + "/" + esperimentationStr + ".txt");
 		}

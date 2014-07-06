@@ -15,11 +15,7 @@ public class ModelEvaluatorSeqMinMSAWseq
 
 	// ATTRIBUTES
 
-	private ArrayList<int[]> m_clustersAL;
 	private ArrayList<ArrayList<String[][]>> m_msaAL;
-	private String m_clustFile = null;
-	private String m_msaFileTxt = null;
-	private String m_msaFileJavaData = null;
 	
 	// CREATOR
 	
@@ -29,40 +25,23 @@ public class ModelEvaluatorSeqMinMSAWseq
 			Matrix dm,
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL,
-			String clustFile,
-			String msaFileTxt, String msaFileJavaData,
-			float minsupport,
-			String wseqFileTxt,	String wseqFileJavaData){
+			ArrayList<ArrayList<Long>> testAL){
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
-		m_clustFile = clustFile;
-		m_msaFileTxt = msaFileTxt;
-		m_msaFileJavaData = msaFileJavaData;
-		m_minsupport = minsupport;
-		m_minSeqsFileTxt = wseqFileTxt;
-		m_minSeqsFileJavaData = wseqFileJavaData;
 	}
 	
 	// BUILD MODEL
 	
-	public void buildModel(){
-		// read clusters
-		ModelEvaluatorClust modelClust = new ModelEvaluatorClust();
-		modelClust.loadClusters(m_clustFile);
-		m_clustersAL = modelClust.getClusters();
-		
-		// MSA
+	public void msa(String msaFileTxt, String msaFileJavaData){
 		this.clustersSequenceAlignment();
-		this.writeAlignments(m_msaFileTxt);
-		this.saveAlignments(m_msaFileJavaData);
-		
-		// Wseq
+		this.writeAlignments(msaFileTxt);
+		this.saveAlignments(msaFileJavaData);
+	}
+	
+	public void wseq(float minsupport, String minSeqsFileTxt, String minSeqsFileJavaData){
+		m_minsupport = minsupport;
 		this.extractWeightedSequences();
 		super.writeWeightedSequences(m_minSeqsFileTxt);
 		super.saveMinedSeqs(m_minSeqsFileJavaData);
-		
-		// ST
-		super.buidSuffixTrees(m_minedSeqs);
 	}
 	
 	

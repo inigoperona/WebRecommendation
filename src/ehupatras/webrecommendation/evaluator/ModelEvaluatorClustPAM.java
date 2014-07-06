@@ -19,15 +19,15 @@ public class ModelEvaluatorClustPAM
 			Matrix dm,
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL,
-			int k){
+			ArrayList<ArrayList<Long>> testAL){
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
-		m_k = k;
 	}
 
 	// BUILD MODEL
 	
-	public void buildModel(){		
+	public void buildPAM(int k){
+		m_k = k;
+		
 		// Clustering for each fold
 		m_clustersAL = new ArrayList<int[]>();
 		for(int i=0; i<m_nFolds; i++){

@@ -26,7 +26,7 @@ public class ModelEvaluatorMarkovChain
 	
 	// BUILD MODEL
 	
-	public void buildModel(){
+	public void buildMC(){
 		// compute markov chain for each fold
 		m_markovChainAL = new ArrayList<MarkovChain>();
 		for(int i=0; i<m_nFolds; i++){

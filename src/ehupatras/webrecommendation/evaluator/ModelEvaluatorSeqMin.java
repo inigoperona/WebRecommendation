@@ -12,6 +12,7 @@ public class ModelEvaluatorSeqMin
 
 	// ATTRIBUTES
 	
+	protected ArrayList<int[]> m_clustersAL;
 	protected float m_minsupport = (float)0.25;
 	protected ArrayList<ArrayList<String[]>> m_minedSeqs;
 	protected String m_minSeqsFileTxt = null;
@@ -37,7 +38,18 @@ public class ModelEvaluatorSeqMin
 				new ArrayList<ArrayList<Long>>(0));
 	}
 	
-
+	// FUNCTIONS
+	
+	public void loadClusters(String clustFile){
+		ModelEvaluatorClust modelClust = new ModelEvaluatorClust();
+		modelClust.loadClusters(clustFile);
+		m_clustersAL = modelClust.getClusters();
+	}
+	
+	public void buildST(){
+		super.buidSuffixTrees(m_minedSeqs);
+	}
+	
 	// Mined Sequences utilities
 	
 	protected void writeWeightedSequences(String outfilename){

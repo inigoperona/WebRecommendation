@@ -70,7 +70,7 @@ public class A041MainClassPAMSplit {
 		ArrayList<ArrayList<Long>> valAL   = mv.getValidation();
 		ArrayList<ArrayList<Long>> testAL  = mv.getTest();
 
-
+		
 		
 		// MODEL VALIDATION //
 	
@@ -81,19 +81,20 @@ public class A041MainClassPAMSplit {
 		//int[] ks = {40, 30, 20, 10, 5};
 		int[] ks = {150, 200, 250, 300};		
 	
-		// HIERARCHICAL CLUSTERING //
+		// Clustering
+		ModelEvaluatorClustPAM modelev = new ModelEvaluatorClustPAM(
+				sequencesUHC, seqsSplit,
+				matrix,
+				trainAL, valAL, testAL);
+		
+		// PAM //
 		for(int j=0; j<ks.length; j++){ // for each height
 			int k = ks[j];
 
 			String esperimentationStr = "pam" + k;
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			
-			// Clustering
-			ModelEvaluatorClust modelev = new ModelEvaluatorClustPAM(
-					sequencesUHC, seqsSplit,
-					matrix,
-					trainAL, valAL, testAL,
-					k);
+			modelev.buildPAM(k);
 			modelev.saveClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			modelev.writeClusters(validationWD + clustWD + "/" + esperimentationStr + ".txt");
 		}
