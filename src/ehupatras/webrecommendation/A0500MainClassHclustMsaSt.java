@@ -76,7 +76,6 @@ public class A0500MainClassHclustMsaSt {
 		// MODEL VALIDATION //
 	
 		// Parameters to play with
-		//int[] cutthA = {10, 15, 20, 25};
 		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
 		float[] seqweights = {0.10f, 0.15f, 0.20f};
 		
