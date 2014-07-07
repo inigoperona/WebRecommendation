@@ -79,14 +79,20 @@ public class A0500MainClassHclustMsaSt {
 		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
 		float[] seqweights = {0.10f, 0.15f, 0.20f};
 		
+		// build model
+		ModelEvaluatorSeqMinMSAWseq modelev = new ModelEvaluatorSeqMinMSAWseq(
+				sequencesUHC, null, 
+				matrix,
+				trainAL, valAL, testAL);
 
+		// Parameters to evaluate
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
 		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
@@ -99,32 +105,31 @@ public class A0500MainClassHclustMsaSt {
 		// Start generating and evaluating the model
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<cutthA.length; j++){
-			float cutth = cutthA[j];
-				
+			float cutth = cutthA[j];				
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
-			// To load clustering
+			// load clustering
 			String clustFile = validationWD + clustWD + "/" + esperimentationStr + ".javaData";
+			modelev.loadClusters(clustFile);
 			
-			// to save MSA
+			// MSA
 			String msaFileTxt = validationWD + profiWD + "/" + esperimentationStr + "_alignments.txt";
 			String msaFileJav = validationWD + profiWD + "/" + esperimentationStr + "_alignments.javaData";
+			modelev.msa(msaFileTxt, msaFileJav);
 			
 			// Weighted Sequences
 			for(int k=0; k<seqweights.length; k++){
 				float minsup = seqweights[k];
 				
+				// Wseq
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
-				String wseqFile1 = validationWD + profiWD + "/" + esperimentationStr2 + ".txt";
-				String wseqFile2 = validationWD + profiWD + "/" + esperimentationStr2 + ".javaData";
+				String wseqFileTxt = validationWD + profiWD + "/" + esperimentationStr2 + ".txt";
+				String wseqFileJav = validationWD + profiWD + "/" + esperimentationStr2 + ".javaData";
+				modelev.wseq(minsup, wseqFileTxt, wseqFileJav);
 				
-				ModelEvaluatorSeqMin modelev = new ModelEvaluatorSeqMinMSAWseq(
-						sequencesUHC, null, 
-						matrix,
-						trainAL, valAL, testAL,
-						clustFile,
-						msaFileTxt, msaFileJav,
-						minsup, wseqFile1, wseqFile2);
+				// build suffix tree
+				modelev.buildST();
+
 			
 				// Evaluation
 				String results;

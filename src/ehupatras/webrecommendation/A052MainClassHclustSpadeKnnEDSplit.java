@@ -3,7 +3,7 @@ package ehupatras.webrecommendation;
 import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -84,17 +84,19 @@ public class A052MainClassHclustSpadeKnnEDSplit {
 				  			{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluator(
+		ModelEvaluatorMedoids modelev = new ModelEvaluatorMedoids(
 				sequencesUHC, seqsSplit, 
 				matrix, 
 				trainAL, valAL, testAL);
+		
+		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
 		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
@@ -110,12 +112,12 @@ public class A052MainClassHclustSpadeKnnEDSplit {
 		// Start generating and evaluating the model
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<cutthA.length; j++){
-			float cutth = cutthA[j];
-				
+			float cutth = cutthA[j];				
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
 			// Load clustering
-			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+			String clustFile = validationWD + clustWD + "/" + esperimentationStr + ".javaData";
+			modelev.loadClusters(clustFile);
 			
 			// SPADE
 			for(int k=0; k<seqweights.length; k++){
@@ -123,7 +125,9 @@ public class A052MainClassHclustSpadeKnnEDSplit {
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 				
 				// MEDOIDS models //
-				modelev.buildMedoidsModels(minsup);
+				modelev.buildMedoids(minsup);
+				
+				
 				
 				// Evaluation
 				String results;

@@ -74,11 +74,11 @@ public class A030MainClassMarkovChainSplit {
 		// MARKOV CHAIN VALIDATION //
 
 		// buil model: MC
-		ModelEvaluator modelev = new ModelEvaluatorMarkovChain(
+		ModelEvaluatorMarkovChain modelev = new ModelEvaluatorMarkovChain(
 				sequencesUHC, seqsSplit, 
 				matrix, 
 				trainAL, valAL, testAL);
-		modelev.buildModel();
+		modelev.buildMC();
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

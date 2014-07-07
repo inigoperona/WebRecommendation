@@ -21,7 +21,7 @@ public class SequencesStructure {
 	private ArrayList<int[]> m_indsALR = null;
 
 	// information to write in disk
-	private String m_workdir = "/home/burdinadar/eclipse_workdirectory/DATA";
+	private String m_workdir = "/home/burdinadar";
 	private String m_basenamejavadata = "spade.javaData";
 	
 	// indexes

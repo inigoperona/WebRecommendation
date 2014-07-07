@@ -68,11 +68,11 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffix {
 		// MODEL VALIDATION //
 
 		// build model: GST
-		ModelEvaluator modelev = new ModelEvaluatorSuffixTreeGlobal(
+		ModelEvaluatorSuffixTreeGlobal modelev = new ModelEvaluatorSuffixTreeGlobal(
 				sequencesUHC, null,
-				matrix,
+				matrix, 
 				trainAL, valAL, testAL);
-		modelev.buildModel();
+		modelev.buildGST();
 		
 		// validation parameters
 		float[] confusionPoints = {0.25f,0.50f,0.75f};

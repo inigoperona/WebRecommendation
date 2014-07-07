@@ -100,8 +100,8 @@ public class A040MainClassHclust {
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			
 			// Clustering
-			modelev.buildDendrograms();
-			modelev.cutDendrograms(pCutDendrogramDiss);
+			modelev.buildDendrograms(linkageClassName);
+			modelev.cutDendrograms(cutth);
 			modelev.saveClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			modelev.writeClusters(validationWD + clustWD + "/" + esperimentationStr + ".txt");
 		}
