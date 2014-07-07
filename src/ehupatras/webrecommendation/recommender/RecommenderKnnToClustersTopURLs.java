@@ -64,6 +64,9 @@ public class RecommenderKnnToClustersTopURLs
 			ArrayList<String> recosCl = (ArrayList<String>)objA[0];
 			ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
 			
+			// enrich
+			recos.add("45");
+			
 			if(recosCl.size()==0){m_0recosClusters++;}
 			for(int j=0; j<recosCl.size(); j++){
 				if(recos.size()<nRecos){

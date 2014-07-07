@@ -122,7 +122,7 @@ public class A053MainClassPamSpadeKnnEDSplit {
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 				
 				// MEDOIDS models //
-				modelev.buildMedoids(minsup);
+				modelev.buildMedoids(minsup, true);
 				
 				
 				// Evaluation

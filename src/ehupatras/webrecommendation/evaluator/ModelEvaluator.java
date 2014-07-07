@@ -1,26 +1,17 @@
 package ehupatras.webrecommendation.evaluator;
 
-import ehupatras.clustering.ClusteringHierarchical;
-import ehupatras.clustering.ClusteringPAM;
-import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
-import ehupatras.webrecommendation.sequencealignment.multiplealignment.MultipleSequenceAlignment;
-import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.weightedsequence.WeightedSequence;
-import ehupatras.markovmodel.MarkovChain;
-import ehupatras.markovmodel.hmm.HiddenMarkovModel;
-import ehupatras.markovmodel.hmm.HiddenMarkovModel000;
-import ehupatras.markovmodel.hmm.HiddenMarkovModel001;
-import ehupatras.clustering.cvi.CVI;
-import ehupatras.sequentialpatternmining.MySPADE;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-public class ModelEvaluator {
+public abstract class ModelEvaluator {
 
+	// ATTRIBUTES
+	
 	// Number of folds
 	protected int m_nFolds;
 	
@@ -36,45 +27,10 @@ public class ModelEvaluator {
 	protected ArrayList<ArrayList<Long>> m_testAL;
 	
 	
-	
-	
-	
-	
-	
-	// MODELS //
-
-	// MSA + Wseq or SPADE //
-	// Multiple Sequence Alignment
-//	private ArrayList<ArrayList<String[][]>> m_msaAL;
-	// Weighted Sequences
-//	private float m_minsupport = (float)0.25;
-//	private ArrayList<ArrayList<String[]>> m_weightedSequences;
-	
-	// Generalized Suffix tree
-	//private ArrayList<SuffixTreeStringArray> m_suffixtreeAL = null;
-//	private ArrayList<MySuffixTree> m_suffixtreeAL = null;
-	
-	// Modular approach Cluster-ST version
-	//private ArrayList<ArrayList<SuffixTreeStringArray>> m_clustSuffixTreeAL = null;
-	private ArrayList<ArrayList<MySuffixTree>> m_clustSuffixTreeAL = null;
-	
-	// Medoids of clusters with each recommendations
-	private ArrayList<ArrayList<String[]>> m_medoidsAL = null;
-	private ArrayList<int[]> m_gmedoidsAL = null;
-	private ArrayList<ArrayList<Object[]>> m_recosAL = null;
-	private int m_knn = 100;
-	
-	// Hidden Markov Model
-	private ArrayList<HiddenMarkovModel> m_hmmAL = null;
-		
-	
-	// EVALUATION //
-	
 	// metrics' parameters
 	private float[] m_confusionPoints = 
 		{0.10f,0.25f,0.50f,0.75f,0.90f};
 	private float m_fmeasurebeta = (float)0.5;
-	
 	// topic related parameters
 	private ArrayList<Integer> m_urlIds = null;
 	private int[] m_url2topic = null;
@@ -85,8 +41,7 @@ public class ModelEvaluator {
 	private String m_lineHeader = null;
 	private BufferedWriter m_evalWriter = null;
 	
-	
-	
+
 	
 	
 	// CONSTRUCTOR
@@ -112,30 +67,7 @@ public class ModelEvaluator {
 		m_testAL = testAL;
 		
 		m_nFolds = m_trainAL.size();
-	}
-	
-	//public void buildModel(){}
-	//public TestSetEvaluator createTestSetEvaluator(int iFold, ArrayList<String[]> testseqs){return null;}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}	
 	
 	private ArrayList<String[]> removeUHCTagDB(ArrayList<String[]> dataset){
 		ArrayList<String[]> dataset2 = new ArrayList<String[]>();
@@ -183,202 +115,17 @@ public class ModelEvaluator {
 	
 
 	
-
 	
+	// FUNCTIONS
 	
-	
-	
-	
-	
-	
-
+	public abstract TestSetEvaluator getTestSetEvaluator(
+			int iFold, 
+			ArrayList<String[]> testseqs);
 	
 	public void setKnn(int knn){
 		m_knn = knn;
 	}
 	
-	
-
-	
-	
-	
-	// Modular Approach: Cluster-SuffixTree //
-	
-	public void buildClustersSuffixTrees(){
-		// Build Cluster-SuffixTrees for each fold
-		m_clustSuffixTreeAL = new ArrayList<ArrayList<MySuffixTree>>();
-		for(int i=0; i<m_nFolds; i++){
-			m_clustSuffixTreeAL.add(this.createClustersSuffixTrees(i));
-		}
-	}
-	
-	private ArrayList<MySuffixTree> createClustersSuffixTrees(int indexFold){
-		// train sessions names
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
-				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
-		
-		// assignment to each case
-		int[] clindexes = m_clustersAL.get(indexFold);
-		// maximum cluster index
-		int climax = Integer.MIN_VALUE;
-		for(int i=0; i<clindexes.length; i++){
-			int cli = clindexes[i];
-			if(cli>climax){
-				climax = cli;
-			}
-		}
-		
-		// for each cluster
-		ArrayList<MySuffixTree> stAL = new ArrayList<MySuffixTree>(); 
-		for(int cli=0; cli<=climax; cli++){
-			// take the sessions we are interested in
-			ArrayList<Long> names = new ArrayList<Long>();
-			for(int i=0; i<clindexes.length; i++){
-				if(cli==clindexes[i]){
-					names.add(trainsetnames2.get(i));
-				}
-			}
-			
-			// take the sequences
-			int[] clusterDMind = m_distancematrix.getSessionIDsIndexes2(names, m_datasetSplit!=null);
-			ArrayList<String[]> sequences = new ArrayList<String[]>(); 
-			for(int i=0; i<clusterDMind.length; i++){
-				int index = clusterDMind[i];
-				String[] seq = this.getDataSet(m_datasetSplit!=null).get(index);
-				sequences.add(seq);
-			}
-			
-			// create the Suffix Tree
-			MySuffixTree st = new MySuffixTree(sequences);
-			stAL.add(st);
-		}
-		
-		return stAL;
-	}
-	
-	
-	
-	
-	// Modular Approach: Cluster-SuffixTree //
-	
-	public void buildClustersSpadeSuffixTrees(float minsup, String workdir){
-		m_minsupport = minsup;
-		
-		// Build Cluster-SuffixTrees for each fold
-		m_clustSuffixTreeAL = new ArrayList<ArrayList<MySuffixTree>>();
-		for(int i=0; i<m_nFolds; i++){
-			m_clustSuffixTreeAL.add(this.createClustersSPADESuffixTrees(i, workdir));
-		}
-	}
-	
-	private ArrayList<MySuffixTree> createClustersSPADESuffixTrees(int indexFold, String workdir){
-		// train sessions names
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
-				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
-		
-		// assignment to each case
-		int[] clindexes = m_clustersAL.get(indexFold);
-		
-		// maximum cluster index
-		int climax = this.getMaxIndex(clindexes);
-		
-		// for each cluster
-		ArrayList<MySuffixTree> stAL = new ArrayList<MySuffixTree>(); 
-		for(int cli=0; cli<=climax; cli++){
-			// take the sessions we are interested in
-			ArrayList<Long> names = new ArrayList<Long>();
-			for(int i=0; i<clindexes.length; i++){
-				if(cli==clindexes[i]){
-					names.add(trainsetnames2.get(i));
-				}
-			}
-			
-			ArrayList<String[]> freqSeqs = this.getSpadeSequences(names, workdir);
-			
-			// create the Suffix Tree
-			MySuffixTree st = new MySuffixTree(freqSeqs);
-			stAL.add(st);
-		}
-		
-		return stAL;
-	}	
-	
-
-	
-
-	
-	
-	
-
-	
-
-	
-	
-	
-
-	
-	
-	
-	
-	// Hidden Markov Model //
-	
-	public void buildHiddenMarkovModels(String outfilename, int hmmMode){
-		// compute markov chain for each fold
-		m_hmmAL = new ArrayList<HiddenMarkovModel>();
-		for(int i=0; i<m_nFolds; i++){
-			m_hmmAL.add(this.getHMM(i, outfilename, hmmMode));
-		}
-	}
-	
-	private HiddenMarkovModel getHMM(int indexFold, String outfilename, int hmmMode){
-		// train sequences indexes
-		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
-		int[] trInds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
-		
-		// clusters. Assign cluster to each train case
-		int[] clInds = m_clustersAL.get(indexFold);
-		
-		// create the HMM
-		HiddenMarkovModel initHmm;
-		if(hmmMode==0){
-			initHmm = new HiddenMarkovModel000(m_dataset, trInds, clInds);
-		} else { // hmmMode==1
-			initHmm = new HiddenMarkovModel001(m_dataset, trInds, clInds);
-		}
-		initHmm.initializeHmmParameters();
-		this.writeHMMsTXT(initHmm, outfilename + "_f" + indexFold + "_initHmm.txt");
-		this.writeHMMsDOT(initHmm, outfilename + "_f" + indexFold + "_initHmm.dot");
-		
-		return initHmm;
-	}
-	
-	private HiddenMarkovModel getTrainnedHMM(int indexFold, String outfilename, int hmmMode){		
-		// create the HMM
-		HiddenMarkovModel initHmm = this.getHMM(indexFold, outfilename, hmmMode); 
-		initHmm.initializeHmmParameters();
-		this.writeHMMsTXT(initHmm, outfilename + "_f" + indexFold + "_initHmm.txt");
-		this.writeHMMsDOT(initHmm, outfilename + "_f" + indexFold + "_initHmm.dot");
-		
-		// Train it
-		HiddenMarkovModel learntHmm = initHmm.baumWelch();
-		this.writeHMMsTXT(learntHmm, outfilename + "_f" + indexFold + "_learntHmm.txt");
-		this.writeHMMsDOT(learntHmm, outfilename + "_f" + indexFold + "_learntHmm.dot");
-		return learntHmm;
-	}
-	
-	private void writeHMMsTXT(HiddenMarkovModel hmm, String outfile){
-		for(int i=0; i<m_nFolds; i++){
-			hmm.writeHMMtxt(outfile);
-		}
-	}
-	
-	private void writeHMMsDOT(HiddenMarkovModel hmm, String outfile){
-		for(int i=0; i<m_nFolds; i++){
-			hmm.writeHMMdot(outfile);
-		}
-	}
 	
 	
 	
@@ -476,8 +223,8 @@ public class ModelEvaluator {
 			
 			
 			// SELECT THE MODEL //
-			TestSetEvaluator eval = this.createTestSetEvaluator(i, testseqs);
-			MySuffixTree suffixtree = null;
+			TestSetEvaluator eval = this.getTestSetEvaluator(i, testseqs);
+			//MySuffixTree suffixtree = null;
 			/*
 			if(m_suffixtreeAL!=null){
 				// GST & clust+MSA+Wseq+ST

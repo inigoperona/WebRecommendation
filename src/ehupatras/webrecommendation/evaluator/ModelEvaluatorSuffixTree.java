@@ -5,11 +5,11 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import java.util.ArrayList;
 
 public class ModelEvaluatorSuffixTree 
-				extends ModelEvaluator {
+				extends ModelEvaluatorClust {
 
 	// ATTRIBUTES
 	
-	protected ArrayList<MySuffixTree> m_suffixtreeAL = null;
+	protected ArrayList<MySuffixTree> m_suffixtreeAL;
 	
 	// CREATOR
 	

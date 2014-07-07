@@ -125,7 +125,7 @@ public class A052MainClassHclustSpadeKnnEDSplit {
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 				
 				// MEDOIDS models //
-				modelev.buildMedoids(minsup);
+				modelev.buildMedoids(minsup, true);
 				
 				
 				

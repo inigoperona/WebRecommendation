@@ -2,6 +2,9 @@ package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.clustering.ClusteringHierarchical;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorMC;
+
 import java.util.ArrayList;
 
 public class ModelEvaluatorClustHclust 
@@ -23,6 +26,14 @@ public class ModelEvaluatorClustHclust
 			ArrayList<ArrayList<Long>> valAL,
 			ArrayList<ArrayList<Long>> testAL){
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+	}
+	
+	// FUNCTIONS
+	
+	public TestSetEvaluator getTestSetEvaluator(
+			int iFold, 
+			ArrayList<String[]> testseqs){
+		return null;
 	}
 	
 	// BUILD MODEL

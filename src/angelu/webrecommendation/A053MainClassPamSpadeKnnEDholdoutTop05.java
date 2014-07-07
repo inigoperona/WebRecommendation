@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
@@ -95,10 +95,15 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 				  			{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluator(
+		ModelEvaluatorMedoids modelev = new ModelEvaluatorMedoids(
 				sequencesUHC, null, 
 				matrix,
 				trainAL, valAL, testAL);
+		
+		// evaluation parameters
+		modelev.setFmeasureBeta(1f);
+		float[] confusionPoints = {0.25f,0.50f,0.75f};
+		modelev.setConfusionPoints(confusionPoints);
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
@@ -106,11 +111,6 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
 		int[] url2topic = (int[])objA[1];
 		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
-		
-		// initialize parameters
-		modelev.setFmeasureBeta(1f);
-		float[] confusionPoints = {0.25f,0.50f,0.75f};
-		modelev.setConfusionPoints(confusionPoints);
 		
 		
 		// PAM + MySPADE //
@@ -136,7 +136,8 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 			String esperimentationStr = "pam" + k;
 			
 			// Load clustering
-			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+			String clustFile = validationWD + clustWD + "/" + esperimentationStr + ".javaData";
+			modelev.loadClusters(clustFile);
 			
 			// SPADE
 			for(int l=0; l<seqweights.length; l++){
@@ -144,12 +145,13 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 				
 				// MEDOIDS models //
-				modelev.buildMedoidsModels(minsup);
+				modelev.buildMedoids(minsup, true);
+				
+				
 				
 				// Evaluation
 				String results;
-				
-				
+								
 				
 				// VALIDATION //
 				String resultInfo;

@@ -3,7 +3,7 @@ package angelu.webrecommendation;
 import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustPAM;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -74,10 +74,12 @@ public class A041MainClassPAMcv {
 		int[] ks = {150, 200, 250, 300};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluator(
+		ModelEvaluatorClustPAM modelev = new ModelEvaluatorClustPAM(
 				sequencesUHC, null,
 				matrix,
 				trainAL, valAL, testAL);
+		
+		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);	
@@ -90,10 +92,9 @@ public class A041MainClassPAMcv {
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			
 			// Clustering
-			modelev.buildClustersPAM(k);
+			modelev.buildPAM(k);
 			modelev.saveClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			modelev.writeClusters(validationWD + clustWD + "/" + esperimentationStr + ".txt");
-			//modelev.loadClusters(validationWD + "/" + esperimentationStr + ".javaData");
 		}
 					
 			

@@ -3,7 +3,7 @@ package ehupatras.webrecommendation;
 import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorModularGST;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -87,10 +87,12 @@ public class A055MainClassModularHclustST2KnnEDSplit {
 							{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluator(
+		ModelEvaluatorModularGST modelev = new ModelEvaluatorModularGST(
 				sequencesUHC, seqsSplit,
 				matrix,
 				trainAL, valAL, testAL);
+		
+		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
@@ -112,18 +114,15 @@ public class A055MainClassModularHclustST2KnnEDSplit {
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<cutthA.length; j++){
 			float cutth = cutthA[j];
-			
-			// Clustering
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
-			//String esperimentationStr = "pam" + (int)cutth;
 			
 			// Load clustering
-			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+			String clustFile = validationWD + clustWD + "/" + esperimentationStr + ".javaData";
+			modelev.loadClusters(clustFile);
 			
 			// Create clusters-STs
 			modelev.buildClustersSuffixTrees();
-			// Create model of medoids
-			modelev.buildMedoidsModels(0.5f);
+			modelev.buildMedoids(0.5f, false);
 			
 			for(int k=0; k<knnA.length; k++){
 				int knn = knnA[k];

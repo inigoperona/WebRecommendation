@@ -72,7 +72,7 @@ public class ModelEvaluatorSeqMinSPADE
 		return seqs;
 	}
 	
-	private int getMaxIndex(int[] intArray){
+	protected int getMaxIndex(int[] intArray){
 		int climax = Integer.MIN_VALUE;
 		for(int i=0; i<intArray.length; i++){
 			int cli = intArray[i];
@@ -83,7 +83,7 @@ public class ModelEvaluatorSeqMinSPADE
 		return climax;
 	}
 	
-	private ArrayList<String[]> getSpadeSequences(ArrayList<Long> sesIDs, String workdir){
+	protected ArrayList<String[]> getSpadeSequences(ArrayList<Long> sesIDs, String workdir){
 		// take the sequences
 		int[] clusterDMind = m_distancematrix.getSessionIDsIndexes2(sesIDs, m_datasetSplit!=null);
 		ArrayList<String[]> sequences = new ArrayList<String[]>(); 

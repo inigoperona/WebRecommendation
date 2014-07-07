@@ -2,6 +2,8 @@ package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorMC;
 import java.util.ArrayList;
 
 public class ModelEvaluatorMarkovChain 
@@ -23,6 +25,18 @@ public class ModelEvaluatorMarkovChain
 			ArrayList<ArrayList<Long>> testAL){
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
 	}
+	
+	// GET TEST EVALUATOR
+	
+	public TestSetEvaluator getTestSetEvaluator(
+			int iFold, 
+			ArrayList<String[]> testseqs){
+		TestSetEvaluator eval = 
+				new TestSetEvaluatorMC(
+						testseqs, 
+						m_markovChainAL.get(iFold));
+		return eval;
+	}	
 	
 	// BUILD MODEL
 	
@@ -51,18 +65,6 @@ public class ModelEvaluatorMarkovChain
 	
 	public MarkovChain getMarkovChain(int ifold){
 		return m_markovChainAL.get(ifold);
-	}
-	
-	// EVALUATION
-	
-	public TestSetEvaluator createTestSetEvaluator(
-			int iFold, 
-			ArrayList<String[]> testseqs){
-		TestSetEvaluator eval = 
-				new TestSetEvaluator(
-						testseqs, 
-						m_markovChainAL.get(iFold));
-		return eval;
 	}
 	
 }

@@ -7,15 +7,13 @@ import ehupatras.sequentialpatternmining.MySPADE;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 
 public class ModelEvaluatorMedoids 
-				extends ModelEvaluator {
+				extends ModelEvaluatorSeqMinSPADE {
 
 	// ATTRIBUTES
 	
-	private ArrayList<int[]> m_clustersAL;
 	private ArrayList<ArrayList<String[]>> m_medoidsAL = null;
-	private ArrayList<int[]> m_gmedoidsAL = null;
+	private ArrayList<int[]> m_gmedoidsAL = null;	
 	private ArrayList<ArrayList<Object[]>> m_recosAL = null;
-	private int m_knn = 100;
 	
 	// CREATOR
 	
@@ -31,24 +29,18 @@ public class ModelEvaluatorMedoids
 	
 	// BUILD MODEL
 	
-	public void loadClusters(String clustFile){
-		ModelEvaluatorClust modelClust = new ModelEvaluatorClust();
-		modelClust.loadClusters(clustFile);
-		m_clustersAL = modelClust.getClusters();
-	}
-	
-	public void buildMedoids(float minsup){
+	public void buildMedoids(float minsup, boolean computeRecos){
 		// compute medoids for each fold
 		m_medoidsAL = new ArrayList<ArrayList<String[]>>();
 		m_gmedoidsAL = new ArrayList<int[]>();
-		m_recosAL = new ArrayList<ArrayList<Object[]>>();
+		if(computeRecos){m_recosAL = new ArrayList<ArrayList<Object[]>>();}
 		for(int i=0; i<m_nFolds; i++){
 			Object[] medObjA = this.getMedoids(i);
 			ArrayList<String[]> medoids = (ArrayList<String[]>)medObjA[0];
 			int[] gmedoids = (int[])medObjA[1];
 			m_medoidsAL.add(medoids);
 			m_gmedoidsAL.add(gmedoids);
-			m_recosAL.add(this.getRecommendations(i, minsup));
+			if(computeRecos){m_recosAL.add(this.getRecommendations(i, minsup));}
 		}
 	}
 	

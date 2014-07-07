@@ -3,7 +3,7 @@ package ehupatras.webrecommendation;
 import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorHMM;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -74,10 +74,12 @@ public class A0600MainClassHclustHMM {
 		float[] cutthA = {4f, 10f, 15f, 20f, 25f};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluator(
+		ModelEvaluatorHMM modelev = new ModelEvaluatorHMM(
 				sequencesUHC, null, 
 				matrix,
 				trainAL, valAL, testAL);
+		
+		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
@@ -97,13 +99,12 @@ public class A0600MainClassHclustHMM {
 		// Start generating and evaluating the model
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<cutthA.length; j++){
-			float cutth = cutthA[j];
-				
+			float cutth = cutthA[j];				
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
 			// Load clustering
-			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
-
+			String clustFile = validationWD + clustWD + "/" + esperimentationStr + ".javaData";
+			modelev.loadClusters(clustFile);
 			
 			// HMM
 			modelev.buildHiddenMarkovModels(validationWD + profiWD + "/" + esperimentationStr, 0);

@@ -3,7 +3,7 @@ package ehupatras.webrecommendation;
 import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorModularGST;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -80,10 +80,12 @@ public class A054MainClassModularHclustST {
 		float[] cutthA = {4f, 10f, 15f};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluator(
+		ModelEvaluatorModularGST modelev = new ModelEvaluatorModularGST(
 				sequencesUHC, null,
 				matrix,
 				trainAL, valAL, testAL);
+		
+		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
@@ -103,16 +105,16 @@ public class A054MainClassModularHclustST {
 		// Start generating and evaluating the model
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<cutthA.length; j++){
-			float cutth = cutthA[j];
-			
+			float cutth = cutthA[j];			
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
-			//String esperimentationStr = "pam" + (int)cutth;
 			
-			// Load clustering
-			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+			// load clustering
+			String clustFile = validationWD + clustWD + "/" + esperimentationStr + ".javaData";
+			modelev.loadClusters(clustFile);
 			
 			// Modular approach: clusters-ST
 			modelev.buildClustersSuffixTrees();
+			
 			
 			// Evaluation
 			String results;
