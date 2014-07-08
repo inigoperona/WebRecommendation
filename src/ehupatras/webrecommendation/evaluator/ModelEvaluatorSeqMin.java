@@ -29,14 +29,6 @@ public class ModelEvaluatorSeqMin
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
 	}
 	
-	public ModelEvaluatorSeqMin(){
-		// creator to load clusters
-		super(null, null, null, 
-				new ArrayList<ArrayList<Long>>(0), 
-				new ArrayList<ArrayList<Long>>(0), 
-				new ArrayList<ArrayList<Long>>(0));
-	}
-	
 	// FUNCTIONS
 	
 	public void buildST(){

@@ -15,6 +15,8 @@ public class ModelEvaluatorHMM
 	
 	protected ArrayList<HiddenMarkovModel> m_hmmAL = null;
 	
+	protected int m_nNextSteps = 3;
+	
 	// CREATOR
 	
 	public ModelEvaluatorHMM(
@@ -35,8 +37,14 @@ public class ModelEvaluatorHMM
 		TestSetEvaluator eval = 
 				new TestSetEvaluatorHMM(
 						testseqs, 
-						m_hmmAL.get(iFold));
+						m_hmmAL.get(iFold),
+						m_nNextSteps);
 		return eval;
+	}
+	
+	public void setEsploitationParameters(
+			int nNextSteps){
+		m_nNextSteps = nNextSteps;
 	}
 	
 	// BUILD MODEL

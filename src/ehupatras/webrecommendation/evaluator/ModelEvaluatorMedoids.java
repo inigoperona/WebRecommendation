@@ -17,6 +17,12 @@ public class ModelEvaluatorMedoids
 	protected ArrayList<int[]> m_gmedoidsAL = null;	
 	private ArrayList<ArrayList<Object[]>> m_recosAL = null;
 	
+	protected boolean m_isDistance = true;
+	protected float[][] m_rolesW = {{ 0f, 0f, 0f},
+									{ 0f, 0f, 0f},
+									{ 0f, 0f, 0f}};
+	protected int m_knn = 100;
+	
 	// CREATOR
 	
 	public ModelEvaluatorMedoids(
@@ -39,8 +45,18 @@ public class ModelEvaluatorMedoids
 						testseqs, 
 						m_medoidsAL.get(iFold),
 						m_gmedoidsAL.get(iFold),
-						m_recosAL.get(iFold));
+						m_recosAL.get(iFold),
+						m_isDistance, m_rolesW, m_knn);
 		return eval;
+	}
+	
+	public void setEsploitationParameters(
+			boolean isDistance,
+			float[][] rolesW,
+			int knn){
+		m_isDistance = isDistance;
+		m_rolesW = rolesW;
+		m_knn = knn;
 	}
 	
 	// BUILD MODEL

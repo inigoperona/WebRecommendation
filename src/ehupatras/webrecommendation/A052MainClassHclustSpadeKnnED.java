@@ -132,13 +132,15 @@ public class A052MainClassHclustSpadeKnnED {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(2, nrec, (long)0, 1, 1, 0, true, rolesW);
+					modelev.setEsploitationParameters(true, rolesW, 100);
+					results = modelev.computeEvaluationTest(2, nrec, (long)0);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1, 0, true, rolesW);
+				modelev.setEsploitationParameters(true, rolesW, 100);
+				results = modelev.computeEvaluationTest(-1, -1, (long)0);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}

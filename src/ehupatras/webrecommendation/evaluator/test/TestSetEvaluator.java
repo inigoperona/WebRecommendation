@@ -2,11 +2,10 @@ package ehupatras.webrecommendation.evaluator.test;
 
 import java.io.BufferedWriter;
 import java.util.ArrayList;
-
 import ehupatras.markovmodel.MarkovChain;
-import ehupatras.webrecommendation.evaluator.SequenceEvaluator;
+import ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluator;
 
-public class TestSetEvaluator {
+public abstract class TestSetEvaluator {
 
 	// ATTRIBUTES
 	
@@ -75,15 +74,16 @@ public class TestSetEvaluator {
 	}
 	
 	
+	// ABSTRACT FUNCTIONS
+	
+	public abstract SequenceEvaluator getSequenceEvaluator(String[] sequence);
+	
 	
 	// BODY
 	
 	public void computeEvaluation(
-			int mode, int nrecos, long seed, 
-			MarkovChain markovchain,
-			int failureMode,
-			int maxMemory,
-			int normMode){
+			int mode, int nrecos, long seed,
+			MarkovChain markovchain){
 		
 		float numberOfRecommendationsRatio = 0f;
 		int numberOfFailures = 0;
@@ -116,7 +116,7 @@ public class TestSetEvaluator {
 			
 			
 			// select the model
-			SequenceEvaluator seqEv = this.getSequenceEvaluator();
+			SequenceEvaluator seqEv = this.getSequenceEvaluator(seq);
 			
 			
 			

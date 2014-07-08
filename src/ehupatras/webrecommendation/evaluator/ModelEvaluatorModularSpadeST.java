@@ -1,7 +1,6 @@
 package ehupatras.webrecommendation.evaluator;
 
 import java.util.ArrayList;
-
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
@@ -37,7 +36,8 @@ public class ModelEvaluatorModularSpadeST
 						testseqs, 
 						m_clustSuffixTreeAL.get(iFold),
 						m_medoidsAL.get(iFold),
-						m_gmedoidsAL.get(iFold));
+						m_gmedoidsAL.get(iFold),
+						m_isDistance, m_rolesW, m_knn);
 		return eval;
 	}
 	

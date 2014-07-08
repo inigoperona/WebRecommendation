@@ -116,18 +116,18 @@ public abstract class ModelEvaluator {
 
 	
 	
-	// FUNCTIONS
+	// ABSTRACT FUNCTIONS
 	
 	public abstract TestSetEvaluator getTestSetEvaluator(
 			int iFold, 
-			ArrayList<String[]> testseqs);
+			ArrayList<String[]> testseqs);	
 	
-	public void setKnn(int knn){
-		m_knn = knn;
+	public int getNumberOfNodes(int iFold){
+		return 0;
 	}
-	
-	
-	
+	public float getNumberOfEdges(int iFold){
+		return 0f;
+	}
 	
 	
 	///////////////////////////////////////////////////
@@ -136,24 +136,14 @@ public abstract class ModelEvaluator {
 	
 	public String computeEvaluationTest(int mode, 
 			int nrecos,
-			long seed,
-			int failuremode,
-			int maxMemory,
-			int normMode,
-			boolean isDistance,
-			float[][] rolesW){
-		return this.computeEvaluation(m_testAL, mode, nrecos, seed, failuremode, maxMemory, normMode, isDistance, rolesW);
+			long seed){
+		return this.computeEvaluation(m_testAL, mode, nrecos, seed);
 	}
 	
 	public String computeEvaluationVal(int mode, 
 			int nrecos,
-			long seed,
-			int failuremode,
-			int maxMemory,
-			int normMode,
-			boolean isDistance,
-			float[][] rolesW){
-		return this.computeEvaluation(m_valAL, mode, nrecos, seed, failuremode, maxMemory, normMode, isDistance, rolesW);
+			long seed){
+		return this.computeEvaluation(m_valAL, mode, nrecos, seed);
 	}
 	
 	
@@ -163,12 +153,7 @@ public abstract class ModelEvaluator {
 					ArrayList<ArrayList<Long>> evalAL,
 					int mode, 
 					int nrecos,
-					long seed,
-					int failuremode,
-					int maxMemory,
-					int normMode,
-					boolean isDistance,
-					float[][] rolesW){
+					long seed){
 		
 		// METRICS //
 		int trnURLs = 0;
@@ -201,12 +186,16 @@ public abstract class ModelEvaluator {
 		float[] moReATop = new float[m_confusionPoints.length];
 		float[] moFmATop = new float[m_confusionPoints.length];
 		
+		
+		
 		// Create a markov chain
 		ModelEvaluatorMarkovChain modelMC = new ModelEvaluatorMarkovChain(
 				m_datasetUHC, m_datasetSplitUHC, 
 				m_distancematrix, 
 				m_trainAL, m_valAL, m_testAL);
 		modelMC.buildMC();
+		
+		
 		
 		// for each fold obtain the metrics
 		for(int i=0; i<m_nFolds; i++){
@@ -222,41 +211,10 @@ public abstract class ModelEvaluator {
 			
 			
 			
-			// SELECT THE MODEL //
+			// CREATE THE MODEL //
 			TestSetEvaluator eval = this.getTestSetEvaluator(i, testseqs);
-			//MySuffixTree suffixtree = null;
-			/*
-			if(m_suffixtreeAL!=null){
-				// GST & clust+MSA+Wseq+ST
-				suffixtree = m_suffixtreeAL.get(i);
-				eval = new TestSetEvaluator(testseqs, suffixtree);
-			} else if(m_medoidsAL!=null && m_clustSuffixTreeAL!=null){
-				// clust+ST+knn
-				eval = new TestSetEvaluator(testseqs,
-						m_medoidsAL.get(i),
-						m_gmedoidsAL.get(i),
-						m_knn,
-						isDistance, rolesW,
-						m_clustSuffixTreeAL.get(i));
-			} else if(m_clustSuffixTreeAL!=null){
-				// clust+ST+fit
-				eval = new TestSetEvaluator(testseqs, m_clustSuffixTreeAL.get(i));
-			} else if(m_medoidsAL!=null) {
-				// clust+SPADE
-				eval = new TestSetEvaluator(testseqs,
-								m_medoidsAL.get(i),
-								m_gmedoidsAL.get(i),
-								m_recosAL.get(i),
-								isDistance, rolesW);
-			} else if(m_hmmAL!=null){
-				// clust+HMM
-				eval = new TestSetEvaluator(testseqs, m_hmmAL.get(i));
-			} else {
-				// Markov Chain
-				MarkovChain markovchain = modelMC.getMarkovChain(i);
-				eval = new TestSetEvaluator(testseqs, markovchain);
-			}
-			*/
+			
+			
 			
 			// if we have to write the recommendations
 			if(m_lineHeader!=null){
@@ -271,10 +229,7 @@ public abstract class ModelEvaluator {
 			eval.setTopicParameters(m_urlIds, m_url2topic, m_topicmatch);
 			eval.computeEvaluation(
 					mode, nrecos, seed, 
-					modelMC.getMarkovChain(i),
-					failuremode,
-					maxMemory,
-					normMode);
+					modelMC.getMarkovChain(i));
 			//eval.writeResults();
 			
 			
@@ -299,10 +254,8 @@ public abstract class ModelEvaluator {
 			
 			// METRICS3
 			
-			if(m_suffixtreeAL!=null){
-				nNodes = nNodes + suffixtree.getNumberOfNodes();
-				nEdges = nEdges + suffixtree.getNumberOfEdges();
-			}
+			nNodes = nNodes + this.getNumberOfNodes(i);
+			nEdges = nEdges + this.getNumberOfEdges(i);
 			
 			// METRICS4
 			

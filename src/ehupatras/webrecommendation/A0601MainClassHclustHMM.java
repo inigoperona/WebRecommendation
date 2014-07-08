@@ -112,18 +112,21 @@ public class A0601MainClassHclustHMM {
 			
 			// Evaluation
 			String results;
+			modelev.setEsploitationParameters(3);
 				
 			// weighted by construction sequences (test sequences)
 			int[] nrecsWST = new int[]{2,3,4,5,10,20};
 			for(int ind=0; ind<nrecsWST.length; ind++ ){
 				int nrec = nrecsWST[ind];
-				results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 3, 0, false, null);
+				modelev.setEsploitationParameters(3);
+				results = modelev.computeEvaluationTest(3, nrec, (long)0);
 				System.out.print(esperimentationStr + "_weighted" + nrec + ",");
 				System.out.print(results);
 			}
 
 			// unbounded
-			results = modelev.computeEvaluationTest(3, 1000, (long)0, 1, 3, 0, false, null);
+			modelev.setEsploitationParameters(3);
+			results = modelev.computeEvaluationTest(3, 1000, (long)0);
 			System.out.print(esperimentationStr + "_unbounded,");
 			System.out.print(results);
 			

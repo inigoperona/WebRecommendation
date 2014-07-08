@@ -134,13 +134,15 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffix {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(6, nrec, (long)0, fmode, gtmem, 0, false, null);
+					modelev.setEsploitationParameters(fmode, gtmem, 0);
+					results = modelev.computeEvaluationTest(6, nrec, (long)0);
 					System.out.print(esperimentationStr3 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(6, 1000, (long)0, fmode, gtmem, 0, false, null);
+				modelev.setEsploitationParameters(fmode, gtmem, 0);
+				results = modelev.computeEvaluationTest(6, 1000, (long)0);
 				System.out.print(esperimentationStr3 + "_unbounded,");
 				System.out.print(results);
 			}

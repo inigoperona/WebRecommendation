@@ -13,6 +13,10 @@ public abstract class ModelEvaluatorSuffixTree
 	
 	protected ArrayList<MySuffixTree> m_suffixtreeAL;
 	
+	protected int m_failuremode = 0;
+	protected int m_maxMemory = 100;
+	protected int m_normMode = 0;
+	
 	// CREATOR
 	
 	public ModelEvaluatorSuffixTree(
@@ -33,8 +37,18 @@ public abstract class ModelEvaluatorSuffixTree
 		TestSetEvaluator eval = 
 				new TestSetEvaluatorST(
 						testseqs, 
-						m_suffixtreeAL.get(iFold));
+						m_suffixtreeAL.get(iFold),
+						m_failuremode, m_maxMemory, m_normMode);
 		return eval;
+	}
+	
+	public void setEsploitationParameters(
+			int failuremode,
+			int maxMemory,
+			int normMode){
+		m_failuremode = failuremode;
+		m_maxMemory = maxMemory;
+		m_normMode = normMode;
 	}
 	
 	// BUILD MODEL
@@ -46,6 +60,17 @@ public abstract class ModelEvaluatorSuffixTree
 			MySuffixTree st = new MySuffixTree(sequences);
 			m_suffixtreeAL.add(st);
 		}
+	}
+	
+	
+	// utilities
+	
+	public int getNumberOfNodes(int iFold){
+		return m_suffixtreeAL.get(iFold).getNumberOfNodes();
+	}
+	
+	public float getNumberOfEdges(int iFold){
+		return m_suffixtreeAL.get(iFold).getNumberOfEdges();
 	}
 	
 }

@@ -1,17 +1,17 @@
-package ehupatras.webrecommendation.evaluator.test;
+package ehupatras.webrecommendation.evaluator.sequence;
 
 import java.util.ArrayList;
-import ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluator;
-import ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluatorMed;
+import ehupatras.webrecommendation.recommender.Recommender;
+import ehupatras.webrecommendation.recommender.RecommenderKnnToClustersTopURLs;
 
-public class TestSetEvaluatorMed
-				extends TestSetEvaluator {
+public class SequenceEvaluatorMed 
+				extends SequenceEvaluator {
 
 	// ATTRIBUTES
 	
 	protected ArrayList<String[]> m_medoids = null;
 	protected int[] m_gmedoids = null;
-	private ArrayList<Object[]> m_recos = null;
+	protected ArrayList<Object[]> m_recos = null;
 	
 	protected boolean m_isDistance = true;
 	protected float[][] m_rolesW = {{ 0f, 0f, 0f},
@@ -21,15 +21,15 @@ public class TestSetEvaluatorMed
 	
 	// CREATOR
 	
-	public TestSetEvaluatorMed(
-			ArrayList<String[]> sequences,
+	public SequenceEvaluatorMed(
+			String[] sequence,
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			ArrayList<Object[]> recos,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequences);
+		super(sequence);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_recos = recos;
@@ -38,19 +38,19 @@ public class TestSetEvaluatorMed
 		m_knn = knn;
 	}
 	
-	protected TestSetEvaluatorMed(
-			ArrayList<String[]> sequences){
-		super(sequences);
+	protected SequenceEvaluatorMed(
+			String[] sequence){
+		super(sequence);
 	}
 	
-	protected TestSetEvaluatorMed(
-			ArrayList<String[]> sequences,
+	protected SequenceEvaluatorMed(
+			String[] sequence,
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequences);
+		super(sequence);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_isDistance = isDistance;
@@ -58,14 +58,14 @@ public class TestSetEvaluatorMed
 		m_knn = knn;
 	}
 	
-	// GET SEQUENCE EVALUATOR
+	// GET RECOMMENDER
 	
-	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
-		SequenceEvaluator seqEva = 
-				new SequenceEvaluatorMed(sequence, 
+	public Recommender getRecommender(){
+		Recommender recommender = 
+				new RecommenderKnnToClustersTopURLs(
 						m_medoids, m_gmedoids, m_recos,
-						m_isDistance, m_rolesW, m_knn);
-		return seqEva;
+						m_isDistance, m_rolesW);
+		return recommender;
 	}
 	
 }
