@@ -18,7 +18,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 	public static void main(String[] args) {
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_angelu/experiments";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
@@ -26,6 +26,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
 		String clustWD = "/pam_DM_04_edit";
+		String profiWD = "/pam_DM_04_edit/spade1";
 		String evalFile = "/evaluation.txt";
 		preprocessingWD = args[0];
 		logfile = args[1];
@@ -34,7 +35,8 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 		dmWD = args[4];
 		validationWD = args[5];
 		clustWD = args[6];
-		evalFile = args[7];
+		profiWD = args[7];
+		evalFile = args[8];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);

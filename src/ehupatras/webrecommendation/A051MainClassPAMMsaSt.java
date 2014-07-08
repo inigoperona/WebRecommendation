@@ -14,24 +14,23 @@ public class A051MainClassPAMMsaSt {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
+		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_00_no_role";
-		dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String clustWD = "/CL_00_no_role";
-		String profiWD = "/CL_00_no_role";
-		clustWD = "";
-		profiWD = "";
+		String databaseWD = base + "/02_DATABASE_5";
+		String dmWD = "/DM_04_edit";
+		String validationWD = base + "/03_VALIDATION_5";
+		String clustWD = "/pam_DM_04_edit";
+		String profiWD = "/pam_DM_04_edit/msa";
 		preprocessingWD = args[0];
 		logfile = args[1];
-		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
-		clustWD = args[5];
-		profiWD = args[6];
+		url2topicFile = args[2];
+		databaseWD = args[3];
+		dmWD = args[4];
+		validationWD = args[5];
+		clustWD = args[6];
+		profiWD = args[7];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);

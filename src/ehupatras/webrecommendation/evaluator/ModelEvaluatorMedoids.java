@@ -142,4 +142,14 @@ public class ModelEvaluatorMedoids
 		return recos;
 	}
 	
+	// utilities
+	
+	public int getNumberOfNodes(int iFold){
+		return 0;
+	}
+	
+	public float getNumberOfEdges(int iFold){
+		return 0f;
+	}
+	
 }

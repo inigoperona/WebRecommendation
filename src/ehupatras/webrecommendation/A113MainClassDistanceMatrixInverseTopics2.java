@@ -40,10 +40,12 @@ public class A113MainClassDistanceMatrixInverseTopics2 {
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/log20000.log";
+		String url2topicFile = "/URLs_to_topic.txt";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];
-		databaseWD = args[2];
+		url2topicFile = args[2];
+		databaseWD = args[3];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -73,7 +75,7 @@ public class A113MainClassDistanceMatrixInverseTopics2 {
 		dm.createDistanceMatrix(databaseWD + "/DM_00_no_role_dist_topics2", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW1,
-				preprocessingWD + "/URLs_to_topic.txt", 0.5f);
+				preprocessingWD + url2topicFile, 0.5f);
 		
 		// Treat the role intelligently2
 		float[][] roleW5 = {{ 0f,    0f,    0f},
@@ -83,7 +85,7 @@ public class A113MainClassDistanceMatrixInverseTopics2 {
 		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent2_dist_topics2", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW5,
-				preprocessingWD + "/URLs_to_topic.txt", 0.5f);
+				preprocessingWD + url2topicFile, 0.5f);
 		
 		
 		

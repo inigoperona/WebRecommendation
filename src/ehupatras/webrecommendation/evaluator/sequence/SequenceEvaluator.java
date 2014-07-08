@@ -56,9 +56,7 @@ public abstract class SequenceEvaluator {
 		this.constructor2(sequenceAL);
 	}
 	
-	private void constructor2(ArrayList<String> sequence){
-		m_recommender = this.getRecommender();
-		
+	private void constructor2(ArrayList<String> sequence){		
 		m_sequence = sequence;
 		m_sequenceURL = sequence;
 		
@@ -97,6 +95,7 @@ public abstract class SequenceEvaluator {
 	// mode =  4 : Merge Markov Chain model and Suffix Tree models recommendations
 	// mode =  5 : Weight the Suffix tree with original train sequences and in exploitation with original test sequences
 	public void computeSequenceMetrics(int mode, int nrecos, long seed, MarkovChain markovchain){
+		m_recommender = this.getRecommender();
 		m_recommender.reset();
 		Recommender recM = null;
 		ArrayList<String> waydone = new ArrayList<String>();

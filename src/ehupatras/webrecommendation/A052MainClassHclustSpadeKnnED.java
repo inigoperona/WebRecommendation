@@ -14,7 +14,7 @@ public class A052MainClassHclustSpadeKnnED {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
@@ -22,12 +22,15 @@ public class A052MainClassHclustSpadeKnnED {
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
 		String clustWD = "/hclust_DM_04_edit";
+		String profiWD = "/hclust_DM_04_edit/spade1";
 		preprocessingWD = args[0];
 		logfile = args[1];
-		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
-		clustWD = args[5];
+		url2topicFile = args[2];
+		databaseWD = args[3];
+		dmWD = args[4];
+		validationWD = args[5];
+		clustWD = args[6];
+		profiWD = args[7];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -122,8 +125,7 @@ public class A052MainClassHclustSpadeKnnED {
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 				
 				// MEDOIDS models //
-				modelev.buildMedoids(minsup, true);
-				
+				modelev.buildMedoids(minsup, true);				
 				
 				// Evaluation
 				String results;

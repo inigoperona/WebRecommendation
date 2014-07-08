@@ -13,25 +13,23 @@ public class A056MainClassModularHclustSpadeSTKnnED {
 	public static void main(String[] args) {
 		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
+		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_03_intelligent2_dist";
-		//dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String clustWD = "/CL_00_no_role";
-		clustWD = "";
-		String profiWD = "/CL_00_no_role";
-		profiWD = "";
+		String databaseWD = base + "/02_DATABASE_5";
+		String dmWD = "/DM_04_edit";
+		String validationWD = base + "/03_VALIDATION_5";
+		String clustWD = "/hclust_DM_04_edit";
+		String profiWD = "/hclust_DM_04_edit/spadest";
 		preprocessingWD = args[0];
 		logfile = args[1];
-		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
-		clustWD = args[5];
-		profiWD = args[6];
-		
+		url2topicFile = args[2];
+		databaseWD = args[3];
+		dmWD = args[4];
+		validationWD = args[5];
+		clustWD = args[6];
+		profiWD = args[7];
 		
 		
 		// initialize the data structure
@@ -99,7 +97,7 @@ public class A056MainClassModularHclustSpadeSTKnnED {
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
 		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);

@@ -45,12 +45,14 @@ public class A012MainClassDistanceMatrixEDSplit {
 	
 	public static void main(String[] args){
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
+		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String databaseWD = base + "/02_DATABASE_5";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
+		
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -83,7 +85,7 @@ public class A012MainClassDistanceMatrixEDSplit {
 	            			{ 0f, 0f, 0f},
 	            			{ 0f, 0f, 0f}};
 		dm = new A012MainClassDistanceMatrixEDSplit();
-		dm.createDistanceMatrix(databaseWD + "/DM04-edit-split", 
+		dm.createDistanceMatrix(databaseWD + "/DM_04_edit-split", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW1, new int[]{11});
 		

@@ -13,7 +13,7 @@ public class A041MainClassPAMholdout {
 	public static void main(String[] args) {
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String databaseWD = base + "/02_DATABASE_5";
@@ -26,7 +26,7 @@ public class A041MainClassPAMholdout {
 		dmWD = args[3];
 		validationWD = args[4];
 		clustWD = args[5];
-		
+
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);

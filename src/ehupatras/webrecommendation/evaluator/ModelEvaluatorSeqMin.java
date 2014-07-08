@@ -14,8 +14,6 @@ public class ModelEvaluatorSeqMin
 	
 	protected float m_minsupport = (float)0.25;
 	protected ArrayList<ArrayList<String[]>> m_minedSeqs;
-	protected String m_minSeqsFileTxt = null;
-	protected String m_minSeqsFileJavaData = null;
 	
 	// CREATOR
 	

@@ -28,7 +28,6 @@ public class A0312MainClassSuffixTreeGoToLongestPrefix {
 		dmWD = args[4];
 		validationWD = args[5];
 		
-		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);

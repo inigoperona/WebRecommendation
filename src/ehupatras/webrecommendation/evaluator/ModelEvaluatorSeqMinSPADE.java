@@ -33,8 +33,8 @@ public class ModelEvaluatorSeqMinSPADE
 		}
 		
 		// write sequences
-		super.writeWeightedSequences(m_minSeqsFileTxt);
-		super.saveMinedSeqs(m_minSeqsFileJavaData);
+		super.writeWeightedSequences(minSeqsFileTxt);
+		super.saveMinedSeqs(minSeqsFileJavaData);
 	}
 	
 	private ArrayList<String[]> computeSpadeSeqs(int indexFold, String workdir){

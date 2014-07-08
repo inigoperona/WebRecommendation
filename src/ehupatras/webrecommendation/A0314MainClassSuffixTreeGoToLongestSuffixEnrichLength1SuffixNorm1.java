@@ -27,7 +27,6 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1SuffixNorm1 {
 		databaseWD = args[3];
 		dmWD = args[4];
 		validationWD = args[5];
-
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
