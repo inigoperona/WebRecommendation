@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorModSTknn;
 
 public class ModelEvaluatorModularSpadeST 
 				extends ModelEvaluatorMedoids {
@@ -22,6 +24,21 @@ public class ModelEvaluatorModularSpadeST
 			ArrayList<ArrayList<Long>> valAL,
 			ArrayList<ArrayList<Long>> testAL){
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+	}
+	
+	
+	// GET TEST EVALUATOR
+	
+	public TestSetEvaluator getTestSetEvaluator(
+			int iFold, 
+			ArrayList<String[]> testseqs){
+		TestSetEvaluator eval = 
+				new TestSetEvaluatorModSTknn(
+						testseqs, 
+						m_clustSuffixTreeAL.get(iFold),
+						m_medoidsAL.get(iFold),
+						m_gmedoidsAL.get(iFold));
+		return eval;
 	}
 	
 	// BUILD MODEL

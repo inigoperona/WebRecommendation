@@ -5,14 +5,16 @@ import java.util.ArrayList;
 import ehupatras.clustering.cvi.CVI;
 import ehupatras.sequentialpatternmining.MySPADE;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorMed;
 
 public class ModelEvaluatorMedoids 
 				extends ModelEvaluatorSeqMinSPADE {
 
 	// ATTRIBUTES
 	
-	private ArrayList<ArrayList<String[]>> m_medoidsAL = null;
-	private ArrayList<int[]> m_gmedoidsAL = null;	
+	protected ArrayList<ArrayList<String[]>> m_medoidsAL = null;
+	protected ArrayList<int[]> m_gmedoidsAL = null;	
 	private ArrayList<ArrayList<Object[]>> m_recosAL = null;
 	
 	// CREATOR
@@ -25,6 +27,20 @@ public class ModelEvaluatorMedoids
 			ArrayList<ArrayList<Long>> valAL,
 			ArrayList<ArrayList<Long>> testAL){
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+	}
+	
+	// GET TEST EVALUATOR
+	
+	public TestSetEvaluator getTestSetEvaluator(
+			int iFold, 
+			ArrayList<String[]> testseqs){
+		TestSetEvaluator eval = 
+				new TestSetEvaluatorMed(
+						testseqs, 
+						m_medoidsAL.get(iFold),
+						m_gmedoidsAL.get(iFold),
+						m_recosAL.get(iFold));
+		return eval;
 	}
 	
 	// BUILD MODEL

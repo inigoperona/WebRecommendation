@@ -2,9 +2,11 @@ package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorST;
 import java.util.ArrayList;
 
-public class ModelEvaluatorSuffixTree 
+public abstract class ModelEvaluatorSuffixTree 
 				extends ModelEvaluatorClust {
 
 	// ATTRIBUTES
@@ -23,6 +25,18 @@ public class ModelEvaluatorSuffixTree
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
 	}
 	
+	// GET EVALUATOR
+	
+	public TestSetEvaluator getTestSetEvaluator(
+			int iFold, 
+			ArrayList<String[]> testseqs){
+		TestSetEvaluator eval = 
+				new TestSetEvaluatorST(
+						testseqs, 
+						m_suffixtreeAL.get(iFold));
+		return eval;
+	}
+	
 	// BUILD MODEL
 	
 	protected void buidSuffixTrees(ArrayList<ArrayList<String[]>> sequencesAL){
@@ -32,18 +46,6 @@ public class ModelEvaluatorSuffixTree
 			MySuffixTree st = new MySuffixTree(sequences);
 			m_suffixtreeAL.add(st);
 		}
-	}
-	
-	// EVALUATION
-	
-	public TestSetEvaluator createTestSetEvaluator(
-			int iFold, 
-			ArrayList<String[]> testseqs){
-		TestSetEvaluator eval = 
-				new TestSetEvaluator(
-						testseqs, 
-						m_suffixtreeAL.get(iFold));
-		return eval;
 	}
 	
 }
