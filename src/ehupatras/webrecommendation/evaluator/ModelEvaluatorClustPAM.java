@@ -2,6 +2,8 @@ package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.clustering.ClusteringPAM;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+
 import java.util.ArrayList;
 
 public class ModelEvaluatorClustPAM 
@@ -23,6 +25,14 @@ public class ModelEvaluatorClustPAM
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
 	}
 
+	// FUNCTIONS
+	
+	public TestSetEvaluator getTestSetEvaluator(
+			int iFold, 
+			ArrayList<String[]> testseqs){
+		return null;
+	}
+	
 	// BUILD MODEL
 	
 	public void buildPAM(int k){

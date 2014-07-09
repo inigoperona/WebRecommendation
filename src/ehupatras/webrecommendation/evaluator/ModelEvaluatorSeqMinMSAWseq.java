@@ -40,8 +40,8 @@ public class ModelEvaluatorSeqMinMSAWseq
 	public void wseq(float minsupport, String minSeqsFileTxt, String minSeqsFileJavaData){
 		m_minsupport = minsupport;
 		this.extractWeightedSequences();
-		super.writeWeightedSequences(m_minSeqsFileTxt);
-		super.saveMinedSeqs(m_minSeqsFileJavaData);
+		super.writeWeightedSequences(minSeqsFileTxt);
+		super.saveMinedSeqs(minSeqsFileJavaData);
 	}
 	
 	

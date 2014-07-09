@@ -3,9 +3,12 @@ package ehupatras.webrecommendation.structures;
 import ehupatras.webrecommendation.utils.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.ArrayList;
 
 public class Website {
-		
+	
+	// ATTRIBUTES
+	
 	// work directory
 	private static String m_workdirectory = ".";
 	
@@ -18,6 +21,11 @@ public class Website {
 	// File to save the Website structure
 	private static String m_saveFileName = "/_Website.javaData";
 	
+	
+	
+	
+	
+	// FUNCTIONS TO MANAGE THE WEBSITE'S PAGE
 	
 	public static boolean containsURL(String urlname){
 		return m_url2idHT.containsKey(urlname);
@@ -100,6 +108,12 @@ public class Website {
 		return keysA;
 	}
 	
+	
+	
+	
+	
+	// FUNCTIONS TO STORE THE WEBSITE
+	
 	public static void writeWebsite(){
 		Enumeration<String> keys = m_url2idHT.keys();
 		while(keys.hasMoreElements()){
@@ -145,5 +159,32 @@ public class Website {
 	public static void setWorkDirectory(String workdirectory){
 		m_workdirectory = workdirectory;
 	}
-
+	
+	
+	
+	
+	// FUNCTIONS TO EXTRACT HOMEPAGE PAGES
+	
+	public static int[] getHomePages(){
+		// structure to store pages
+		ArrayList<Integer> indexesAL = new ArrayList<Integer>();
+		
+		// for each page in the website
+		String[] keys = Website.getAllFormatedUrlNames();
+		for(int i=0; i<keys.length; i++){
+			Page pag = Website.getPage(keys[i]);
+			if(pag.getIsIndex()){
+				int usageID = pag.getUrlIDusage();
+				indexesAL.add(usageID);
+			}
+		}
+		
+		// convert to int[]
+		int[] indexes = new int[indexesAL.size()];
+		for(int i=0; i<indexesAL.size(); i++){
+			indexes[i] = indexesAL.get(i);
+		}
+		return indexes;
+	}
+	
 }

@@ -3,7 +3,7 @@ package angelu.webrecommendation;
 import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustPAM;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -13,14 +13,13 @@ public class A041MainClassPAMcv {
 	public static void main(String[] args) {
 		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
+		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_00_no_role";
-		dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String clustWD = "/CL_00_no_role";
-		clustWD = "";
+		String databaseWD = base + "/02_DATABASE_5";
+		String dmWD = "/DM_04_edit";
+		String validationWD = base + "/03_VALIDATION_5";
+		String clustWD = "/pam_DM_04_edit";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
@@ -74,10 +73,12 @@ public class A041MainClassPAMcv {
 		int[] ks = {150, 200, 250, 300};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluator(
+		ModelEvaluatorClustPAM modelev = new ModelEvaluatorClustPAM(
 				sequencesUHC, null,
 				matrix,
 				trainAL, valAL, testAL);
+		
+		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);	
@@ -90,10 +91,9 @@ public class A041MainClassPAMcv {
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			
 			// Clustering
-			modelev.buildClustersPAM(k);
+			modelev.buildPAM(k);
 			modelev.saveClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
 			modelev.writeClusters(validationWD + clustWD + "/" + esperimentationStr + ".txt");
-			//modelev.loadClusters(validationWD + "/" + esperimentationStr + ".javaData");
 		}
 					
 			

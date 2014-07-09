@@ -2,6 +2,9 @@ package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorST;
+
 import java.util.ArrayList;
 
 public class ModelEvaluatorSuffixTreeGlobal 

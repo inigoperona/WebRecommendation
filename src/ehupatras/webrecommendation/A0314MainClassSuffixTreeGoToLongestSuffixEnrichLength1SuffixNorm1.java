@@ -27,11 +27,11 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1SuffixNorm1 {
 		databaseWD = args[3];
 		dmWD = args[4];
 		validationWD = args[5];
-
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
+		Website.load();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -113,13 +113,15 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1SuffixNorm1 {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(6, nrec, (long)0, fmode, gtmem, 1, false, null);
+					modelev.setEsploitationParameters(fmode, gtmem, 1);
+					results = modelev.computeEvaluationTest("ST_w_eS1", nrec, (long)0);
 					System.out.print(esperimentationStr3 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(6, 1000, (long)0, fmode, gtmem, 1, false, null);
+				modelev.setEsploitationParameters(fmode, gtmem, 1);
+				results = modelev.computeEvaluationTest("ST_w_eS1", 1000, (long)0);
 				System.out.print(esperimentationStr3 + "_unbounded,");
 				System.out.print(results);
 			}

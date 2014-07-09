@@ -3,7 +3,7 @@ package ehupatras.webrecommendation;
 import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorModularSpadeST;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -13,30 +13,29 @@ public class A056MainClassModularHclustSpadeSTKnnED {
 	public static void main(String[] args) {
 		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
+		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String dmWD = "/DM_03_intelligent2_dist";
-		//dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
-		String clustWD = "/CL_00_no_role";
-		clustWD = "";
-		String profiWD = "/CL_00_no_role";
-		profiWD = "";
+		String databaseWD = base + "/02_DATABASE_5";
+		String dmWD = "/DM_04_edit";
+		String validationWD = base + "/03_VALIDATION_5";
+		String clustWD = "/hclust_DM_04_edit";
+		String profiWD = "/hclust_DM_04_edit/spadest";
 		preprocessingWD = args[0];
 		logfile = args[1];
-		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
-		clustWD = args[5];
-		profiWD = args[6];
-		
+		url2topicFile = args[2];
+		databaseWD = args[3];
+		dmWD = args[4];
+		validationWD = args[5];
+		clustWD = args[6];
+		profiWD = args[7];
 		
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
+		Website.load();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -87,17 +86,19 @@ public class A056MainClassModularHclustSpadeSTKnnED {
 							{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluator(
+		ModelEvaluatorModularSpadeST modelev = new ModelEvaluatorModularSpadeST(
 				sequencesUHC, null,
 				matrix,
 				trainAL, valAL, testAL);
+		
+		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
+		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
 		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
@@ -111,37 +112,40 @@ public class A056MainClassModularHclustSpadeSTKnnED {
 		int i = 5; // Hclust - linkage method
 		for(int j=0; j<cutthA.length; j++){
 			float cutth = cutthA[j];
-			
-			// Clustering
 			String esperimentationStr = "agglo" + i + "_cl" + cutth;
 			
 			// Load clustering
-			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+			String clustFile = validationWD + clustWD + "/" + esperimentationStr + ".javaData";
+			modelev.loadClusters(clustFile);
 			
-			// Create model of medoids
-			modelev.buildMedoidsModels(0.5f);
-			// Create clusters-SPADE-STs
+			// Create model of STs and medoids
 			modelev.buildClustersSpadeSuffixTrees(0.5f, validationWD + profiWD);
+			modelev.buildMedoids(0.5f, false);
+			
 			
 			for(int k=0; k<knnA.length; k++){
 				int knn = knnA[k];
-				modelev.setKnn(knnA[k]);
 				String esperimentationStr2 = esperimentationStr + "_knn" + knn;
 			
 				// Evaluation
 				String results;
+				modelev.setEsploitationParameters(true, rolesW, knnA[k]);
 			
 				// weighted by construction sequences (test sequences)
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(3, nrec, (long)0, 1, 1000, 0, true, rolesW);
+					modelev.setEsploitationParameters(1, 1000, 0);
+					modelev.setEsploitationParameters(true, rolesW, 100);
+					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, 1000, (long)0, 1, 1000, 0, true, rolesW);
+				modelev.setEsploitationParameters(1, 1000, 0);
+				modelev.setEsploitationParameters(true, rolesW, 100);
+				results = modelev.computeEvaluationTest("unbounded", 1000, (long)0);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}

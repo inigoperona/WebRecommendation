@@ -20,20 +20,19 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1SuffixSplit {
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
 		String databaseWD = base + "/02_DATABASE_5";
-		String dmWD = "/DM_04_edit";
+		String dmWD = "/DM_04_edit-split";
 		String validationWD = base + "/03_VALIDATION_5";
-		/*
 		preprocessingWD = args[0];
 		logfile = args[1];
 		url2topicFile = args[2];
 		databaseWD = args[3];
 		dmWD = args[4];
 		validationWD = args[5];
-		*/
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
+		Website.load();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -118,13 +117,15 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1SuffixSplit {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(6, nrec, (long)0, fmode, gtmem, 0, false, null);
+					modelev.setEsploitationParameters(fmode, gtmem, 0);
+					results = modelev.computeEvaluationTest("ST_w_eS1", nrec, (long)0);
 					System.out.print(esperimentationStr3 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(6, 1000, (long)0, fmode, gtmem, 0, false, null);
+				modelev.setEsploitationParameters(fmode, gtmem, 0);
+				results = modelev.computeEvaluationTest("ST_w_eS1", 1000, (long)0);
 				System.out.print(esperimentationStr3 + "_unbounded,");
 				System.out.print(results);
 			}

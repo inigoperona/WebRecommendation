@@ -20,7 +20,7 @@ public class A030MainClassMarkovChainSplit {
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
 		String databaseWD = base + "/02_DATABASE_5";
-		String dmWD = "/DM_04_edit";
+		String dmWD = "/DM_04_edit-split";
 		String validationWD = base + "/03_VALIDATION_5";
 		preprocessingWD = args[0];
 		logfile = args[1];
@@ -33,6 +33,7 @@ public class A030MainClassMarkovChainSplit {
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
+		Website.load();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -102,13 +103,13 @@ public class A030MainClassMarkovChainSplit {
 		int[] nrecsW = new int[]{2,3,4,5,10,20};
 		for(int i=0; i<nrecsW.length; i++ ){
 			int nrec = nrecsW[i];
-			resultsMarkov = modelev.computeEvaluationTest(1, nrec, (long)0, 0, 100, 0, false, null);
+			resultsMarkov = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 			System.out.print("markovchain" + "_weighted" + nrec + ",");
 			System.out.print(resultsMarkov);
 		}
 		
 			// unbounded
-		resultsMarkov = modelev.computeEvaluationTest(-1, -1, (long)0, 0, 100, 0, false, null);
+		resultsMarkov = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 		System.out.print("markovchain_unbounded,");
 		System.out.print(resultsMarkov);
 					

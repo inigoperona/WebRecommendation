@@ -40,10 +40,12 @@ public class A114MainClassDistanceMatrixEDTopics2 {
 		// Parameter control
 		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		String logfile = "/log20000.log";
+		String url2topicFile = "/URLs_to_topic.txt";
 		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];
-		databaseWD = args[2];
+		url2topicFile = args[2];
+		databaseWD = args[3];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -73,7 +75,7 @@ public class A114MainClassDistanceMatrixEDTopics2 {
 		dm.createDistanceMatrix(databaseWD + "/DM_04_edit_dist_topics2", 
 				sampleSessionIDs, sequencesUHC, 
 				roleW1,
-				preprocessingWD + "/URLs_to_topic.txt", 0.5f);
+				preprocessingWD + url2topicFile, 0.5f);
 		
 		
 		// ending the program

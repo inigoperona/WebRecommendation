@@ -14,7 +14,7 @@ public class A052MainClassHclustSpadeKnnED {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
@@ -22,16 +22,20 @@ public class A052MainClassHclustSpadeKnnED {
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
 		String clustWD = "/hclust_DM_04_edit";
+		String profiWD = "/hclust_DM_04_edit/spade1";
 		preprocessingWD = args[0];
 		logfile = args[1];
-		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
-		clustWD = args[5];
+		url2topicFile = args[2];
+		databaseWD = args[3];
+		dmWD = args[4];
+		validationWD = args[5];
+		clustWD = args[6];
+		profiWD = args[7];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
+		Website.load();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -122,8 +126,7 @@ public class A052MainClassHclustSpadeKnnED {
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 				
 				// MEDOIDS models //
-				modelev.buildMedoids(minsup);
-				
+				modelev.buildMedoids(minsup, true);				
 				
 				// Evaluation
 				String results;
@@ -132,13 +135,15 @@ public class A052MainClassHclustSpadeKnnED {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(2, nrec, (long)0, 1, 1, 0, true, rolesW);
+					modelev.setEsploitationParameters(true, rolesW, 100);
+					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1, 0, true, rolesW);
+				modelev.setEsploitationParameters(true, rolesW, 100);
+				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}

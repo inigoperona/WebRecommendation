@@ -5,17 +5,23 @@ import java.util.ArrayList;
 import ehupatras.clustering.cvi.CVI;
 import ehupatras.sequentialpatternmining.MySPADE;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorMed;
 
 public class ModelEvaluatorMedoids 
-				extends ModelEvaluator {
+				extends ModelEvaluatorSeqMinSPADE {
 
 	// ATTRIBUTES
 	
-	private ArrayList<int[]> m_clustersAL;
-	private ArrayList<ArrayList<String[]>> m_medoidsAL = null;
-	private ArrayList<int[]> m_gmedoidsAL = null;
-	private ArrayList<ArrayList<Object[]>> m_recosAL = null;
-	private int m_knn = 100;
+	protected ArrayList<ArrayList<String[]>> m_medoidsAL = null;
+	protected ArrayList<int[]> m_gmedoidsAL = null;	
+	protected ArrayList<ArrayList<Object[]>> m_recosAL = null;
+	
+	protected boolean m_isDistance = true;
+	protected float[][] m_rolesW = {{ 0f, 0f, 0f},
+									{ 0f, 0f, 0f},
+									{ 0f, 0f, 0f}};
+	protected int m_knn = 100;
 	
 	// CREATOR
 	
@@ -29,26 +35,44 @@ public class ModelEvaluatorMedoids
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
 	}
 	
-	// BUILD MODEL
+	// GET TEST EVALUATOR
 	
-	public void loadClusters(String clustFile){
-		ModelEvaluatorClust modelClust = new ModelEvaluatorClust();
-		modelClust.loadClusters(clustFile);
-		m_clustersAL = modelClust.getClusters();
+	public TestSetEvaluator getTestSetEvaluator(
+			int iFold, 
+			ArrayList<String[]> testseqs){
+		TestSetEvaluator eval = 
+				new TestSetEvaluatorMed(
+						testseqs, 
+						m_medoidsAL.get(iFold),
+						m_gmedoidsAL.get(iFold),
+						m_recosAL.get(iFold),
+						m_isDistance, m_rolesW, m_knn);
+		return eval;
 	}
 	
-	public void buildMedoids(float minsup){
+	public void setEsploitationParameters(
+			boolean isDistance,
+			float[][] rolesW,
+			int knn){
+		m_isDistance = isDistance;
+		m_rolesW = rolesW;
+		m_knn = knn;
+	}
+	
+	// BUILD MODEL
+	
+	public void buildMedoids(float minsup, boolean computeRecos){
 		// compute medoids for each fold
 		m_medoidsAL = new ArrayList<ArrayList<String[]>>();
 		m_gmedoidsAL = new ArrayList<int[]>();
-		m_recosAL = new ArrayList<ArrayList<Object[]>>();
+		if(computeRecos){m_recosAL = new ArrayList<ArrayList<Object[]>>();}
 		for(int i=0; i<m_nFolds; i++){
 			Object[] medObjA = this.getMedoids(i);
 			ArrayList<String[]> medoids = (ArrayList<String[]>)medObjA[0];
 			int[] gmedoids = (int[])medObjA[1];
 			m_medoidsAL.add(medoids);
 			m_gmedoidsAL.add(gmedoids);
-			m_recosAL.add(this.getRecommendations(i, minsup));
+			if(computeRecos){m_recosAL.add(this.getRecommendations(i, minsup));}
 		}
 	}
 	
@@ -116,6 +140,16 @@ public class ModelEvaluatorMedoids
 		}
 		
 		return recos;
+	}
+	
+	// utilities
+	
+	public int getNumberOfNodes(int iFold){
+		return 0;
+	}
+	
+	public float getNumberOfEdges(int iFold){
+		return 0f;
 	}
 	
 }

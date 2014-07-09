@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ModelEvaluatorClust 
+public abstract class ModelEvaluatorClust 
 				extends ModelEvaluator {
 
 	// ATTRIBUTES
@@ -25,14 +25,6 @@ public class ModelEvaluatorClust
 			ArrayList<ArrayList<Long>> valAL,
 			ArrayList<ArrayList<Long>> testAL){
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
-	}
-	
-	public ModelEvaluatorClust(){
-		// creator to load clusters
-		super(null, null, null, 
-				new ArrayList<ArrayList<Long>>(0), 
-				new ArrayList<ArrayList<Long>>(0), 
-				new ArrayList<ArrayList<Long>>(0));
 	}
 	
 	// Clustering utils

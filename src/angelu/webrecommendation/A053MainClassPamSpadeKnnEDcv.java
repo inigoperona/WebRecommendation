@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluator;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -14,23 +14,28 @@ public class A053MainClassPamSpadeKnnEDcv {
 	public static void main(String[] args) {
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments";
+		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
+		String url2topicFile = "/URLs_to_topic.txt";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
 		String clustWD = "/pam_DM_04_edit";
+		String profiWD = "/pam_DM_04_edit/spade1";
 		preprocessingWD = args[0];
 		logfile = args[1];
-		databaseWD = args[2];
-		dmWD = args[3];
-		validationWD = args[4];
-		clustWD = args[5];
+		url2topicFile = args[2];
+		databaseWD = args[3];
+		dmWD = args[4];
+		validationWD = args[5];
+		clustWD = args[6];
+		profiWD = args[7];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
+		Website.load();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -78,22 +83,22 @@ public class A053MainClassPamSpadeKnnEDcv {
 				  			{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
-		ModelEvaluator modelev = new ModelEvaluator(
+		ModelEvaluatorMedoids modelev = new ModelEvaluatorMedoids(
 				sequencesUHC, null, 
 				matrix,
 				trainAL, valAL, testAL);
 		
-		// load topic information
-		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objA = cont.loadUrlsTopic(preprocessingWD + "/URLs_to_topic.txt");
-		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
-		int[] url2topic = (int[])objA[1];
-		modelev.setTopicParameters(urlIDs, url2topic, 1f);
-		
-		// initialize parameters
+		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);
 		float[] confusionPoints = {0.25f,0.50f,0.75f};
 		modelev.setConfusionPoints(confusionPoints);
+		
+		// load topic information
+		A100MainClassAddContent cont = new A100MainClassAddContent();
+		Object[] objA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
+		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
+		int[] url2topic = (int[])objA[1];
+		modelev.setTopicParameters(urlIDs, url2topic, 1f);
 		
 		
 		// PAM + MySPADE //
@@ -103,12 +108,12 @@ public class A053MainClassPamSpadeKnnEDcv {
 		
 		// Start generating and evaluating the model
 		for(int j=0; j<ks.length; j++){
-			int k = ks[j];
-				
+			int k = ks[j];				
 			String esperimentationStr = "pam" + k;
 			
 			// Load clustering
-			modelev.loadClusters(validationWD + clustWD + "/" + esperimentationStr + ".javaData");
+			String clustFile = validationWD + clustWD + "/" + esperimentationStr + ".javaData";
+			modelev.loadClusters(clustFile);
 			
 			// SPADE
 			for(int l=0; l<seqweights.length; l++){
@@ -116,11 +121,11 @@ public class A053MainClassPamSpadeKnnEDcv {
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
 				
 				// MEDOIDS models //
-				modelev.buildMedoidsModels(minsup);
+				modelev.buildMedoids(minsup, true);
+				
 				
 				// Evaluation
 				String results;
-				
 				
 				
 				// VALIDATION //
@@ -129,13 +134,15 @@ public class A053MainClassPamSpadeKnnEDcv {
 				int[] nrecsWSTv = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWSTv.length; ind++ ){
 					int nrec = nrecsWSTv[ind];
-					results = modelev.computeEvaluationVal(2, nrec, (long)0, 1, 1, 0, true, rolesW);
+					modelev.setEsploitationParameters(true, rolesW, 100);
+					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + "_val,");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationVal(-1, -1, (long)0, 1, 1, 0, true, rolesW);
+				modelev.setEsploitationParameters(true, rolesW, 100);
+				results = modelev.computeEvaluationVal("unbounded", -1, (long)0);
 				System.out.print(esperimentationStr2 + "_unbounded_val,");
 				System.out.print(results);
 				
@@ -147,13 +154,15 @@ public class A053MainClassPamSpadeKnnEDcv {
 				int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
-					results = modelev.computeEvaluationTest(2, nrec, (long)0, 1, 1, 0, true, rolesW);
+					modelev.setEsploitationParameters(true, rolesW, 100);
+					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + "_test,");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, -1, (long)0, 1, 1, 0, true, rolesW);
+				modelev.setEsploitationParameters(true, rolesW, 100);
+				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 				System.out.print(esperimentationStr2 + "_unbounded_test,");
 				System.out.print(results);
 				

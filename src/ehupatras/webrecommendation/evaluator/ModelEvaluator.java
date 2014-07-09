@@ -1,26 +1,19 @@
 package ehupatras.webrecommendation.evaluator;
 
-import ehupatras.clustering.ClusteringHierarchical;
-import ehupatras.clustering.ClusteringPAM;
-import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
-import ehupatras.webrecommendation.sequencealignment.multiplealignment.MultipleSequenceAlignment;
-import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.weightedsequence.WeightedSequence;
-import ehupatras.markovmodel.MarkovChain;
-import ehupatras.markovmodel.hmm.HiddenMarkovModel;
-import ehupatras.markovmodel.hmm.HiddenMarkovModel000;
-import ehupatras.markovmodel.hmm.HiddenMarkovModel001;
-import ehupatras.clustering.cvi.CVI;
-import ehupatras.sequentialpatternmining.MySPADE;
+import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+import ehupatras.webrecommendation.structures.Website;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-public class ModelEvaluator {
+public abstract class ModelEvaluator {
 
+	// ATTRIBUTES
+	
 	// Number of folds
 	protected int m_nFolds;
 	
@@ -36,57 +29,23 @@ public class ModelEvaluator {
 	protected ArrayList<ArrayList<Long>> m_testAL;
 	
 	
-	
-	
-	
-	
-	
-	// MODELS //
-
-	// MSA + Wseq or SPADE //
-	// Multiple Sequence Alignment
-//	private ArrayList<ArrayList<String[][]>> m_msaAL;
-	// Weighted Sequences
-//	private float m_minsupport = (float)0.25;
-//	private ArrayList<ArrayList<String[]>> m_weightedSequences;
-	
-	// Generalized Suffix tree
-	//private ArrayList<SuffixTreeStringArray> m_suffixtreeAL = null;
-//	private ArrayList<MySuffixTree> m_suffixtreeAL = null;
-	
-	// Modular approach Cluster-ST version
-	//private ArrayList<ArrayList<SuffixTreeStringArray>> m_clustSuffixTreeAL = null;
-	private ArrayList<ArrayList<MySuffixTree>> m_clustSuffixTreeAL = null;
-	
-	// Medoids of clusters with each recommendations
-	private ArrayList<ArrayList<String[]>> m_medoidsAL = null;
-	private ArrayList<int[]> m_gmedoidsAL = null;
-	private ArrayList<ArrayList<Object[]>> m_recosAL = null;
-	private int m_knn = 100;
-	
-	// Hidden Markov Model
-	private ArrayList<HiddenMarkovModel> m_hmmAL = null;
-		
-	
-	// EVALUATION //
-	
 	// metrics' parameters
 	private float[] m_confusionPoints = 
 		{0.10f,0.25f,0.50f,0.75f,0.90f};
 	private float m_fmeasurebeta = (float)0.5;
-	
 	// topic related parameters
 	private ArrayList<Integer> m_urlIds = null;
 	private int[] m_url2topic = null;
 	private float m_topicmatch = 0.5f;
+	// index pages
+	private int[] m_homepages = null;
 	
 		
 	// Write the recommendations
 	private String m_lineHeader = null;
 	private BufferedWriter m_evalWriter = null;
 	
-	
-	
+
 	
 	
 	// CONSTRUCTOR
@@ -98,44 +57,27 @@ public class ModelEvaluator {
 					ArrayList<ArrayList<Long>> trainAL,
 					ArrayList<ArrayList<Long>> valAL,
 					ArrayList<ArrayList<Long>> testAL){
+		// prepare all database
 		m_dataset = this.removeUHCTagDB(dataset);
 		m_datasetUHC = dataset;
 		if(datasetSplit!=null){
 			m_datasetSplit = this.removeUHCTagDB(datasetSplit);
 			m_datasetSplitUHC = datasetSplit;
 		}
-		
+		// the distance matrix of all database
 		m_distancematrix = dm;
 		
+		// divide the database to evaluate
 		m_trainAL = trainAL;
 		m_valAL = valAL;
 		m_testAL = testAL;
 		
+		// number of folds
 		m_nFolds = m_trainAL.size();
-	}
-	
-	//public void buildModel(){}
-	//public TestSetEvaluator createTestSetEvaluator(int iFold, ArrayList<String[]> testseqs){return null;}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
+		// have identifyed the homepage-index pages
+		m_homepages = Website.getHomePages();
+	}	
 	
 	private ArrayList<String[]> removeUHCTagDB(ArrayList<String[]> dataset){
 		ArrayList<String[]> dataset2 = new ArrayList<String[]>();
@@ -183,230 +125,37 @@ public class ModelEvaluator {
 	
 
 	
-
 	
+	// ABSTRACT FUNCTIONS
 	
+	public abstract TestSetEvaluator getTestSetEvaluator(
+			int iFold, 
+			ArrayList<String[]> testseqs);	
 	
-	
-	
-	
-	
-
-	
-	public void setKnn(int knn){
-		m_knn = knn;
+	public int getNumberOfNodes(int iFold){
+		return 0;
+	}
+	public float getNumberOfEdges(int iFold){
+		return 0f;
 	}
 	
 	
-
-	
-	
-	
-	// Modular Approach: Cluster-SuffixTree //
-	
-	public void buildClustersSuffixTrees(){
-		// Build Cluster-SuffixTrees for each fold
-		m_clustSuffixTreeAL = new ArrayList<ArrayList<MySuffixTree>>();
-		for(int i=0; i<m_nFolds; i++){
-			m_clustSuffixTreeAL.add(this.createClustersSuffixTrees(i));
-		}
-	}
-	
-	private ArrayList<MySuffixTree> createClustersSuffixTrees(int indexFold){
-		// train sessions names
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
-				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
-		
-		// assignment to each case
-		int[] clindexes = m_clustersAL.get(indexFold);
-		// maximum cluster index
-		int climax = Integer.MIN_VALUE;
-		for(int i=0; i<clindexes.length; i++){
-			int cli = clindexes[i];
-			if(cli>climax){
-				climax = cli;
-			}
-		}
-		
-		// for each cluster
-		ArrayList<MySuffixTree> stAL = new ArrayList<MySuffixTree>(); 
-		for(int cli=0; cli<=climax; cli++){
-			// take the sessions we are interested in
-			ArrayList<Long> names = new ArrayList<Long>();
-			for(int i=0; i<clindexes.length; i++){
-				if(cli==clindexes[i]){
-					names.add(trainsetnames2.get(i));
-				}
-			}
-			
-			// take the sequences
-			int[] clusterDMind = m_distancematrix.getSessionIDsIndexes2(names, m_datasetSplit!=null);
-			ArrayList<String[]> sequences = new ArrayList<String[]>(); 
-			for(int i=0; i<clusterDMind.length; i++){
-				int index = clusterDMind[i];
-				String[] seq = this.getDataSet(m_datasetSplit!=null).get(index);
-				sequences.add(seq);
-			}
-			
-			// create the Suffix Tree
-			MySuffixTree st = new MySuffixTree(sequences);
-			stAL.add(st);
-		}
-		
-		return stAL;
-	}
-	
-	
-	
-	
-	// Modular Approach: Cluster-SuffixTree //
-	
-	public void buildClustersSpadeSuffixTrees(float minsup, String workdir){
-		m_minsupport = minsup;
-		
-		// Build Cluster-SuffixTrees for each fold
-		m_clustSuffixTreeAL = new ArrayList<ArrayList<MySuffixTree>>();
-		for(int i=0; i<m_nFolds; i++){
-			m_clustSuffixTreeAL.add(this.createClustersSPADESuffixTrees(i, workdir));
-		}
-	}
-	
-	private ArrayList<MySuffixTree> createClustersSPADESuffixTrees(int indexFold, String workdir){
-		// train sessions names
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
-				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
-		
-		// assignment to each case
-		int[] clindexes = m_clustersAL.get(indexFold);
-		
-		// maximum cluster index
-		int climax = this.getMaxIndex(clindexes);
-		
-		// for each cluster
-		ArrayList<MySuffixTree> stAL = new ArrayList<MySuffixTree>(); 
-		for(int cli=0; cli<=climax; cli++){
-			// take the sessions we are interested in
-			ArrayList<Long> names = new ArrayList<Long>();
-			for(int i=0; i<clindexes.length; i++){
-				if(cli==clindexes[i]){
-					names.add(trainsetnames2.get(i));
-				}
-			}
-			
-			ArrayList<String[]> freqSeqs = this.getSpadeSequences(names, workdir);
-			
-			// create the Suffix Tree
-			MySuffixTree st = new MySuffixTree(freqSeqs);
-			stAL.add(st);
-		}
-		
-		return stAL;
-	}	
-	
-
-	
-
-	
-	
-	
-
-	
-
-	
-	
-	
-
-	
-	
-	
-	
-	// Hidden Markov Model //
-	
-	public void buildHiddenMarkovModels(String outfilename, int hmmMode){
-		// compute markov chain for each fold
-		m_hmmAL = new ArrayList<HiddenMarkovModel>();
-		for(int i=0; i<m_nFolds; i++){
-			m_hmmAL.add(this.getHMM(i, outfilename, hmmMode));
-		}
-	}
-	
-	private HiddenMarkovModel getHMM(int indexFold, String outfilename, int hmmMode){
-		// train sequences indexes
-		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
-		int[] trInds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
-		
-		// clusters. Assign cluster to each train case
-		int[] clInds = m_clustersAL.get(indexFold);
-		
-		// create the HMM
-		HiddenMarkovModel initHmm;
-		if(hmmMode==0){
-			initHmm = new HiddenMarkovModel000(m_dataset, trInds, clInds);
-		} else { // hmmMode==1
-			initHmm = new HiddenMarkovModel001(m_dataset, trInds, clInds);
-		}
-		initHmm.initializeHmmParameters();
-		this.writeHMMsTXT(initHmm, outfilename + "_f" + indexFold + "_initHmm.txt");
-		this.writeHMMsDOT(initHmm, outfilename + "_f" + indexFold + "_initHmm.dot");
-		
-		return initHmm;
-	}
-	
-	private HiddenMarkovModel getTrainnedHMM(int indexFold, String outfilename, int hmmMode){		
-		// create the HMM
-		HiddenMarkovModel initHmm = this.getHMM(indexFold, outfilename, hmmMode); 
-		initHmm.initializeHmmParameters();
-		this.writeHMMsTXT(initHmm, outfilename + "_f" + indexFold + "_initHmm.txt");
-		this.writeHMMsDOT(initHmm, outfilename + "_f" + indexFold + "_initHmm.dot");
-		
-		// Train it
-		HiddenMarkovModel learntHmm = initHmm.baumWelch();
-		this.writeHMMsTXT(learntHmm, outfilename + "_f" + indexFold + "_learntHmm.txt");
-		this.writeHMMsDOT(learntHmm, outfilename + "_f" + indexFold + "_learntHmm.dot");
-		return learntHmm;
-	}
-	
-	private void writeHMMsTXT(HiddenMarkovModel hmm, String outfile){
-		for(int i=0; i<m_nFolds; i++){
-			hmm.writeHMMtxt(outfile);
-		}
-	}
-	
-	private void writeHMMsDOT(HiddenMarkovModel hmm, String outfile){
-		for(int i=0; i<m_nFolds; i++){
-			hmm.writeHMMdot(outfile);
-		}
-	}
-	
-	
-	
-	
-	///////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
 	
 	// MODEL EVALUATION //
 	
-	public String computeEvaluationTest(int mode, 
+	public String computeEvaluationTest(
+			String mode, 
 			int nrecos,
-			long seed,
-			int failuremode,
-			int maxMemory,
-			int normMode,
-			boolean isDistance,
-			float[][] rolesW){
-		return this.computeEvaluation(m_testAL, mode, nrecos, seed, failuremode, maxMemory, normMode, isDistance, rolesW);
+			long seed){
+		return this.computeEvaluation(m_testAL, mode, nrecos, seed);
 	}
 	
-	public String computeEvaluationVal(int mode, 
+	public String computeEvaluationVal(
+			String mode, 
 			int nrecos,
-			long seed,
-			int failuremode,
-			int maxMemory,
-			int normMode,
-			boolean isDistance,
-			float[][] rolesW){
-		return this.computeEvaluation(m_valAL, mode, nrecos, seed, failuremode, maxMemory, normMode, isDistance, rolesW);
+			long seed){
+		return this.computeEvaluation(m_valAL, mode, nrecos, seed);
 	}
 	
 	
@@ -414,14 +163,9 @@ public class ModelEvaluator {
 	
 	private String computeEvaluation(
 					ArrayList<ArrayList<Long>> evalAL,
-					int mode, 
+					String mode, 
 					int nrecos,
-					long seed,
-					int failuremode,
-					int maxMemory,
-					int normMode,
-					boolean isDistance,
-					float[][] rolesW){
+					long seed){
 		
 		// METRICS //
 		int trnURLs = 0;
@@ -434,6 +178,7 @@ public class ModelEvaluator {
 		int nFailuresI = 0;
 		float[] failuresHist = new float[12];
 		
+		// HONEST METRICS 
 		// URL level metrics
 		float hitratio = 0f;
 		float clicksoonration = 0f;
@@ -442,8 +187,7 @@ public class ModelEvaluator {
 		float[] fmA = new float[m_confusionPoints.length];
 		float[] moPrA = new float[m_confusionPoints.length];
 		float[] moReA = new float[m_confusionPoints.length];
-		float[] moFmA = new float[m_confusionPoints.length];
-		
+		float[] moFmA = new float[m_confusionPoints.length];		
 		// TOPIC level metrics
 		float hitratioTop = 0f;
 		float clicksoonrationTop = 0f;
@@ -454,12 +198,39 @@ public class ModelEvaluator {
 		float[] moReATop = new float[m_confusionPoints.length];
 		float[] moFmATop = new float[m_confusionPoints.length];
 		
+		// COUNT HOMEPAGE/INDEX ALWAYS CORRECT
+		// URL level metrics
+		float hitratio_OkHome = 0f;
+		float clicksoonration_OkHome = 0f;
+		float[] prA_OkHome = new float[m_confusionPoints.length];
+		float[] reA_OkHome = new float[m_confusionPoints.length];
+		float[] fmA_OkHome = new float[m_confusionPoints.length];
+		float[] moPrA_OkHome = new float[m_confusionPoints.length];
+		float[] moReA_OkHome = new float[m_confusionPoints.length];
+		float[] moFmA_OkHome = new float[m_confusionPoints.length];
+		
+		// TOPIC level metrics
+		float hitratioTop_OkHome = 0f;
+		float clicksoonrationTop_OkHome = 0f;
+		float[] prATop_OkHome = new float[m_confusionPoints.length];
+		float[] reATop_OkHome = new float[m_confusionPoints.length];
+		float[] fmATop_OkHome = new float[m_confusionPoints.length];
+		float[] moPrATop_OkHome = new float[m_confusionPoints.length];
+		float[] moReATop_OkHome = new float[m_confusionPoints.length];
+		float[] moFmATop_OkHome = new float[m_confusionPoints.length];
+		
+		
 		// Create a markov chain
-		ModelEvaluatorMarkovChain modelMC = new ModelEvaluatorMarkovChain(
+		ModelEvaluatorMarkovChain modelMC = null;
+		if(mode.equals("ST_markov")){
+			modelMC = new ModelEvaluatorMarkovChain(
 				m_datasetUHC, m_datasetSplitUHC, 
 				m_distancematrix, 
 				m_trainAL, m_valAL, m_testAL);
-		modelMC.buildMC();
+			modelMC.buildMC();
+		}
+		
+		
 		
 		// for each fold obtain the metrics
 		for(int i=0; i<m_nFolds; i++){
@@ -475,41 +246,10 @@ public class ModelEvaluator {
 			
 			
 			
-			// SELECT THE MODEL //
-			TestSetEvaluator eval = this.createTestSetEvaluator(i, testseqs);
-			MySuffixTree suffixtree = null;
-			/*
-			if(m_suffixtreeAL!=null){
-				// GST & clust+MSA+Wseq+ST
-				suffixtree = m_suffixtreeAL.get(i);
-				eval = new TestSetEvaluator(testseqs, suffixtree);
-			} else if(m_medoidsAL!=null && m_clustSuffixTreeAL!=null){
-				// clust+ST+knn
-				eval = new TestSetEvaluator(testseqs,
-						m_medoidsAL.get(i),
-						m_gmedoidsAL.get(i),
-						m_knn,
-						isDistance, rolesW,
-						m_clustSuffixTreeAL.get(i));
-			} else if(m_clustSuffixTreeAL!=null){
-				// clust+ST+fit
-				eval = new TestSetEvaluator(testseqs, m_clustSuffixTreeAL.get(i));
-			} else if(m_medoidsAL!=null) {
-				// clust+SPADE
-				eval = new TestSetEvaluator(testseqs,
-								m_medoidsAL.get(i),
-								m_gmedoidsAL.get(i),
-								m_recosAL.get(i),
-								isDistance, rolesW);
-			} else if(m_hmmAL!=null){
-				// clust+HMM
-				eval = new TestSetEvaluator(testseqs, m_hmmAL.get(i));
-			} else {
-				// Markov Chain
-				MarkovChain markovchain = modelMC.getMarkovChain(i);
-				eval = new TestSetEvaluator(testseqs, markovchain);
-			}
-			*/
+			// CREATE THE MODEL //
+			TestSetEvaluator eval = this.getTestSetEvaluator(i, testseqs);
+			
+			
 			
 			// if we have to write the recommendations
 			if(m_lineHeader!=null){
@@ -523,11 +263,11 @@ public class ModelEvaluator {
 			eval.setFmeasureBeta(m_fmeasurebeta);
 			eval.setTopicParameters(m_urlIds, m_url2topic, m_topicmatch);
 			eval.computeEvaluation(
-					mode, nrecos, seed, 
-					modelMC.getMarkovChain(i),
-					failuremode,
-					maxMemory,
-					normMode);
+					mode, 
+					nrecos, seed, 
+					m_homepages,
+					(modelMC!=null ? modelMC.getMarkovChain(i) : null)
+							);
 			//eval.writeResults();
 			
 			
@@ -552,10 +292,8 @@ public class ModelEvaluator {
 			
 			// METRICS3
 			
-			if(m_suffixtreeAL!=null){
-				nNodes = nNodes + suffixtree.getNumberOfNodes();
-				nEdges = nEdges + suffixtree.getNumberOfEdges();
-			}
+			nNodes = nNodes + this.getNumberOfNodes(i);
+			nEdges = nEdges + this.getNumberOfEdges(i);
 			
 			// METRICS4
 			
@@ -566,7 +304,7 @@ public class ModelEvaluator {
 				failuresHist[j] = failuresHist[j] + failuresHist2[j];
 			}
 			
-			// URL level metrics
+			// URL level metrics - HONEST
 			
 			hitratio = hitratio + eval.getHitRatio();
 			clicksoonration = clicksoonration + eval.getClickSoonRatio();
@@ -585,7 +323,7 @@ public class ModelEvaluator {
 				moFmA[j] = moFmA[j] + moFmA2[j];
 			}
 			
-			// TOPIC level metrics
+			// TOPIC level metrics - HONEST
 			
 			hitratioTop = hitratioTop + eval.getHitRatioTop();
 			clicksoonrationTop = clicksoonrationTop + eval.getClickSoonRatioTop();
@@ -602,6 +340,44 @@ public class ModelEvaluator {
 				moPrATop[j] = moPrATop[j] + moPrA2Top[j];
 				moReATop[j] = moReATop[j] + moReA2Top[j];
 				moFmATop[j] = moFmATop[j] + moFmA2Top[j];
+			}
+			
+			// URL level metrics - homepage always true
+			
+			hitratio_OkHome = hitratio_OkHome + eval.getHitRatio_OkHome();
+			clicksoonration_OkHome = clicksoonration_OkHome + eval.getClickSoonRatio_OkHome();
+			float[] prA2_OkHome   = eval.getPrecisions_OkHome();
+			float[] reA2_OkHome   = eval.getRecalls_OkHome();
+			float[] fmA2_OkHome   = eval.getFmeasures_OkHome();
+			float[] moPrA2_OkHome = eval.getModelPrecisions_OkHome();
+			float[] moReA2_OkHome = eval.getModelRecalls_OkHome();
+			float[] moFmA2_OkHome = eval.getModelFmeasures_OkHome();
+			for(int j=0; j<m_confusionPoints.length; j++){
+				prA_OkHome[j]   = prA_OkHome[j]   + prA2_OkHome[j];
+				reA_OkHome[j]   = reA_OkHome[j]   + reA2_OkHome[j];
+				fmA_OkHome[j]   = fmA_OkHome[j]   + fmA2_OkHome[j];
+				moPrA_OkHome[j] = moPrA_OkHome[j] + moPrA2_OkHome[j];
+				moReA_OkHome[j] = moReA_OkHome[j] + moReA2_OkHome[j];
+				moFmA_OkHome[j] = moFmA_OkHome[j] + moFmA2_OkHome[j];
+			}
+			
+			// TOPIC level metrics - homepage always true
+			
+			hitratioTop_OkHome = hitratioTop_OkHome + eval.getHitRatioTop_OkHome();
+			clicksoonrationTop_OkHome = clicksoonrationTop_OkHome + eval.getClickSoonRatioTop_OkHome();
+			float[] prA2Top_OkHome   = eval.getPrecisionsTop_OkHome();
+			float[] reA2Top_OkHome   = eval.getRecallsTop_OkHome();
+			float[] fmA2Top_OkHome   = eval.getFmeasuresTop_OkHome();
+			float[] moPrA2Top_OkHome = eval.getModelPrecisionsTop_OkHome();
+			float[] moReA2Top_OkHome = eval.getModelRecallsTop_OkHome();
+			float[] moFmA2Top_OkHome = eval.getModelFmeasuresTop_OkHome();
+			for(int j=0; j<m_confusionPoints.length; j++){
+				prATop_OkHome[j]   = prATop_OkHome[j]   + prA2Top_OkHome[j];
+				reATop_OkHome[j]   = reATop_OkHome[j]   + reA2Top_OkHome[j];
+				fmATop_OkHome[j]   = fmATop_OkHome[j]   + fmA2Top_OkHome[j];
+				moPrATop_OkHome[j] = moPrATop_OkHome[j] + moPrA2Top_OkHome[j];
+				moReATop_OkHome[j] = moReATop_OkHome[j] + moReA2Top_OkHome[j];
+				moFmATop_OkHome[j] = moFmATop_OkHome[j] + moFmA2Top_OkHome[j];
 			}
 			
 		}
@@ -624,7 +400,7 @@ public class ModelEvaluator {
 			failuresHist[j] = failuresHist[j] / (float)m_nFolds; 
 		}
 		
-		// URL level metrics
+		// URL level metrics - HONEST
 		hitratio = hitratio / (float)m_nFolds;
 		clicksoonration = clicksoonration / (float)m_nFolds;
 		for(int j=0; j<m_confusionPoints.length; j++){
@@ -636,7 +412,7 @@ public class ModelEvaluator {
 			moFmA[j] = moFmA[j] / (float)m_nFolds;
 		}
 		
-		// TOPIC level metrics
+		// TOPIC level metrics - HONEST
 		hitratioTop = hitratioTop / (float)m_nFolds;
 		clicksoonrationTop = clicksoonrationTop / (float)m_nFolds;
 		for(int j=0; j<m_confusionPoints.length; j++){
@@ -646,6 +422,30 @@ public class ModelEvaluator {
 			moPrATop[j] = moPrATop[j] / (float)m_nFolds;
 			moReATop[j] = moReATop[j] / (float)m_nFolds;
 			moFmATop[j] = moFmATop[j] / (float)m_nFolds;
+		}
+		
+		// URL level metrics - homepage always true
+		hitratio_OkHome = hitratio_OkHome / (float)m_nFolds;
+		clicksoonration_OkHome = clicksoonration_OkHome / (float)m_nFolds;
+		for(int j=0; j<m_confusionPoints.length; j++){
+			prA_OkHome[j]   = prA_OkHome[j]   / (float)m_nFolds;
+			reA_OkHome[j]   = reA_OkHome[j]   / (float)m_nFolds;
+			fmA_OkHome[j]   = fmA_OkHome[j]   / (float)m_nFolds;
+			moPrA_OkHome[j] = moPrA_OkHome[j] / (float)m_nFolds;
+			moReA_OkHome[j] = moReA_OkHome[j] / (float)m_nFolds;
+			moFmA_OkHome[j] = moFmA_OkHome[j] / (float)m_nFolds;
+		}
+		
+		// TOPIC level metrics - homepage always true
+		hitratioTop_OkHome = hitratioTop_OkHome / (float)m_nFolds;
+		clicksoonrationTop_OkHome = clicksoonrationTop_OkHome / (float)m_nFolds;
+		for(int j=0; j<m_confusionPoints.length; j++){
+			prATop_OkHome[j] = prATop_OkHome[j] / (float)m_nFolds;
+			reATop_OkHome[j] = reATop_OkHome[j] / (float)m_nFolds;
+			fmATop_OkHome[j] = fmATop_OkHome[j] / (float)m_nFolds;
+			moPrATop_OkHome[j] = moPrATop_OkHome[j] / (float)m_nFolds;
+			moReATop_OkHome[j] = moReATop_OkHome[j] / (float)m_nFolds;
+			moFmATop_OkHome[j] = moFmATop_OkHome[j] / (float)m_nFolds;
 		}
 		
 		
@@ -664,7 +464,7 @@ public class ModelEvaluator {
 		results = results + "," + nFailures;
 		for(int j=0; j<failuresHist.length; j++){results = results + "," + failuresHist[j];}
 		
-		// URL level statistics
+		// URL level statistics - HONEST
 		results = results + "," + hitratio;
 		results = results + "," + clicksoonration;
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + prA[j];}
@@ -674,7 +474,7 @@ public class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmA[j];}
 		
-		// TOPIC level statistics
+		// TOPIC level statistics - HONEST
 		results = results + "," + hitratioTop;
 		results = results + "," + clicksoonrationTop;
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + prATop[j];}
@@ -684,6 +484,26 @@ public class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReATop[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmATop[j];}
 
+		// URL level statistics - homepage always true
+		results = results + "," + hitratio_OkHome;
+		results = results + "," + clicksoonration_OkHome;
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + prA_OkHome[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + reA_OkHome[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + fmA_OkHome[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moPrA_OkHome[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReA_OkHome[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmA_OkHome[j];}
+		
+		// TOPIC level statistics - homepage always true
+		results = results + "," + hitratioTop_OkHome;
+		results = results + "," + clicksoonrationTop_OkHome;
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + prATop_OkHome[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + reATop_OkHome[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + fmATop_OkHome[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moPrATop_OkHome[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReATop_OkHome[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmATop_OkHome[j];}		
+		
 		// return
 		results = results + "\n";
 		return results;
@@ -712,7 +532,7 @@ public class ModelEvaluator {
 		for(int j=0; j<11; j++){header = header + ",f=" + j;}
 		header = header + ",f>10";
 		
-		// URL level metrics
+		// URL level metrics - HONEST
 		header = header + ",hitratio";
 		header = header + ",clicksoonration";
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",pr_" + m_confusionPoints[j];}
@@ -722,7 +542,7 @@ public class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mRe_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "_" + m_confusionPoints[j];}
 		
-		// TOPIC level metrics
+		// TOPIC level metrics - HONEST
 		header = header + ",hitratioTop";
 		header = header + ",clicksoonrationTop";
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",prTop_" + m_confusionPoints[j];}
@@ -731,6 +551,26 @@ public class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mPrTop_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mReTop_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "Top_" + m_confusionPoints[j];}
+		
+		// URL level metrics - homepage always true
+		header = header + ",hitratio";
+		header = header + ",clicksoonration";
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",prOkH_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",reOkH_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",fm" + m_fmeasurebeta + "OkH_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mPrOkH_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mReOkH_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "OkH_" + m_confusionPoints[j];}
+		
+		// TOPIC level metrics - homepage always true
+		header = header + ",hitratioTop";
+		header = header + ",clicksoonrationTop";
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",prTopOkH_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",reTopOkH_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",fm" + m_fmeasurebeta + "TopOkH_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mPrTopOkH_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mReTopOkH_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "TopOkH_" + m_confusionPoints[j];}
 		
 		// return
 		header = header + "\n";
