@@ -33,7 +33,16 @@ public class RecommenderKnnToClustersTopURLsAndContents001
 		ArrayList<Integer> clustersL = (ArrayList<Integer>)objA[2];
 		ArrayList<Float> distsL = (ArrayList<Float>)objA[3];
 		
-		// Change the recommendation
+		// print the path done until this moment
+		/*
+		for(int i=0; i<m_waydone.size(); i++){
+			int step = Integer.valueOf(m_waydone.get(i));
+			System.out.print(step + ",");
+		}
+		System.out.println();
+		*/
+		
+		// print all the information of each recommendation
 		/*
 		System.out.println("---");
 		for(int i=0; i<recosL.size(); i++){
@@ -46,11 +55,14 @@ public class RecommenderKnnToClustersTopURLsAndContents001
 		System.out.println("---");
 		*/
 		
+		// enrich/change the list of recommendations
+		/*
 		// for example, add 200 recommendation
 		int recExample = 200;
 		String recExampleStr = String.format(
 				"%0"+ m_leftZerosLen + "d", recExample);
 		recosL.add(recExampleStr);
+		*/
 		
 		// return the new recommendations
 		return recosL;
