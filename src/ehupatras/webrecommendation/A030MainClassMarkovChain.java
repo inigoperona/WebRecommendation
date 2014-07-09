@@ -23,12 +23,14 @@ public class A030MainClassMarkovChain {
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
+		/*
 		preprocessingWD = args[0];
 		logfile = args[1];
 		url2topicFile = args[2];
 		databaseWD = args[3];
 		dmWD = args[4];
 		validationWD = args[5];
+		*/
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);

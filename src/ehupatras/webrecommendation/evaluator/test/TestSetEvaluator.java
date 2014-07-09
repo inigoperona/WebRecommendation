@@ -15,13 +15,18 @@ public abstract class TestSetEvaluator {
 	// Validation metrics
 	private float[] m_points = {0.10f, 0.25f, 0.50f, 0.75f, 0.90f};
 	private float m_beta = (float)0.5;
+	private int[] m_homepages = null;
 		
 	// failure counts
 	private float m_numberOfRecommendationsRatio = (float)0;
 	private int m_numberOfFailures = 0;
 	private float[] m_failuresHist = new float[12]; 
+	// topic relate attributes
+	private ArrayList<Integer> m_urlIds = null;
+	private int[] m_url2topic = null;
+	private float m_topicmatch = 0.5f;
 	
-	// URL level metrics
+	// URL level metrics - HONEST
 	private float m_hitratio = 0f;
 	private float m_clicksoonratio = 0f;
 	private float[] m_precision;
@@ -29,12 +34,8 @@ public abstract class TestSetEvaluator {
 	private float[] m_fmeasure;
 	private float[] m_ModelPrecision;
 	private float[] m_ModelRecall;
-	private float[] m_ModelFmeasure;
-		
-	// Topic level metrics
-	private ArrayList<Integer> m_urlIds = null;
-	private int[] m_url2topic = null;
-	private float m_topicmatch = 0.5f;
+	private float[] m_ModelFmeasure;		
+	// Topic level metrics - HONEST
 	private float m_hitratioTop = 0f;
 	private float m_clicksoonratioTop = 0f;
 	private float[] m_precisionTop;
@@ -43,10 +44,30 @@ public abstract class TestSetEvaluator {
 	private float[] m_ModelPrecisionTop;
 	private float[] m_ModelRecallTop;
 	private float[] m_ModelFmeasureTop;
-		
+	
+	// URL level metrics - homepage always true
+	private float m_hitratio_OkHome = 0f;
+	private float m_clicksoonratio_OkHome = 0f;
+	private float[] m_precision_OkHome;
+	private float[] m_recall_OkHome;
+	private float[] m_fmeasure_OkHome;
+	private float[] m_ModelPrecision_OkHome;
+	private float[] m_ModelRecall_OkHome;
+	private float[] m_ModelFmeasure_OkHome;
+	// Topic level metrics - homepage always true
+	private float m_hitratioTop_OkHome = 0f;
+	private float m_clicksoonratioTop_OkHome = 0f;
+	private float[] m_precisionTop_OkHome;
+	private float[] m_recallTop_OkHome;
+	private float[] m_fmeasureTop_OkHome;
+	private float[] m_ModelPrecisionTop_OkHome;
+	private float[] m_ModelRecallTop_OkHome;
+	private float[] m_ModelFmeasureTop_OkHome;
+	
 	// To write recommendations
 	private String m_lineHeader = null;
 	private BufferedWriter m_evalWriter = null;
+	
 	
 	
 	// CREATOR
@@ -58,20 +79,35 @@ public abstract class TestSetEvaluator {
 	private void constructor(ArrayList<String[]> sequences){
 		m_sequences = sequences;
 		
+		// HONEST
 		m_precision = new float[m_points.length];
 		m_recall = new float[m_points.length];
 		m_fmeasure = new float[m_points.length];
 		m_ModelPrecision = new float[m_points.length];
 		m_ModelRecall = new float[m_points.length];
-		m_ModelFmeasure = new float[m_points.length];
-		
+		m_ModelFmeasure = new float[m_points.length];		
 		m_precisionTop = new float[m_points.length];
 		m_recallTop = new float[m_points.length];
 		m_fmeasureTop = new float[m_points.length];
 		m_ModelPrecisionTop = new float[m_points.length];
 		m_ModelRecallTop = new float[m_points.length];
 		m_ModelFmeasureTop = new float[m_points.length];
+		
+		// homepage always true
+		m_precision_OkHome = new float[m_points.length];
+		m_recall_OkHome = new float[m_points.length];
+		m_fmeasure_OkHome = new float[m_points.length];
+		m_ModelPrecision_OkHome = new float[m_points.length];
+		m_ModelRecall_OkHome = new float[m_points.length];
+		m_ModelFmeasure_OkHome = new float[m_points.length];		
+		m_precisionTop_OkHome = new float[m_points.length];
+		m_recallTop_OkHome = new float[m_points.length];
+		m_fmeasureTop_OkHome = new float[m_points.length];
+		m_ModelPrecisionTop_OkHome = new float[m_points.length];
+		m_ModelRecallTop_OkHome = new float[m_points.length];
+		m_ModelFmeasureTop_OkHome = new float[m_points.length];
 	}
+	
 	
 	
 	// ABSTRACT FUNCTIONS
@@ -79,17 +115,21 @@ public abstract class TestSetEvaluator {
 	public abstract SequenceEvaluator getSequenceEvaluator(String[] sequence);
 	
 	
+	
 	// BODY
 	
 	public void computeEvaluation(
 			int mode, int nrecos, long seed,
+			int[] homepages,
 			MarkovChain markovchain){
+		
+		// ATRRIBUTES
 		
 		float numberOfRecommendationsRatio = 0f;
 		int numberOfFailures = 0;
 		int[] failuresHist = new int[m_failuresHist.length];
 		
-		// URL level metrics
+		// URL level metrics - HONEST
 		float hitratio = 0f;
 		float clicksoonratio = 0f;
 		float[] precission = new float[m_points.length];
@@ -99,7 +139,7 @@ public abstract class TestSetEvaluator {
 		float[] modelRecall = new float[m_points.length];
 		float[] modelFmeasure = new float[m_points.length];
 		
-		// TOPIC level metrics
+		// TOPIC level metrics - HONEST
 		float hitratioTop = 0f;
 		float clicksoonratioTop = 0f;
 		float[] precissionTop = new float[m_points.length];
@@ -108,6 +148,26 @@ public abstract class TestSetEvaluator {
 		float[] modelPrecisionTop = new float[m_points.length];
 		float[] modelRecallTop = new float[m_points.length];
 		float[] modelFmeasureTop = new float[m_points.length];
+		
+		// URL level metrics - homepage always true
+		float hitratio_OkHome = 0f;
+		float clicksoonratio_OkHome = 0f;
+		float[] precission_OkHome = new float[m_points.length];
+		float[] recall_OkHome = new float[m_points.length];
+		float[] fmeasure_OkHome = new float[m_points.length];
+		float[] modelPrecision_OkHome = new float[m_points.length];
+		float[] modelRecall_OkHome = new float[m_points.length];
+		float[] modelFmeasure_OkHome = new float[m_points.length];
+		
+		// TOPIC level metrics - homepage always true
+		float hitratioTop_OkHome = 0f;
+		float clicksoonratioTop_OkHome = 0f;
+		float[] precissionTop_OkHome = new float[m_points.length];
+		float[] recallTop_OkHome = new float[m_points.length];
+		float[] fmeasureTop_OkHome = new float[m_points.length];
+		float[] modelPrecisionTop_OkHome = new float[m_points.length];
+		float[] modelRecallTop_OkHome = new float[m_points.length];
+		float[] modelFmeasureTop_OkHome = new float[m_points.length];
 		
 		
 		for(int i=0; i<m_sequences.size(); i++){
@@ -137,7 +197,10 @@ public abstract class TestSetEvaluator {
 			
 			// METRICS //
 			seqEv.setTopicParameters(m_urlIds, m_url2topic, m_topicmatch);
-			seqEv.computeSequenceMetrics(mode, nrecos, seed, markovchain);
+			seqEv.computeSequenceMetrics(
+					mode, nrecos, seed,
+					homepages,
+					markovchain);
 			
 	
 			// number of recommendations
@@ -173,28 +236,52 @@ public abstract class TestSetEvaluator {
 						break;
 			}
 			
-			// URL level metrics
+			// URL level metrics - HONEST
 			hitratio = hitratio + seqEv.getHitRatio();
 			clicksoonratio = clicksoonratio + seqEv.getClickSoonRatio();
 			for(int j=0; j<m_points.length; j++){
-				precission[j] = precission[j] + seqEv.getPrecisionAtPoint(m_points[j]);
-				recall[j] = recall[j] + seqEv.getRecallAtPoint(m_points[j]);
-				fmeasure[j] = fmeasure[j] + seqEv.getFmeasureAtPoint(m_beta, m_points[j]);
+				precission[j]     = precission[j]     + seqEv.getPrecisionAtPoint(m_points[j]);
+				recall[j]         = recall[j]         + seqEv.getRecallAtPoint(m_points[j]);
+				fmeasure[j]       = fmeasure[j]       + seqEv.getFmeasureAtPoint(m_beta, m_points[j]);
 				modelPrecision[j] = modelPrecision[j] + seqEv.getPrecisionModelAtPoint(m_points[j]);
-				modelRecall[j] = modelRecall[j] + seqEv.getRecallModelAtPoint(m_points[j]);
-				modelFmeasure[j] = modelFmeasure[j] + seqEv.getFmeasureModelAtPoint(m_beta, m_points[j]);
+				modelRecall[j]    = modelRecall[j]    + seqEv.getRecallModelAtPoint(m_points[j]);
+				modelFmeasure[j]  = modelFmeasure[j]  + seqEv.getFmeasureModelAtPoint(m_beta, m_points[j]);
 			}
 			
-			// TOPIC level metrics
+			// TOPIC level metrics - HONEST
 			hitratioTop = hitratioTop + seqEv.getHitRatioTop();
 			clicksoonratioTop = clicksoonratioTop + seqEv.getClickSoonRatioTop();
 			for(int j=0; j<m_points.length; j++){
-				precissionTop[j] = precissionTop[j] + seqEv.getPrecisionTopAtPoint(m_points[j]);
-				recallTop[j] = recallTop[j] + seqEv.getRecallTopAtPoint(m_points[j]);
-				fmeasureTop[j] = fmeasureTop[j] + seqEv.getFmeasureTopAtPoint(m_beta, m_points[j]);
+				precissionTop[j]     = precissionTop[j]     + seqEv.getPrecisionTopAtPoint(m_points[j]);
+				recallTop[j]         = recallTop[j]         + seqEv.getRecallTopAtPoint(m_points[j]);
+				fmeasureTop[j]       = fmeasureTop[j]       + seqEv.getFmeasureTopAtPoint(m_beta, m_points[j]);
 				modelPrecisionTop[j] = modelPrecisionTop[j] + seqEv.getPrecisionModelTopAtPoint(m_points[j]);
-				modelRecallTop[j] = modelRecallTop[j] + seqEv.getRecallModelTopAtPoint(m_points[j]);
-				modelFmeasureTop[j] = modelFmeasureTop[j] + seqEv.getFmeasureModelTopAtPoint(m_beta, m_points[j]);
+				modelRecallTop[j]    = modelRecallTop[j]    + seqEv.getRecallModelTopAtPoint(m_points[j]);
+				modelFmeasureTop[j]  = modelFmeasureTop[j]  + seqEv.getFmeasureModelTopAtPoint(m_beta, m_points[j]);
+			}
+			
+			// URL level metrics - homepage always true
+			hitratio_OkHome = hitratio_OkHome + seqEv.getHitRatio_OkHome();
+			clicksoonratio_OkHome = clicksoonratio_OkHome + seqEv.getClickSoonRatio_OkHome();
+			for(int j=0; j<m_points.length; j++){
+				precission_OkHome[j]     = precission_OkHome[j]     + seqEv.getPrecisionAtPoint_OkHome(m_points[j]);
+				recall_OkHome[j]         = recall_OkHome[j]         + seqEv.getRecallAtPoint_OkHome(m_points[j]);
+				fmeasure_OkHome[j]       = fmeasure_OkHome[j]       + seqEv.getFmeasureAtPoint_OkHome(m_beta, m_points[j]);
+				modelPrecision_OkHome[j] = modelPrecision_OkHome[j] + seqEv.getPrecisionModelAtPoint_OkHome(m_points[j]);
+				modelRecall_OkHome[j]    = modelRecall_OkHome[j]    + seqEv.getRecallModelAtPoint_OkHome(m_points[j]);
+				modelFmeasure_OkHome[j]  = modelFmeasure_OkHome[j]  + seqEv.getFmeasureModelAtPoint_OkHome(m_beta, m_points[j]);
+			}
+			
+			// TOPIC level metrics - homepage always true
+			hitratioTop_OkHome = hitratioTop_OkHome + seqEv.getHitRatioTop_OkHome();
+			clicksoonratioTop_OkHome = clicksoonratioTop_OkHome + seqEv.getClickSoonRatioTop_OkHome();
+			for(int j=0; j<m_points.length; j++){
+				precissionTop_OkHome[j]     = precissionTop_OkHome[j]     + seqEv.getPrecisionTopAtPoint_OkHome(m_points[j]);
+				recallTop_OkHome[j]         = recallTop_OkHome[j]         + seqEv.getRecallTopAtPoint_OkHome(m_points[j]);
+				fmeasureTop_OkHome[j]       = fmeasureTop_OkHome[j]       + seqEv.getFmeasureTopAtPoint_OkHome(m_beta, m_points[j]);
+				modelPrecisionTop_OkHome[j] = modelPrecisionTop_OkHome[j] + seqEv.getPrecisionModelTopAtPoint_OkHome(m_points[j]);
+				modelRecallTop_OkHome[j]    = modelRecallTop_OkHome[j]    + seqEv.getRecallModelTopAtPoint_OkHome(m_points[j]);
+				modelFmeasureTop_OkHome[j]  = modelFmeasureTop_OkHome[j]  + seqEv.getFmeasureModelTopAtPoint_OkHome(m_beta, m_points[j]);
 			}
 			
 		}
@@ -208,28 +295,52 @@ public abstract class TestSetEvaluator {
 			m_failuresHist[j] = (float)failuresHist[j] / (float)m_sequences.size();
 		}
 		
-		// URL level metrics
+		// URL level metrics - HONEST
 		m_hitratio = hitratio/(float)m_sequences.size();
 		m_clicksoonratio = clicksoonratio/(float)m_sequences.size();
 		for(int j=0; j<m_points.length; j++){
-			m_precision[j] = precission[j]/(float)m_sequences.size();
-			m_recall[j] = recall[j]/(float)m_sequences.size();
-			m_fmeasure[j] = fmeasure[j]/(float)m_sequences.size();
-			m_ModelPrecision[j] = modelPrecision[j]/(float)m_sequences.size();
-			m_ModelRecall[j] = modelRecall[j]/(float)m_sequences.size();
-			m_ModelFmeasure[j] = modelFmeasure[j]/(float)m_sequences.size();
+			m_precision[j]      = precission[j]     / (float)m_sequences.size();
+			m_recall[j]         = recall[j]         / (float)m_sequences.size();
+			m_fmeasure[j]       = fmeasure[j]       / (float)m_sequences.size();
+			m_ModelPrecision[j] = modelPrecision[j] / (float)m_sequences.size();
+			m_ModelRecall[j]    = modelRecall[j]    / (float)m_sequences.size();
+			m_ModelFmeasure[j]  = modelFmeasure[j]  / (float)m_sequences.size();
 		}
 		
-		// TOPIC level metrics
+		// TOPIC level metrics - HONEST
 		m_hitratioTop = hitratioTop/(float)m_sequences.size();
 		m_clicksoonratioTop = clicksoonratioTop/(float)m_sequences.size();
 		for(int j=0; j<m_points.length; j++){
-			m_precisionTop[j] = precissionTop[j]/(float)m_sequences.size();
-			m_recallTop[j] = recallTop[j]/(float)m_sequences.size();
-			m_fmeasureTop[j] = fmeasureTop[j]/(float)m_sequences.size();
-			m_ModelPrecisionTop[j] = modelPrecisionTop[j]/(float)m_sequences.size();
-			m_ModelRecallTop[j] = modelRecallTop[j]/(float)m_sequences.size();
-			m_ModelFmeasureTop[j] = modelFmeasureTop[j]/(float)m_sequences.size();
+			m_precisionTop[j]      = precissionTop[j]     / (float)m_sequences.size();
+			m_recallTop[j]         = recallTop[j]         / (float)m_sequences.size();
+			m_fmeasureTop[j]       = fmeasureTop[j]       / (float)m_sequences.size();
+			m_ModelPrecisionTop[j] = modelPrecisionTop[j] / (float)m_sequences.size();
+			m_ModelRecallTop[j]    = modelRecallTop[j]    / (float)m_sequences.size();
+			m_ModelFmeasureTop[j]  = modelFmeasureTop[j]  / (float)m_sequences.size();
+		}
+		
+		// URL level metrics - homepage always true
+		m_hitratio_OkHome = hitratio_OkHome/(float)m_sequences.size();
+		m_clicksoonratio_OkHome = clicksoonratio_OkHome/(float)m_sequences.size();
+		for(int j=0; j<m_points.length; j++){
+			m_precision_OkHome[j]      = precission_OkHome[j]     / (float)m_sequences.size();
+			m_recall_OkHome[j]         = recall_OkHome[j]         / (float)m_sequences.size();
+			m_fmeasure_OkHome[j]       = fmeasure_OkHome[j]       / (float)m_sequences.size();
+			m_ModelPrecision_OkHome[j] = modelPrecision_OkHome[j] / (float)m_sequences.size();
+			m_ModelRecall_OkHome[j]    = modelRecall_OkHome[j]    / (float)m_sequences.size();
+			m_ModelFmeasure_OkHome[j]  = modelFmeasure_OkHome[j]  / (float)m_sequences.size();
+		}
+		
+		// TOPIC level metrics - homepage always true
+		m_hitratioTop_OkHome = hitratioTop_OkHome/(float)m_sequences.size();
+		m_clicksoonratioTop_OkHome = clicksoonratioTop_OkHome/(float)m_sequences.size();
+		for(int j=0; j<m_points.length; j++){
+			m_precisionTop_OkHome[j]      = precissionTop_OkHome[j]     / (float)m_sequences.size();
+			m_recallTop_OkHome[j]         = recallTop_OkHome[j]         / (float)m_sequences.size();
+			m_fmeasureTop_OkHome[j]       = fmeasureTop_OkHome[j]       / (float)m_sequences.size();
+			m_ModelPrecisionTop_OkHome[j] = modelPrecisionTop_OkHome[j] / (float)m_sequences.size();
+			m_ModelRecallTop_OkHome[j]    = modelRecallTop_OkHome[j]    / (float)m_sequences.size();
+			m_ModelFmeasureTop_OkHome[j]  = modelFmeasureTop_OkHome[j]  / (float)m_sequences.size();
 		}
 
 	}
@@ -279,7 +390,7 @@ public abstract class TestSetEvaluator {
 	}
 	
 	
-	// URL level attributes
+	// URL level attributes - HONEST
 	
 	public float getHitRatio(){
 		return m_hitratio;
@@ -307,7 +418,7 @@ public abstract class TestSetEvaluator {
 	}
 	
 	
-	// TOPIC level attributes
+	// TOPIC level attributes - HONEST
 	
 	public float getHitRatioTop(){
 		return m_hitratioTop;
@@ -332,6 +443,62 @@ public abstract class TestSetEvaluator {
 	}
 	public float[] getModelFmeasuresTop(){
 		return m_ModelFmeasureTop;
+	}
+	
+	
+	// URL level attributes - homepage always true
+	
+	public float getHitRatio_OkHome(){
+		return m_hitratio_OkHome;
+	}
+	public float getClickSoonRatio_OkHome(){
+		return m_clicksoonratio_OkHome;
+	}
+	public float[] getPrecisions_OkHome(){
+		return m_precision_OkHome;
+	}
+	public float[] getRecalls_OkHome(){
+		return m_recall_OkHome;
+	}
+	public float[] getFmeasures_OkHome(){
+		return m_fmeasure_OkHome;
+	}
+	public float[] getModelPrecisions_OkHome(){
+		return m_ModelPrecision_OkHome;
+	}
+	public float[] getModelRecalls_OkHome(){
+		return m_ModelRecall_OkHome;
+	}
+	public float[] getModelFmeasures_OkHome(){
+		return m_ModelFmeasure_OkHome;
+	}
+	
+	
+	// TOPIC level attributes - homepage always true
+	
+	public float getHitRatioTop_OkHome(){
+		return m_hitratioTop_OkHome;
+	}
+	public float getClickSoonRatioTop_OkHome(){
+		return m_clicksoonratioTop_OkHome;
+	}
+	public float[] getPrecisionsTop_OkHome(){
+		return m_precisionTop_OkHome;
+	}
+	public float[] getRecallsTop_OkHome(){
+		return m_recallTop_OkHome;
+	}
+	public float[] getFmeasuresTop_OkHome(){
+		return m_fmeasureTop_OkHome;
+	}
+	public float[] getModelPrecisionsTop_OkHome(){
+		return m_ModelPrecisionTop_OkHome;
+	}
+	public float[] getModelRecallsTop_OkHome(){
+		return m_ModelRecallTop_OkHome;
+	}
+	public float[] getModelFmeasuresTop_OkHome(){
+		return m_ModelFmeasureTop_OkHome;
 	}
 	
 	
