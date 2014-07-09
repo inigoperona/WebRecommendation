@@ -134,14 +134,14 @@ public class A053MainClassPamSpadeKnnEDcv {
 				for(int ind=0; ind<nrecsWSTv.length; ind++ ){
 					int nrec = nrecsWSTv[ind];
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					results = modelev.computeEvaluationVal(2, nrec, (long)0);
+					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + "_val,");
 					System.out.print(results);
 				}
 			
 				// unbounded
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				results = modelev.computeEvaluationVal(-1, -1, (long)0);
+				results = modelev.computeEvaluationVal("unbounded", -1, (long)0);
 				System.out.print(esperimentationStr2 + "_unbounded_val,");
 				System.out.print(results);
 				
@@ -154,14 +154,14 @@ public class A053MainClassPamSpadeKnnEDcv {
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					results = modelev.computeEvaluationTest(2, nrec, (long)0);
+					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + "_test,");
 					System.out.print(results);
 				}
 			
 				// unbounded
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				results = modelev.computeEvaluationTest(-1, -1, (long)0);
+				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 				System.out.print(esperimentationStr2 + "_unbounded_test,");
 				System.out.print(results);
 				

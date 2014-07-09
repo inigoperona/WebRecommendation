@@ -9,11 +9,19 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtei
 public class RecommenderKnnToClustersTopURLs
 				implements Recommender {
 	
+	// ATTRIBUTES
+	
+	// the path done
 	private ArrayList<String> m_waydone = new ArrayList<String>();
+	
+	// the model
 	private ArrayList<String[]> m_medoids;
 	private int[] m_gmedoids; 
 	private ArrayList<Object[]> m_recosInEachCluster;
+	
+	// selected empty clusters
 	private int m_0recosClusters = 0;
+	// distance/similarity related attrbutes
 	private boolean m_isDistance = true;
 	private float[][] m_rolesW = {{ 0f, 0f, 0f},
 								  { 0f, 0f, 0f},

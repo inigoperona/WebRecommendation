@@ -144,13 +144,15 @@ public abstract class ModelEvaluator {
 	
 	// MODEL EVALUATION //
 	
-	public String computeEvaluationTest(int mode, 
+	public String computeEvaluationTest(
+			String mode, 
 			int nrecos,
 			long seed){
 		return this.computeEvaluation(m_testAL, mode, nrecos, seed);
 	}
 	
-	public String computeEvaluationVal(int mode, 
+	public String computeEvaluationVal(
+			String mode, 
 			int nrecos,
 			long seed){
 		return this.computeEvaluation(m_valAL, mode, nrecos, seed);
@@ -161,7 +163,7 @@ public abstract class ModelEvaluator {
 	
 	private String computeEvaluation(
 					ArrayList<ArrayList<Long>> evalAL,
-					int mode, 
+					String mode, 
 					int nrecos,
 					long seed){
 		
@@ -219,11 +221,14 @@ public abstract class ModelEvaluator {
 		
 		
 		// Create a markov chain
-		ModelEvaluatorMarkovChain modelMC = new ModelEvaluatorMarkovChain(
+		ModelEvaluatorMarkovChain modelMC = null;
+		if(mode.equals("ST_markov")){
+			modelMC = new ModelEvaluatorMarkovChain(
 				m_datasetUHC, m_datasetSplitUHC, 
 				m_distancematrix, 
 				m_trainAL, m_valAL, m_testAL);
-		modelMC.buildMC();
+			modelMC.buildMC();
+		}
 		
 		
 		
@@ -258,9 +263,11 @@ public abstract class ModelEvaluator {
 			eval.setFmeasureBeta(m_fmeasurebeta);
 			eval.setTopicParameters(m_urlIds, m_url2topic, m_topicmatch);
 			eval.computeEvaluation(
-					mode, nrecos, seed, 
+					mode, 
+					nrecos, seed, 
 					m_homepages,
-					modelMC.getMarkovChain(i));
+					(modelMC!=null ? modelMC.getMarkovChain(i) : null)
+							);
 			//eval.writeResults();
 			
 			

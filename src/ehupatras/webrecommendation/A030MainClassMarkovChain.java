@@ -23,14 +23,12 @@ public class A030MainClassMarkovChain {
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
-		/*
 		preprocessingWD = args[0];
 		logfile = args[1];
 		url2topicFile = args[2];
 		databaseWD = args[3];
 		dmWD = args[4];
 		validationWD = args[5];
-		*/
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -111,13 +109,13 @@ public class A030MainClassMarkovChain {
 		int[] nrecsW = new int[]{2,3,4,5,10,20};
 		for(int i=0; i<nrecsW.length; i++ ){
 			int nrec = nrecsW[i];
-			resultsMarkov = modelev.computeEvaluationTest(1, nrec, (long)0);
+			resultsMarkov = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 			System.out.print("markovchain" + "_weighted" + nrec + ",");
 			System.out.print(resultsMarkov);
 		}
 		
 			// unbounded
-		resultsMarkov = modelev.computeEvaluationTest(-1, -1, (long)0);
+		resultsMarkov = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 		System.out.print("markovchain_unbounded,");
 		System.out.print(resultsMarkov);
 					

@@ -138,7 +138,7 @@ public class A055MainClassModularHclustST2KnnED {
 					int nrec = nrecsWST[ind];
 					modelev.setEsploitationParameters(1, 1000, 0);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					results = modelev.computeEvaluationTest(3, nrec, (long)0);
+					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
@@ -146,7 +146,7 @@ public class A055MainClassModularHclustST2KnnED {
 				// unbounded
 				modelev.setEsploitationParameters(1, 1000, 0);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				results = modelev.computeEvaluationTest(-1, 1000, (long)0);
+				results = modelev.computeEvaluationTest("unbounded", 1000, (long)0);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}

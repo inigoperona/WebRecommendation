@@ -138,14 +138,14 @@ public class A0500MainClassHclustMsaSt {
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					modelev.setEsploitationParameters(1, 1000, 0);
-					results = modelev.computeEvaluationTest(6, nrec, (long)0);
+					results = modelev.computeEvaluationTest("ST_w_eS1", nrec, (long)0);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 
 				// unbounded
 				modelev.setEsploitationParameters(1, 1000, 0);
-				results = modelev.computeEvaluationTest(6, 1000, (long)0);
+				results = modelev.computeEvaluationTest("ST_w_eS1", 1000, (long)0);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}

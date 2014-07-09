@@ -125,14 +125,14 @@ public class A054MainClassModularHclustST {
 			for(int ind=0; ind<nrecsWST.length; ind++ ){
 				int nrec = nrecsWST[ind];
 				modelev.setEsploitationParameters(1, 1000, 0);
-				results = modelev.computeEvaluationTest(3, nrec, (long)0);
+				results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 				System.out.print(esperimentationStr + "_weighted" + nrec + ",");
 				System.out.print(results);
 			}
 
 			// unbounded
 			modelev.setEsploitationParameters(1, 1000, 0);
-			results = modelev.computeEvaluationTest(-1, 1000, (long)0);
+			results = modelev.computeEvaluationTest("unbounded", 1000, (long)0);
 			System.out.print(esperimentationStr + "_unbounded,");
 			System.out.print(results);
 		}

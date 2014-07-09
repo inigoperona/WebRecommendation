@@ -140,13 +140,13 @@ public class A052MainClassHclustSpadeKnnEDSplit {
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					results = modelev.computeEvaluationTest(2, nrec, (long)0);
+					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					System.out.print(esperimentationStr2 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
-				results = modelev.computeEvaluationTest(-1, -1, (long)0);
+				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 				System.out.print(esperimentationStr2 + "_unbounded,");
 				System.out.print(results);
 			}

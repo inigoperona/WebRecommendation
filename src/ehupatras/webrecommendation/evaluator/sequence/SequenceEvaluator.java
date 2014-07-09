@@ -120,8 +120,10 @@ public abstract class SequenceEvaluator {
 	// mode =  3 : Weighted the suffix tree by weighted training sequences and original test sequences.
 	// mode =  4 : Merge Markov Chain model and Suffix Tree models recommendations
 	// mode =  5 : Weight the Suffix tree with original train sequences and in exploitation with original test sequences
+	// mode =  6 : Weight the ST with Train sequences and enrich it with step1 URLs 
 	public void computeSequenceMetrics(
-			int mode, int nrecos, long seed,
+			String mode, 
+			int nrecos, long seed,
 			int[] homepages,
 			MarkovChain markovchain){
 		m_homepages = homepages;
@@ -131,23 +133,23 @@ public abstract class SequenceEvaluator {
 		ArrayList<String> waydone = new ArrayList<String>();
 		ArrayList<String> list = null;
 		
-		if(mode==-1){ // Unbounded
+		if(mode.equals("unbounded")){ // -1
 			list = m_recommender.getNextpossibleStepsUnbounded();
-		} else if(mode==0){ // Random
+		} else if(mode.equals("random")){ // 0
 			list = m_recommender.getNextpossibleStepsRandom(nrecos, seed);
-		} else if(mode==1){ // Weighted Suffix Tree with Train-Clusters-WeightedSequences
+		} else if(mode.equals("ST_wTrain") || mode.equals("weighted")){ // 1
 			list = m_recommender.getNextpossibleStepsWeightedTrain(nrecos, waydone);
-		} else if(mode==2){
+		} else if(mode.equals("ST_wTest")){ // 2
 			list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
-		} else if(mode==3){
+		} else if(mode.equals("ST_w")){ // 3
 			list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
-		} else if(mode==4){
+		} else if(mode.equals("ST_markov")){ // 4
 			recM = new RecommenderMarkovChain(markovchain);
 			ArrayList<String> listMarkov = recM.getNextpossibleStepsWeightedTest(nrecos);
 			list = m_recommender.getNextpossibleStepsMarkov(nrecos, waydone, listMarkov);
-		} else if(mode==5){
+		} else if(mode.equals("ST_wOrig")){ // 5
 			list = m_recommender.getNextpossibleStepsWeightedByOriginalSequences(nrecos);
-		} else if(mode==6){
+		} else if(mode.equals("ST_w_eS1")){ //6
 			list = m_recommender.getNextpossibleStepsWeightedEnrichWithStep1(nrecos, waydone);
 		}
 		for(int i=0; i<m_sequence.size(); i++){
@@ -179,23 +181,23 @@ public abstract class SequenceEvaluator {
 			waydone = m_recommender.update(waydone, nextstep, true, true);
 			
 			// get the next recommendations
-			if(mode==-1){ // BASELINE
+			if(mode.equals("unbounded")){
 				list = m_recommender.getNextpossibleStepsUnbounded();
-			} else if(mode==0){ // BASELINE
+			} else if(mode.equals("random")){
 				list = m_recommender.getNextpossibleStepsRandom(nrecos, seed);
-			} else if(mode==1){
+			} else if(mode.equals("ST_wTrain") || mode.equals("weighted") ){
 				list = m_recommender.getNextpossibleStepsWeightedTrain(nrecos, waydone);
-			} else if(mode==2){
+			} else if(mode.equals("ST_wTest")){
 				list = m_recommender.getNextpossibleStepsWeightedTest(nrecos);
-			} else if(mode==3){ // OUR PROPOSED METHOD
+			} else if(mode.equals("ST_w")){
 				list = m_recommender.getNextpossibleStepsWeighted(nrecos, waydone);
-			} else if(mode==4){
+			} else if(mode.equals("ST_markov")){
 				recM.update(null, nextstep, false, false);
 				ArrayList<String> listMarkov = recM.getNextpossibleStepsWeightedTest(nrecos);
 				list = m_recommender.getNextpossibleStepsMarkov(nrecos, waydone, listMarkov);
-			} else if(mode==5){
+			} else if(mode.equals("ST_wOrig")){
 				list = m_recommender.getNextpossibleStepsWeightedByOriginalSequences(nrecos);
-			} else if(mode==6){
+			} else if(mode.equals("ST_w_eS1")){
 				list = m_recommender.getNextpossibleStepsWeightedEnrichWithStep1(nrecos, waydone);
 			}
 		}

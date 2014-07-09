@@ -15,7 +15,6 @@ public abstract class TestSetEvaluator {
 	// Validation metrics
 	private float[] m_points = {0.10f, 0.25f, 0.50f, 0.75f, 0.90f};
 	private float m_beta = (float)0.5;
-	private int[] m_homepages = null;
 		
 	// failure counts
 	private float m_numberOfRecommendationsRatio = (float)0;
@@ -119,7 +118,8 @@ public abstract class TestSetEvaluator {
 	// BODY
 	
 	public void computeEvaluation(
-			int mode, int nrecos, long seed,
+			String mode, 
+			int nrecos, long seed,
 			int[] homepages,
 			MarkovChain markovchain){
 		
@@ -198,9 +198,11 @@ public abstract class TestSetEvaluator {
 			// METRICS //
 			seqEv.setTopicParameters(m_urlIds, m_url2topic, m_topicmatch);
 			seqEv.computeSequenceMetrics(
-					mode, nrecos, seed,
+					mode, 
+					nrecos, seed,
 					homepages,
-					markovchain);
+					(markovchain!=null ? markovchain : null)
+					);
 			
 	
 			// number of recommendations

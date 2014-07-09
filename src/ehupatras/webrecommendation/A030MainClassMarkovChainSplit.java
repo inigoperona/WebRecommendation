@@ -102,13 +102,13 @@ public class A030MainClassMarkovChainSplit {
 		int[] nrecsW = new int[]{2,3,4,5,10,20};
 		for(int i=0; i<nrecsW.length; i++ ){
 			int nrec = nrecsW[i];
-			resultsMarkov = modelev.computeEvaluationTest(1, nrec, (long)0);
+			resultsMarkov = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 			System.out.print("markovchain" + "_weighted" + nrec + ",");
 			System.out.print(resultsMarkov);
 		}
 		
 			// unbounded
-		resultsMarkov = modelev.computeEvaluationTest(-1, -1, (long)0);
+		resultsMarkov = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 		System.out.print("markovchain_unbounded,");
 		System.out.print(resultsMarkov);
 					

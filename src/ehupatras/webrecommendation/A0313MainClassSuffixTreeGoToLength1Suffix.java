@@ -113,14 +113,14 @@ public class A0313MainClassSuffixTreeGoToLength1Suffix {
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					modelev.setEsploitationParameters(fmode, gtmem, 0);
-					results = modelev.computeEvaluationTest(1, nrec, (long)0);
+					results = modelev.computeEvaluationTest("ST_wTrain", nrec, (long)0);
 					System.out.print(esperimentationStr3 + "_weighted" + nrec + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
 				modelev.setEsploitationParameters(fmode, gtmem, 0);
-				results = modelev.computeEvaluationTest(1, 1000, (long)0);
+				results = modelev.computeEvaluationTest("unbounded", 1000, (long)0);
 				System.out.print(esperimentationStr3 + "_unbounded,");
 				System.out.print(results);
 			}

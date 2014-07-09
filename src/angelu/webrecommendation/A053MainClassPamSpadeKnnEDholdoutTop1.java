@@ -167,7 +167,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val"; 
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					results = modelev.computeEvaluationVal(2, nrec, (long)0);
+					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
 					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}
@@ -176,7 +176,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 				resultInfo = esperimentationStr2 + "_unbounded_val";
 				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				results = modelev.computeEvaluationVal(-1, -1, (long)0);
+				results = modelev.computeEvaluationVal("unbounded", -1, (long)0);
 				System.out.print(resultInfo + ",");
 				System.out.print(results);
 				
@@ -191,7 +191,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					results = modelev.computeEvaluationTest(2, nrec, (long)0);
+					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}
@@ -200,7 +200,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 				resultInfo = esperimentationStr2 + "_unbounded_test";
 				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				results = modelev.computeEvaluationTest(-1, -1, (long)0);
+				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 				System.out.print(resultInfo + ",");
 				System.out.print(results);
 				
