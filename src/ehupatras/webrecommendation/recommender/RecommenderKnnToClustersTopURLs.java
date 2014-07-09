@@ -9,23 +9,27 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtei
 public class RecommenderKnnToClustersTopURLs
 				implements Recommender {
 	
+	
 	// ATTRIBUTES
 	
 	// the path done
-	private ArrayList<String> m_waydone = new ArrayList<String>();
+	protected ArrayList<String> m_waydone = new ArrayList<String>();
 	
 	// the model
 	private ArrayList<String[]> m_medoids;
 	private int[] m_gmedoids; 
 	private ArrayList<Object[]> m_recosInEachCluster;
 	
-	// selected empty clusters
+	// number of selected empty clusters
 	private int m_0recosClusters = 0;
-	// distance/similarity related attrbutes
+	// distance/similarity related attributes
 	private boolean m_isDistance = true;
 	private float[][] m_rolesW = {{ 0f, 0f, 0f},
 								  { 0f, 0f, 0f},
 								  { 0f, 0f, 0f}};
+	
+	
+	// CREATOR
 	
 	public RecommenderKnnToClustersTopURLs(ArrayList<String[]> medoids,
 			int[] globalMedoids,
@@ -37,14 +41,16 @@ public class RecommenderKnnToClustersTopURLs
 		m_gmedoids = globalMedoids;
 		m_waydone = new ArrayList<String>();
 		m_isDistance = isDistance;
-		
 	}
+	
+	
+	// FUNCTIONS
 	
 	public void reset(){
 		m_waydone = new ArrayList<String>();
 	}
 	
-	// No recommendations clusters
+	// No recommendations in clusters
 	public int getNumberOfFailures(){
 		return m_0recosClusters;
 	}
@@ -55,9 +61,22 @@ public class RecommenderKnnToClustersTopURLs
 		return m_waydone;
 	}
 	
-	private ArrayList<String> getNextpossibleSteps(int nRecos){
+	protected ArrayList<String> getNextpossibleSteps(int nRecos){
+		Object[] objA = this.getNextpossibleSteps_Info(nRecos);
+		ArrayList<String> recosL = (ArrayList<String>)objA[0];
+		//ArrayList<Integer> supportL = (ArrayList<Integer>)objA[1];
+		//ArrayList<Integer> clustersL = (ArrayList<Integer>)objA[2];
+		//ArrayList<Float> distsL = (ArrayList<Float>)objA[3];
+		return recosL;
+	}
+	
+	protected Object[] getNextpossibleSteps_Info(int nRecos){
+		
 		// the elements we are interested in
-		ArrayList<String> recos = new ArrayList<String>(); 
+		ArrayList<String> recosL = new ArrayList<String>();
+		ArrayList<Integer> supportL = new ArrayList<Integer>();
+		ArrayList<Integer> clustersL = new ArrayList<Integer>();
+		ArrayList<Float> distsL = new ArrayList<Float>();
 		
 		// medoids ordered from the nearest to farthest
 		Object[] objAa = this.knnSim();
@@ -68,19 +87,27 @@ public class RecommenderKnnToClustersTopURLs
 		boolean end = false;
 		for(int i=0; i<orderedMedoids.length; i++){
 			int nearesCl = orderedMedoids[i];
+			float dist2clust = 0f;
+			if(orderedSims==null){
+				if(m_isDistance){dist2clust = 0f;} 
+				else{dist2clust = 1f;}
+			} else {
+				dist2clust = orderedSims[i];
+			}
+			
 			Object[] objA = m_recosInEachCluster.get(nearesCl);
 			ArrayList<String> recosCl = (ArrayList<String>)objA[0];
 			ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
 			
-			// enrich
-			recos.add("45");
-			
 			if(recosCl.size()==0){m_0recosClusters++;}
 			for(int j=0; j<recosCl.size(); j++){
-				if(recos.size()<nRecos){
+				if(recosL.size()<nRecos){
 					String reco = recosCl.get(j);
-					if(!recos.contains(reco)){
-						recos.add(reco);
+					if(!recosL.contains(reco)){
+						recosL.add(reco);
+						supportL.add(supports.get(j));
+						clustersL.add(nearesCl);
+						distsL.add(dist2clust);
 					}
 				} else {
 					end = true;
@@ -91,7 +118,12 @@ public class RecommenderKnnToClustersTopURLs
 		}
 		
 		// return the list of recommendations
-		return recos;
+		Object[] objA = new Object[4];
+		objA[0] = recosL;
+		objA[1] = supportL;
+		objA[2] = clustersL;
+		objA[3] = distsL;
+		return objA;
 	}
 	
 	private ArrayList<String> getNextpossibleStepsW(int nRecos){
@@ -179,7 +211,7 @@ public class RecommenderKnnToClustersTopURLs
 		boolean[] isTaken = new boolean[recos.size()];
 		Arrays.fill(isTaken, false);
 		for(int i=0; i<nRecos; i++){
-			if(i>=recos2.size()){ break;}
+			if(i>=recos.size()){ break;}
 			float maxw = Float.MIN_VALUE;
 			int maxj = -1;
 			for(int j=0; j<weightsA.size(); j++){
@@ -197,6 +229,133 @@ public class RecommenderKnnToClustersTopURLs
 		// return the list of recommendations
 		return recos2;
 	}
+	
+	/*
+	protected Object[] getNextpossibleStepsW_AllInfo(int nRecos){
+		int minsupfreq = 5;
+		
+		// the elements we are interested in
+		ArrayList<String> recosL = new ArrayList<String>();
+		ArrayList<Float> supportL = new ArrayList<Float>();
+		ArrayList<Integer> clustersL = new ArrayList<Integer>();
+		ArrayList<Float> distsL = new ArrayList<Float>();
+		ArrayList<Float> weightsL = new ArrayList<Float>();
+		
+		// medoids ordered from the nearest to farthest
+		Object[] objAa = this.knnSim();
+		int[] orderedMedoids = (int[])objAa[0];
+		float[] orderedSims = (float[])objAa[1]; // it can be null
+		if(orderedSims==null){ return getNextpossibleSteps(nRecos); } // //////////////////  BEGIRATU!!!!!!
+		
+		// find maximum & minimum values of the similarities
+		float maxsim = Float.MIN_VALUE;
+		float minsim = Float.MAX_VALUE;
+		for(int i=0; i<orderedSims.length; i++){
+			float sim = orderedSims[i];
+			if(maxsim<sim){maxsim = sim;}
+			if(minsim>sim){minsim = sim;}
+		}
+		
+		// take more URLs and after select the best ones
+		int nRecos2 = Math.round((float)nRecos * 1.5f);
+		
+		// for each medoid take the reccommendations		
+		boolean end = false;
+		for(int i=0; i<orderedMedoids.length; i++){
+			int nearesCl = orderedMedoids[i];
+			float sim = orderedSims[i];
+			float normsim = (sim-minsim)/(maxsim-minsim);
+			
+			// get the recommendations of the cluster
+			Object[] objA = m_recosInEachCluster.get(nearesCl);
+			ArrayList<String> recosCl = (ArrayList<String>)objA[0];
+			ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
+			
+			// if it does not have recommendations
+			if(recosCl.size()==0){m_0recosClusters++;}
+			
+			// sum all support-frequency values
+			int sumsup = 0;
+			for(int j=0; j<supports.size(); j++){ sumsup = sumsup + supports.get(j);}
+			
+			// take the URLs we are interested in with their weights
+			int nurls = recosCl.size();
+			for(int j=0; j<nurls; j++){
+				if(recosL.size()<nRecos2){
+					String reco = recosCl.get(j);
+					int sup = supports.get(j);
+					float supf = sup/(float)sumsup;
+					
+					float weight = 0f; 
+					if(sup>=minsupfreq){
+						// compute the final weight between support and distance to the medoid
+						if(m_isDistance){
+							weight = supf * (1f-normsim);
+						} else {
+							weight = supf * normsim;
+						}
+					}
+					
+					if(!recosL.contains(reco)){
+						recosL.add(reco);
+						supportL.add(supf);
+						clustersL.add(nearesCl);
+						if(m_isDistance){ distsL.add(1f-normsim); } else { distsL.add(normsim); }
+						weightsL.add(weight);
+					} else {
+						int index = recosL.indexOf(reco);
+						float w = weightsL.get(index) + weight;
+						weightsL.set(index, w);
+					}
+				} else {
+					end = true;
+					break;
+				}
+			}
+			if(end){ break;}
+		}
+		
+		
+		// take the most relevant URLs
+		ArrayList<String> recos2L = new ArrayList<String>();
+		ArrayList<Float> support2L = new ArrayList<Float>();
+		ArrayList<Integer> clusters2L = new ArrayList<Integer>();
+		ArrayList<Float> dists2L = new ArrayList<Float>();
+		ArrayList<Float> weights2L = new ArrayList<Float>();
+		
+		boolean[] isTaken = new boolean[recosL.size()];
+		Arrays.fill(isTaken, false);
+		
+		for(int i=0; i<nRecos; i++){
+			if(i>=recosL.size()){ break;}
+			
+			float maxw = Float.MIN_VALUE;
+			int maxj = -1;
+			for(int j=0; j<weightsL.size(); j++){
+				float w = weightsL.get(j);
+				if(!isTaken[j] && maxw<w && w>0){
+					maxw = w;
+					maxj = j;
+				}
+			}
+			recos2L.add(recosL.get(maxj));
+			support2L.add(supportL.get(maxj));
+			clusters2L.add(clustersL.get(maxj));
+			dists2L.add(dists2L.get(maxj));
+			weights2L.add(weightsL.get(maxj));
+			isTaken[maxj] = true;
+		}
+		
+		// return the list of recommendations
+		Object[] objA = new Object[5];
+		objA[0] = recos2L;
+		objA[1] = support2L;
+		objA[2] = clusters2L;
+		objA[3] = dists2L;
+		objA[4] = weights2L;
+		return objA;
+	}
+	*/
 	
 	protected Object[] knnSim(){
 		// if we do not know nothing about the navigation
@@ -303,7 +462,7 @@ public class RecommenderKnnToClustersTopURLs
 		return this.getNextpossibleSteps(nrecos);
 	}
 	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone){
-		return this.getNextpossibleStepsW(nRecos);
+		return this.getNextpossibleSteps(nRecos);
 	}
 	public ArrayList<String> getNextpossibleStepsMarkov(int nRecos, ArrayList<String> waydone, ArrayList<String> listMarkov){
 		return this.getNextpossibleSteps(nRecos);

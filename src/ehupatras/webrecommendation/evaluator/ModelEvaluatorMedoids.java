@@ -15,7 +15,7 @@ public class ModelEvaluatorMedoids
 	
 	protected ArrayList<ArrayList<String[]>> m_medoidsAL = null;
 	protected ArrayList<int[]> m_gmedoidsAL = null;	
-	private ArrayList<ArrayList<Object[]>> m_recosAL = null;
+	protected ArrayList<ArrayList<Object[]>> m_recosAL = null;
 	
 	protected boolean m_isDistance = true;
 	protected float[][] m_rolesW = {{ 0f, 0f, 0f},

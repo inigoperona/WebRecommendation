@@ -11,7 +11,7 @@ public class TestSetEvaluatorMed
 	
 	protected ArrayList<String[]> m_medoids = null;
 	protected int[] m_gmedoids = null;
-	private ArrayList<Object[]> m_recos = null;
+	protected ArrayList<Object[]> m_recos = null;
 	
 	protected boolean m_isDistance = true;
 	protected float[][] m_rolesW = {{ 0f, 0f, 0f},

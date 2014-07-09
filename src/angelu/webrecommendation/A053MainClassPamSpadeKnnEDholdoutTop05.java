@@ -41,6 +41,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
+		Website.load();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -164,7 +165,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 					int nrec = nrecsWSTv[ind];
 					// Write recommendations
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val"; 
-					modelev.setLineHeader(resultInfo + ";", evalWriter);
+					//modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
 					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
 					System.out.print(resultInfo + ",");
@@ -173,7 +174,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 			
 				// unbounded
 				resultInfo = esperimentationStr2 + "_unbounded_val";
-				modelev.setLineHeader(resultInfo + ";", evalWriter);
+				//modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
 				results = modelev.computeEvaluationVal("unbounded", -1, (long)0);
 				System.out.print(resultInfo + ",");
@@ -188,7 +189,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";
-					modelev.setLineHeader(resultInfo + ";", evalWriter);
+					//modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
 					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					System.out.print(resultInfo + ",");
@@ -197,7 +198,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 			
 				// unbounded
 				resultInfo = esperimentationStr2 + "_unbounded_test";
-				modelev.setLineHeader(resultInfo + ";", evalWriter);
+				//modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
 				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 				System.out.print(resultInfo + ",");

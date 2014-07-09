@@ -5,15 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import angelu.webrecommendation.evaluator.ModelEvaluatorMedoidsContent;
 import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
-import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
-import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A053MainClassPamSpadeKnnEDholdoutTop1 {
+public class A054MainClassPamSpadeKnnEDhoTop1Content001 {
 
 	public static void main(String[] args) {
 		
@@ -98,7 +97,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 				  			{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
-		ModelEvaluatorMedoids modelev = new ModelEvaluatorMedoids(
+		ModelEvaluatorMedoidsContent modelev = new ModelEvaluatorMedoidsContent(
 				sequencesUHC, null, 
 				matrix,
 				trainAL, valAL, testAL);
@@ -165,19 +164,25 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 				for(int ind=0; ind<nrecsWSTv.length; ind++ ){
 					int nrec = nrecsWSTv[ind];
 					// Write recommendations
-					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val"; 
-					//modelev.setLineHeader(resultInfo + ";", evalWriter);
+					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val";
+					
+					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
+					modelev.setEsploitationParameters("Contents001");
 					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
+					
 					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
 				resultInfo = esperimentationStr2 + "_unbounded_val";
-				//modelev.setLineHeader(resultInfo + ";", evalWriter);
+				
+				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
+				modelev.setEsploitationParameters("Contents001");
 				results = modelev.computeEvaluationVal("unbounded", -1, (long)0);
+				
 				System.out.print(resultInfo + ",");
 				System.out.print(results);
 				
@@ -190,18 +195,24 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";
-					//modelev.setLineHeader(resultInfo + ";", evalWriter);
+					
+					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
+					modelev.setEsploitationParameters("Contents001");
 					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
+					
 					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}
 			
 				// unbounded
 				resultInfo = esperimentationStr2 + "_unbounded_test";
-				//modelev.setLineHeader(resultInfo + ";", evalWriter);
+				
+				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
+				modelev.setEsploitationParameters("Contents001");
 				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
+				
 				System.out.print(resultInfo + ",");
 				System.out.print(results);
 				

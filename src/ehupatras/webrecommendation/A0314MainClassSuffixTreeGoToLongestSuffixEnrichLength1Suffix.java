@@ -30,6 +30,7 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffix {
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
+		Website.load();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
