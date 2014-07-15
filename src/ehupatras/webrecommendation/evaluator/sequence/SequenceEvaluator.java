@@ -767,7 +767,7 @@ public abstract class SequenceEvaluator {
 		float reModel = this.computeRecallTop_OkHome(0, recommendatios);
 		m_precisionModelTop_OkHome[stepIndex] = prModel;
 		m_recallModelTop_OkHome[stepIndex] = reModel;
-	}	
+	}
 	
 	private float computePrecisionTop_OkHome(
 			int stepIndex, 
@@ -1139,9 +1139,11 @@ public abstract class SequenceEvaluator {
 	// Utilities
 	
 	private int getPosition(float point){
-		float len = (float)m_precision.length - (float)1;
+		float len = (float)m_precision.length;
 		float index = len * point;
-		return (int)Math.round(index);
+		float maxindex =  (float)m_precision.length - (float)1;
+		float index2 = index>maxindex ? maxindex : index;
+		return (int)Math.round(index2);
 	}
 	
 	private float[] getFmeasures(float beta, float[] prA, float[] reA){

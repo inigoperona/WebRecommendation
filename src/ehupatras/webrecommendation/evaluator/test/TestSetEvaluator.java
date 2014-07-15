@@ -77,7 +77,10 @@ public abstract class TestSetEvaluator {
 	
 	private void constructor(ArrayList<String[]> sequences){
 		m_sequences = sequences;
-		
+		this.constructor2();
+	}
+	
+	private void constructor2(){
 		// HONEST
 		m_precision = new float[m_points.length];
 		m_recall = new float[m_points.length];
@@ -355,6 +358,7 @@ public abstract class TestSetEvaluator {
 	
 	public void setConfusionPoints(float[] confusionPoints){
 		m_points = confusionPoints;
+		this.constructor2();
 	}
 	public void setFmeasureBeta(float beta){
 		m_beta = beta;
