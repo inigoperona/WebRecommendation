@@ -38,12 +38,12 @@ public class A020MainClassHoldOut {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String preprocessingWD = "experiments/DATA";
 		String logfile = "/log20000.log";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String databaseWD = "experiments/DATA";
 		String dmWD = "/DM_00_no_role";
 		dmWD = "";
-		String validationWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String validationWD = "experiments/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];

@@ -159,7 +159,7 @@ public class A000MainClassPreprocess {
 		
 		// Parameter control
 		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
-		String basedirectory = "/home/aizea/ecplipse20140529/experiments/01_preprocess";
+		String basedirectory = "experiments/01_preprocess";
 		String filename1 = "/log20000.log";
 		basedirectory = args[0];
 		filename1 = args[1];

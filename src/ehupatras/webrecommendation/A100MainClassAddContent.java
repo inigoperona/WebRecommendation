@@ -87,7 +87,7 @@ public class A100MainClassAddContent {
 	public static void main(String args[]){
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_angelu/experiments";
+		String base = "experiments_angelu/experiments";
 		String preprocessingWD = base + "/01_preprocess";
 		String contentWD = base + "/01_preprocess";
 		String infileUrl2topicDist = "/document-topic-distributions1_IDhutsa_usageID.csv";

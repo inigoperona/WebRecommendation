@@ -15,7 +15,7 @@ public class A040MainClassHclustSplit {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
+		String base = "experiments_ehupatras";
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String databaseWD = base + "/02_DATABASE_5";

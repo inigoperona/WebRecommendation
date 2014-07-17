@@ -34,9 +34,9 @@ public class A014MainClassDistanceMatrixNcdGzip {
 	
 	public static void main(String[] args){
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String preprocessingWD = "experiments/DATA";
 		String logfile = "/log20000.log";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String databaseWD = "experiments/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];

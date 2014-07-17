@@ -13,7 +13,7 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffix {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String base = "/home/burdinadar/workspace_ehupatras/WebRecommendation/experiments_ehupatras";
+		String base = "experiments_ehupatras";
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";

@@ -38,12 +38,12 @@ public class A021MainClassCrossValidation {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String preprocessingWD = "/home/aizea/ecplipse20140529/experiments/01_preprocess";
+		String preprocessingWD = "experiments/01_preprocess";
 		String logfile = "/log20000.log";
-		String databaseWD = "/home/aizea/ecplipse20140529/experiments/02_DATABASE_5";
+		String databaseWD = "experiments/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
 		dmWD = "";
-		String validationWD = "/home/aizea/ecplipse20140529/experiments/03_VALIDATION_5";
+		String validationWD = "experiments/03_VALIDATION_5";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];

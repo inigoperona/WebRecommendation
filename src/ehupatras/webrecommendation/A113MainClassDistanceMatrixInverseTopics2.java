@@ -38,10 +38,10 @@ public class A113MainClassDistanceMatrixInverseTopics2 {
 		// TODO Auto-generated method stub
 		
 		// Parameter control
-		String preprocessingWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String preprocessingWD = "experiments/DATA";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
-		String databaseWD = "/home/burdinadar/eclipse_workdirectory/DATA";
+		String databaseWD = "experiments/DATA";
 		preprocessingWD = args[0];
 		logfile = args[1];
 		url2topicFile = args[2];
