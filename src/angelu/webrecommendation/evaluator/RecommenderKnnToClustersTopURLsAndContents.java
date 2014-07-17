@@ -1,0 +1,193 @@
+package angelu.webrecommendation.evaluator;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import angelu.webrecommendation.converter.URLconverterUsaCon;
+import ehupatras.webrecommendation.recommender.RecommenderKnnToClustersTopURLs;
+
+public abstract class RecommenderKnnToClustersTopURLsAndContents 
+				extends RecommenderKnnToClustersTopURLs {
+
+	// ATTRIBUTES
+	
+	protected int m_leftZerosLen = 6;
+	protected int m_nURLs = 0;
+	protected float[][] m_UrlSimilarityMatrix = null;
+	protected String[][] m_UrlRelationMatrix = null;
+	protected HashMap<Integer,Integer> m_UrlClusteringDict = null;
+	protected URLconverterUsaCon m_conv = null;
+	
+	
+	
+	// CREATOR
+	
+	public RecommenderKnnToClustersTopURLsAndContents(
+			ArrayList<String[]> medoids,
+			int[] globalMedoids,
+			ArrayList<Object[]> recosForEachMedoid,
+			boolean isDistance,
+			float[][] rolesW,
+			int nURLs,
+			float[][] urlSimilarityMatrix,
+			String[][] urlRelationMatrix,
+			HashMap<Integer,Integer> urlClusteringDict,
+			URLconverterUsaCon conv){
+		super(medoids, globalMedoids, recosForEachMedoid, isDistance, rolesW);
+		m_nURLs = nURLs;
+		m_UrlSimilarityMatrix = urlSimilarityMatrix;
+		m_UrlRelationMatrix = urlRelationMatrix;
+		m_UrlClusteringDict = urlClusteringDict;
+		m_conv = conv;
+	}
+	
+	
+	
+	// FUNCTIONS
+	
+	protected ArrayList<String> getNextpossibleSteps(int nRecos){
+		
+		// All information about the recommendations		
+		Object[] objA = this.getNextpossibleSteps_Info(nRecos);
+		ArrayList<String> recosL = (ArrayList<String>)objA[0];
+		ArrayList<Integer> supportL = (ArrayList<Integer>)objA[1];
+		ArrayList<Integer> clustersL = (ArrayList<Integer>)objA[2];
+		ArrayList<Float> distsL = (ArrayList<Float>)objA[3];
+		
+		// Prepare the recommendations and the way done	
+		// Recommendations
+		int[] url = new int[recosL.size()];
+		for(int j=0;j<recosL.size();j++){
+			int recUsage = Integer.valueOf(recosL.get(j));
+			int recContent = m_conv.getContentURL(recUsage);
+			url[j] = recContent;
+		}
+		// way done
+		int[] urlDone = new int[m_waydone.size()];
+		for(int j=0;j<m_waydone.size();j++){
+			int wayUsage = Integer.valueOf(m_waydone.get(j));
+			int wayContent = m_conv.getContentURL(wayUsage);
+			urlDone[j] = Integer.valueOf(wayContent);
+		}
+		
+		
+		// Enrichment
+		ArrayList<Integer> urlAL = this.applyEnrichment(url, urlDone);
+		
+		// KONTROLATU ERREPIKAPENAK
+		// SPADEko URL ezberdinei gertueneko berdina izatea
+		// BIDEAN URLak errepikatuak gerta daitezke, 
+		// beraz errepikapenak eman daitezke proposamenetan
+		
+		// Convert the final recommendations to usage URLs
+		ArrayList<String> recosFinal = new ArrayList<String>();
+		for(int i=0; i<urlAL.size(); i++){
+			int urlContent = urlAL.get(i);
+			int urlUsage = m_conv.getUsageURL(urlContent);
+			String urlStr = String.format("%0"+ m_leftZerosLen + "d", urlUsage);
+			recosFinal.add(urlStr); 
+		}
+		
+		// return the new recommendations
+		return recosFinal;
+	}
+	
+	public abstract ArrayList<Integer> applyEnrichment(int[] url, int[] urlDone);
+	
+	
+	
+	// AUXILIAR FUNCTIONS
+	
+	protected int[] gertueneko_urla(int url1,int zenbat, boolean clusterrakEzDuAxola)
+	{	final float[] similarityak= new float[m_nURLs];
+		final Integer[] indizeak= new Integer[m_nURLs];
+		int[] gertuenekoURLak = new int[zenbat];
+		
+		for (int j=0;j<=m_UrlSimilarityMatrix.length-1;j++)
+		{	similarityak[j]=m_UrlSimilarityMatrix[url1][j];
+			indizeak[j]=j;}
+		Integer[] min_max= ordenatumin_max(similarityak, indizeak);	
+		int tamaina=min_max.length-1;
+	
+		if (clusterrakEzDuAxola)
+		{	for(int k=0; k<=zenbat-1;k++)
+			{	gertuenekoURLak[k]=min_max[tamaina];
+				tamaina--;}}
+	
+		else
+		{	int cl2 = m_UrlClusteringDict.get(url1);
+			for(int k=0; k<=zenbat-1;k++)
+			{	int cl1=m_UrlClusteringDict.get(min_max[tamaina]);
+				while(cl1==cl2)
+				{	tamaina--;
+					cl1=m_UrlClusteringDict.get(min_max[tamaina]);}
+				gertuenekoURLak[k]=min_max[tamaina];}}
+	
+		return  gertuenekoURLak;
+	}
+	
+	private Integer[] ordenatumin_max(final float[] data,final Integer[] idx )	
+	{	Arrays.sort(idx, new Comparator<Integer>() {
+	    
+		@Override
+	    public int compare(final Integer o1, final Integer o2) {
+	        return Float.compare(data[o1], data[o2]);}});
+	
+		return idx;
+	}
+	
+	protected int[] number_of_Relation (int[] urls, boolean SpDa)
+	{ 	int Equal_kop=0;
+	  	int different_kop=0;
+	  	String erlazioa;
+	  	int[] kontagailua= new int[2];
+	  
+	  	if (SpDa)
+	  	{	for (int z=0; z<=urls.length-1;z++)
+	  		{	for (int j=0; j<=urls.length-1;j++)
+	  			{ 	if(z!=j){
+	  					erlazioa=equal_different(urls[z], urls[j]);
+	  					if (erlazioa=="Equal")
+	  					{	Equal_kop++;}
+	  					else
+	  					{	different_kop++;}}}}
+	  		kontagailua[0]=Equal_kop;
+	  		kontagailua[1]=different_kop;
+	  		return kontagailua;
+	  	}
+	  	else
+	  	{	//hemen nabigazioaren asuntoakin hasi beharko nintzen number of relation honetan bakarrik 3 erlazio begiratzen dira.
+	  		if(urls.length==1)
+	  		{	kontagailua[0]=0;
+	  			kontagailua[1]=0;
+	  			return kontagailua;}		
+		
+	  		else
+	  		{	for (int h=0; h<=urls.length-2;h++)
+	  			{	erlazioa=equal_different(urls[h], urls[h+1]);
+	  				if (erlazioa=="Equal")
+	  				{	Equal_kop++;}
+	  				else
+	  				{	different_kop++;}}
+	  		
+	  		kontagailua[0]=Equal_kop;
+	  		kontagailua[1]=different_kop;
+	  		return kontagailua;}
+		}
+	}
+	
+	private String equal_different(int url1, int url2)
+	{	String erlazioa=m_UrlRelationMatrix[url1][url2];
+		if(erlazioa!="Equal" && erlazioa!="Disjoint")
+		{	int cl1=m_UrlClusteringDict.get(url1);
+			int cl2=m_UrlClusteringDict.get(url2);
+			if (cl1==cl2)
+			{	return "Equal";}
+			else
+			{	return "Disjoint";}}
+		else
+		{	return erlazioa;}
+	}
+	
+}

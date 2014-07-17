@@ -31,6 +31,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContentA1 {
 		String clustWD = "/pam_DM_04_edit";
 		String profiWD = "/pam_DM_04_edit/spade1";
 		String evalFile = "/evaluation.txt";
+		/*
 		preprocessingWD = args[0];
 		logfile = args[1];
 		url2topicFile = args[2];
@@ -40,6 +41,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContentA1 {
 		clustWD = args[6];
 		profiWD = args[7];
 		evalFile = args[8];
+		*/
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
