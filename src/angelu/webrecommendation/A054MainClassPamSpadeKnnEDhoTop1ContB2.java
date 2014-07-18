@@ -31,17 +31,20 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB2 {
 		String clustWD = "/pam_DM_04_edit";
 		String profiWD = "/pam_DM_04_edit/spade1";
 		String evalFile = "/evaluation.txt";
-		/*
+		
 		preprocessingWD = args[0];
 		logfile = args[1];
 		url2topicFile = args[2];
-		databaseWD = args[3];
-		dmWD = args[4];
-		validationWD = args[5];
-		clustWD = args[6];
-		profiWD = args[7];
-		evalFile = args[8];
-		*/
+		urlSimilarityMatrix = args[3];
+		urlRelationMatrix = args[4];
+		clusterPartitionFile = args[5];
+		usage2contentFile = args[6];
+		databaseWD = args[7];
+		dmWD = args[8];
+		validationWD = args[9];
+		clustWD = args[10];
+		profiWD = args[11];
+		evalFile = args[12];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -94,8 +97,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB2 {
 		
 		// Parameters to play with
 		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
-		//int[] ks = {150};
-		int[] ks = {10};
+		int[] ks = {150};
 		//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
 		//float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
 		float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};

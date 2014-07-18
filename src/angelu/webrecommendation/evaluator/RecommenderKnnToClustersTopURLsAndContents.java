@@ -79,10 +79,6 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		// Enrichment
 		ArrayList<Integer> urlAL = this.applyEnrichment(url, urlDone);
 		
-		// KONTROLATU ERREPIKAPENAK
-		// SPADEko URL ezberdinei gertueneko berdina izatea
-		// BIDEAN URLak errepikatuak gerta daitezke, 
-		// beraz errepikapenak eman daitezke proposamenetan
 		
 		// Convert the final recommendations to usage URLs
 		ArrayList<String> recosFinal = new ArrayList<String>();
@@ -103,9 +99,12 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	
 	// AUXILIAR FUNCTIONS
 	
-	protected ArrayList<Integer> gehituUrlEzErrepikatua(int url1,int[] nearestURL,ArrayList<Integer> recomendations,boolean clusterrakEzDuAxola){
+	protected ArrayList<Integer> gehituUrlEzErrepikatua(
+			int url1,
+			int[] nearestURL,
+			ArrayList<Integer> recomendations,
+			boolean clusterrakEzDuAxola){
 		int kontagailua=0;
-		int[] nearestURL2=null;
 		
 		for(int i=0; i<=nearestURL.length-1;i++)
 		{	int GehitzekoUrla= nearestURL[i];
@@ -114,14 +113,14 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 				kontagailua++;}
 		}
 		if(kontagailua<nearestURL.length)
-		{nearestURL2=gertueneko_urla(url1, 100, clusterrakEzDuAxola);}
-		
-		for(int j=0; j<=nearestURL2.length-1;j++)
-		{	int GehitzekoUrla= nearestURL2[j];
-			if(!recomendations.contains(GehitzekoUrla))
-			{	recomendations.add(GehitzekoUrla);
-				kontagailua++;
-				if(kontagailua==nearestURL.length){break;}}
+		{	int[] nearestURL2=gertueneko_urla(url1, 100, clusterrakEzDuAxola);
+			for(int j=0; j<=nearestURL2.length-1;j++)
+			{	int GehitzekoUrla= nearestURL2[j];
+				if(!recomendations.contains(GehitzekoUrla))
+				{	recomendations.add(GehitzekoUrla);
+					kontagailua++;
+					if(kontagailua==nearestURL.length){break;}}
+			}
 		}
 				
 		
@@ -130,17 +129,17 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	protected int[] gertueneko_urla(int url1,int zenbat, boolean clusterrakEzDuAxola)
 	{	final float[] similarityak= new float[m_nURLs];
 		final Integer[] indizeak= new Integer[m_nURLs];
-		int[] gertuenekoURLak = new int[zenbat];
+		ArrayList<Integer> gertuenekoURLak = new ArrayList<Integer>();
 		
 		for (int j=0;j<=m_UrlSimilarityMatrix.length-1;j++)
 		{	similarityak[j]=m_UrlSimilarityMatrix[url1][j];
 			indizeak[j]=j;}
 		Integer[] min_max= ordenatumin_max(similarityak, indizeak);	
-		int tamaina=min_max.length-1;
+		int tamaina=min_max.length-2;
 	
 		if (clusterrakEzDuAxola)
 		{	for(int k=0; k<=zenbat-1;k++)
-			{	gertuenekoURLak[k]=min_max[tamaina];
+			{	gertuenekoURLak.add(k,min_max[tamaina]);
 				tamaina--;}}
 	
 		else
@@ -150,9 +149,17 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 				while(cl1==cl2)
 				{	tamaina--;
 					cl1=m_UrlClusteringDict.get(min_max[tamaina]);}
-				gertuenekoURLak[k]=min_max[tamaina];}}
+				gertuenekoURLak.add(k,min_max[tamaina]);
+				tamaina--;
+				if(tamaina<0){break;}}}
 	
-		return  gertuenekoURLak;
+		// convert to int[]
+		int[] gertuenekoURLak2 = new int[gertuenekoURLak.size()];
+		for(int i=0; i<gertuenekoURLak.size(); i++){
+			gertuenekoURLak2[i] = gertuenekoURLak.get(i);
+		}
+
+		return  gertuenekoURLak2;
 	}
 	
 	private Integer[] ordenatumin_max(final float[] data,final Integer[] idx )	
@@ -176,7 +183,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	  		{	for (int j=0; j<=urls.length-1;j++)
 	  			{ 	if(z!=j){
 	  					erlazioa=equal_different(urls[z], urls[j]);
-	  					if (erlazioa=="Equal")
+	  					if (erlazioa.equals("Equal"))
 	  					{	Equal_kop++;}
 	  					else
 	  					{	different_kop++;}}}}
@@ -194,7 +201,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	  		else
 	  		{	for (int h=0; h<=urls.length-2;h++)
 	  			{	erlazioa=equal_different(urls[h], urls[h+1]);
-	  				if (erlazioa=="Equal")
+	  				if (erlazioa.equals("Equal"))
 	  				{	Equal_kop++;}
 	  				else
 	  				{	different_kop++;}}
@@ -207,7 +214,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	
 	private String equal_different(int url1, int url2)
 	{	String erlazioa=m_UrlRelationMatrix[url1][url2];
-		if(erlazioa!="Equal" && erlazioa!="Disjoint")
+		if(!erlazioa.equals("Equal") && !erlazioa.equals("Disjoint"))
 		{	int cl1=m_UrlClusteringDict.get(url1);
 			int cl2=m_UrlClusteringDict.get(url2);
 			if (cl1==cl2)

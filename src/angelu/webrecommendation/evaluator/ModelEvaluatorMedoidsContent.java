@@ -163,7 +163,7 @@ public class ModelEvaluatorMedoidsContent
 		for(int i=0; i<linebyline.size(); i++){
 			String line = linebyline.get(i);
 			String[] lineA = line.split(";");
-			int urlIndex = Integer.valueOf(lineA[0]);
+			int urlIndex = Integer.valueOf(lineA[0]) - 1;
 			int clIndex = Integer.valueOf(lineA[1]);
 			if(!m_UrlClusteringDict.containsKey(urlIndex)){
 				m_UrlClusteringDict.put(urlIndex, clIndex);
