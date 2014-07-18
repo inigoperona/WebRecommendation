@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+
 import angelu.webrecommendation.converter.URLconverterUsaCon;
 import ehupatras.webrecommendation.recommender.RecommenderKnnToClustersTopURLs;
 
@@ -101,6 +102,30 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	
 	
 	// AUXILIAR FUNCTIONS
+	
+	protected ArrayList<Integer> gehituUrlEzErrepikatua(int url1,int[] nearestURL,ArrayList<Integer> recomendations,boolean clusterrakEzDuAxola){
+		int kontagailua=0;
+		int[] nearestURL2=null;
+		
+		for(int i=0; i<=nearestURL.length-1;i++)
+		{	int GehitzekoUrla= nearestURL[i];
+			if(!recomendations.contains(GehitzekoUrla))
+			{	recomendations.add(GehitzekoUrla);
+				kontagailua++;}
+		}
+		if(kontagailua<nearestURL.length)
+		{nearestURL2=gertueneko_urla(url1, 100, clusterrakEzDuAxola);}
+		
+		for(int j=0; j<=nearestURL2.length-1;j++)
+		{	int GehitzekoUrla= nearestURL2[j];
+			if(!recomendations.contains(GehitzekoUrla))
+			{	recomendations.add(GehitzekoUrla);
+				kontagailua++;
+				if(kontagailua==nearestURL.length){break;}}
+		}
+				
+		
+	return recomendations;}
 	
 	protected int[] gertueneko_urla(int url1,int zenbat, boolean clusterrakEzDuAxola)
 	{	final float[] similarityak= new float[m_nURLs];

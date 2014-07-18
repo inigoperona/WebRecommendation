@@ -43,22 +43,18 @@ public class RecommenderKnnToClustersTopURLsAndContentsB2
 		if(n_relation[0] >=n_relation[1])
 		{	//itzuli beharko nuke spurl4ren gertukoena, horretarako gertuko clusterra kalkulatuko duen programa egin behar dut
 			nearestURL= gertueneko_urla(url[3], 1, true);
-			for(int i=0; i<=nearestURL.length-1;i++){
-				recomendations.add(nearestURL[i]);}
+			recomendations=gehituUrlEzErrepikatua(url[3], nearestURL, recomendations, true);
 		 
 			nearestURL= gertueneko_urla(url[2], 1, true);
-			for(int i=0; i<=nearestURL.length-1;i++){
-				recomendations.add(nearestURL[i]);}}
+			recomendations=gehituUrlEzErrepikatua(url[2], nearestURL, recomendations, true);}
 		 
 		else
 		{	//nearest urls SPURL2
 			nearestURL= gertueneko_urla(url[1], 1, false);
-			for(int i=0; i<=nearestURL.length-1;i++){
-				recomendations.add(nearestURL[i]);}	
+			recomendations=gehituUrlEzErrepikatua(url[1], nearestURL, recomendations, false);	
 			//nearest urls SPURL2
 			nearestURL= gertueneko_urla(url[0], 1, false);
-			for(int i=0; i<=nearestURL.length-1;i++){
-				recomendations.add(nearestURL[i]);}}
+			recomendations=gehituUrlEzErrepikatua(url[0], nearestURL, recomendations, false);}
 		
 		return recomendations;
 	}
