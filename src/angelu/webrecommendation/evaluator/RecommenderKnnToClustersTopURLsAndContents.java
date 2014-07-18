@@ -64,11 +64,14 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 			url[j] = recContent;
 		}
 		// way done
-		int[] urlDone = new int[m_waydone.size()];
-		for(int j=0;j<m_waydone.size();j++){
+		int memory = 4;
+		int nWayDoneLastPart = m_waydone.size()>=memory ? 4 : m_waydone.size();
+		int[] urlDone = new int[nWayDoneLastPart];
+		int startpoint = m_waydone.size()-nWayDoneLastPart; 
+		for(int j=startpoint; j<m_waydone.size(); j++){
 			int wayUsage = Integer.valueOf(m_waydone.get(j));
 			int wayContent = m_conv.getContentURL(wayUsage);
-			urlDone[j] = Integer.valueOf(wayContent);
+			urlDone[j-startpoint] = Integer.valueOf(wayContent);
 		}
 		
 		
