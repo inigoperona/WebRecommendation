@@ -59,6 +59,33 @@ public class SequenceEvaluatorMedContent
 								m_UrlRelationMatrix,
 								m_UrlClusteringDict,
 								m_conv);
+		} else if(m_enrichStrategy.equals("ContentsA2")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsA2(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv);
+		} else if(m_enrichStrategy.equals("ContentsB1")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB1(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv);
+		} else if(m_enrichStrategy.equals("ContentsB2")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB2(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv);
 		}
 		
 		return recommender;

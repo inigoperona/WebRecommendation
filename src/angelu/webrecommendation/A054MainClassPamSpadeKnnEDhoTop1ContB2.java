@@ -12,7 +12,7 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidatio
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A054MainClassPamSpadeKnnEDhoTop1ContentA1 {
+public class A054MainClassPamSpadeKnnEDhoTop1ContB2 {
 
 	public static void main(String[] args) {
 		
@@ -167,7 +167,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContentA1 {
 				String resultInfo;
 				
 				// weighted by construction sequences (test sequences)
-				int[] nrecsWSTv = new int[]{2,3,4,5,10,20};
+				int[] nrecsWSTv = new int[]{4,5,10,20};
 				for(int ind=0; ind<nrecsWSTv.length; ind++ ){
 					int nrec = nrecsWSTv[ind];
 					// Write recommendations
@@ -175,7 +175,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContentA1 {
 					
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					modelev.setEsploitationParameters("ContentsA1", 
+					modelev.setEsploitationParameters("ContentsB2", 
 							urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
 					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
 					
@@ -188,7 +188,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContentA1 {
 				
 				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				modelev.setEsploitationParameters("ContentsA1",
+				modelev.setEsploitationParameters("ContentsB2",
 						urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
 				results = modelev.computeEvaluationVal("unbounded", -1, (long)0);
 				
@@ -200,14 +200,14 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContentA1 {
 				// TEST //
 				
 				// weighted by construction sequences (test sequences)
-				int[] nrecsWST = new int[]{2,3,4,5,10,20};
+				int[] nrecsWST = new int[]{4,5,10,20};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";
 					
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					modelev.setEsploitationParameters("ContentsA1",
+					modelev.setEsploitationParameters("ContentsB2",
 							urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
 					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					
@@ -220,7 +220,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContentA1 {
 				
 				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				modelev.setEsploitationParameters("ContentsA1",
+				modelev.setEsploitationParameters("ContentsB2",
 						urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
 				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 				
