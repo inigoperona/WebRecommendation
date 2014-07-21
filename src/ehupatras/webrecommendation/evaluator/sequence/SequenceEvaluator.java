@@ -153,9 +153,6 @@ public abstract class SequenceEvaluator {
 			list = m_recommender.getNextpossibleStepsWeightedEnrichWithStep1(nrecos, waydone);
 		}
 		for(int i=0; i<m_sequence.size(); i++){
-			// update the prediction indicators
-			this.computeStepMetrics(i, list);
-			
 			// if we want to write recommendations
 			// write the done recommendations in each step.
 			if(m_lineHeader!=null){
@@ -165,7 +162,7 @@ public abstract class SequenceEvaluator {
 						m_evalWriter.write(list.get(0));
 					}
 					for(int j=1; j<list.size(); j++){
-						m_evalWriter.write("," + list.get(1));
+						m_evalWriter.write("," + list.get(j));
 					}
 					m_evalWriter.write("\n");
 				} catch(IOException ex){
@@ -175,6 +172,9 @@ public abstract class SequenceEvaluator {
 					System.exit(1);
 				}
 			}
+			
+			// update the prediction indicators
+			this.computeStepMetrics(i, list);
 			
 			// do the step
 			String nextstep = m_sequence.get(i);

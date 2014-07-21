@@ -100,7 +100,8 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 		int[] ks = {150};
 		//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
 		//float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
-		float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};
+		//float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};
+		float[] seqweights = {0.20f};
 		float[][] rolesW = {{ 0f, 0f, 0f},
 				  			{ 0f, 0f, 0f},
 				  			{ 0f, 0f, 0f}};
@@ -169,7 +170,8 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 				String resultInfo;
 				
 				// weighted by construction sequences (test sequences)
-				int[] nrecsWSTv = new int[]{4,5,10,20};
+				//int[] nrecsWSTv = new int[]{4,5,10,20};
+				int[] nrecsWSTv = new int[]{4};
 				for(int ind=0; ind<nrecsWSTv.length; ind++ ){
 					int nrec = nrecsWSTv[ind];
 					// Write recommendations
@@ -185,6 +187,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 					System.out.print(results);
 				}
 			
+				/*
 				// unbounded
 				resultInfo = esperimentationStr2 + "_unbounded_val";
 				
@@ -196,13 +199,14 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 				
 				System.out.print(resultInfo + ",");
 				System.out.print(results);
-				
+				*/
 				
 				
 				// TEST //
 				
 				// weighted by construction sequences (test sequences)
-				int[] nrecsWST = new int[]{4,5,10,20};
+				//int[] nrecsWST = new int[]{4,5,10,20};
+				int[] nrecsWST = new int[]{4};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";
@@ -217,6 +221,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 					System.out.print(results);
 				}
 			
+				/*
 				// unbounded
 				resultInfo = esperimentationStr2 + "_unbounded_test";
 				
@@ -228,7 +233,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 				
 				System.out.print(resultInfo + ",");
 				System.out.print(results);
-				
+				*/				
 			}
 
 		}
