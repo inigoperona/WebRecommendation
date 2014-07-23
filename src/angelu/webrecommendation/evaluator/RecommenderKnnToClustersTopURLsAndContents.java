@@ -60,6 +60,10 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		// Recommendations
 		int[] url = new int[recosL.size()];
 		for(int j=recosL.size()-1;j>=0;j--){
+			// Put all recommendations in reverse order
+			// because afterwards the strategies takes 
+			// the SPADE's URLs 
+			// from the bottom to the top
 			int recUsage = Integer.valueOf(recosL.get(j));
 			int recContent = m_conv.getContentURL(recUsage);
 			url[j] = recContent;
