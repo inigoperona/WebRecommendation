@@ -59,7 +59,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		// Prepare the recommendations and the way done	
 		// Recommendations
 		int[] url = new int[recosL.size()];
-		for(int j=0;j<recosL.size();j++){
+		for(int j=recosL.size()-1;j>=0;j--){
 			int recUsage = Integer.valueOf(recosL.get(j));
 			int recContent = m_conv.getContentURL(recUsage);
 			url[j] = recContent;
@@ -85,8 +85,10 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		for(int i=0; i<urlAL.size(); i++){
 			int urlContent = urlAL.get(i);
 			int urlUsage = m_conv.getUsageURL(urlContent);
-			String urlStr = String.format("%0"+ m_leftZerosLen + "d", urlUsage);
+			if(urlUsage>0)
+			{String urlStr = String.format("%0"+ m_leftZerosLen + "d", urlUsage);
 			recosFinal.add(urlStr); 
+			}
 		}
 		
 		// return the new recommendations
