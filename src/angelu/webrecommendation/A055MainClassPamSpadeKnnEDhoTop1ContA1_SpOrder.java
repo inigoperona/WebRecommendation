@@ -12,7 +12,7 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidatio
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
+public class A055MainClassPamSpadeKnnEDhoTop1ContA1_SpOrder {
 
 	public static void main(String[] args) {
 		
@@ -135,8 +135,10 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 		try{
 			evalWriter = new BufferedWriter(new FileWriter(validationWD + evalFile));
 		} catch(IOException ex){
-			System.err.println("[angelu.webrecommendation.A053MainClassPamSpadeKnnEDholdoutTop05] " +
-					"Not possible to open the file: " + evalFile);
+			System.err.println(
+					"[angelu.webrecommendation." + 
+							"A054MainClassPamSpadeKnnEDhoTop1ContA1] " +
+					"Problems at opening the file: " + evalFile);
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
@@ -179,7 +181,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 					
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					modelev.setEsploitationParameters("ContentsB1", 
+					modelev.setEsploitationParameters("ContentsA1_SpOrder", 
 							urlSimilarityMatrix, urlRelationMatrix, usage2contentFile);
 					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
 					
@@ -193,7 +195,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 				
 				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				modelev.setEsploitationParameters("ContentsB1",
+				modelev.setEsploitationParameters("ContentsA1",
 						urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
 				results = modelev.computeEvaluationVal("unbounded", -1, (long)0);
 				
@@ -213,7 +215,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 					
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					modelev.setEsploitationParameters("ContentsB1",
+					modelev.setEsploitationParameters("ContentsA1_SpOrder",
 							urlSimilarityMatrix, urlRelationMatrix, usage2contentFile);
 					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					
@@ -227,7 +229,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 				
 				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				modelev.setEsploitationParameters("ContentsB1",
+				modelev.setEsploitationParameters("ContentsA1",
 						urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
 				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 				
@@ -242,7 +244,9 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 		try{
 			evalWriter.close();
 		} catch (IOException ex){
-			System.err.println("[[angelu.webrecommendation.A053MainClassPamSpadeKnnEDholdoutTop05]] " +
+			System.err.println(
+					"[angelu.webrecommendation." + 
+							"A054MainClassPamSpadeKnnEDhoTop1ContA1] " +
 					"Problems at closing the file: " + evalFile);
 			System.err.println(ex.getMessage());
 			System.exit(1);

@@ -4,11 +4,17 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
 import ehupatras.webrecommendation.structures.Website;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class ModelEvaluator {
 
@@ -35,8 +41,11 @@ public abstract class ModelEvaluator {
 	private float m_fmeasurebeta = (float)0.5;
 	// topic related parameters
 	private ArrayList<Integer> m_urlIds = null;
+		// topic1: based on url to topic distribution matrix
 	private int[] m_url2topic = null;
 	private float m_topicmatch = 0.5f;
+		// topic2: based on url clustering
+	protected HashMap<Integer,Integer> m_UrlClusteringDict = null;
 	// index pages
 	private int[] m_homepages = null;
 	
@@ -188,15 +197,24 @@ public abstract class ModelEvaluator {
 		float[] moPrA = new float[m_confusionPoints.length];
 		float[] moReA = new float[m_confusionPoints.length];
 		float[] moFmA = new float[m_confusionPoints.length];		
-		// TOPIC level metrics
-		float hitratioTop = 0f;
-		float clicksoonrationTop = 0f;
-		float[] prATop = new float[m_confusionPoints.length];
-		float[] reATop = new float[m_confusionPoints.length];
-		float[] fmATop = new float[m_confusionPoints.length];
-		float[] moPrATop = new float[m_confusionPoints.length];
-		float[] moReATop = new float[m_confusionPoints.length];
-		float[] moFmATop = new float[m_confusionPoints.length];
+		// TOPIC1 level metrics
+		float hitratioTop1 = 0f;
+		float clicksoonrationTop1 = 0f;
+		float[] prATop1 = new float[m_confusionPoints.length];
+		float[] reATop1 = new float[m_confusionPoints.length];
+		float[] fmATop1 = new float[m_confusionPoints.length];
+		float[] moPrATop1 = new float[m_confusionPoints.length];
+		float[] moReATop1 = new float[m_confusionPoints.length];
+		float[] moFmATop1 = new float[m_confusionPoints.length];
+		// TOPIC2 level metrics
+		float hitratioTop2 = 0f;
+		float clicksoonrationTop2 = 0f;
+		float[] prATop2 = new float[m_confusionPoints.length];
+		float[] reATop2 = new float[m_confusionPoints.length];
+		float[] fmATop2 = new float[m_confusionPoints.length];
+		float[] moPrATop2 = new float[m_confusionPoints.length];
+		float[] moReATop2 = new float[m_confusionPoints.length];
+		float[] moFmATop2 = new float[m_confusionPoints.length];
 		
 		// COUNT HOMEPAGE/INDEX ALWAYS CORRECT
 		// URL level metrics
@@ -261,7 +279,10 @@ public abstract class ModelEvaluator {
 			// carry out the evaluation
 			eval.setConfusionPoints(m_confusionPoints);
 			eval.setFmeasureBeta(m_fmeasurebeta);
-			eval.setTopicParameters(m_urlIds, m_url2topic, m_topicmatch);
+			eval.setTopicParameters(
+					m_urlIds, 
+					m_url2topic, m_topicmatch,
+					m_UrlClusteringDict);
 			eval.computeEvaluation(
 					mode, 
 					nrecos, seed, 
@@ -323,23 +344,42 @@ public abstract class ModelEvaluator {
 				moFmA[j] = moFmA[j] + moFmA2[j];
 			}
 			
-			// TOPIC level metrics - HONEST
+			// TOPIC1 level metrics
 			
-			hitratioTop = hitratioTop + eval.getHitRatioTop();
-			clicksoonrationTop = clicksoonrationTop + eval.getClickSoonRatioTop();
-			float[] prA2Top = eval.getPrecisionsTop();
-			float[] reA2Top = eval.getRecallsTop();
-			float[] fmA2Top = eval.getFmeasuresTop();
-			float[] moPrA2Top = eval.getModelPrecisionsTop();
-			float[] moReA2Top = eval.getModelRecallsTop();
-			float[] moFmA2Top = eval.getModelFmeasuresTop();
+			hitratioTop1 = hitratioTop1 + eval.getHitRatioTop1();
+			clicksoonrationTop1 = clicksoonrationTop1 + eval.getClickSoonRatioTop1();
+			float[] prA2Top1 = eval.getPrecisionsTop1();
+			float[] reA2Top1 = eval.getRecallsTop1();
+			float[] fmA2Top1 = eval.getFmeasuresTop1();
+			float[] moPrA2Top1 = eval.getModelPrecisionsTop1();
+			float[] moReA2Top1 = eval.getModelRecallsTop1();
+			float[] moFmA2Top1 = eval.getModelFmeasuresTop1();
 			for(int j=0; j<m_confusionPoints.length; j++){
-				prATop[j] = prATop[j] + prA2Top[j];
-				reATop[j] = reATop[j] + reA2Top[j];
-				fmATop[j] = fmATop[j] + fmA2Top[j];
-				moPrATop[j] = moPrATop[j] + moPrA2Top[j];
-				moReATop[j] = moReATop[j] + moReA2Top[j];
-				moFmATop[j] = moFmATop[j] + moFmA2Top[j];
+				prATop1[j] = prATop1[j] + prA2Top1[j];
+				reATop1[j] = reATop1[j] + reA2Top1[j];
+				fmATop1[j] = fmATop1[j] + fmA2Top1[j];
+				moPrATop1[j] = moPrATop1[j] + moPrA2Top1[j];
+				moReATop1[j] = moReATop1[j] + moReA2Top1[j];
+				moFmATop1[j] = moFmATop1[j] + moFmA2Top1[j];
+			}
+			
+			// TOPIC1 level metrics
+			
+			hitratioTop2 = hitratioTop2 + eval.getHitRatioTop2();
+			clicksoonrationTop2 = clicksoonrationTop2 + eval.getClickSoonRatioTop2();
+			float[] prA2Top2 = eval.getPrecisionsTop2();
+			float[] reA2Top2 = eval.getRecallsTop2();
+			float[] fmA2Top2 = eval.getFmeasuresTop2();
+			float[] moPrA2Top2 = eval.getModelPrecisionsTop2();
+			float[] moReA2Top2 = eval.getModelRecallsTop2();
+			float[] moFmA2Top2 = eval.getModelFmeasuresTop2();
+			for(int j=0; j<m_confusionPoints.length; j++){
+				prATop2[j] = prATop2[j] + prA2Top2[j];
+				reATop2[j] = reATop2[j] + reA2Top2[j];
+				fmATop2[j] = fmATop2[j] + fmA2Top2[j];
+				moPrATop2[j] = moPrATop2[j] + moPrA2Top2[j];
+				moReATop2[j] = moReATop2[j] + moReA2Top2[j];
+				moFmATop2[j] = moFmATop2[j] + moFmA2Top2[j];
 			}
 			
 			// URL level metrics - homepage always true
@@ -412,16 +452,28 @@ public abstract class ModelEvaluator {
 			moFmA[j] = moFmA[j] / (float)m_nFolds;
 		}
 		
-		// TOPIC level metrics - HONEST
-		hitratioTop = hitratioTop / (float)m_nFolds;
-		clicksoonrationTop = clicksoonrationTop / (float)m_nFolds;
+		// TOPIC1 level metrics
+		hitratioTop1 = hitratioTop1 / (float)m_nFolds;
+		clicksoonrationTop1 = clicksoonrationTop1 / (float)m_nFolds;
 		for(int j=0; j<m_confusionPoints.length; j++){
-			prATop[j] = prATop[j] / (float)m_nFolds;
-			reATop[j] = reATop[j] / (float)m_nFolds;
-			fmATop[j] = fmATop[j] / (float)m_nFolds;
-			moPrATop[j] = moPrATop[j] / (float)m_nFolds;
-			moReATop[j] = moReATop[j] / (float)m_nFolds;
-			moFmATop[j] = moFmATop[j] / (float)m_nFolds;
+			prATop1[j] = prATop1[j] / (float)m_nFolds;
+			reATop1[j] = reATop1[j] / (float)m_nFolds;
+			fmATop1[j] = fmATop1[j] / (float)m_nFolds;
+			moPrATop1[j] = moPrATop1[j] / (float)m_nFolds;
+			moReATop1[j] = moReATop1[j] / (float)m_nFolds;
+			moFmATop1[j] = moFmATop1[j] / (float)m_nFolds;
+		}
+		
+		// TOPIC2 level metrics
+		hitratioTop2 = hitratioTop2 / (float)m_nFolds;
+		clicksoonrationTop2 = clicksoonrationTop2 / (float)m_nFolds;
+		for(int j=0; j<m_confusionPoints.length; j++){
+			prATop2[j] = prATop2[j] / (float)m_nFolds;
+			reATop2[j] = reATop2[j] / (float)m_nFolds;
+			fmATop2[j] = fmATop2[j] / (float)m_nFolds;
+			moPrATop2[j] = moPrATop2[j] / (float)m_nFolds;
+			moReATop2[j] = moReATop2[j] / (float)m_nFolds;
+			moFmATop2[j] = moFmATop2[j] / (float)m_nFolds;
 		}
 		
 		// URL level metrics - homepage always true
@@ -474,16 +526,27 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmA[j];}
 		
-		// TOPIC level statistics - HONEST
-		results = results + "," + hitratioTop;
-		results = results + "," + clicksoonrationTop;
-		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + prATop[j];}
-		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + reATop[j];}
-		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + fmATop[j];}
-		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moPrATop[j];}
-		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReATop[j];}
-		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmATop[j];}
+		// TOPIC1 level statistics
+		results = results + "," + hitratioTop1;
+		results = results + "," + clicksoonrationTop1;
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + prATop1[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + reATop1[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + fmATop1[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moPrATop1[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReATop1[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmATop1[j];}
 
+		// TOPIC2 level statistics
+		results = results + "," + hitratioTop2;
+		results = results + "," + clicksoonrationTop2;
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + prATop2[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + reATop2[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + fmATop2[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moPrATop2[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReATop2[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmATop2[j];}
+
+		
 		// URL level statistics - homepage always true
 		results = results + "," + hitratio_OkHome;
 		results = results + "," + clicksoonration_OkHome;
@@ -542,19 +605,29 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mRe_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "_" + m_confusionPoints[j];}
 		
-		// TOPIC level metrics - HONEST
-		header = header + ",hitratioTop";
-		header = header + ",clicksoonrationTop";
-		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",prTop_" + m_confusionPoints[j];}
-		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",reTop_" + m_confusionPoints[j];}
-		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",fm" + m_fmeasurebeta + "Top_" + m_confusionPoints[j];}
-		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mPrTop_" + m_confusionPoints[j];}
-		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mReTop_" + m_confusionPoints[j];}
-		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "Top_" + m_confusionPoints[j];}
+		// TOPIC1 level metrics
+		header = header + ",hitratioTop1";
+		header = header + ",clicksoonrationTop1";
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",prTop1_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",reTop1_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",fm" + m_fmeasurebeta + "Top1_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mPrTop1_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mReTop1_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "Top1_" + m_confusionPoints[j];}
+		
+		// TOPIC1 level metrics
+		header = header + ",hitratioTop2";
+		header = header + ",clicksoonrationTop2";
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",prTop2_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",reTop2_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",fm" + m_fmeasurebeta + "Top2_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mPrTop2_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mReTop2_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "Top2_" + m_confusionPoints[j];}
 		
 		// URL level metrics - homepage always true
-		header = header + ",hitratio";
-		header = header + ",clicksoonration";
+		header = header + ",hitratioOkH";
+		header = header + ",clicksoonrationOkH";
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",prOkH_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",reOkH_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",fm" + m_fmeasurebeta + "OkH_" + m_confusionPoints[j];}
@@ -587,10 +660,65 @@ public abstract class ModelEvaluator {
 	public void setFmeasureBeta(float fmeasurebeta){
 		m_fmeasurebeta = fmeasurebeta;
 	}
-	public void setTopicParameters(ArrayList<Integer> urlIds, int[] url2topic, float topicmatch){
+	public void setTopicParameters(
+			ArrayList<Integer> urlIds, 
+			int[] url2topic, float topicmatch,
+			String urlClusteringDictFile){
 		m_urlIds = urlIds;
 		m_url2topic = url2topic;
 		m_topicmatch = topicmatch;
+		this.readUrlClustering(urlClusteringDictFile);
 	}
+	
+	
+	// read URL to cluster file
+	
+	private void readUrlClustering(String clusterPartitionFile){
+		ArrayList<String> linebyline = this.readLineByLine(clusterPartitionFile);
+		// parse the lines
+		m_UrlClusteringDict = new HashMap<Integer,Integer>();
+		for(int i=0; i<linebyline.size(); i++){
+			String line = linebyline.get(i);
+			String[] lineA = line.split(";");
+			int urlIndex = Integer.valueOf(lineA[0]) - 1;
+			int clIndex = Integer.valueOf(lineA[1]);
+			if(!m_UrlClusteringDict.containsKey(urlIndex)){
+				m_UrlClusteringDict.put(urlIndex, clIndex);
+			}
+		}
+	}
+	
+	private ArrayList<String> readLineByLine(String filename){
+		ArrayList<String> linebyline = new ArrayList<String>();
+		FileInputStream fstream = null;
+		try{
+			fstream = new FileInputStream(filename);
+		} catch (FileNotFoundException ex){
+			System.err.println(
+					"[angelu.webrecommendation.evaluator." +
+					"ModelEvaluatorMedoidsContent.readLineByLine] " +
+					"File not found: " + filename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		DataInputStream in = new DataInputStream(fstream);
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		String line;
+		try{
+			while ((line= br.readLine())!= null){
+				linebyline.add(line);
+			}
+			br.close();
+		} catch(IOException ex){
+			System.err.println(
+					"[angelu.webrecommendation.evaluator." +
+					"ModelEvaluatorMedoidsContent.readLineByLine] " +
+					"Problems reading the file: " + filename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		return linebyline;
+	}
+	
 	
 }

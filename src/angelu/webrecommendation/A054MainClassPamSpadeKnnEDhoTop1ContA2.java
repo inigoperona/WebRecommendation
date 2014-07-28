@@ -123,7 +123,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 		Object[] objA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
 		int[] url2topic = (int[])objA[1];
-		modelev.setTopicParameters(urlIDs, url2topic, 1f);
+		modelev.setTopicParameters(urlIDs, url2topic, 1f, clusterPartitionFile);
 				
 		
 		// PAM + MySPADE //
@@ -181,7 +181,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
 					modelev.setEsploitationParameters("ContentsA2", 
-							urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
+							urlSimilarityMatrix, urlRelationMatrix, usage2contentFile);
 					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
 					
 					System.out.print(resultInfo + ",");
@@ -215,7 +215,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
 					modelev.setEsploitationParameters("ContentsA2",
-							urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
+							urlSimilarityMatrix, urlRelationMatrix, usage2contentFile);
 					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					
 					System.out.print(resultInfo + ",");

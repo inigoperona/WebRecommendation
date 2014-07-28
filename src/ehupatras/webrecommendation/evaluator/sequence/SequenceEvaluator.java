@@ -3,6 +3,8 @@ package ehupatras.webrecommendation.evaluator.sequence;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderMarkovChain;
@@ -22,8 +24,11 @@ public abstract class SequenceEvaluator {
 	private int[] m_homepages = null;
 	// Topic's parameter
 	private ArrayList<Integer> m_urlIds = null;
+		// topic1: based on url to topic distribution
 	private int[] m_url2topic = null;
 	private float m_topicmatch = 0.5f;
+		// topic2: based on url clustering
+	private HashMap<Integer,Integer> m_UrlClusteringDict = null;
 	
 	// HONEST MODE
 	// URL level metrics
@@ -33,13 +38,20 @@ public abstract class SequenceEvaluator {
 	private float[] m_recall;
 	private float[] m_precisionModel;
 	private float[] m_recallModel;	
-	// TOPIC level metrics
-	private float m_hitscoreTop = 0;
-	private float m_clicksoonscoreTop = 0;
-	private float[] m_precisionTop;
-	private float[] m_recallTop;
-	private float[] m_precisionModelTop;
-	private float[] m_recallModelTop;
+	// TOPIC1 level metrics
+	private float m_hitscoreTop1 = 0;
+	private float m_clicksoonscoreTop1 = 0;
+	private float[] m_precisionTop1;
+	private float[] m_recallTop1;
+	private float[] m_precisionModelTop1;
+	private float[] m_recallModelTop1;
+	// TOPIC1 level metrics
+	private float m_hitscoreTop2 = 0;
+	private float m_clicksoonscoreTop2 = 0;
+	private float[] m_precisionTop2;
+	private float[] m_recallTop2;
+	private float[] m_precisionModelTop2;
+	private float[] m_recallModelTop2;
 	
 	// Index always correct
 	// URL level metrics
@@ -82,10 +94,14 @@ public abstract class SequenceEvaluator {
 		m_recall = new float[sequence.size()];
 		m_precisionModel = new float[sequence.size()];
 		m_recallModel = new float[sequence.size()];		
-		m_precisionTop = new float[sequence.size()];
-		m_recallTop = new float[sequence.size()];
-		m_precisionModelTop = new float[sequence.size()];
-		m_recallModelTop = new float[sequence.size()];
+		m_precisionTop1 = new float[sequence.size()];
+		m_recallTop1 = new float[sequence.size()];
+		m_precisionModelTop1 = new float[sequence.size()];
+		m_recallModelTop1 = new float[sequence.size()];
+		m_precisionTop2 = new float[sequence.size()];
+		m_recallTop2 = new float[sequence.size()];
+		m_precisionModelTop2 = new float[sequence.size()];
+		m_recallModelTop2 = new float[sequence.size()];
 		
 		m_precision_OkHome = new float[sequence.size()];
 		m_recall_OkHome = new float[sequence.size()];
@@ -227,10 +243,15 @@ public abstract class SequenceEvaluator {
 		this.computeClickSoonScore(stepIndex, recommendatios);
 		this.computeConfusionMatrix(stepIndex, recommendatios);
 		
-		// TOPIC level - HONEST
-		this.computeHitScoreTop(step, recommendatios);
-		this.computeClickSoonScoreTop(stepIndex, recommendatios);
-		this.computeConfusionMatrixTop(stepIndex, recommendatios);
+		// TOPIC1 level
+		this.computeHitScoreTop(step, recommendatios, true);
+		this.computeClickSoonScoreTop(stepIndex, recommendatios, true);
+		this.computeConfusionMatrixTop(stepIndex, recommendatios, true);
+		
+		// TOPIC2 level
+		this.computeHitScoreTop(step, recommendatios, false);
+		this.computeClickSoonScoreTop(stepIndex, recommendatios, false);
+		this.computeConfusionMatrixTop(stepIndex, recommendatios, false);
 		
 		// URL level - homepage always correct
 		this.computeHitScore_OkHome(step, recommendatios);
@@ -353,11 +374,40 @@ public abstract class SequenceEvaluator {
 	}
 	
 		
-	// TOPIC level functions - HONEST
+	// TOPIC GLOBAL functions.
 	
-	protected void computeHitScoreTop(
+	private int getTopicID(int urlID, boolean isTopic){
+		if(isTopic){
+			return this.getTopicID_1(urlID);
+		} else {
+			return this.getTopicID_2(urlID);
+		}
+	}
+	
+	private int getTopicID_1(int urlID){
+		int topicID = 0;
+		if(urlID==-1){
+			topicID = -1;
+		} else {
+			topicID = m_url2topic[urlID];
+		}
+		return topicID;
+	}
+	
+	private int getTopicID_2(int urlID){
+		int topicID = 0;
+		if(urlID==-1){
+			topicID = -1;
+		} else {
+			topicID = m_UrlClusteringDict.get(urlID);
+		}
+		return topicID;
+	}
+	
+	private void computeHitScoreTop(
 			String step, 
-			ArrayList<String> recommendatios){
+			ArrayList<String> recommendatios,
+			boolean isTopic){
 		// for each recommendations
 		boolean hitURL = false;
 		boolean hitTopic = false;
@@ -367,8 +417,8 @@ public abstract class SequenceEvaluator {
 			int recInt = Integer.valueOf(rec);
 			int stepInt2 = m_urlIds.indexOf(stepInt);
 			int recInt2 = m_urlIds.indexOf(recInt);
-			int stepTop = stepInt2==-1 ? -1 : m_url2topic[stepInt2];
-			int recTop = recInt2==-1 ? -1 : m_url2topic[recInt2];
+			int stepTop = this.getTopicID(stepInt2, isTopic);
+			int recTop = this.getTopicID(recInt2, isTopic);
 			
 			if(stepInt == recInt){
 				hitURL = true;
@@ -383,28 +433,37 @@ public abstract class SequenceEvaluator {
 		
 		// update the m_hitscoreTop
 		if(hitURL){
-			m_hitscoreTop = m_hitscoreTop + 1f;
+			if(isTopic){
+				m_hitscoreTop1 = m_hitscoreTop1 + 1f;
+			} else {
+				m_hitscoreTop2 = m_hitscoreTop2 + 1f;
+			}
 		} else if(hitTopic){
-			m_hitscoreTop = m_hitscoreTop + m_topicmatch;
+			if(isTopic){
+				m_hitscoreTop1 = m_hitscoreTop1 + m_topicmatch;
+			} else {
+				m_hitscoreTop2 = m_hitscoreTop2 + m_topicmatch;
+			}
 		}
-	}	
+	}
 	
-	protected void computeClickSoonScoreTop(
+	private void computeClickSoonScoreTop(
 			int stepIndex,
-			ArrayList<String> recommendatios){
+			ArrayList<String> recommendatios,
+			boolean isTopic){
 		boolean hitURL = false;
 		boolean hitTopic = false;		
 		for(int i=0; i<recommendatios.size(); i++){
 			String onereco = recommendatios.get(i);
 			int onerecoInt = Integer.valueOf(onereco);
 			int onerecoInt2 = m_urlIds.indexOf(onerecoInt);
-			int onerecoTop = onerecoInt2==-1 ? -1 : m_url2topic[onerecoInt2];
+			int onerecoTop = this.getTopicID(onerecoInt2, isTopic);
 			
 			for(int j=stepIndex; j<m_sequenceURL.size(); j++){
 				String realstep = m_sequenceURL.get(j);
 				int realstepInt = Integer.valueOf(realstep);
 				int realstepInt2 = m_urlIds.indexOf(realstepInt);
-				int realstepTop = realstepInt2==-1 ? -1 : m_url2topic[realstepInt2];
+				int realstepTop = this.getTopicID(realstepInt2, isTopic);
 				
 				if(onerecoInt == realstepInt){
 					hitURL = true;
@@ -421,28 +480,48 @@ public abstract class SequenceEvaluator {
 		
 		// update the m_clicksoonscoreTop
 		if(hitURL){
-			m_clicksoonscoreTop = m_clicksoonscoreTop + 1f;
+			if(isTopic){
+				m_clicksoonscoreTop1 = m_clicksoonscoreTop1 + 1f;
+			} else {
+				m_clicksoonscoreTop2 = m_clicksoonscoreTop2 + 1f;
+			}
 		} else if(hitTopic){
-			m_clicksoonscoreTop = m_clicksoonscoreTop + m_topicmatch;
+			if(isTopic){
+				m_clicksoonscoreTop1 = m_clicksoonscoreTop1 + m_topicmatch;
+			} else {
+				m_clicksoonscoreTop2 = m_clicksoonscoreTop2 + m_topicmatch;
+			}
 		}
-	}	
+	}
 	
-	protected void computeConfusionMatrixTop(
+	private void computeConfusionMatrixTop(
 			int stepIndex, 
-			ArrayList<String> recommendatios){
-		float pr = this.computePrecisionTop(stepIndex, recommendatios);
-		float re = this.computeRecallTop(stepIndex, recommendatios);
-		m_precisionTop[stepIndex] = pr;
-		m_recallTop[stepIndex] = re;
-		float prModel = this.computePrecisionTop(0, recommendatios);
-		float reModel = this.computeRecallTop(0, recommendatios);
-		m_precisionModelTop[stepIndex] = prModel;
-		m_recallModelTop[stepIndex] = reModel;
-	}	
+			ArrayList<String> recommendatios,
+			boolean isTopic){
+		float pr = this.computePrecisionTop(stepIndex, recommendatios, isTopic);
+		float re = this.computeRecallTop(stepIndex, recommendatios, isTopic);
+		if(isTopic){
+			m_precisionTop1[stepIndex] = pr;
+			m_recallTop1[stepIndex] = re;
+		} else {
+			m_precisionTop2[stepIndex] = pr;
+			m_recallTop2[stepIndex] = re;
+		}
+		float prModel = this.computePrecisionTop(0, recommendatios, isTopic);
+		float reModel = this.computeRecallTop(0, recommendatios, isTopic);
+		if(isTopic){
+			m_precisionModelTop1[stepIndex] = prModel;
+			m_recallModelTop1[stepIndex] = reModel;
+		} else {
+			m_precisionModelTop2[stepIndex] = prModel;
+			m_recallModelTop2[stepIndex] = reModel;
+		}
+	}
 	
 	private float computePrecisionTop(
 			int stepIndex, 
-			ArrayList<String> recommendatios){
+			ArrayList<String> recommendatios,
+			boolean isTopic){
 		float prTP = 0;
 		float prFP = 0;
 		
@@ -454,13 +533,13 @@ public abstract class SequenceEvaluator {
 			String onereco = recommendatios.get(i);
 			int onerecoInt = Integer.valueOf(onereco);
 			int onerecoInt2 = m_urlIds.indexOf(onerecoInt);
-			int onerecoTop =  onerecoInt2==-1 ? -1 : m_url2topic[onerecoInt2];
+			int onerecoTop =  this.getTopicID(onerecoInt2, isTopic);
 			
 			for(int j=stepIndex; j<m_sequenceURL.size(); j++){
 				String realstep = m_sequenceURL.get(j);
 				int realstepInt = Integer.valueOf(realstep);
 				int realstepInt2 = m_urlIds.indexOf(realstepInt);
-				int realstepTop = realstepInt2==-1 ? -1 : m_url2topic[realstepInt2];
+				int realstepTop = this.getTopicID(realstepInt2, isTopic);
 				
 				if(onerecoInt == realstepInt){
 					hitURL = true;
@@ -491,7 +570,8 @@ public abstract class SequenceEvaluator {
 	
 	private float computeRecallTop(
 			int stepIndex, 
-			ArrayList<String> recommendatios){
+			ArrayList<String> recommendatios,
+			boolean isTopic){
 		float reTP = 0;
 		float reFN = 0;
 		
@@ -503,13 +583,13 @@ public abstract class SequenceEvaluator {
 			String realstep = m_sequenceURL.get(i);
 			int realstepInt = Integer.valueOf(realstep);
 			int realstepInt2 = m_urlIds.indexOf(realstepInt);
-			int realstepTop = realstepInt2==-1 ? -1 : m_url2topic[realstepInt2];
+			int realstepTop = this.getTopicID(realstepInt2, isTopic);
 			
 			for(int j=0; j<recommendatios.size(); j++){
 				String onereco = recommendatios.get(j);
 				int onerecoInt = Integer.valueOf(onereco);
 				int onerecoInt2 = m_urlIds.indexOf(onerecoInt);
-				int onerecoTop =  onerecoInt2==-1 ? -1 : m_url2topic[onerecoInt2];
+				int onerecoTop =  this.getTopicID(onerecoInt2, isTopic);
 				
 				if(realstepInt == onerecoInt){
 					hitURL = true;
@@ -537,7 +617,7 @@ public abstract class SequenceEvaluator {
 			return reTP/(reTP+reFN);
 		}
 	}
-	
+
 	
 	
 	
@@ -883,6 +963,7 @@ public abstract class SequenceEvaluator {
 	
 	
 	
+	
 	// GET parameters/metrics of this class	
 	public float getNumberOfRecommendationsRatio(){
 		return (float)m_numberOfRecommendations / (float)m_sequence.size();
@@ -967,62 +1048,121 @@ public abstract class SequenceEvaluator {
 	
 	
 	
-	// TOPIC level metrics - HONEST	
-	public void setTopicParameters(ArrayList<Integer> urlIds, int[] url2topic, float topicmatch){
+	// TOPIC level metrics	
+	public void setTopicParameters(
+			ArrayList<Integer> urlIds, 
+			int[] url2topic, float topicmatch,
+			HashMap<Integer,Integer> urlClusteringDict){
 		m_urlIds = urlIds;
 		m_url2topic = url2topic;
 		m_topicmatch = topicmatch;
+		m_UrlClusteringDict = urlClusteringDict;
+	}
+	
+	// topic1: based on URL to topic distribution matrix
+	public float getHitRatioTop1(){
+		return (float)m_hitscoreTop1/(float)m_sequence.size();
 	}	
-	public float getHitRatioTop(){
-		return (float)m_hitscoreTop/(float)m_sequence.size();
+	public float getClickSoonRatioTop1(){
+		return (float)m_clicksoonscoreTop1/(float)m_sequence.size();
 	}	
-	public float getClickSoonRatioTop(){
-		return (float)m_clicksoonscoreTop/(float)m_sequence.size();
+	public float[] getPrecissionsTop1(){
+		return m_precisionTop1;
 	}	
-	public float[] getPrecissionsTop(){
-		return m_precisionTop;
+	public float[] getRecallsTop1(){
+		return m_recallTop1;
 	}	
-	public float[] getRecallsTop(){
-		return m_recallTop;
+	public float[] getPrecissionsModelTop1(){
+		return m_precisionModelTop1;
 	}	
-	public float[] getPrecissionsModelTop(){
-		return m_precisionModelTop;
+	public float[] getRecallsModelTop1(){
+		return m_recallModelTop1;
 	}	
-	public float[] getRecallsModelTop(){
-		return m_recallModelTop;
+	public float[] getFmeasuresTop1(float beta){
+		return this.getFmeasures(beta, m_precisionTop1, m_recallTop1);		
 	}	
-	public float[] getFmeasuresTop(float beta){
-		return this.getFmeasures(beta, m_precisionTop, m_recallTop);		
+	public float[] getFmeasuresModelTop1(float beta){		
+		return this.getFmeasures(beta, m_precisionModelTop1, m_recallModelTop1);		
 	}	
-	public float[] getFmeasuresModelTop(float beta){		
-		return this.getFmeasures(beta, m_precisionModelTop, m_recallModelTop);		
-	}	
-	public float getPrecisionTopAtPoint(float point){
+	public float getPrecisionTopAtPoint1(float point){
 		int index = this.getPosition(point);
-		return m_precisionTop[index];
+		return m_precisionTop1[index];
 	}	
-	public float getRecallTopAtPoint(float point){
+	public float getRecallTopAtPoint1(float point){
 		int index = this.getPosition(point);
-		return m_recallTop[index];
+		return m_recallTop1[index];
 	}	
-	public float getFmeasureTopAtPoint(float beta, float point){
-		float[] fmeasure = this.getFmeasuresTop(beta);
+	public float getFmeasureTopAtPoint1(float beta, float point){
+		float[] fmeasure = this.getFmeasuresTop1(beta);
 		int index = this.getPosition(point);
 		return fmeasure[index];
 	}	
-	public float getPrecisionModelTopAtPoint(float point){
+	public float getPrecisionModelTopAtPoint1(float point){
 		int index = this.getPosition(point);
-		return m_precisionModelTop[index];
+		return m_precisionModelTop1[index];
 	}	
-	public float getRecallModelTopAtPoint(float point){
+	public float getRecallModelTopAtPoint1(float point){
 		int index = this.getPosition(point);
-		return m_recallModelTop[index];
+		return m_recallModelTop1[index];
 	}	
-	public float getFmeasureModelTopAtPoint(float beta, float point){
-		float[] fmeasure = this.getFmeasuresModelTop(beta);
+	public float getFmeasureModelTopAtPoint1(float beta, float point){
+		float[] fmeasure = this.getFmeasuresModelTop1(beta);
 		int index = this.getPosition(point);
 		return fmeasure[index];
 	}
+	
+	// topic2: based on URL clustering
+	public float getHitRatioTop2(){
+		return (float)m_hitscoreTop2/(float)m_sequence.size();
+	}
+	public float getClickSoonRatioTop2(){
+		return (float)m_clicksoonscoreTop2/(float)m_sequence.size();
+	}
+	public float[] getPrecissionsTop2(){
+		return m_precisionTop2;
+	}	
+	public float[] getRecallsTop2(){
+		return m_recallTop2;
+	}	
+	public float[] getPrecissionsModelTop2(){
+		return m_precisionModelTop2;
+	}
+	public float[] getRecallsModelTop2(){
+		return m_recallModelTop2;
+	}	
+	public float[] getFmeasuresTop2(float beta){
+		return this.getFmeasures(beta, m_precisionTop2, m_recallTop2);		
+	}	
+	public float[] getFmeasuresModelTop2(float beta){		
+		return this.getFmeasures(beta, m_precisionModelTop2, m_recallModelTop2);		
+	}	
+	public float getPrecisionTopAtPoint2(float point){
+		int index = this.getPosition(point);
+		return m_precisionTop2[index];
+	}	
+	public float getRecallTopAtPoint2(float point){
+		int index = this.getPosition(point);
+		return m_recallTop2[index];
+	}	
+	public float getFmeasureTopAtPoint2(float beta, float point){
+		float[] fmeasure = this.getFmeasuresTop2(beta);
+		int index = this.getPosition(point);
+		return fmeasure[index];
+	}	
+	public float getPrecisionModelTopAtPoint2(float point){
+		int index = this.getPosition(point);
+		return m_precisionModelTop2[index];
+	}	
+	public float getRecallModelTopAtPoint2(float point){
+		int index = this.getPosition(point);
+		return m_recallModelTop2[index];
+	}	
+	public float getFmeasureModelTopAtPoint2(float beta, float point){
+		float[] fmeasure = this.getFmeasuresModelTop2(beta);
+		int index = this.getPosition(point);
+		return fmeasure[index];
+	}
+	
 	
 	
 	

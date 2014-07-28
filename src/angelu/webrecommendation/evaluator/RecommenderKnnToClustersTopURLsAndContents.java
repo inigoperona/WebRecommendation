@@ -56,16 +56,23 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		ArrayList<Integer> clustersL = (ArrayList<Integer>)objA[2];
 		ArrayList<Float> distsL = (ArrayList<Float>)objA[3];
 		
+		// order the recommendations
+		final float[] sups = new float[recosL.size()];
+		for(int i=0; i<supportL.size(); i++){
+			sups[i] = (float)supportL.get(i);
+		}
+		ArrayList<Integer> recosL2 = this.orderRecommendations(sups, recosL);
+		
 		// Prepare the recommendations and the way done	
 		// Recommendations
 		int[] url = new int[recosL.size()];
 		int ind = 0;
-		for(int j=recosL.size()-1; j>=0; j--){
+		for(int j=recosL2.size()-1; j>=0; j--){
 			// Put all recommendations in reverse order
 			// because afterwards the strategies takes 
 			// the SPADE's URLs 
 			// from the bottom to the top
-			int recUsage = Integer.valueOf(recosL.get(j));
+			int recUsage = recosL2.get(j);
 			int recContent = m_conv.getContentURL(recUsage);
 			url[ind] = recContent;
 			ind++;
@@ -103,6 +110,31 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	
 	public abstract ArrayList<Integer> applyEnrichment(int[] url, int[] urlDone);
 	
+	public ArrayList<Integer> orderRecommendations(final float[] supports, ArrayList<String> recos){
+		ArrayList<Integer> recosAL = new ArrayList<Integer>();
+		for(int i=0; i<recos.size(); i++){
+			int val = Integer.valueOf(recos.get(i));
+			recosAL.add(val);
+		}
+		return recosAL;
+	}
+	
+	public ArrayList<Integer> orderRecommendations_SpOrder(final float[] supports, ArrayList<String> recos){
+		final Integer[] idx = new Integer[recos.size()];
+		for(int i=0; i<recos.size(); i++){
+			int val = Integer.valueOf(recos.get(i));
+			idx[i] = val;
+		}
+
+		Integer[] recosI = this.ordenatumin_max2(supports, idx);
+		
+		ArrayList<Integer> recosAL = new ArrayList<Integer>();
+		for(int i=recosI.length-1; i>=0; i--){
+			recosAL.add(recosI[i]);
+		}
+		
+		return recosAL;
+	}
 	
 	
 	// AUXILIAR FUNCTIONS
@@ -178,6 +210,19 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	        return Float.compare(data[o1], data[o2]);}});
 	
 		return idx;
+	}
+	
+	private Integer[] ordenatumin_max2(float[] sups, Integer[] recos)	{
+		Integer[] idx = new Integer[recos.length];
+		for(int i=0; i<idx.length; i++){ idx[i] = i; }
+		Integer[] orderIdx = this.ordenatumin_max(sups, idx);
+		
+		Integer[] recosOrd = new Integer[orderIdx.length];
+		for(int i=0; i<orderIdx.length; i++){
+			recosOrd[i] = recos[orderIdx[i]]; 
+		}
+		
+		return recosOrd;
 	}
 	
 	protected int[] number_of_Relation (int[] urls, boolean SpDa)

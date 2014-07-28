@@ -12,7 +12,7 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidatio
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
+public class A055MainClassPamSpadeKnnEDhoTop1ContA2_SpOrder {
 
 	public static void main(String[] args) {
 		
@@ -21,9 +21,9 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
-		String urlSimilarityMatrix = "contentEnrichment/relations/ResSimilarity.txt";
-		String urlRelationMatrix = "contentEnrichment/relations/ResRelations.txt";
-		String clusterPartitionFile = "contentEnrichment/clusterPartitions/ClusterPartitionModua0.txt";
+		String urlSimilarityMatrix = "contentEnrichment/ResultadosTestuHutsa/ResSimilarity.txt";
+		String urlRelationMatrix = "contentEnrichment/ResultadosTestuHutsa/ResRelations.txt";
+		String clusterPartitionFile = "contentEnrichment/clusterPartitions/ClusterPartitionTestuHutsa.txt";
 		String usage2contentFile = "convert_UrlIDs_content2usage/usa2cont.csv";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
@@ -31,7 +31,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 		String clustWD = "/pam_DM_04_edit";
 		String profiWD = "/pam_DM_04_edit/spade1";
 		String evalFile = "/evaluation.txt";
-		
+
 		preprocessingWD = args[0];
 		logfile = args[1];
 		url2topicFile = args[2];
@@ -45,6 +45,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 		clustWD = args[10];
 		profiWD = args[11];
 		evalFile = args[12];
+	
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -179,7 +180,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 					
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					modelev.setEsploitationParameters("ContentsB1", 
+					modelev.setEsploitationParameters("ContentsA2_SpOrder", 
 							urlSimilarityMatrix, urlRelationMatrix, usage2contentFile);
 					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
 					
@@ -193,7 +194,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 				
 				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				modelev.setEsploitationParameters("ContentsB1",
+				modelev.setEsploitationParameters("ContentsA2",
 						urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
 				results = modelev.computeEvaluationVal("unbounded", -1, (long)0);
 				
@@ -213,7 +214,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 					
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					modelev.setEsploitationParameters("ContentsB1",
+					modelev.setEsploitationParameters("ContentsA2_SpOrder",
 							urlSimilarityMatrix, urlRelationMatrix, usage2contentFile);
 					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					
@@ -227,13 +228,13 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 				
 				modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				modelev.setEsploitationParameters("ContentsB1",
+				modelev.setEsploitationParameters("ContentsA2",
 						urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
 				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
 				
 				System.out.print(resultInfo + ",");
 				System.out.print(results);
-				*/
+				*/				
 			}
 
 		}

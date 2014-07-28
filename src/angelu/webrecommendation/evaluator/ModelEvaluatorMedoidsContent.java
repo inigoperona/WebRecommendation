@@ -26,7 +26,6 @@ public class ModelEvaluatorMedoidsContent
 	private int m_nURLs = 0;
 	private float[][] m_UrlSimilarityMatrix = null;
 	private String[][] m_UrlRelationMatrix = null;
-	private HashMap<Integer,Integer> m_UrlClusteringDict = null;
 	private URLconverterUsaCon m_conv = null;
 	
 	
@@ -67,12 +66,10 @@ public class ModelEvaluatorMedoidsContent
 			String selectedEnrichementStrategy,
 			String resSimilarityFile,
 			String resRelationsFile,
-			String clusterPartitionFile,
 			String m_usage2contentFile){
 		m_enrichementStrategy = selectedEnrichementStrategy;
 		this.readSimilarityMatrix(resSimilarityFile);
 		this.readRelationsMatrix(resRelationsFile);
-		this.readUrlClustering(clusterPartitionFile);
 		m_nURLs = m_UrlSimilarityMatrix.length;
 		m_conv = new URLconverterUsaCon(m_usage2contentFile);
 	}
@@ -152,21 +149,6 @@ public class ModelEvaluatorMedoidsContent
 			String[] lineA = line.split(";");
 			for(int j=0; j<lineA.length; j++){
 				m_UrlRelationMatrix[i][j] = lineA[j]; 
-			}
-		}
-	}
-	
-	private void readUrlClustering(String clusterPartitionFile){
-		ArrayList<String> linebyline = this.readLineByLine(clusterPartitionFile);
-		// parse the lines
-		m_UrlClusteringDict = new HashMap<Integer,Integer>();
-		for(int i=0; i<linebyline.size(); i++){
-			String line = linebyline.get(i);
-			String[] lineA = line.split(";");
-			int urlIndex = Integer.valueOf(lineA[0]) - 1;
-			int clIndex = Integer.valueOf(lineA[1]);
-			if(!m_UrlClusteringDict.containsKey(urlIndex)){
-				m_UrlClusteringDict.put(urlIndex, clIndex);
 			}
 		}
 	}

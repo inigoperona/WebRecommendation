@@ -17,15 +17,30 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffix {
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
+		String urlSimilarityMatrix = "contentEnrichment/relations/ResSimilarity.txt";
+		String urlRelationMatrix = "contentEnrichment/relations/ResRelations.txt";
+		String clusterPartitionFile = "contentEnrichment/clusterPartitions/ClusterPartitionModua0.txt";
+		String usage2contentFile = "convert_UrlIDs_content2usage/usa2cont.csv";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
+		String clustWD = "/pam_DM_04_edit";
+		String profiWD = "/pam_DM_04_edit/spade1";
+		String evalFile = "/evaluation.txt";
+		
 		preprocessingWD = args[0];
 		logfile = args[1];
 		url2topicFile = args[2];
-		databaseWD = args[3];
-		dmWD = args[4];
-		validationWD = args[5];
+		urlSimilarityMatrix = args[3];
+		urlRelationMatrix = args[4];
+		clusterPartitionFile = args[5];
+		usage2contentFile = args[6];
+		databaseWD = args[7];
+		dmWD = args[8];
+		validationWD = args[9];
+		clustWD = args[10];
+		profiWD = args[11];
+		evalFile = args[12];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -84,7 +99,7 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffix {
 		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
-		modelev.setTopicParameters(urlIDs, url2topic, 0.5f);
+		modelev.setTopicParameters(urlIDs, url2topic, 0.5f, clusterPartitionFile);
 		
 		// Results' header
 		System.out.print("options," + modelev.getEvaluationHeader());
