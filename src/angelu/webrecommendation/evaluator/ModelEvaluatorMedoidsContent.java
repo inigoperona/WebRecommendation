@@ -118,7 +118,7 @@ public class ModelEvaluatorMedoidsContent
 			String line = linebyline.get(i);
 			String[] lineA = line.split(";");
 			for(int j=0; j<lineA.length; j++){
-				m_UrlSimilarityMatrix[i][j] = this.parseToFloat(lineA[j], ','); 
+				m_UrlSimilarityMatrix[i][j] = this.parseToFloat(lineA[j], '.'); 
 			}
 		} 
 	}

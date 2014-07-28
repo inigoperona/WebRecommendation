@@ -39,7 +39,7 @@ public class RecommenderKnnToClustersTopURLsAndContentsA1
 	private ArrayList<Integer> a1_Proposamena(int[] url, int[] urlDone){ 
 		ArrayList<Integer> recomendations= new ArrayList<Integer>();
 		int[] nearestURL;
-		int[] n_relation=number_of_Relation(url,true);
+		int[] n_relation=number_of_Relation(urlDone,false);
 		
 		if(urlDone.length<=1){
 			for(int i=0; i<url.length; i++){

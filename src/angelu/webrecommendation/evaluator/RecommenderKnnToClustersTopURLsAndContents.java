@@ -59,14 +59,16 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		// Prepare the recommendations and the way done	
 		// Recommendations
 		int[] url = new int[recosL.size()];
-		for(int j=recosL.size()-1;j>=0;j--){
+		int ind = 0;
+		for(int j=recosL.size()-1; j>=0; j--){
 			// Put all recommendations in reverse order
 			// because afterwards the strategies takes 
 			// the SPADE's URLs 
 			// from the bottom to the top
 			int recUsage = Integer.valueOf(recosL.get(j));
 			int recContent = m_conv.getContentURL(recUsage);
-			url[j] = recContent;
+			url[ind] = recContent;
+			ind++;
 		}
 		// way done
 		int memory = 4;
@@ -199,7 +201,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	  	}
 	  	else
 	  	{	//hemen nabigazioaren asuntoakin hasi beharko nintzen number of relation honetan bakarrik 3 erlazio begiratzen dira.
-	  		if(urls.length==1)
+	  		if(urls.length<=1)
 	  		{	kontagailua[0]=0;
 	  			kontagailua[1]=0;
 	  			return kontagailua;}		

@@ -36,7 +36,7 @@ public class RecommenderKnnToClustersTopURLsAndContentsA2
 	{	ArrayList<Integer> recomendations= new ArrayList<Integer>();
 		int[] nearestURL;
 		
-		int[] n_relation=number_of_Relation(url,true);
+		int[] n_relation=number_of_Relation(urlDone,false);
 		recomendations.add(url[2]);
 		recomendations.add(url[3]);
 		
