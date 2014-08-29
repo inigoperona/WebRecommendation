@@ -68,6 +68,15 @@ public class SequenceEvaluatorMedContent
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv);
+		} else if(m_enrichStrategy.equals("ContentsA2v2")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsA2v2(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv);
 		} else if(m_enrichStrategy.equals("ContentsB1")){
 			recommender = new RecommenderKnnToClustersTopURLsAndContentsB1(
 					m_medoids, m_gmedoids, m_recos,
@@ -79,6 +88,15 @@ public class SequenceEvaluatorMedContent
 					m_conv);
 		} else if(m_enrichStrategy.equals("ContentsB2")){
 			recommender = new RecommenderKnnToClustersTopURLsAndContentsB2(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv);
+		} else if(m_enrichStrategy.equals("ContentsB2v2")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB2v2(
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
@@ -105,6 +123,15 @@ public class SequenceEvaluatorMedContent
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv);
+		} else if(m_enrichStrategy.equals("ContentsA2v2_SpOrder")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsA2v2_SpOrder(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv);
 		} else if(m_enrichStrategy.equals("ContentsB1_SpOrder")){
 			recommender = new RecommenderKnnToClustersTopURLsAndContentsB1_SpOrder(
 					m_medoids, m_gmedoids, m_recos,
@@ -123,7 +150,17 @@ public class SequenceEvaluatorMedContent
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv);
+		} else if(m_enrichStrategy.equals("ContentsB2v2_SpOrder")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB2v2_SpOrder(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv);
 		}
+		
 		
 		return recommender;
 	}
