@@ -36,10 +36,12 @@ public abstract class TestSetEvaluator {
 	private float[] m_precision;
 	private float[] m_recall;
 	private float[] m_fmeasure;
+	private float[] m_cosineSimilarity;
 	private float[] m_ModelPrecision;
 	private float[] m_ModelRecall;
 	private float[] m_ModelFmeasure;
-	private float m_cosineSimilarity = 0f;
+	private float[] m_ModelCosineSimilarity;
+	
 	// Topic1 level metrics
 	private float m_hitratioTop1 = 0f;
 	private float m_clicksoonratioTop1 = 0f;
@@ -100,9 +102,11 @@ public abstract class TestSetEvaluator {
 		m_precision = new float[m_points.length];
 		m_recall = new float[m_points.length];
 		m_fmeasure = new float[m_points.length];
+		m_cosineSimilarity = new float[m_points.length];
 		m_ModelPrecision = new float[m_points.length];
 		m_ModelRecall = new float[m_points.length];
-		m_ModelFmeasure = new float[m_points.length];		
+		m_ModelFmeasure = new float[m_points.length];
+		m_ModelCosineSimilarity = new float[m_points.length];
 		m_precisionTop1 = new float[m_points.length];
 		m_recallTop1 = new float[m_points.length];
 		m_fmeasureTop1 = new float[m_points.length];
@@ -159,10 +163,11 @@ public abstract class TestSetEvaluator {
 		float[] precission = new float[m_points.length];
 		float[] recall = new float[m_points.length];
 		float[] fmeasure = new float[m_points.length];
+		float[] cosineSim = new float[m_points.length];
 		float[] modelPrecision = new float[m_points.length];
 		float[] modelRecall = new float[m_points.length];
 		float[] modelFmeasure = new float[m_points.length];
-		float cosineSim = 0f;
+		float[] cosineSimModel = new float[m_points.length];
 		
 		// TOPIC level metrics
 		float hitratioTop1 = 0f;
@@ -283,11 +288,12 @@ public abstract class TestSetEvaluator {
 				precission[j]     = precission[j]     + seqEv.getPrecisionAtPoint(m_points[j]);
 				recall[j]         = recall[j]         + seqEv.getRecallAtPoint(m_points[j]);
 				fmeasure[j]       = fmeasure[j]       + seqEv.getFmeasureAtPoint(m_beta, m_points[j]);
+				cosineSim[j]      = cosineSim[j]      + seqEv.getCosineSimilarityAtPoint(m_points[j]);
 				modelPrecision[j] = modelPrecision[j] + seqEv.getPrecisionModelAtPoint(m_points[j]);
 				modelRecall[j]    = modelRecall[j]    + seqEv.getRecallModelAtPoint(m_points[j]);
 				modelFmeasure[j]  = modelFmeasure[j]  + seqEv.getFmeasureModelAtPoint(m_beta, m_points[j]);
+				cosineSimModel[j] = cosineSimModel[j] + seqEv.getCosineSimilarityModelAtPoint(m_points[j]);
 			}
-			cosineSim = cosineSim + seqEv.getCosineSimilarity();
 			
 			// TOPIC1 level metrics
 			hitratioTop1 = hitratioTop1 + seqEv.getHitRatioTop1();
@@ -355,11 +361,12 @@ public abstract class TestSetEvaluator {
 			m_precision[j]      = precission[j]     / (float)m_sequences.size();
 			m_recall[j]         = recall[j]         / (float)m_sequences.size();
 			m_fmeasure[j]       = fmeasure[j]       / (float)m_sequences.size();
+			m_cosineSimilarity[j] = cosineSim[j]      / (float)m_sequences.size();
 			m_ModelPrecision[j] = modelPrecision[j] / (float)m_sequences.size();
 			m_ModelRecall[j]    = modelRecall[j]    / (float)m_sequences.size();
 			m_ModelFmeasure[j]  = modelFmeasure[j]  / (float)m_sequences.size();
+			m_ModelCosineSimilarity[j] = cosineSimModel[j] / (float)m_sequences.size();
 		}
-		m_cosineSimilarity = cosineSim/(float)m_sequences.size();
 		
 		// TOPIC1 level metrics - HONEST
 		m_hitratioTop1 = hitratioTop1/(float)m_sequences.size();
@@ -478,6 +485,9 @@ public abstract class TestSetEvaluator {
 	public float[] getFmeasures(){
 		return m_fmeasure;
 	}
+	public float[] getCosineSimilarity(){
+		return m_cosineSimilarity;
+	}
 	public float[] getModelPrecisions(){
 		return m_ModelPrecision;
 	}
@@ -487,8 +497,8 @@ public abstract class TestSetEvaluator {
 	public float[] getModelFmeasures(){
 		return m_ModelFmeasure;
 	}
-	public float getCosineSimilarity(){
-		return m_cosineSimilarity;
+	public float[] getModelCosineSimilarity(){
+		return m_ModelCosineSimilarity;
 	}
 	
 	

@@ -194,10 +194,11 @@ public abstract class ModelEvaluator {
 		float[] prA = new float[m_confusionPoints.length];
 		float[] reA = new float[m_confusionPoints.length];
 		float[] fmA = new float[m_confusionPoints.length];
+		float[] coSimA = new float[m_confusionPoints.length];
 		float[] moPrA = new float[m_confusionPoints.length];
 		float[] moReA = new float[m_confusionPoints.length];
 		float[] moFmA = new float[m_confusionPoints.length];
-		float coSim = 0f;
+		float[] moCoSimA = new float[m_confusionPoints.length];
 		// TOPIC1 level metrics
 		float hitratioTop1 = 0f;
 		float clicksoonrationTop1 = 0f;
@@ -333,18 +334,21 @@ public abstract class ModelEvaluator {
 			float[] prA2 = eval.getPrecisions();
 			float[] reA2 = eval.getRecalls();
 			float[] fmA2 = eval.getFmeasures();
+			float[] coSimA2 = eval.getCosineSimilarity();
 			float[] moPrA2 = eval.getModelPrecisions();
 			float[] moReA2 = eval.getModelRecalls();
 			float[] moFmA2 = eval.getModelFmeasures();
+			float[] moCoSimA2 = eval.getModelCosineSimilarity();
 			for(int j=0; j<m_confusionPoints.length; j++){
 				prA[j] = prA[j] + prA2[j];
 				reA[j] = reA[j] + reA2[j];
 				fmA[j] = fmA[j] + fmA2[j];
+				coSimA[j] = coSimA[j] + coSimA2[j];
 				moPrA[j] = moPrA[j] + moPrA2[j];
 				moReA[j] = moReA[j] + moReA2[j];
 				moFmA[j] = moFmA[j] + moFmA2[j];
+				moCoSimA[j] = moCoSimA[j] + moCoSimA2[j];
 			}
-			coSim = coSim + eval.getCosineSimilarity();
 			
 			// TOPIC1 level metrics
 			
@@ -449,11 +453,12 @@ public abstract class ModelEvaluator {
 			prA[j] = prA[j] / (float)m_nFolds;
 			reA[j] = reA[j] / (float)m_nFolds;
 			fmA[j] = fmA[j] / (float)m_nFolds;
+			coSimA[j] = coSimA[j] / (float)m_nFolds;
 			moPrA[j] = moPrA[j] / (float)m_nFolds;
 			moReA[j] = moReA[j] / (float)m_nFolds;
 			moFmA[j] = moFmA[j] / (float)m_nFolds;
+			moCoSimA[j] = moCoSimA[j] / (float)m_nFolds;
 		}
-		coSim = coSim / (float)m_nFolds;
 		
 		// TOPIC1 level metrics
 		hitratioTop1 = hitratioTop1 / (float)m_nFolds;
@@ -525,10 +530,11 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + prA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + reA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + fmA[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + coSimA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moPrA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmA[j];}
-		results = results  + "," + coSim;
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moCoSimA[j];}
 		
 		// TOPIC1 level statistics
 		results = results + "," + hitratioTop1;
@@ -605,10 +611,11 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",pr_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",re_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",fm" + m_fmeasurebeta + "_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",cs_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mPr_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mRe_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "_" + m_confusionPoints[j];}
-		header = header + ",cosineSim";
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mCs_" + m_confusionPoints[j];}
 		
 		// TOPIC1 level metrics
 		header = header + ",hitratioTop1";

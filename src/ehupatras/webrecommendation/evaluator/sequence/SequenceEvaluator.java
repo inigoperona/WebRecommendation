@@ -38,9 +38,10 @@ public abstract class SequenceEvaluator {
 	private int m_clicksoonscore = 0;
 	private float[] m_precision;
 	private float[] m_recall;
+	private float[] m_cosineSim;
 	private float[] m_precisionModel;
 	private float[] m_recallModel;
-	private float m_cosineSim = 0f;
+	private float[] m_cosineSimModel;
 	// TOPIC1 level metrics
 	private float m_hitscoreTop1 = 0;
 	private float m_clicksoonscoreTop1 = 0;
@@ -95,8 +96,10 @@ public abstract class SequenceEvaluator {
 		
 		m_precision = new float[sequence.size()];
 		m_recall = new float[sequence.size()];
+		m_cosineSim = new float[sequence.size()];
 		m_precisionModel = new float[sequence.size()];
-		m_recallModel = new float[sequence.size()];		
+		m_recallModel = new float[sequence.size()];
+		m_cosineSimModel = new float[sequence.size()];
 		m_precisionTop1 = new float[sequence.size()];
 		m_recallTop1 = new float[sequence.size()];
 		m_precisionModelTop1 = new float[sequence.size()];
@@ -311,10 +314,15 @@ public abstract class SequenceEvaluator {
 		float re = this.computeRecall(stepIndex, recommendatios);
 		m_precision[stepIndex] = pr;
 		m_recall[stepIndex] = re;
+		float cs = this.cosineEvaluation(stepIndex, recommendatios);
+		m_cosineSim[stepIndex] = cs;
+		
 		float prModel = this.computePrecision(0, recommendatios);
 		float reModel = this.computeRecall(0, recommendatios);
 		m_precisionModel[stepIndex] = prModel;
 		m_recallModel[stepIndex] = reModel;
+		float csModel = this.cosineEvaluation(0, recommendatios);
+		m_cosineSimModel[stepIndex] = csModel;
 	}
 	
 	private float computePrecision(
@@ -377,7 +385,7 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
-	private void cosineEvaluation(
+	private float cosineEvaluation(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
 
@@ -400,7 +408,7 @@ public abstract class SequenceEvaluator {
 		}
 		
 		// cosine similarity
-		m_cosineSim = this.cosineSimilarity(wayA, recosA);
+		return this.cosineSimilarity(wayA, recosA);
 	}
 	
 	private float cosineSimilarity(int[] vec1, int[] vec2){
@@ -1044,19 +1052,25 @@ public abstract class SequenceEvaluator {
 	}	
 	public float[] getRecalls(){
 		return m_recall;
-	}	
+	}
+	public float[] getFmeasures(float beta){
+		return this.getFmeasures(beta, m_precision, m_recall);
+	}
+	public float[] getCosineSimilarities(){
+		return m_cosineSim;
+	}
 	public float[] getPrecissionsModel(){
 		return m_precisionModel;
 	}	
 	public float[] getRecallsModel(){
 		return m_recallModel;
-	}	
-	public float[] getFmeasures(float beta){
-		return this.getFmeasures(beta, m_precision, m_recall);
-	}	
+	}
 	public float[] getFmeasuresModel(float beta){
 		return this.getFmeasures(beta, m_precisionModel, m_recallModel);		
-	}	
+	}
+	public float[] getCosineSimilaritiesModel(){
+		return m_cosineSimModel;
+	}
 	protected void printPrecision(){
 		System.out.print("Precision: ");
 		for(int i=0; i<m_precision.length; i++){
@@ -1091,7 +1105,11 @@ public abstract class SequenceEvaluator {
 		float[] fmeasure = this.getFmeasures(beta);
 		int index = this.getPosition(point);
 		return fmeasure[index];
-	}	
+	}
+	public float getCosineSimilarityAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_cosineSim[index];
+	}
 	public float getPrecisionModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_precisionModel[index];
@@ -1105,8 +1123,9 @@ public abstract class SequenceEvaluator {
 		int index = this.getPosition(point);
 		return fmeasure[index];
 	}
-	public float getCosineSimilarity(){
-		return m_cosineSim;
+	public float getCosineSimilarityModelAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_cosineSimModel[index];
 	}
 	
 	
