@@ -196,7 +196,8 @@ public abstract class ModelEvaluator {
 		float[] fmA = new float[m_confusionPoints.length];
 		float[] moPrA = new float[m_confusionPoints.length];
 		float[] moReA = new float[m_confusionPoints.length];
-		float[] moFmA = new float[m_confusionPoints.length];		
+		float[] moFmA = new float[m_confusionPoints.length];
+		float coSim = 0f;
 		// TOPIC1 level metrics
 		float hitratioTop1 = 0f;
 		float clicksoonrationTop1 = 0f;
@@ -343,6 +344,7 @@ public abstract class ModelEvaluator {
 				moReA[j] = moReA[j] + moReA2[j];
 				moFmA[j] = moFmA[j] + moFmA2[j];
 			}
+			coSim = coSim + eval.getCosineSimilarity();
 			
 			// TOPIC1 level metrics
 			
@@ -451,6 +453,7 @@ public abstract class ModelEvaluator {
 			moReA[j] = moReA[j] / (float)m_nFolds;
 			moFmA[j] = moFmA[j] / (float)m_nFolds;
 		}
+		coSim = coSim / (float)m_nFolds;
 		
 		// TOPIC1 level metrics
 		hitratioTop1 = hitratioTop1 / (float)m_nFolds;
@@ -525,6 +528,7 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moPrA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmA[j];}
+		results = results  + "," + coSim;
 		
 		// TOPIC1 level statistics
 		results = results + "," + hitratioTop1;
@@ -604,6 +608,7 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mPr_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mRe_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "_" + m_confusionPoints[j];}
+		header = header + ",cosineSim";
 		
 		// TOPIC1 level metrics
 		header = header + ",hitratioTop1";

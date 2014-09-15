@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.text.html.MinimalHTMLWriter;
+
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderMarkovChain;
@@ -37,7 +39,8 @@ public abstract class SequenceEvaluator {
 	private float[] m_precision;
 	private float[] m_recall;
 	private float[] m_precisionModel;
-	private float[] m_recallModel;	
+	private float[] m_recallModel;
+	private float m_cosineSim = 0f;
 	// TOPIC1 level metrics
 	private float m_hitscoreTop1 = 0;
 	private float m_clicksoonscoreTop1 = 0;
@@ -242,6 +245,7 @@ public abstract class SequenceEvaluator {
 		this.computeHitScore(step, recommendatios);
 		this.computeClickSoonScore(stepIndex, recommendatios);
 		this.computeConfusionMatrix(stepIndex, recommendatios);
+		this.cosineEvaluation(stepIndex, recommendatios);
 		
 		// TOPIC1 level
 		this.computeHitScoreTop(step, recommendatios, true);
@@ -371,6 +375,62 @@ public abstract class SequenceEvaluator {
 		} else {
 			return (float)reTP/((float)reTP+(float)reFN);
 		}
+	}
+	
+	private void cosineEvaluation(
+			int stepIndex, 
+			ArrayList<String> recommendatios){
+
+		// way
+		int[] wayA = new int[m_urlIds.size()];
+		for(int i=stepIndex; i<m_sequenceURL.size(); i++){
+			String realstep = m_sequenceURL.get(i);
+			int realstepInt = Integer.valueOf(realstep);
+			int ind = m_urlIds.indexOf(realstepInt);
+			wayA[ind] = 1;
+		}
+		
+		// recommendations
+		int[] recosA = new int[m_urlIds.size()];
+		for(int i=0; i<recommendatios.size(); i++){
+			String recStr = recommendatios.get(i);
+			int recInt = Integer.valueOf(recStr);
+			int ind = m_urlIds.indexOf(recInt);
+			recosA[ind] = 1;
+		}
+		
+		// cosine similarity
+		m_cosineSim = this.cosineSimilarity(wayA, recosA);
+	}
+	
+	private float cosineSimilarity(int[] vec1, int[] vec2){
+		int n = Math.min(vec1.length, vec2.length);
+		
+		// A · B
+		int sum = 0;
+		for(int i=0; i<n; i++){
+			sum = sum + (vec1[i] * vec2[i]);
+		}
+		
+		// ||A||
+		int sumA = 0;
+		for(int i=0; i<n; i++){
+			int pow = (int)Math.pow(vec1[i], 2);
+			sumA = sumA + pow;
+		}
+		double sumAd = Math.sqrt(sumA);
+		
+		// ||B||
+		int sumB = 0;
+		for(int i=0; i<n; i++){
+			int pow = (int)Math.pow(vec2[i], 2);
+			sumB = sumB + pow;
+		}
+		double sumBd = Math.sqrt(sumB);
+		
+		// result
+		double sim = (double)sum / (sumAd * sumBd);
+		return (float)sim;
 	}
 	
 		
@@ -1044,6 +1104,9 @@ public abstract class SequenceEvaluator {
 		float[] fmeasure = this.getFmeasuresModel(beta);
 		int index = this.getPosition(point);
 		return fmeasure[index];
+	}
+	public float getCosineSimilarity(){
+		return m_cosineSim;
 	}
 	
 	
