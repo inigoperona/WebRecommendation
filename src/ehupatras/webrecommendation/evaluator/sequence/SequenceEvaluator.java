@@ -47,15 +47,19 @@ public abstract class SequenceEvaluator {
 	private float m_clicksoonscoreTop1 = 0;
 	private float[] m_precisionTop1;
 	private float[] m_recallTop1;
+	private float[] m_cosineSimTop1;
 	private float[] m_precisionModelTop1;
 	private float[] m_recallModelTop1;
+	private float[] m_cosineSimModelTop1;
 	// TOPIC1 level metrics
 	private float m_hitscoreTop2 = 0;
 	private float m_clicksoonscoreTop2 = 0;
 	private float[] m_precisionTop2;
 	private float[] m_recallTop2;
+	private float[] m_cosineSimTop2;
 	private float[] m_precisionModelTop2;
 	private float[] m_recallModelTop2;
+	private float[] m_cosineSimModelTop2;
 	
 	// Index always correct
 	// URL level metrics
@@ -63,15 +67,19 @@ public abstract class SequenceEvaluator {
 	private int m_clicksoonscore_OkHome = 0;
 	private float[] m_precision_OkHome;
 	private float[] m_recall_OkHome;
+	private float[] m_cosineSim_OkHome;
 	private float[] m_precisionModel_OkHome;
 	private float[] m_recallModel_OkHome;
+	private float[] m_cosineSimModel_OkHome;
 	// TOPIC level metrics
 	private float m_hitscoreTop_OkHome = 0;
 	private float m_clicksoonscoreTop_OkHome = 0;
 	private float[] m_precisionTop_OkHome;
 	private float[] m_recallTop_OkHome;
+	private float[] m_cosineSimTop_OkHome;
 	private float[] m_precisionModelTop_OkHome;
 	private float[] m_recallModelTop_OkHome;
+	private float[] m_cosineSimModelTop_OkHome;
 	
 	// write the recommendations done in each step
 	private String m_lineHeader = null;
@@ -102,21 +110,29 @@ public abstract class SequenceEvaluator {
 		m_cosineSimModel = new float[sequence.size()];
 		m_precisionTop1 = new float[sequence.size()];
 		m_recallTop1 = new float[sequence.size()];
+		m_cosineSimTop1 = new float[sequence.size()];
 		m_precisionModelTop1 = new float[sequence.size()];
 		m_recallModelTop1 = new float[sequence.size()];
+		m_cosineSimModelTop1 = new float[sequence.size()];
 		m_precisionTop2 = new float[sequence.size()];
 		m_recallTop2 = new float[sequence.size()];
+		m_cosineSimTop2 = new float[sequence.size()];
 		m_precisionModelTop2 = new float[sequence.size()];
 		m_recallModelTop2 = new float[sequence.size()];
+		m_cosineSimModelTop2 = new float[sequence.size()];
 		
 		m_precision_OkHome = new float[sequence.size()];
 		m_recall_OkHome = new float[sequence.size()];
+		m_cosineSim_OkHome = new float[sequence.size()];
 		m_precisionModel_OkHome = new float[sequence.size()];
-		m_recallModel_OkHome = new float[sequence.size()];		
+		m_recallModel_OkHome = new float[sequence.size()];
+		m_cosineSimModel_OkHome = new float[sequence.size()];
 		m_precisionTop_OkHome = new float[sequence.size()];
 		m_recallTop_OkHome = new float[sequence.size()];
+		m_cosineSimTop_OkHome = new float[sequence.size()];
 		m_precisionModelTop_OkHome = new float[sequence.size()];
 		m_recallModelTop_OkHome = new float[sequence.size()];
+		m_cosineSimModelTop_OkHome = new float[sequence.size()];
 	}
 	
 	private ArrayList<String> convertToArrayList(String[] strA){
@@ -684,6 +700,33 @@ public abstract class SequenceEvaluator {
 		} else {
 			return reTP/(reTP+reFN);
 		}
+	}
+	
+	private float cosineEvaluationTop(
+			int stepIndex, 
+			ArrayList<String> recommendatios,
+			boolean isTopic){
+
+		// way
+		int[] wayA = new int[m_urlIds.size()];
+		for(int i=stepIndex; i<m_sequenceURL.size(); i++){
+			String realstep = m_sequenceURL.get(i);
+			int realstepInt = Integer.valueOf(realstep);
+			int ind = m_urlIds.indexOf(realstepInt);
+			wayA[ind] = 1;
+		}
+		
+		// recommendations
+		int[] recosA = new int[m_urlIds.size()];
+		for(int i=0; i<recommendatios.size(); i++){
+			String recStr = recommendatios.get(i);
+			int recInt = Integer.valueOf(recStr);
+			int ind = m_urlIds.indexOf(recInt);
+			recosA[ind] = 1;
+		}
+		
+		// cosine similarity
+		return this.cosineSimilarity(wayA, recosA);
 	}
 
 	

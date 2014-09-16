@@ -56,6 +56,9 @@ public class A100MainClassAddContent {
     }
 	
     public Object[] loadUrlsTopic(String urlsTopicfile){
+    	// count different topics there are
+    	ArrayList<Integer> topicIDs = new ArrayList<Integer>();
+    	
     	// load the distance matrix of URL's similarity
     	ArrayList<Integer> urlIDs = new ArrayList<Integer>();
     	ArrayList<Integer> urls2topic = new ArrayList<Integer>(); 
@@ -65,7 +68,11 @@ public class A100MainClassAddContent {
 			while ((sCurrentLine = br.readLine()) != null) {
 				String[] line = sCurrentLine.split(" ");
 				urlIDs.add(Integer.valueOf(line[0]));
-				urls2topic.add(Integer.valueOf(line[1]));
+				int topicID = Integer.valueOf(line[1]);
+				if(topicID!=-1 && !topicIDs.contains(topicID)){
+					topicIDs.add(topicID);
+				}
+				urls2topic.add(topicID);
 			}
 			br.close();
 		} catch (IOException ex){
@@ -83,9 +90,10 @@ public class A100MainClassAddContent {
 		}
 		
 		// return
-		Object[] objA = new Object[2];
+		Object[] objA = new Object[3];
 		objA[0] = urlIDs;
 		objA[1] = url2topic;
+		objA[2] = topicIDs.size(); // different topics there are
 		return objA;
     }
 	

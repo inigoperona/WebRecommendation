@@ -122,7 +122,8 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 		Object[] objA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
 		int[] url2topic = (int[])objA[1];
-		modelev.setTopicParameters(urlIDs, url2topic, 0.5f, clusterPartitionFile);
+		int difftopics = (int)objA[2];
+		modelev.setTopicParameters(urlIDs, url2topic, difftopics, 0.5f, clusterPartitionFile);
 		
 		
 		// PAM + MySPADE //

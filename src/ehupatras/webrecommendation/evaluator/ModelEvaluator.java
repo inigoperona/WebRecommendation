@@ -43,9 +43,11 @@ public abstract class ModelEvaluator {
 	private ArrayList<Integer> m_urlIds = null;
 		// topic1: based on url to topic distribution matrix
 	private int[] m_url2topic = null;
+	private int m_nDiffTopics = 10;
 	private float m_topicmatch = 0.5f;
 		// topic2: based on url clustering
 	protected HashMap<Integer,Integer> m_UrlClusteringDict = null;
+	private int m_nDiffClusters = 10;
 	// index pages
 	private int[] m_homepages = null;
 	
@@ -674,10 +676,11 @@ public abstract class ModelEvaluator {
 	}
 	public void setTopicParameters(
 			ArrayList<Integer> urlIds, 
-			int[] url2topic, float topicmatch,
+			int[] url2topic, int nDiffTopics, float topicmatch,
 			String urlClusteringDictFile){
 		m_urlIds = urlIds;
 		m_url2topic = url2topic;
+		m_nDiffTopics = nDiffTopics;
 		m_topicmatch = topicmatch;
 		this.readUrlClustering(urlClusteringDictFile);
 	}
@@ -686,6 +689,10 @@ public abstract class ModelEvaluator {
 	// read URL to cluster file
 	
 	private void readUrlClustering(String clusterPartitionFile){
+		// count different clusters there are
+		ArrayList<Integer> clusterIDs = new ArrayList<Integer>();
+		
+		// read file
 		ArrayList<String> linebyline = this.readLineByLine(clusterPartitionFile);
 		// parse the lines
 		m_UrlClusteringDict = new HashMap<Integer,Integer>();
@@ -694,10 +701,16 @@ public abstract class ModelEvaluator {
 			String[] lineA = line.split(";");
 			int urlIndex = Integer.valueOf(lineA[0]) - 1;
 			int clIndex = Integer.valueOf(lineA[1]);
+			if(!clusterIDs.contains(clIndex)){
+				clusterIDs.add(clIndex);
+			}
 			if(!m_UrlClusteringDict.containsKey(urlIndex)){
 				m_UrlClusteringDict.put(urlIndex, clIndex);
 			}
 		}
+		
+		// different clusters there are
+		m_nDiffClusters = clusterIDs.size();
 	}
 	
 	private ArrayList<String> readLineByLine(String filename){

@@ -101,7 +101,8 @@ public class A0310MainClassSuffixTreeGoToRoot {
 		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
-		modelev.setTopicParameters(urlIDs, url2topic, 0.5f, clusterPartitionFile);
+		int difftopics = (int)objAA[2];
+		modelev.setTopicParameters(urlIDs, url2topic, difftopics, 0.5f, clusterPartitionFile);
 
 				
 		
