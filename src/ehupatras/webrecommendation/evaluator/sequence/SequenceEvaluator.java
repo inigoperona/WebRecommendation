@@ -28,9 +28,11 @@ public abstract class SequenceEvaluator {
 	private ArrayList<Integer> m_urlIds = null;
 		// topic1: based on url to topic distribution
 	private int[] m_url2topic = null;
+	private int m_nDiffTopics = 10;
 	private float m_topicmatch = 0.5f;
 		// topic2: based on url clustering
 	private HashMap<Integer,Integer> m_UrlClusteringDict = null;
+	private int m_nDiffClusters = 10;
 	
 	// HONEST MODE
 	// URL level metrics
@@ -67,19 +69,15 @@ public abstract class SequenceEvaluator {
 	private int m_clicksoonscore_OkHome = 0;
 	private float[] m_precision_OkHome;
 	private float[] m_recall_OkHome;
-	private float[] m_cosineSim_OkHome;
 	private float[] m_precisionModel_OkHome;
 	private float[] m_recallModel_OkHome;
-	private float[] m_cosineSimModel_OkHome;
 	// TOPIC level metrics
 	private float m_hitscoreTop_OkHome = 0;
 	private float m_clicksoonscoreTop_OkHome = 0;
 	private float[] m_precisionTop_OkHome;
 	private float[] m_recallTop_OkHome;
-	private float[] m_cosineSimTop_OkHome;
 	private float[] m_precisionModelTop_OkHome;
 	private float[] m_recallModelTop_OkHome;
-	private float[] m_cosineSimModelTop_OkHome;
 	
 	// write the recommendations done in each step
 	private String m_lineHeader = null;
@@ -123,16 +121,12 @@ public abstract class SequenceEvaluator {
 		
 		m_precision_OkHome = new float[sequence.size()];
 		m_recall_OkHome = new float[sequence.size()];
-		m_cosineSim_OkHome = new float[sequence.size()];
 		m_precisionModel_OkHome = new float[sequence.size()];
 		m_recallModel_OkHome = new float[sequence.size()];
-		m_cosineSimModel_OkHome = new float[sequence.size()];
 		m_precisionTop_OkHome = new float[sequence.size()];
 		m_recallTop_OkHome = new float[sequence.size()];
-		m_cosineSimTop_OkHome = new float[sequence.size()];
 		m_precisionModelTop_OkHome = new float[sequence.size()];
 		m_recallModelTop_OkHome = new float[sequence.size()];
-		m_cosineSimModelTop_OkHome = new float[sequence.size()];
 	}
 	
 	private ArrayList<String> convertToArrayList(String[] strA){
@@ -453,7 +447,10 @@ public abstract class SequenceEvaluator {
 		double sumBd = Math.sqrt(sumB);
 		
 		// result
-		double sim = (double)sum / (sumAd * sumBd);
+		double sim = 0d;
+		if(sumAd!=0d && sumBd!=0d){
+			sim = (double)sum / (sumAd * sumBd);
+		}
 		return (float)sim;
 	}
 	
@@ -584,21 +581,27 @@ public abstract class SequenceEvaluator {
 			boolean isTopic){
 		float pr = this.computePrecisionTop(stepIndex, recommendatios, isTopic);
 		float re = this.computeRecallTop(stepIndex, recommendatios, isTopic);
+		float cs = this.cosineEvaluationTop(stepIndex, recommendatios, isTopic);
 		if(isTopic){
 			m_precisionTop1[stepIndex] = pr;
 			m_recallTop1[stepIndex] = re;
+			m_cosineSimTop1[stepIndex] = cs;
 		} else {
 			m_precisionTop2[stepIndex] = pr;
 			m_recallTop2[stepIndex] = re;
+			m_cosineSimTop2[stepIndex] = cs;
 		}
 		float prModel = this.computePrecisionTop(0, recommendatios, isTopic);
 		float reModel = this.computeRecallTop(0, recommendatios, isTopic);
+		float csModel = this.cosineEvaluationTop(0, recommendatios, isTopic);
 		if(isTopic){
 			m_precisionModelTop1[stepIndex] = prModel;
 			m_recallModelTop1[stepIndex] = reModel;
+			m_cosineSimModelTop1[stepIndex] = csModel;
 		} else {
 			m_precisionModelTop2[stepIndex] = prModel;
 			m_recallModelTop2[stepIndex] = reModel;
+			m_cosineSimModelTop2[stepIndex] = csModel;
 		}
 	}
 	
@@ -706,23 +709,34 @@ public abstract class SequenceEvaluator {
 			int stepIndex, 
 			ArrayList<String> recommendatios,
 			boolean isTopic){
+		int n = isTopic ? m_nDiffTopics : m_nDiffClusters;
 
 		// way
-		int[] wayA = new int[m_urlIds.size()];
+		int[] wayA = new int[n];
 		for(int i=stepIndex; i<m_sequenceURL.size(); i++){
 			String realstep = m_sequenceURL.get(i);
 			int realstepInt = Integer.valueOf(realstep);
-			int ind = m_urlIds.indexOf(realstepInt);
-			wayA[ind] = 1;
+			int realstepInt2 = m_urlIds.indexOf(realstepInt);
+			int realstepTop = this.getTopicID(realstepInt2, isTopic);
+
+			if(realstepTop!=-1){
+				int ind = isTopic ? realstepTop : realstepTop-1;
+				wayA[ind] = 1;
+			}
 		}
 		
 		// recommendations
-		int[] recosA = new int[m_urlIds.size()];
+		int[] recosA = new int[n];
 		for(int i=0; i<recommendatios.size(); i++){
 			String recStr = recommendatios.get(i);
 			int recInt = Integer.valueOf(recStr);
-			int ind = m_urlIds.indexOf(recInt);
-			recosA[ind] = 1;
+			int recInt2 = m_urlIds.indexOf(recInt);
+			int recTop = this.getTopicID(recInt2, isTopic);
+			
+			if(recTop!=-1){
+				int ind = isTopic ? recTop : recTop-1;
+				recosA[ind] = 1;
+			}
 		}
 		
 		// cosine similarity
@@ -1176,12 +1190,14 @@ public abstract class SequenceEvaluator {
 	// TOPIC level metrics	
 	public void setTopicParameters(
 			ArrayList<Integer> urlIds, 
-			int[] url2topic, float topicmatch,
-			HashMap<Integer,Integer> urlClusteringDict){
+			int[] url2topic, int nDiffTopics, float topicmatch,
+			HashMap<Integer,Integer> urlClusteringDict, int nDiffClusters){
 		m_urlIds = urlIds;
 		m_url2topic = url2topic;
+		m_nDiffTopics = nDiffTopics;
 		m_topicmatch = topicmatch;
 		m_UrlClusteringDict = urlClusteringDict;
+		m_nDiffClusters = nDiffClusters;
 	}
 	
 	// topic1: based on URL to topic distribution matrix
@@ -1196,13 +1212,19 @@ public abstract class SequenceEvaluator {
 	}	
 	public float[] getRecallsTop1(){
 		return m_recallTop1;
+	}
+	public float[] getcosineSimsTop1(){
+		return m_cosineSimTop1;
 	}	
 	public float[] getPrecissionsModelTop1(){
 		return m_precisionModelTop1;
 	}	
 	public float[] getRecallsModelTop1(){
 		return m_recallModelTop1;
-	}	
+	}
+	public float[] getCosineSimsModelTop1(){
+		return m_cosineSimModelTop1;
+	}
 	public float[] getFmeasuresTop1(float beta){
 		return this.getFmeasures(beta, m_precisionTop1, m_recallTop1);		
 	}	
@@ -1216,7 +1238,11 @@ public abstract class SequenceEvaluator {
 	public float getRecallTopAtPoint1(float point){
 		int index = this.getPosition(point);
 		return m_recallTop1[index];
-	}	
+	}
+	public float getCosineSimTopAtPoint1(float point){
+		int index = this.getPosition(point);
+		return m_cosineSimTop1[index];
+	}
 	public float getFmeasureTopAtPoint1(float beta, float point){
 		float[] fmeasure = this.getFmeasuresTop1(beta);
 		int index = this.getPosition(point);
@@ -1229,6 +1255,10 @@ public abstract class SequenceEvaluator {
 	public float getRecallModelTopAtPoint1(float point){
 		int index = this.getPosition(point);
 		return m_recallModelTop1[index];
+	}
+	public float getCosineSimModelTopAtPoint1(float point){
+		int index = this.getPosition(point);
+		return m_cosineSimModelTop1[index];
 	}	
 	public float getFmeasureModelTopAtPoint1(float beta, float point){
 		float[] fmeasure = this.getFmeasuresModelTop1(beta);
@@ -1248,13 +1278,19 @@ public abstract class SequenceEvaluator {
 	}	
 	public float[] getRecallsTop2(){
 		return m_recallTop2;
-	}	
+	}
+	public float[] getCosineSimsTop2(){
+		return m_cosineSimTop2;
+	}
 	public float[] getPrecissionsModelTop2(){
 		return m_precisionModelTop2;
 	}
 	public float[] getRecallsModelTop2(){
 		return m_recallModelTop2;
-	}	
+	}
+	public float[] getCosineSimsModelTop2(){
+		return m_cosineSimModelTop2;
+	}
 	public float[] getFmeasuresTop2(float beta){
 		return this.getFmeasures(beta, m_precisionTop2, m_recallTop2);		
 	}	
@@ -1268,7 +1304,11 @@ public abstract class SequenceEvaluator {
 	public float getRecallTopAtPoint2(float point){
 		int index = this.getPosition(point);
 		return m_recallTop2[index];
-	}	
+	}
+	public float getCosineSimTopAtPoint2(float point){
+		int index = this.getPosition(point);
+		return m_cosineSimTop2[index];
+	}
 	public float getFmeasureTopAtPoint2(float beta, float point){
 		float[] fmeasure = this.getFmeasuresTop2(beta);
 		int index = this.getPosition(point);
@@ -1281,6 +1321,10 @@ public abstract class SequenceEvaluator {
 	public float getRecallModelTopAtPoint2(float point){
 		int index = this.getPosition(point);
 		return m_recallModelTop2[index];
+	}
+	public float getCosineSimModelTopAtPoint2(float point){
+		int index = this.getPosition(point);
+		return m_cosineSimModelTop2[index];
 	}	
 	public float getFmeasureModelTopAtPoint2(float beta, float point){
 		float[] fmeasure = this.getFmeasuresModelTop2(beta);

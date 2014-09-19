@@ -217,6 +217,12 @@ public class SequenceEvaluatorMedContent
 			m_conv);
 		}
 		
+		else if(m_enrichStrategy.equals("Top4_1")){
+			recommender = new RecommenderTop4_1(
+			m_medoids, m_gmedoids, m_recos,
+			m_isDistance, m_rolesW);
+		}
+		
 		return recommender;
 	}
 	
