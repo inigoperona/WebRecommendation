@@ -5,14 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import angelu.webrecommendation.evaluator.ModelEvaluatorMedoidsContent;
 import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
+public class A060MainClassPamSpadeKnnEDholdoutTop1_noInds {
 
 	public static void main(String[] args) {
 		
@@ -21,9 +21,9 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
-		String urlSimilarityMatrix = "contentEnrichment/ResultadosTestuHutsa/ResSimilarity.txt";
-		String urlRelationMatrix = "contentEnrichment/ResultadosTestuHutsa/ResRelations.txt";
-		String clusterPartitionFile = "contentEnrichment/clusterPartitions/ClusterPartitionTestuHutsa.txt";
+		String urlSimilarityMatrix = "contentEnrichment/OntologySimilarity/ResultadosTestuHutsa/ResSimilarity.txt";
+		String urlRelationMatrix = "contentEnrichment/OntologySimilarity/ResultadosTestuHutsa/ResRelations.txt";
+		String clusterPartitionFile = "contentEnrichment/OntologySimilarity/clusterPartitions/ClusterPartitionTestuHutsa.txt";
 		String usage2contentFile = "convert_UrlIDs_content2usage/usa2cont.csv";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
@@ -58,8 +58,7 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 				noProposeUrls.add(norec);
 			}
 		}
-		
-		
+	
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
@@ -111,7 +110,7 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 		
 		// Parameters to play with
 		//int[] ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
-		int[] ks = {150};
+		int[] ks = {10};
 		//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
 		//float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
 		//float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};
@@ -121,7 +120,7 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 				  			{ 0f, 0f, 0f}};
 		
 		// initialize the model evaluator
-		ModelEvaluatorMedoidsContent modelev = new ModelEvaluatorMedoidsContent(
+		ModelEvaluatorMedoids modelev = new ModelEvaluatorMedoids(
 				sequencesUHC, null, 
 				matrix,
 				trainAL, valAL, testAL,
@@ -151,8 +150,10 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 		try{
 			evalWriter = new BufferedWriter(new FileWriter(validationWD + evalFile));
 		} catch(IOException ex){
-			System.err.println("[angelu.webrecommendation.A053MainClassPamSpadeKnnEDholdoutTop05] " +
-					"Not possible to open the file: " + evalFile);
+			System.err.println(
+					"[angelu.webrecommendation." + "" +
+							"A053MainClassPamSpadeKnnEDholdoutTop1] " +
+					"Problems at opening the file: " + evalFile);
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
@@ -186,19 +187,15 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 				String resultInfo;
 				
 				// weighted by construction sequences (test sequences)
-				//int[] nrecsWSTv = new int[]{4,5,10,20};
+				//int[] nrecsWSTv = new int[]{2,3,4,5,10,20};
 				int[] nrecsWSTv = new int[]{4};
 				for(int ind=0; ind<nrecsWSTv.length; ind++ ){
 					int nrec = nrecsWSTv[ind];
 					// Write recommendations
-					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val";
-					
+					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val"; 
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					modelev.setEsploitationParameters("ContentsA2v2", 
-							urlSimilarityMatrix, urlRelationMatrix, usage2contentFile);
 					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
-					
 					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}
@@ -206,13 +203,9 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 				/*
 				// unbounded
 				resultInfo = esperimentationStr2 + "_unbounded_val";
-				
-				modelev.setLineHeader(resultInfo + ";", evalWriter);
+				//modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				modelev.setEsploitationParameters("ContentsA2",
-						urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
 				results = modelev.computeEvaluationVal("unbounded", -1, (long)0);
-				
 				System.out.print(resultInfo + ",");
 				System.out.print(results);
 				*/
@@ -221,18 +214,14 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 				// TEST //
 				
 				// weighted by construction sequences (test sequences)
-				//int[] nrecsWST = new int[]{4,5,10,20};
+				//int[] nrecsWST = new int[]{2,3,4,5,10,20};
 				int[] nrecsWST = new int[]{4};
 				for(int ind=0; ind<nrecsWST.length; ind++ ){
 					int nrec = nrecsWST[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";
-					
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					modelev.setEsploitationParameters("ContentsA2v2",
-							urlSimilarityMatrix, urlRelationMatrix, usage2contentFile);
 					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
-					
 					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}
@@ -240,16 +229,12 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 				/*
 				// unbounded
 				resultInfo = esperimentationStr2 + "_unbounded_test";
-				
-				modelev.setLineHeader(resultInfo + ";", evalWriter);
+				//modelev.setLineHeader(resultInfo + ";", evalWriter);
 				modelev.setEsploitationParameters(true, rolesW, 100);
-				modelev.setEsploitationParameters("ContentsA2",
-						urlSimilarityMatrix, urlRelationMatrix, clusterPartitionFile, usage2contentFile);
 				results = modelev.computeEvaluationTest("unbounded", -1, (long)0);
-				
 				System.out.print(resultInfo + ",");
 				System.out.print(results);
-				*/				
+				*/
 			}
 
 		}
@@ -258,7 +243,9 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 		try{
 			evalWriter.close();
 		} catch (IOException ex){
-			System.err.println("[[angelu.webrecommendation.A053MainClassPamSpadeKnnEDholdoutTop05]] " +
+			System.err.println(
+					"[angelu.webrecommendation." + "" +
+							"A053MainClassPamSpadeKnnEDholdoutTop1] " +
 					"Problems at closing the file: " + evalFile);
 			System.err.println(ex.getMessage());
 			System.exit(1);

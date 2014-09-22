@@ -23,6 +23,9 @@ public class ModelEvaluatorMedoids
 									{ 0f, 0f, 0f}};
 	protected int m_knn = 100;
 	
+	protected ArrayList<Integer> m_noProposeURLs = new ArrayList<Integer>();
+	
+	
 	// CREATOR
 	
 	public ModelEvaluatorMedoids(
@@ -31,8 +34,10 @@ public class ModelEvaluatorMedoids
 			Matrix dm,
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL){
+			ArrayList<ArrayList<Long>> testAL,
+			ArrayList<Integer> noProposeURLs){
 		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+		m_noProposeURLs = noProposeURLs;
 	}
 	
 	// GET TEST EVALUATOR
@@ -72,7 +77,7 @@ public class ModelEvaluatorMedoids
 			int[] gmedoids = (int[])medObjA[1];
 			m_medoidsAL.add(medoids);
 			m_gmedoidsAL.add(gmedoids);
-			if(computeRecos){m_recosAL.add(this.getRecommendations(i, minsup));}
+			if(computeRecos){m_recosAL.add(this.getRecommendations(i, minsup, m_noProposeURLs));}
 		}
 	}
 	
@@ -104,7 +109,7 @@ public class ModelEvaluatorMedoids
 		return objA;
 	}
 	
-	private ArrayList<Object[]> getRecommendations(int indexFold, float minsup){
+	private ArrayList<Object[]> getRecommendations(int indexFold, float minsup, ArrayList<Integer> noExtractA){
 		// train cases indexes
 		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
 		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
@@ -134,9 +139,23 @@ public class ModelEvaluatorMedoids
 			// Frequent patter mining
 			MySPADE sp = new MySPADE(trainseqs, minsup);
 			Object[] objA = sp.getFrequentSequencesLength1();
-			//ArrayList<String> freqseqs1 = (ArrayList<String>)objA[0];
-			//ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
-			recos.add(objA);
+			ArrayList<String> freqseqs1 = (ArrayList<String>)objA[0];
+			ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
+			ArrayList<String> freqseqs1_2 = new ArrayList<String>();
+			ArrayList<Integer> supports_2 = new ArrayList<Integer>();
+			for(int j=0; j<freqseqs1.size(); j++){
+				String urlStr = freqseqs1.get(j);
+				int urlId = Integer.valueOf(urlStr);
+				if(!noExtractA.contains(urlId)){
+					freqseqs1_2.add(urlStr);
+					int sup = supports.get(j);
+					supports_2.add(sup);
+				}
+			}
+			Object[] objA_2 = new Object[2];
+			objA_2[0] = freqseqs1_2;
+			objA_2[1] = supports_2;
+			recos.add(objA_2);
 		}
 		
 		return recos;

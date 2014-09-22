@@ -26,7 +26,7 @@ public class ModelEvaluatorMedoidsContent
 	private int m_nURLs = 0;
 	private float[][] m_UrlSimilarityMatrix = null;
 	private String[][] m_UrlRelationMatrix = null;
-	private URLconverterUsaCon m_conv = null;
+	private URLconverterUsaCon m_conv = null; 
 	
 	
 	// CREATOR
@@ -37,8 +37,9 @@ public class ModelEvaluatorMedoidsContent
 			Matrix dm,
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+			ArrayList<ArrayList<Long>> testAL,
+			ArrayList<Integer> noProposeURLs){
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, noProposeURLs);
 	}
 	
 	// GET TEST EVALUATOR
@@ -58,7 +59,8 @@ public class ModelEvaluatorMedoidsContent
 						m_UrlSimilarityMatrix,
 						m_UrlRelationMatrix,
 						m_UrlClusteringDict,
-						m_conv);
+						m_conv,
+						m_noProposeURLs);
 		return eval;
 	}
 	

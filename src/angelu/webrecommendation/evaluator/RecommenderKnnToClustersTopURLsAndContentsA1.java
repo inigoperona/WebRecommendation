@@ -23,10 +23,12 @@ public class RecommenderKnnToClustersTopURLsAndContentsA1
 			float[][] urlSimilarityMatrix,
 			String[][] urlRelationMatrix,
 			HashMap<Integer,Integer> urlClusteringDict,
-			URLconverterUsaCon conv){
+			URLconverterUsaCon conv,
+			ArrayList<Integer> noProposeURLs){
 		super(medoids, globalMedoids, recosForEachMedoid, isDistance, rolesW,
 				nURLs, urlSimilarityMatrix, urlRelationMatrix, urlClusteringDict,
-				conv);
+				conv,
+				noProposeURLs);
 	}
 	
 	

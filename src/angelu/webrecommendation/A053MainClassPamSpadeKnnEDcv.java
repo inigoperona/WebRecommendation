@@ -28,6 +28,7 @@ public class A053MainClassPamSpadeKnnEDcv {
 		String clustWD = "/pam_DM_04_edit";
 		String profiWD = "/pam_DM_04_edit/spade1";
 		String evalFile = "/evaluation.txt";
+		String noRecURLsStr = "11,74,7,89,152";
 
 		preprocessingWD = args[0];
 		logfile = args[1];
@@ -42,6 +43,18 @@ public class A053MainClassPamSpadeKnnEDcv {
 		clustWD = args[10];
 		profiWD = args[11];
 		evalFile = args[12];
+		noRecURLsStr = args[13];
+
+		
+		// the URLs we do not have to recommend
+		ArrayList<Integer> noProposeUrls = new ArrayList<Integer>();
+		if(noRecURLsStr!=""){
+			String[] noRecURLsA = noRecURLsStr.split(",");
+			for(int i=0; i<noRecURLsA.length; i++){
+				int norec = Integer.valueOf(noRecURLsA[i]);
+				noProposeUrls.add(norec);
+			}
+		}
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -97,7 +110,8 @@ public class A053MainClassPamSpadeKnnEDcv {
 		ModelEvaluatorMedoids modelev = new ModelEvaluatorMedoids(
 				sequencesUHC, null, 
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				noProposeUrls);
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

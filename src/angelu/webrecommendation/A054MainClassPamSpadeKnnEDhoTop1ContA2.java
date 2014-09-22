@@ -21,9 +21,9 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
-		String urlSimilarityMatrix = "contentEnrichment/ResultadosTestuHutsa/ResSimilarity.txt";
-		String urlRelationMatrix = "contentEnrichment/ResultadosTestuHutsa/ResRelations.txt";
-		String clusterPartitionFile = "contentEnrichment/clusterPartitions/ClusterPartitionTestuHutsa.txt";
+		String urlSimilarityMatrix = "contentEnrichment/OntologySimilarity/ResultadosTestuHutsa/ResSimilarity.txt";
+		String urlRelationMatrix = "contentEnrichment/OntologySimilarity/ResultadosTestuHutsa/ResRelations.txt";
+		String clusterPartitionFile = "contentEnrichment/OntologySimilarity/clusterPartitions/ClusterPartitionTestuHutsa.txt";
 		String usage2contentFile = "convert_UrlIDs_content2usage/usa2cont.csv";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
@@ -31,6 +31,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 		String clustWD = "/pam_DM_04_edit";
 		String profiWD = "/pam_DM_04_edit/spade1";
 		String evalFile = "/evaluation.txt";
+		String noRecURLsStr = "11,74,7,89,152";
 
 		preprocessingWD = args[0];
 		logfile = args[1];
@@ -45,6 +46,18 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 		clustWD = args[10];
 		profiWD = args[11];
 		evalFile = args[12];
+		noRecURLsStr = args[13];
+
+		
+		// the URLs we do not have to recommend
+		ArrayList<Integer> noProposeUrls = new ArrayList<Integer>();
+		if(noRecURLsStr!=""){
+			String[] noRecURLsA = noRecURLsStr.split(",");
+			for(int i=0; i<noRecURLsA.length; i++){
+				int norec = Integer.valueOf(noRecURLsA[i]);
+				noProposeUrls.add(norec);
+			}
+		}
 		
 		
 		// initialize the data structure
@@ -111,7 +124,8 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContA2 {
 		ModelEvaluatorMedoidsContent modelev = new ModelEvaluatorMedoidsContent(
 				sequencesUHC, null, 
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				noProposeUrls);
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(1f);

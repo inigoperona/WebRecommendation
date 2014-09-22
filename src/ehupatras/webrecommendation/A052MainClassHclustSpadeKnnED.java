@@ -98,7 +98,8 @@ public class A052MainClassHclustSpadeKnnED {
 		ModelEvaluatorMedoids modelev = new ModelEvaluatorMedoids(
 				sequencesUHC, null, 
 				matrix, 
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				new ArrayList<Integer>());
 		
 		// Evaluation parameters
 		modelev.setFmeasureBeta(1f);

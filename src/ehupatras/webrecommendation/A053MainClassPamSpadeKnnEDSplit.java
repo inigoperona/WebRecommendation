@@ -99,7 +99,8 @@ public class A053MainClassPamSpadeKnnEDSplit {
 		ModelEvaluatorMedoids modelev = new ModelEvaluatorMedoids(
 				sequencesUHC, seqsSplit, 
 				matrix, 
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				new ArrayList<Integer>());
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

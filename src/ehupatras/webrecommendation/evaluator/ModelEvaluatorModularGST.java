@@ -22,7 +22,7 @@ public class ModelEvaluatorModularGST
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
 			ArrayList<ArrayList<Long>> testAL){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, new ArrayList<Integer>());
 	}
 	
 	

@@ -96,7 +96,8 @@ public class A053MainClassPamSpadeKnnED {
 		ModelEvaluatorMedoids modelev = new ModelEvaluatorMedoids(
 				sequencesUHC, null, 
 				matrix, 
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				new ArrayList<Integer>());
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

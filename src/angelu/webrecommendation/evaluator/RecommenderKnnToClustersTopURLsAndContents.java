@@ -19,7 +19,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	protected String[][] m_UrlRelationMatrix = null;
 	protected HashMap<Integer,Integer> m_UrlClusteringDict = null;
 	protected URLconverterUsaCon m_conv = null;
-	
+	private ArrayList<Integer> m_noProposeURLs_contID = new ArrayList<Integer>();
 	
 	
 	// CREATOR
@@ -34,13 +34,22 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 			float[][] urlSimilarityMatrix,
 			String[][] urlRelationMatrix,
 			HashMap<Integer,Integer> urlClusteringDict,
-			URLconverterUsaCon conv){
+			URLconverterUsaCon conv,
+			ArrayList<Integer> noProposeURLs){
 		super(medoids, globalMedoids, recosForEachMedoid, isDistance, rolesW);
 		m_nURLs = nURLs;
 		m_UrlSimilarityMatrix = urlSimilarityMatrix;
 		m_UrlRelationMatrix = urlRelationMatrix;
 		m_UrlClusteringDict = urlClusteringDict;
 		m_conv = conv;
+		
+		// convert usage URL-IDs to Content-ID
+		m_noProposeURLs_contID = new ArrayList<Integer>();
+		for(int i=0; i<noProposeURLs.size(); i++){
+			int usageID = Integer.valueOf(noProposeURLs.get(i));
+			int conteID = m_conv.getContentURL(usageID);
+			m_noProposeURLs_contID.add(conteID);
+		}
 	}
 	
 	
@@ -144,6 +153,15 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 			int[] nearestURL,
 			ArrayList<Integer> recomendations,
 			boolean clusterrakEzDuAxola){
+		
+		// Add the URLs we do not want to appear as an enrichment
+		for(int i=0; i<m_noProposeURLs_contID.size(); i++){
+			int contID = m_noProposeURLs_contID.get(i);
+			recomendations.add(contID);
+		}
+		
+		
+		// Add the enrichments
 		int kontagailua=0;
 		
 		for(int i=0; i<=nearestURL.length-1;i++)
@@ -162,9 +180,18 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 					if(kontagailua==nearestURL.length){break;}}
 			}
 		}
-				
 		
-	return recomendations;}
+		
+		// Remove the URLs we do not want in the final set of recommendations
+		for(int i=0; i<m_noProposeURLs_contID.size(); i++){
+			int contID = m_noProposeURLs_contID.get(i);
+			recomendations.remove(new Integer(contID));
+		}
+		
+		
+		// return the recommendations list
+		return recomendations;
+	}
 	
 	protected int[] gertueneko_urla(int url1,int zenbat, boolean clusterrakEzDuAxola)
 	{	final float[] similarityak= new float[m_nURLs];

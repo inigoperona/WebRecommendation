@@ -19,6 +19,7 @@ public class TestSetEvaluatorMedContent
 	private String[][] m_UrlRelationMatrix = null;
 	private HashMap<Integer,Integer> m_UrlClusteringDict = null;
 	private URLconverterUsaCon m_conv = null;
+	private ArrayList<Integer> m_noProposeURLs = new ArrayList<Integer>();
 	
 	// CREATOR
 	
@@ -35,7 +36,8 @@ public class TestSetEvaluatorMedContent
 			float[][] urlSimilarityMatrix,
 			String[][] urlRelationMatrix,
 			HashMap<Integer,Integer> urlClusteringDict,
-			URLconverterUsaCon conv){
+			URLconverterUsaCon conv,
+			ArrayList<Integer> noProposeURLs){
 		super(sequences, medoids, gmedoids, recos, isDistance, rolesW, knn);
 		m_enrichStrategy = enrichStrategy;
 		m_nURLs = nURLs;
@@ -43,6 +45,7 @@ public class TestSetEvaluatorMedContent
 		m_UrlRelationMatrix = urlRelationMatrix;
 		m_UrlClusteringDict = urlClusteringDict;
 		m_conv = conv;
+		m_noProposeURLs = noProposeURLs;
 	}
 	
 	// GET SEQUENCE EVALUATOR
@@ -58,7 +61,8 @@ public class TestSetEvaluatorMedContent
 						m_UrlSimilarityMatrix,
 						m_UrlRelationMatrix,
 						m_UrlClusteringDict,
-						m_conv);
+						m_conv,
+						m_noProposeURLs);
 		return seqEva;
 	}
 	
