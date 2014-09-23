@@ -112,7 +112,7 @@ public class A052MainClassHclustSpadeKnnEDSplit {
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
+		Object[] objAA = cont.loadUrlsTopic(preprocessingWD + url2topicFile, " ");
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objAA[0];
 		int[] url2topic = (int[])objAA[1];
 		int difftopics = (int)objAA[2];

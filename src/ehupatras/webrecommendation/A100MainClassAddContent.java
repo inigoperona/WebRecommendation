@@ -55,7 +55,7 @@ public class A100MainClassAddContent {
 		return objA;
     }
 	
-    public Object[] loadUrlsTopic(String urlsTopicfile){
+    public Object[] loadUrlsTopic(String urlsTopicfile, String sep){
     	// count different topics there are
     	ArrayList<Integer> topicIDs = new ArrayList<Integer>();
     	
@@ -66,7 +66,7 @@ public class A100MainClassAddContent {
 			BufferedReader br = new BufferedReader(new FileReader(urlsTopicfile));
 			String sCurrentLine;
 			while ((sCurrentLine = br.readLine()) != null) {
-				String[] line = sCurrentLine.split(" ");
+				String[] line = sCurrentLine.split(sep);
 				urlIDs.add(Integer.valueOf(line[0]));
 				int topicID = Integer.valueOf(line[1]);
 				if(topicID!=-1 && !topicIDs.contains(topicID)){
@@ -102,11 +102,11 @@ public class A100MainClassAddContent {
 		// Parameter control
 		String base = "experiments_angelu/experiments";
 		String preprocessingWD = base + "/01_preprocess";
-		String contentWD = base + "/01_preprocess";
-		String infileUrl2topicDist = "/document-topic-distributions1_IDhutsa_usageID.csv";
+		String contentWD = base + "/01_preprocess/Content";
+		String infileUrl2topicDist = "/document-topic-distributions1_TestuHutsa_contentID.csv";
 		String topicThStr = "0.4";
-		String outfileUrlDM = "/URLs_DM.txt";
-		String outfileUrl2topic = "/URLs_to_topic.txt";
+		String outfileUrlDM = "/URLs_DM_TH.txt";
+		String outfileUrl2topic = "/URLs_to_topic_TH.txt";
 		
 		preprocessingWD = args[0];
 		contentWD = args[1];

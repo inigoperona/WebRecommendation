@@ -134,7 +134,7 @@ public class A058MainClassPamSpadeKnnEDhoTop1ContA2v2_En2 {
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
+		Object[] objA = cont.loadUrlsTopic(preprocessingWD + url2topicFile, " ");
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
 		int[] url2topic = (int[])objA[1];
 		int difftopics = (int)objA[2];

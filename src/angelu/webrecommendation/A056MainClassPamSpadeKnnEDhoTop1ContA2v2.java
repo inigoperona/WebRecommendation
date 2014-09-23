@@ -21,9 +21,9 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
-		String urlSimilarityMatrix = "contentEnrichment/ResultadosTestuHutsa/ResSimilarity.txt";
-		String urlRelationMatrix = "contentEnrichment/ResultadosTestuHutsa/ResRelations.txt";
-		String clusterPartitionFile = "contentEnrichment/clusterPartitions/ClusterPartitionTestuHutsa.txt";
+		String urlSimilarityMatrix = "contentEnrichment/OntologySimilarity/ResultadosTestuHutsa/ResSimilarity.txt";
+		String urlRelationMatrix = "contentEnrichment/OntologySimilarity/ResultadosTestuHutsa/ResRelations.txt";
+		String clusterPartitionFile = "contentEnrichment/OntologySimilarity/clusterPartitions/ClusterPartitionTestuHutsa.txt";
 		String usage2contentFile = "convert_UrlIDs_content2usage/usa2cont.csv";
 		String databaseWD = base + "/02_DATABASE_5";
 		String dmWD = "/DM_04_edit";
@@ -134,7 +134,7 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 		
 		// load topic information
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objA = cont.loadUrlsTopic(preprocessingWD + url2topicFile);
+		Object[] objA = cont.loadUrlsTopic(preprocessingWD + url2topicFile, " ");
 		ArrayList<Integer> urlIDs = (ArrayList<Integer>)objA[0];
 		int[] url2topic = (int[])objA[1];
 		int difftopics = (int)objA[2];

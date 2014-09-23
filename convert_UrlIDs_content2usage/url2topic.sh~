@@ -1,0 +1,20 @@
+#!/bin/bash
+
+while read line; do
+  usageID=`echo $line | awk '{print $1}'` 
+  topicID=`echo $line | awk '{print $2}'` 
+  convLine=`grep "^$usageID," usa2cont.csv`
+  contID=`echo $convLine | awk 'BEGIN{FS=","}{print $2+1}'`
+  echo $contID";"$topicID
+done < angelu/URL2topic_th0/URLs_to_topic_TestuHutsa_th0_usageID.txt | sort -n > URLs_to_topic_TestuHutsa_th0_contID.txt
+
+
+URLs_to_topic_Modua0_th0_usageID.txt
+URLs_to_topic_Modua1_th0_usageID.txt
+URLs_to_topic_Modua2_th0_usageID.txt
+
+usa2cont.csv
+
+
+
+contentEnrichment

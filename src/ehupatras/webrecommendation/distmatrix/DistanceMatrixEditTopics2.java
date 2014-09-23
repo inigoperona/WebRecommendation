@@ -15,7 +15,7 @@ public class DistanceMatrixEditTopics2
 		
 		// load topics
 		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objA = cont.loadUrlsTopic(urls2topicfile);
+		Object[] objA = cont.loadUrlsTopic(urls2topicfile, " ");
 		m_UrlIDs = (ArrayList<Integer>)objA[0];
 		m_url2topic = (int[])objA[1];
 	}
