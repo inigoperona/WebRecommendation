@@ -53,7 +53,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 		
 		// the URLs we do not have to recommend
 		ArrayList<Integer> noProposeUrls = new ArrayList<Integer>();
-		if(noRecURLsStr!=""){
+		if(!noRecURLsStr.equals("-")){
 			String[] noRecURLsA = noRecURLsStr.split(",");
 			for(int i=0; i<noRecURLsA.length; i++){
 				int norec = Integer.valueOf(noRecURLsA[i]);
