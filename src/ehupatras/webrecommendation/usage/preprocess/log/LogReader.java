@@ -1,9 +1,9 @@
 package ehupatras.webrecommendation.usage.preprocess.log;
 
-import ehupatras.webrecommendation.structures.Request;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.Website;
-import ehupatras.webrecommendation.structures.Page;
+import ehupatras.webrecommendation.structures.page.Page;
+import ehupatras.webrecommendation.structures.request.Request;
 
 public abstract class LogReader {
 	

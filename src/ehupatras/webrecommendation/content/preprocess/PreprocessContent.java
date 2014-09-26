@@ -1,7 +1,8 @@
 package ehupatras.webrecommendation.content.preprocess;
 
 import ehupatras.webrecommendation.structures.Website;
-import ehupatras.webrecommendation.structures.Page;
+import ehupatras.webrecommendation.structures.page.Page;
+
 import java.util.ArrayList;
 import java.net.URL;
 import java.net.URLConnection;

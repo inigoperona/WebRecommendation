@@ -1,4 +1,4 @@
-package ehupatras.webrecommendation.structures;
+package ehupatras.webrecommendation.structures.request;
 
 public abstract class Request {
 	public abstract int getUserID();

@@ -1,11 +1,12 @@
 package ehupatras.webrecommendation.usage.preprocess.log;
 
-import ehupatras.webrecommendation.structures.Page;
-import ehupatras.webrecommendation.structures.PageBidasoaTurismo;
-import ehupatras.webrecommendation.structures.Request;
-import ehupatras.webrecommendation.structures.RequestBidasoaTurismo;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.Website;
+import ehupatras.webrecommendation.structures.page.Page;
+import ehupatras.webrecommendation.structures.page.PageBidasoaTurismo;
+import ehupatras.webrecommendation.structures.request.Request;
+import ehupatras.webrecommendation.structures.request.RequestBidasoaTurismo;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

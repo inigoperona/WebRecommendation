@@ -1,9 +1,9 @@
 package ehupatras.webrecommendation.usage.preprocess;
 
-import ehupatras.webrecommendation.structures.Request;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.Website;
-import ehupatras.webrecommendation.structures.Page;
+import ehupatras.webrecommendation.structures.page.Page;
+import ehupatras.webrecommendation.structures.request.Request;
 
 import java.util.*;
 

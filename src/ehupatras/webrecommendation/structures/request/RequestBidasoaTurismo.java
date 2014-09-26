@@ -1,8 +1,11 @@
-package ehupatras.webrecommendation.structures;
+package ehupatras.webrecommendation.structures.request;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.io.Serializable;
+
+import ehupatras.webrecommendation.structures.Website;
+import ehupatras.webrecommendation.structures.page.Page;
 
 public class RequestBidasoaTurismo 
 				extends Request

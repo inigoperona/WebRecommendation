@@ -1,6 +1,7 @@
 package ehupatras.webrecommendation.structures;
 
-import ehupatras.webrecommendation.structures.Request;
+import ehupatras.webrecommendation.structures.request.Request;
+
 import java.io.*;
 import java.util.*;
 

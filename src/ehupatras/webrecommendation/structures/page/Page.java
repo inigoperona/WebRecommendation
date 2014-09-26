@@ -1,4 +1,4 @@
-package ehupatras.webrecommendation.structures;
+package ehupatras.webrecommendation.structures.page;
 
 public interface Page {
 	public boolean getIsValid();

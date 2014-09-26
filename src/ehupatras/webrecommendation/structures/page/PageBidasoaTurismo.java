@@ -1,53 +1,17 @@
-package ehupatras.webrecommendation.structures;
-
-import java.io.Serializable;
-import java.util.*;
+package ehupatras.webrecommendation.structures.page;
 
 public class PageBidasoaTurismo
-				implements Page, Serializable {
+				extends PageAbstract {
 	
 	// To implement serializable needs this
 	private static final long serialVersionUID = 1L;
 	
-	// URL's information
-	private String m_urlname = "-";
-	private String m_formatedurlname = "-";
-		// the code we assign to it
-	private int m_urlIDusage = -1;
-	private int m_urlIDcontent = -1;
-		// in which language is the requested page: es (spanish), en (english), eu (basque, euskera), fr (french)
-	private String m_language = "-"; 
-		// for example, the URL appears every 10 days at least 10 times
-	private int m_numPeriod = 0;
-	private boolean m_isStatic = false;
-		// for example, the URL appears in the log files at least 10 times
-	private int m_frequency = 0;
-	private boolean m_isFrequent = false;
-		// some URL's nature labeled by hand
-	private String m_labelByHand = "-";
-		// if it is a pure html or text based webpage (no pdf for example)
-	private boolean m_ishtml = false;
-		// if it is a avalid URL
-	private boolean m_isvalid = true;
-	
-	// Semantic information of the data //
-		// pagerank
-	private int m_pagerankvalue = 0;
-		// topic distribution
-	private float[] m_topicDist = null;
-	
-	
-		// CONTENT DATA
-	private ArrayList<String> m_wordList;
 	
 	public PageBidasoaTurismo(String urlname){
-		m_urlname = urlname;
-		isValid();
-		ishtml();
-		cleanURL();
+		super(urlname);
 	}
 	
-	private void isValid(){
+	protected void isValid(){
 		// default is true
 		m_isvalid = true;
 		
@@ -74,11 +38,7 @@ public class PageBidasoaTurismo
 		}
 	}
 	
-	public boolean getIsValid(){
-		return m_isvalid;
-	}
-	
-	private void ishtml(){
+	protected void ishtml(){
 		// default
 		m_ishtml = false;
 		
@@ -90,7 +50,7 @@ public class PageBidasoaTurismo
 		}
 	}
 	
-	private void cleanURL(){
+	protected void cleanURL(){
 		String urlname2 = m_urlname.toLowerCase();
 		
 		// language analysis
@@ -172,25 +132,7 @@ public class PageBidasoaTurismo
 					!m_labelByHand.equals("noticias") && 
 					!m_labelByHand.equals("search")	);
 	}
-	
-	
-	// Getting/Setting the attributes
-	
-	public String getFormatedUrlName(){
-		return m_formatedurlname;
-	}
-	
-	public void setUrlIDusage(int urlIDusage){
-		m_urlIDusage = urlIDusage;
-	}
-	
-	public int getUrlIDusage(){
-		return m_urlIDusage;
-	}
-	
-	public boolean getIsIndex(){
-		return m_labelByHand.equals("index");
-	}
+
 	
 	public String getUrlName(){
 		String urlname2 = m_urlname.replace("lang=es", "lang=en");
@@ -198,110 +140,6 @@ public class PageBidasoaTurismo
 		String urlname4 = urlname3.replace("lang=fr", "lang=en");
 		String urlname5 = "bidasoaturismo.com" + urlname4; 
 		return urlname5;
-	}
-	
-	
-	
-	// frequency of the page in the Website
-	
-	public void setIsFrequent(boolean isFrequent){
-		m_isFrequent = isFrequent;
-	}
-	
-	public void incrementFrequency(){
-		m_frequency++;
-	}
-	
-	public int getFrequency(){
-		return m_frequency;
-	}
-	
-	public void setIsFrequent(int minimumFrequency){
-		if(m_frequency>=minimumFrequency){
-			m_isFrequent = true;
-		}
-	}
-	
-	public boolean getIsFrequent(){
-		return m_isFrequent;
-	}
-	
-	
-	
-	// Number of periods / staticness of the page in the website
-	
-	public void setIsStatic(boolean isStatic){
-		m_isStatic = isStatic;
-	}
-	
-	public void incrementNumPeriod(){
-		m_numPeriod++;
-	}
-	
-	public int getNumPeriod(){
-		return m_numPeriod;
-	}
-	
-	public void setIsStatic(int minimumNumPeriod){
-		if(m_numPeriod>=minimumNumPeriod){
-			m_isStatic = true;
-		}
-	}
-	
-	public boolean getIsStatic(){
-		return m_isStatic;
-	}
-	
-	public void setNumPeriod(int numPeriod){
-		m_numPeriod = numPeriod;
-	}
-	
-	
-	
-	// PageRank of the page
-	
-	public void setPageRank(int pagerank){
-		m_pagerankvalue = pagerank;
-	}
-	
-	
-	
-	// Topic distribution
-	
-	public void setTopicDistribution(float[] topicDistribution){
-		m_topicDist = topicDistribution;
-	}
-	
-	public float[] getTopicDistribution(){
-		return m_topicDist;
-	}
-	
-	
-	
-	// Writing the Page information
-	
-	public String toStringLongHeader(){
-		return 	"urlname " +
-				"formatedurlname " +
-				"language " +
-				"isStatic " +
-				"isFrequent " +
-				"labelByHand " +
-				"ishtml " +
-				"urlIDusage " +
-				"urlIDcontent";
-	}
-	
-	public String toStringLong(){
-		return 	m_urlname + " " +
-				m_formatedurlname + " " +
-				m_language  + " " +
-				m_isStatic + " " +
-				m_isFrequent + " " +
-				m_labelByHand + " " +
-				m_ishtml + " " +
-				m_urlIDusage + " " +
-				m_urlIDcontent;
 	}
 	
 }

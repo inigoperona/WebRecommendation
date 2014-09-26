@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import ehupatras.webrecommendation.structures.page.Page;
+import ehupatras.webrecommendation.structures.request.Request;
+
 public class WebAccessSequencesUHC 
 				extends WebAccessSequences {
 
