@@ -11,7 +11,7 @@ import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.page.PageDiscapnet;
 import ehupatras.webrecommendation.structures.request.Request;
-import ehupatras.webrecommendation.structures.request.RequestBidasoaTurismo;
+import ehupatras.webrecommendation.structures.request.RequestDiscapnet;
 
 public class LogReaderDiscapnet extends LogReader {
 
@@ -51,12 +51,19 @@ public class LogReaderDiscapnet extends LogReader {
 				
 				// the fields
 				String day = lineA[0];
-				String time = lineA[1];
+				String timeInDay = lineA[1];
+				String time = day + " " + timeInDay;
+				
 				String server_ip = lineA[2];
 				String method = lineA[3];
+				
 				String urlname = lineA[4]; 
 				String param = lineA[5];
-				String urlname2 = urlname + "?" + param;
+				String urlname2 = urlname;
+				if(!param.equals("-")){
+					urlname2 = urlname2 + "?" + param;
+				}
+				
 				String server_port = lineA[6];
 				//String field7 = lineA[7];
 				String ip = lineA[8];
@@ -64,8 +71,10 @@ public class LogReaderDiscapnet extends LogReader {
 				//String field10 = lineA[10];
 				//String field11 = lineA[11];
 				String reference = lineA[12];
+				
 				String statuscodeStr = lineA[13];
 				int statuscode = Integer.valueOf(statuscodeStr).intValue();
+				
 				String field14 = lineA[14];
 				String field15 = lineA[15];
 				String reqsize = lineA[16]; // size of the request in bytes
@@ -80,14 +89,11 @@ public class LogReaderDiscapnet extends LogReader {
 				}
 				
 				// Create page
-				Page page = new PageDiscapnet(urlname2);		
-				
-				
-			
+				Page page = new PageDiscapnet(urlname2);			
 				
 			
 				// Create a request object
-				Request req = new RequestBidasoaTurismo(ip, ipID, time, 
+				Request req = new RequestDiscapnet(ip, ipID, time, 
 						method, page, "-", statuscode, 
 						reqsize, reference, useragent);
 				

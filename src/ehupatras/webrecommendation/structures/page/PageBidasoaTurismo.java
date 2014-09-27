@@ -124,13 +124,14 @@ public class PageBidasoaTurismo
 	public boolean getIsSuitableToLinkPrediction(){
 		// !m_labelByHand.equals("index") we want index URLs in the sequences
 		// because its alignment give us information.
-		return 	m_isvalid &&
-				m_ishtml &&
-				m_isStatic &&
-				m_isFrequent &&
-				(	!m_labelByHand.equals("agenda") && 
-					!m_labelByHand.equals("noticias") && 
-					!m_labelByHand.equals("search")	);
+		m_isvalidLP = 	m_isvalid &&
+						m_ishtml &&
+						m_isStatic &&
+						m_isFrequent &&
+						(	!m_labelByHand.equals("agenda") && 
+							!m_labelByHand.equals("noticias") && 
+							!m_labelByHand.equals("search")	);
+		return m_isvalidLP;
 	}
 
 	

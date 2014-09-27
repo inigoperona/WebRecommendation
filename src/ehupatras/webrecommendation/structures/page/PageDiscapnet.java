@@ -221,10 +221,12 @@ public class PageDiscapnet
 		
 		// english
 		if(urlname2.contains("english")){
-			m_labelByHand = "english"; break;
+			m_labelByHand = "english"; 
+			m_language = "en"; break;
 		}
 		if(urlname2.contains("/castellano/areastematicas/tecnologia/drt4all/en/")){
-			m_labelByHand = "english"; break;
+			m_labelByHand = "english"; 
+			m_language = "en"; break;
 		}
 		
 		// salud
@@ -251,7 +253,7 @@ public class PageDiscapnet
 	
 	private String removeTildes(String input) {
 	    String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-	    String noTildes1 = normalized.replaceAll("[^\\p{ASCII}]", "");
+	    //String noTildes1 = normalized.replaceAll("[^\\p{ASCII}]", "");
 	    String noTildes2 = normalized.replaceAll("\\p{M}", "");
 	    return noTildes2;
 	}
@@ -259,29 +261,26 @@ public class PageDiscapnet
 	public boolean getIsSuitableToLinkPrediction(){
 		// !m_labelByHand.equals("index") we want index URLs in the sequences
 		// because its alignment give us information.
-		return 	m_isvalid &&
-				m_ishtml &&
-				m_isStatic &&
-				m_isFrequent &&
-				(	!m_labelByHand.contains("actualidad") && 
-					!m_labelByHand.contains("noticias") &&
-					!m_labelByHand.contains("enviaramigo") && 
-					!m_labelByHand.contains("pdf") && 
-					!m_labelByHand.contains("layouts") && 
-					!m_labelByHand.contains("buscador") && 
-					!m_labelByHand.contains("com_canaljunior") && 
-					!m_labelByHand.contains("image") && 
-					!m_labelByHand.contains("esquema") && 
-					!m_labelByHand.contains("sitecollectiondocuments") && 
-					!m_labelByHand.contains("web_accesible") && 
-					!m_labelByHand.contains("forms") && 
-					!m_labelByHand.contains("english") && 
-					!m_labelByHand.contains("salud") && 
-					!m_labelByHand.contains("others")	);
+		m_isvalidLP =	m_isvalid &&
+						m_ishtml &&
+						m_isStatic &&
+						m_isFrequent &&
+						(	!m_labelByHand.contains("actualidad") && 
+							!m_labelByHand.contains("noticias") &&
+							!m_labelByHand.contains("enviaramigo") && 
+							!m_labelByHand.contains("pdf") && 
+							!m_labelByHand.contains("layouts") && 
+							!m_labelByHand.contains("buscador") && 
+							!m_labelByHand.contains("com_canaljunior") && 
+							!m_labelByHand.contains("image") && 
+							!m_labelByHand.contains("esquema") && 
+							!m_labelByHand.contains("sitecollectiondocuments") && 
+							!m_labelByHand.contains("web_accesible") && 
+							!m_labelByHand.contains("forms") && 
+							!m_labelByHand.contains("english") && 
+							!m_labelByHand.contains("salud") && 
+							!m_labelByHand.contains("others")	);
+		return m_isvalidLP;
 	}
-
-	public String getUrlName(){
-		return m_urlname;
-	}	
 	
 }

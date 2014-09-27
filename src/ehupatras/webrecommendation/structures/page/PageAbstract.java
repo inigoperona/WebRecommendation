@@ -29,6 +29,8 @@ public abstract class PageAbstract
 	protected boolean m_ishtml = false;
 		// if it is a avalid URL
 	protected boolean m_isvalid = true;
+		// if it is valid for link prediction
+	protected boolean m_isvalidLP = true;
 	
 	// Semantic information of the data //
 		// pagerank
@@ -56,12 +58,13 @@ public abstract class PageAbstract
 	protected abstract void isValid();	
 	protected abstract void ishtml();
 	protected abstract void cleanURL();
-	
 	public abstract boolean getIsSuitableToLinkPrediction();
-	public abstract String getUrlName();
-	
 	
 	// Getting/Setting the attributes
+	
+	public String getUrlName(){
+		return m_urlname;
+	}
 	
 	public boolean getIsValid(){
 		return m_isvalid;
