@@ -10,14 +10,22 @@ public class WebAccessSequences {
 	// The directory where we are working
 	private static String m_workdirectory = ".";
 	
-	// The filtered/good requests from the log
+	// The requests container
 	private static ArrayList<Request> m_filterlog = new ArrayList<Request>();
+	private static int m_actualloadedmodulus = 0;
+	
+	// Auxiliar ArrayList<Request> to read faster
+	private static ArrayList<Request> m_filterlog2 = new ArrayList<Request>();
+	private static int m_actualloadedmodulus2 = -1;
+	
+	// Necessary attributes when we are adding requests
 	private static int m_actualloadedrequest = 0;
 	private static int m_lastloadedrequest = 0;
 	private static int m_maxloadrequests = 100000;
 	private static int m_writedmodulus = 0;
-	private static int m_actualloadedmodulus = 0;
 	private static String m_basenamejavadata = "requests.javaData";
+	
+	
 	
 	// The sequences we are going to use to link prediction
 	// sessionID1: req1, req2, req3
@@ -25,9 +33,22 @@ public class WebAccessSequences {
 	public static Hashtable<Integer,Float> m_validnessOfSequences = new Hashtable<Integer,Float>();
 	private static String m_seqfilename = "_sequences.javaData";
 	
+	
 	// protected constructor
 	protected WebAccessSequences(){
 	}
+	
+	
+	// to have more control in modulus change
+	public static int getActualModulus(){
+		return m_actualloadedmodulus;
+	}
+	
+	public static int getModulusAfterGetRequest(int i) {
+		int imodulus = i / m_maxloadrequests;
+		return imodulus;
+	}
+	
 	
 	
 	// Requests related functions
@@ -36,7 +57,7 @@ public class WebAccessSequences {
 		// load the last modulus to add if we do not have already loaded
 		if(m_writedmodulus>m_actualloadedmodulus){
 			long starttime = System.currentTimeMillis();
-			savemodulus(m_actualloadedmodulus);
+			savemodulus(m_actualloadedmodulus, m_filterlog);
 			loadmodulus(m_writedmodulus);
 			long endtime = System.currentTimeMillis();
 			System.out.println("  [" + endtime + "] End swaping modulus. " + 
@@ -45,7 +66,7 @@ public class WebAccessSequences {
 		if(m_actualloadedrequest>=m_maxloadrequests){
 			// dump: save the requests we have loaded until now
 			long starttime = System.currentTimeMillis();
-			savemodulus(m_writedmodulus);
+			savemodulus(m_writedmodulus, m_filterlog);
 			// verbose
 			long endtime = System.currentTimeMillis();
 			System.out.println("  [" + endtime + "] End dump the modulus " + m_writedmodulus +
@@ -67,10 +88,13 @@ public class WebAccessSequences {
 	public static Request getRequest(int i) {
 		int imodulus = i / m_maxloadrequests;
 		int iindex = i % m_maxloadrequests;
+		if(m_actualloadedmodulus2==imodulus){
+			return m_filterlog2.get(iindex);
+		}
 		if(m_actualloadedmodulus!=imodulus){
 			long starttime = System.currentTimeMillis();
 			int oldmod = m_actualloadedmodulus;
-			savemodulus(m_actualloadedmodulus);
+			savemodulus(m_actualloadedmodulus, m_filterlog);
 			loadmodulus(imodulus);
 			long endtime = System.currentTimeMillis();
 			System.out.println("  [" + endtime + "] End swaping modulus. " +
@@ -83,21 +107,35 @@ public class WebAccessSequences {
 	public static void replaceRequest(int i, Request req){
 		int imodulus = i / m_maxloadrequests;
 		int iindex = i % m_maxloadrequests;
-		if(m_actualloadedmodulus!=imodulus){
-			long starttime = System.currentTimeMillis();
-			int oldmod = m_actualloadedmodulus;
-			savemodulus(m_actualloadedmodulus);
-			loadmodulus(imodulus);
-			long endtime = System.currentTimeMillis();
-			System.out.println("  [" + endtime + "] End swaping modulus. " + 
+		if(m_actualloadedmodulus2==imodulus){
+			m_filterlog2.remove(iindex);
+			m_filterlog2.add(iindex, req);
+		} else {
+			if(m_actualloadedmodulus!=imodulus){
+				long starttime = System.currentTimeMillis();
+				int oldmod = m_actualloadedmodulus;
+				savemodulus(m_actualloadedmodulus, m_filterlog);
+				loadmodulus(imodulus);
+				long endtime = System.currentTimeMillis();
+				System.out.println("  [" + endtime + "] End swaping modulus. " + 
 					oldmod + " <-> " + m_actualloadedmodulus + ". " +
 					(endtime-starttime)/1000 + " seconds. [replaceRequest]");
+			}
+			m_filterlog.remove(iindex);
+			m_filterlog.add(iindex, req);
 		}
-		m_filterlog.remove(iindex);
-		m_filterlog.add(iindex, req);
 	}
 	
 	private static void loadmodulus(int mod){
+		// save the previous one to read faster
+		if(m_actualloadedmodulus2!=-1){
+			savemodulus(m_actualloadedmodulus2, m_filterlog2);
+		}
+		m_filterlog2 = (ArrayList<Request>)m_filterlog.clone();
+		m_actualloadedmodulus2 = m_actualloadedmodulus;
+		
+		
+		// load the modulus
 		String outputfilename = "_" + mod + "_" + m_basenamejavadata;
 		FileInputStream fis = null;
 		try{
@@ -136,7 +174,7 @@ public class WebAccessSequences {
 		m_actualloadedmodulus = mod;
 	}
 	
-	private static void savemodulus(int mod){
+	private static void savemodulus(int mod, ArrayList<Request> filterlog){
 		String outputfilename = "_" + mod + "_" + m_basenamejavadata;
 		// open the file
 		FileOutputStream fos = null;
@@ -152,7 +190,7 @@ public class WebAccessSequences {
 		ObjectOutputStream oos = null;
 		try{
 			oos = new ObjectOutputStream(fos);
-			oos.writeObject(m_filterlog);
+			oos.writeObject(filterlog);
 		} catch (IOException ex){
 			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.savemodulus] " +
 				"Problems at writing in the file: " + outputfilename);
@@ -381,15 +419,15 @@ public class WebAccessSequences {
 	}
 	
 	public static void saveStructure(){
+		savemodulus(m_actualloadedmodulus2, m_filterlog2);
+		
 		for(int i=0; i<=m_writedmodulus; i++){
-			String filename = m_workdirectory + "/" + 
-					"_" + i + "_" + m_basenamejavadata;
 			if(m_actualloadedmodulus!=i){
-				savemodulus(m_actualloadedmodulus);
+				savemodulus(m_actualloadedmodulus, m_filterlog);
 				loadmodulus(i);
 				m_actualloadedmodulus = i;
 			}
-			savemodulus(i);
+			savemodulus(i, m_filterlog);
 			
 			// update pointers
 			m_lastloadedrequest = m_filterlog.size()-1;

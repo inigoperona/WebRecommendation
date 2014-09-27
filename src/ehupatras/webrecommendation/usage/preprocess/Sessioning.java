@@ -13,6 +13,7 @@ public class Sessioning {
 	// expireSessionsInMin: We split up sequences in two sessions when we see this jump of time between clicks.
 	public void createSessions(int expireSessionsInMin){
 		Hashtable<Integer,Object[]> oldrequests = new Hashtable<Integer,Object[]>();
+		
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
 			if(i%100000==0){
 				System.out.println("  " + i + "/" + WebAccessSequences.filteredlogsize() +
@@ -34,11 +35,7 @@ public class Sessioning {
 					sum = sum + oldelapssedtime;
 					nreq++;
 					// we now know the elapsed time, so, update the old requests
-					Request oldreq = WebAccessSequences.getRequest(oldindex);
-					oldreq.setElapsedTime(oldelapssedtime);
-					int oldsessionint = actualuser*10000+oldsessioni;
-					oldreq.setSessionID(oldsessionint);
-					WebAccessSequences.replaceRequest(oldindex, oldreq);
+					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni);
 					// Update the user with the actual request information
 					Object[] objAr = new Object[5];
 					objAr[0] = new Integer(oldsessioni); // session number
@@ -49,12 +46,8 @@ public class Sessioning {
 					oldrequests.put(actualuser, objAr);
 				} else {
 					// update the last request of the previous session
-					Request oldreq = WebAccessSequences.getRequest(oldindex);
-					float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
-					oldreq.setElapsedTime(oldelapssedtime);
-					int oldsessionint = actualuser*10000+oldsessioni;
-					oldreq.setSessionID(oldsessionint);
-					WebAccessSequences.replaceRequest(oldindex, oldreq);
+					float oldelapssedtime = nreq==1 ? -1f : sum/(float)(nreq-1);
+					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni);
 					// now start a new session to the user
 					oldsessioni++;
 					Object[] objAr = new Object[5];
@@ -87,13 +80,18 @@ public class Sessioning {
 			int oldindex = ((Integer)objA[2]).intValue();
 			float sum = ((Float)objA[3]).floatValue();
 			int nreq = ((Integer)objA[4]).intValue();
-			Request oldreq = WebAccessSequences.getRequest(oldindex);
+			// update the request registry
 			float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
-			oldreq.setElapsedTime(oldelapssedtime);
-			int oldsessionint = userid*10000+oldsessioni;
-			oldreq.setSessionID(oldsessionint);
-			WebAccessSequences.replaceRequest(oldindex, oldreq);
+			this.updateTheOldRequest(oldindex, oldelapssedtime, userid, oldsessioni);
 		}
+	}
+	
+	private void updateTheOldRequest(int oldindex, float oldelapssedtime, int actualuser, int oldsessioni){
+		Request oldreq = WebAccessSequences.getRequest(oldindex);
+		oldreq.setElapsedTime(oldelapssedtime);
+		int oldsessionint = actualuser*10000+oldsessioni;
+		oldreq.setSessionID(oldsessionint);
+		WebAccessSequences.replaceRequest(oldindex, oldreq);
 	}
 	
 	

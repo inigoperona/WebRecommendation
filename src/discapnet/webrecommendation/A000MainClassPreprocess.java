@@ -221,7 +221,7 @@ public class A000MainClassPreprocess {
 		// Parameter control
 		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
 		String basedirectory = "experiments_discapnet/01_preprocess";
-		String logfilesIndex = "/logFilesIndex2.txt";
+		String logfilesIndex = "/logFilesIndex.txt";
 		/*
 		basedirectory = args[0];
 		logfilesIndex = args[1];
