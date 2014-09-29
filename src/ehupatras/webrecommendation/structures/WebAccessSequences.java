@@ -25,7 +25,8 @@ public class WebAccessSequences {
 	private static int m_writedmodulus = 0;
 	private static String m_basenamejavadata = "requests.javaData";
 	
-	
+	// order of requests; long[0]: requests_index; long[1]: requests timestamp
+	//private static ArrayList<long[]> m_orderedRequests = new ArrayList<long[]>(); 
 	
 	// The sequences we are going to use to link prediction
 	// sessionID1: req1, req2, req3

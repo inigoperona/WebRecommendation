@@ -37,12 +37,7 @@ public class Sessioning {
 					// we now know the elapsed time, so, update the old requests
 					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni);
 					// Update the user with the actual request information
-					Object[] objAr = new Object[5];
-					objAr[0] = new Integer(oldsessioni); // session number
-					objAr[1] = new Long(actualtime); // last timestamp
-					objAr[2] = new Integer(i); // last request index
-					objAr[3] = new Float(sum); // accumulated sum of elapsed times
-					objAr[4] = new Integer(nreq); // number of request in the session so far
+					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, sum, nreq);
 					oldrequests.put(actualuser, objAr);
 				} else {
 					// update the last request of the previous session
@@ -50,22 +45,12 @@ public class Sessioning {
 					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni);
 					// now start a new session to the user
 					oldsessioni++;
-					Object[] objAr = new Object[5];
-					objAr[0] = new Integer(oldsessioni); // session number
-					objAr[1] = new Long(actualtime); // last timestamp
-					objAr[2] = new Integer(i); // last request index
-					objAr[3] = new Float(0.0); // accumulated sum of elapsed times
-					objAr[4] = new Integer(1); // number of request in the session so far
+					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, 0.0f, 1);
 					oldrequests.put(actualuser, objAr);
 				}
 			} else {
-				Object[] objA = new Object[5];
-				objA[0] = new Integer(1); // session number
-				objA[1] = new Long(actualtime); // last timestamp
-				objA[2] = new Integer(i); // last request index
-				objA[3] = new Float((float)0.0); // accumulated sum of elapsed times
-				objA[4] = new Integer(1); // number of request in the session so far
-				oldrequests.put(actualuser, objA);
+				Object[] objAr = this.createOldRequestsObj(1, actualtime, i, 0.0f, 1);
+				oldrequests.put(actualuser, objAr);
 			}
 		}
 		// close the sessions that there are in the hashtable
@@ -92,6 +77,16 @@ public class Sessioning {
 		int oldsessionint = actualuser*10000+oldsessioni;
 		oldreq.setSessionID(oldsessionint);
 		WebAccessSequences.replaceRequest(oldindex, oldreq);
+	}
+	
+	private Object[] createOldRequestsObj(int sessionNumber, long starttime, int startIndex, float sessionDuration, int sessionNumReqs){
+		Object[] objAr = new Object[5];
+		objAr[0] = new Integer(sessionNumber); // session number
+		objAr[1] = new Long(starttime); // last timestamp
+		objAr[2] = new Integer(startIndex); // last request index
+		objAr[3] = new Float(sessionDuration); // accumulated sum of elapsed times
+		objAr[4] = new Integer(sessionNumReqs); // number of request in the session so far
+		return objAr;
 	}
 	
 	

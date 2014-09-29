@@ -169,7 +169,9 @@ public abstract class PageAbstract
 		return 	"urlname " +
 				"formatedurlname " +
 				"language " +
+				"nStaticPeriods" +
 				"isStatic " +
+				"nFrequency" +
 				"isFrequent " +
 				"labelByHand " +
 				"ishtml " +
@@ -181,7 +183,9 @@ public abstract class PageAbstract
 		return 	m_urlname + " " +
 				m_formatedurlname + " " +
 				m_language  + " " +
+				m_numPeriod + " " +
 				m_isStatic + " " +
+				m_frequency + " " +
 				m_isFrequent + " " +
 				m_labelByHand + " " +
 				m_ishtml + " " +
