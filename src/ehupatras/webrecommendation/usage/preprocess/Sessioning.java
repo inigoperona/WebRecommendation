@@ -8,6 +8,8 @@ import ehupatras.webrecommendation.structures.request.Request;
 import java.util.*;
 
 public class Sessioning {
+
+	private int m_maxLenghtOfTheSequence = 200;
 	
 	// expireSessionsInMin: We suppose after this time that a new session starts.
 	// expireSessionsInMin: We split up sequences in two sessions when we see this jump of time between clicks.
@@ -29,7 +31,7 @@ public class Sessioning {
 				int oldindex = ((Integer)objA[2]).intValue();
 				float sum = ((Float)objA[3]).floatValue();
 				int nreq = ((Integer)objA[4]).intValue();
-				if((actualtime-oldtime)/1000 <= expireSessionsInMin*60){
+				if( m_maxLenghtOfTheSequence<=nreq && ((actualtime-oldtime)/1000 <= expireSessionsInMin*60) ){
 					// this request is in the same session
 					float oldelapssedtime = (float)(actualtime-oldtime);
 					sum = sum + oldelapssedtime;
@@ -88,6 +90,8 @@ public class Sessioning {
 		objAr[4] = new Integer(sessionNumReqs); // number of request in the session so far
 		return objAr;
 	}
+	
+	
 	
 	
 	public void joinConsecutiveSameUrls(){
@@ -305,7 +309,7 @@ public class Sessioning {
 		// compute the given percentile's position
 		int nseqs = lengthsInOrder.size();
 		int position = Math.round((float)nseqs*(lengthpercentile/(float)100));
-		int value = lengthsInOrder.get(position);
+		int value = lengthsInOrder.size()>0 ? lengthsInOrder.get(position) : -1;
 		System.out.println("  " + value + " is the sequence length of the " +
 			"percentile " + lengthpercentile + "%.");
 		removeLongSequences(value);

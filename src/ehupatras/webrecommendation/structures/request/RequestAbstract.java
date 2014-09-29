@@ -24,7 +24,9 @@ public abstract class RequestAbstract
 	private int m_status = -1;
 	private String m_reqsize = "-";
 	private String m_reference = "-";
+	private String m_referenceLabel = "_";
 	private String m_useragent = "-";
+	private String m_useragentLabel = "_";
 
 	// if it is valid request or not
 	private boolean m_isvalid = true;
@@ -69,9 +71,11 @@ public abstract class RequestAbstract
 		
 		// reference: from where the request comes
 		m_reference = reference;
+		this.analyzeReference();
 		
 		// user agent field
 		m_useragent = useragent;
+		this.analyzeUserAgent();
 		
 		// compute if it is a valid request
 		this.isvalid();
@@ -117,9 +121,53 @@ public abstract class RequestAbstract
 		String useragent2 = m_useragent.toLowerCase();
 		if(	useragent2.contains("bot") ||
 			useragent2.contains("spider") ||
-			useragent2.contains("crawler") ){
+			useragent2.contains("crawler")){
 			m_isbot  = true;
+			m_useragentLabel = m_useragentLabel + "_bot";
 		}
+	}
+	
+	protected void analyzeUserAgent(){
+		String useragent2 = m_useragent.toLowerCase();		
+		// bots
+		if(	useragent2.contains("googlebot") ){ m_useragentLabel = m_useragentLabel + "_googlebot"; }
+		if(	useragent2.contains("bingbot") ){ m_useragentLabel = m_useragentLabel + "_bingbot"; }
+		// browsers
+		if(	useragent2.contains("yahoo") ){ m_useragentLabel = m_useragentLabel + "_bro_yahoo"; }
+		if(	useragent2.contains("chrome") ){ m_useragentLabel = m_useragentLabel + "_bro_chrome"; }
+		if(	useragent2.contains("iexplorer") ){ m_useragentLabel = m_useragentLabel + "_bro_iexplorer"; }
+		if(	useragent2.contains("firefox") ){ m_useragentLabel = m_useragentLabel + "_bro_firefox"; }
+		if(	useragent2.contains("opera") ){ m_useragentLabel = m_useragentLabel + "_bro_opera"; }
+		if(	useragent2.contains("safari") ){ m_useragentLabel = m_useragentLabel + "_bro_safari"; }
+		// operating system
+		if(	useragent2.contains("windows") ){ m_useragentLabel = m_useragentLabel + "_os_windows"; }
+		if(	useragent2.contains("macintosh") ){ m_useragentLabel = m_useragentLabel + "_os_macintosh"; }
+		if(	useragent2.contains("linux") ){ m_useragentLabel = m_useragentLabel + "_os_linux"; }
+		if(	useragent2.contains("mobile") ){ m_useragentLabel = m_useragentLabel + "_os_mobile"; }
+	}
+	
+	protected void analyzeReference(){
+		String reference2 = m_reference.toLowerCase();
+		// sites related with discapnet
+		if(	reference2.contains("discapnet") ){ m_referenceLabel = m_referenceLabel + "_disc"; }
+		if(	reference2.contains("www.discapnet.es") ){ m_referenceLabel = m_referenceLabel + "_disc"; }
+		if(	reference2.contains("discapnet.es") ){ m_referenceLabel = m_referenceLabel + "_disc_subdomain"; }
+		if(	reference2.contains("technosite") ){ m_referenceLabel = m_referenceLabel + "_disc_technosite"; }
+		if(	reference2.contains("once") ){ m_referenceLabel = m_referenceLabel + "_disc_once"; }
+		// search engine 
+		if(	reference2.contains("google") ||  reference2.contains("goo.gl") ){ m_referenceLabel = m_referenceLabel + "_se_google"; }
+		if(	reference2.contains("yahoo") ){ m_referenceLabel = m_referenceLabel + "_se_yahoo"; }
+		if(	reference2.contains("ask") ){ m_referenceLabel = m_referenceLabel + "_se_ask"; }
+		if(	reference2.contains("iconoce") ){ m_referenceLabel = m_referenceLabel + "_se_iconoce"; }
+		if(	reference2.contains("bing") ){ m_referenceLabel = m_referenceLabel + "_se_bing"; }
+		// social networks
+		if(	reference2.contains("facebook") ){ m_referenceLabel = m_referenceLabel + "_sn_facebook"; }
+		if(	reference2.contains("t.co") ){ m_referenceLabel = m_referenceLabel + "_sn_twitter"; }
+		// other
+		if(	reference2.contains("babylon") ){ m_referenceLabel = m_referenceLabel + "_oth_babylon"; }
+		if(	reference2.contains("portalento") ){ m_referenceLabel = m_referenceLabel + "_oth_portalento"; }
+		if(	reference2.contains("wikipedia") ){ m_referenceLabel = m_referenceLabel + "_oth_wikipedia"; }
+		if(	reference2.contains("173.194") ||  reference2.contains("goo.gl") ){ m_referenceLabel = m_referenceLabel + "_oth_ehu"; }
 	}
 	
 	public void isSuitableToLinkPrediction(){
@@ -192,7 +240,9 @@ public abstract class RequestAbstract
 				"status " +
 				"reqsize " +
 				"reference " +
+				"referenceLabel " +
 				"useragent " +
+				"useragentLabel " +
 				"isvalid " +
 				"sesssionID " +
 				"elapsedtime " +
@@ -212,7 +262,9 @@ public abstract class RequestAbstract
 				m_status + " " +
 				m_reqsize + " " +
 				m_reference.replaceAll(" ", "") + " " +
+				m_referenceLabel + " " +
 				m_useragent.replaceAll(" ", "") + " " +
+				m_useragentLabel + " " +
 				m_isvalid + " " +
 				m_sessionID + " " +
 				m_elapsedtime + " " +

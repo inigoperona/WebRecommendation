@@ -123,6 +123,12 @@ public class LogReaderDiscapnet extends LogReader {
 		}
 		
 		} // for each log file
+		
+		
+		// order the WebAccessSequences
+		System.out.println("  [" + System.currentTimeMillis() + 
+				"] Ordering the requests. ");
+		WebAccessSequences.orderRequests();
 	}
 	
 	
