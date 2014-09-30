@@ -81,7 +81,7 @@ public class WebAccessSequences {
 			if(m_actualloadedmodulus==-1){m_actualloadedmodulus=0;}
 			long starttime = System.currentTimeMillis();
 			savemodulus(m_actualloadedmodulus, m_filterlog, basenamejavadata);
-			loadmodulus(m_writedmodulus, basenamejavadata, false, false);
+			loadmodulus(m_writedmodulus, basenamejavadata, true, false);
 			long endtime = System.currentTimeMillis();
 			System.out.println("  [" + endtime + "] End swaping modulus. " + 
 					(endtime-starttime)/1000 + " seconds. [addRequest]");
@@ -248,7 +248,11 @@ public class WebAccessSequences {
 		ObjectInputStream ois = null;
 		try{
 			ois = new ObjectInputStream(fis);
-			m_filterlog = (ArrayList<Request>)ois.readObject();
+			if(!modeOrd){
+				m_filterlog = (ArrayList<Request>)ois.readObject();
+			} else {
+				m_filterlog2 = (ArrayList<Request>)ois.readObject();
+			}
 		} catch(IOException ex){
 			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.loadmodulus] " +
 					"Problems at reading the file: " + outputfilename);
@@ -576,12 +580,10 @@ public class WebAccessSequences {
 		m_actualloadedmodulus = -1;
 		m_filterlog = new ArrayList<Request>();
 		m_actualloadedrequest = 0;
-		m_lastloadedrequest = 0;
 		// 2
 		m_actualloadedmodulus2 = -1;
 		m_filterlog2 = new ArrayList<Request>();
 		m_actualloadedrequest2 = 0;
-		m_lastloadedrequest2 = 0;	
 	}
 	
 	
@@ -640,6 +642,7 @@ public class WebAccessSequences {
 		}
 		WebAccessSequences.saveStructure2();
 		m_basenamejavadata = m_basenamejavadata2;
+		m_lastloadedrequest = m_lastloadedrequest2;
 		WebAccessSequences.resetModulus();
 	}
 	
@@ -660,6 +663,7 @@ public class WebAccessSequences {
 					break;
 				}
 			}
+			m_orderedRequests.add(obj);
 		}
 	}
 	
