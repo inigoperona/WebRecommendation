@@ -60,7 +60,7 @@ public class SaveLoadObjects {
 		ObjectInputStream ois = null;
 		try{
 			ois = new ObjectInputStream(fis);
-			obj = ois.readObject();
+			obj = (Object)ois.readObject();
 		} catch(IOException ex){
 			
 		} catch(ClassNotFoundException ex){

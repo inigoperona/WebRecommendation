@@ -3,14 +3,14 @@ package angelu.webrecommendation.evaluator;
 import java.util.ArrayList;
 import ehupatras.webrecommendation.recommender.RecommenderKnnToClustersTopURLs;
 
-public class RecommenderTop4_1 
+public class RecommenderTop05_1 
 				extends RecommenderKnnToClustersTopURLs {
 
 	protected int m_leftZerosLen = 6;
 	
 	// CREATOR
 	
-	public RecommenderTop4_1(
+	public RecommenderTop05_1(
 			ArrayList<String[]> medoids,
 			int[] globalMedoids,
 			ArrayList<Object[]> recosForEachMedoid,
@@ -32,6 +32,8 @@ public class RecommenderTop4_1
 		urlStr = String.format("%0"+ m_leftZerosLen + "d", 7);
 		recosFinal.add(urlStr);
 		urlStr = String.format("%0"+ m_leftZerosLen + "d", 89);
+		recosFinal.add(urlStr);
+		urlStr = String.format("%0"+ m_leftZerosLen + "d", 152);
 		recosFinal.add(urlStr);
 		return recosFinal;
 	}

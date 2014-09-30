@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import angelu.webrecommendation.evaluator.ModelEvaluatorMedoidsContent;
 import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
@@ -11,7 +12,7 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidatio
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A059MainClassTop4_1 {
+public class A059MainClassTop03_1 {
 
 	public static void main(String[] args) {
 		
@@ -63,7 +64,7 @@ public class A059MainClassTop4_1 {
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
-		Website.load();
+		//Website.load();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -195,7 +196,7 @@ public class A059MainClassTop4_1 {
 					
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					modelev.setEsploitationParameters("Top4_1", 
+					modelev.setEsploitationParameters("Top03_1", 
 							urlSimilarityMatrix, urlRelationMatrix, usage2contentFile);
 					results = modelev.computeEvaluationVal("weighted", nrec, (long)0);
 					
@@ -229,7 +230,7 @@ public class A059MainClassTop4_1 {
 					
 					modelev.setLineHeader(resultInfo + ";", evalWriter);
 					modelev.setEsploitationParameters(true, rolesW, 100);
-					modelev.setEsploitationParameters("Top4_1", 
+					modelev.setEsploitationParameters("Top03_1", 
 							urlSimilarityMatrix, urlRelationMatrix, usage2contentFile);
 					results = modelev.computeEvaluationTest("weighted", nrec, (long)0);
 					

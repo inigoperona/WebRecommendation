@@ -319,8 +319,32 @@ public class SequenceEvaluatorMedContent
 					m_noProposeURLs);
 		}
 		
-		else if(m_enrichStrategy.equals("Top4_1")){
-			recommender = new RecommenderTop4_1(
+		else if(m_enrichStrategy.equals("Top02_1")){
+			recommender = new RecommenderTop02_1(
+			m_medoids, m_gmedoids, m_recos,
+			m_isDistance, m_rolesW);
+		} else if(m_enrichStrategy.equals("Top03_1")){
+			recommender = new RecommenderTop03_1(
+			m_medoids, m_gmedoids, m_recos,
+			m_isDistance, m_rolesW);
+		} else if(m_enrichStrategy.equals("Top04_1")){
+			recommender = new RecommenderTop04_1(
+			m_medoids, m_gmedoids, m_recos,
+			m_isDistance, m_rolesW);
+		} else if(m_enrichStrategy.equals("Top05_1")){
+			recommender = new RecommenderTop05_1(
+			m_medoids, m_gmedoids, m_recos,
+			m_isDistance, m_rolesW);
+		} else if(m_enrichStrategy.equals("Top06_1")){
+			recommender = new RecommenderTop06_1(
+			m_medoids, m_gmedoids, m_recos,
+			m_isDistance, m_rolesW);
+		} else if(m_enrichStrategy.equals("Top07_1")){
+			recommender = new RecommenderTop07_1(
+			m_medoids, m_gmedoids, m_recos,
+			m_isDistance, m_rolesW);
+		} else if(m_enrichStrategy.equals("Top16_1")){
+			recommender = new RecommenderTop16_1(
 			m_medoids, m_gmedoids, m_recos,
 			m_isDistance, m_rolesW);
 		}
