@@ -649,13 +649,26 @@ public class WebAccessSequences {
 	private static void orderRequestsInd(){
 		m_orderedRequests = new ArrayList<long[]>();
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			// actual request
 			Request req = WebAccessSequences.getRequest(i, m_basenamejavadata);
 			long ind = (long)i;
 			long time = req.getTimeInMillis();
 			long[] obj = new long[2];
 			obj[0] = ind;
 			obj[1] = time;
-			int j=0;
+			
+			// fast approach to the position we need
+			int k=1000;
+			for(; k<m_orderedRequests.size(); k=k+1000){
+				long[] obj2 = m_orderedRequests.get(k);
+				long time2 = obj2[1];
+				if(time<time2){
+					break;
+				}
+			}
+			
+			// it has to be in the position
+			int j=k-1000;
 			for(; j<m_orderedRequests.size(); j++){
 				long[] obj2 = m_orderedRequests.get(j);
 				long time2 = obj2[1];
@@ -663,7 +676,7 @@ public class WebAccessSequences {
 					break;
 				}
 			}
-			m_orderedRequests.add(obj);
+			m_orderedRequests.add(j, obj);
 		}
 	}
 	
