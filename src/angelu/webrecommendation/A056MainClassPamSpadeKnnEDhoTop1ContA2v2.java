@@ -17,7 +17,7 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 	public static void main(String[] args) {
 		
 		// Parameter control
-		String base = "experiments_ehupatras";
+		String base = "experiments_angelu/experiments";
 		String preprocessingWD = base + "/01_preprocess";
 		String logfile = "/log20000.log";
 		String url2topicFile = "/URLs_to_topic.txt";
@@ -32,7 +32,7 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 		String profiWD = "/pam_DM_04_edit/spade1";
 		String evalFile = "/evaluation.txt";
 		String noRecURLsStr = "11,74,7,89,152";
-
+/*
 		preprocessingWD = args[0];
 		logfile = args[1];
 		url2topicFile = args[2];
@@ -47,7 +47,7 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 		profiWD = args[11];
 		evalFile = args[12];
 		noRecURLsStr = args[13];
-
+*/
 		
 		// the URLs we do not have to recommend
 		ArrayList<Integer> noProposeUrls = new ArrayList<Integer>();
@@ -63,7 +63,7 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
-		Website.load();
+		//Website.load();
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();

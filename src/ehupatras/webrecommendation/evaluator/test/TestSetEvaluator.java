@@ -2,6 +2,7 @@ package ehupatras.webrecommendation.evaluator.test;
 
 import java.io.BufferedWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import ehupatras.markovmodel.MarkovChain;
@@ -13,7 +14,10 @@ public abstract class TestSetEvaluator {
 	
 	// test sequences 
 	private ArrayList<String[]> m_sequences;
-		
+	
+	// mode to compute precision and recall
+	protected int m_modePrRe = 1;
+	
 	// Validation metrics
 	private float[] m_points = {0.10f, 0.25f, 0.50f, 0.75f, 0.90f};
 	private float m_beta = (float)0.5;
@@ -223,7 +227,7 @@ public abstract class TestSetEvaluator {
 		float[] modelRecallTop_OkHome = new float[m_points.length];
 		float[] modelFmeasureTop_OkHome = new float[m_points.length];
 		
-		
+		int[] numOfSequencesA = new int[m_points.length];
 		for(int i=0; i<m_sequences.size(); i++){
 			String[] seq = m_sequences.get(i);
 			
@@ -295,33 +299,57 @@ public abstract class TestSetEvaluator {
 						break;
 			}
 			
+			
+			// in the case we are computing metrics in a relaxed way
+			boolean noCountSeq[] = new boolean[m_points.length];
+			Arrays.fill(noCountSeq, false);
+			
 			// URL level metrics - HONEST
 			hitratio = hitratio + seqEv.getHitRatio();
 			clicksoonratio = clicksoonratio + seqEv.getClickSoonRatio();
 			for(int j=0; j<m_points.length; j++){
-				precission[j]     = precission[j]     + seqEv.getPrecisionAtPoint(m_points[j]);
-				recall[j]         = recall[j]         + seqEv.getRecallAtPoint(m_points[j]);
-				fmeasure[j]       = fmeasure[j]       + seqEv.getFmeasureAtPoint(m_beta, m_points[j]);
+				// check if we need to count the 
+				float val = seqEv.getPrecisionAtPoint(m_points[j]);
+				noCountSeq[j] = (val!=-1f);
+				
+				// prediction
+				if(noCountSeq[j]){
+					precission[j]     = precission[j]     + seqEv.getPrecisionAtPoint(m_points[j]);
+					recall[j]         = recall[j]         + seqEv.getRecallAtPoint(m_points[j]);
+					fmeasure[j]       = fmeasure[j]       + seqEv.getFmeasureAtPoint(m_beta, m_points[j]);
+				}
 				cosineSim[j]      = cosineSim[j]      + seqEv.getCosineSimilarityAtPoint(m_points[j]);
 				
-				modelPrecision[j] = modelPrecision[j] + seqEv.getPrecisionModelAtPoint(m_points[j]);
-				modelRecall[j]    = modelRecall[j]    + seqEv.getRecallModelAtPoint(m_points[j]);
-				modelFmeasure[j]  = modelFmeasure[j]  + seqEv.getFmeasureModelAtPoint(m_beta, m_points[j]);
+				// model
+				if(noCountSeq[j]){
+					modelPrecision[j] = modelPrecision[j] + seqEv.getPrecisionModelAtPoint(m_points[j]);
+					modelRecall[j]    = modelRecall[j]    + seqEv.getRecallModelAtPoint(m_points[j]);
+					modelFmeasure[j]  = modelFmeasure[j]  + seqEv.getFmeasureModelAtPoint(m_beta, m_points[j]);
+				}
 				modelCosineSim[j] = modelCosineSim[j] + seqEv.getCosineSimilarityModelAtPoint(m_points[j]);
+				
+				// count number of sequences
+				if(noCountSeq[j]){
+					numOfSequencesA[j]++;
+				}
 			}
 			
 			// TOPIC1 level metrics
 			hitratioTop1 = hitratioTop1 + seqEv.getHitRatioTop1();
 			clicksoonratioTop1 = clicksoonratioTop1 + seqEv.getClickSoonRatioTop1();
 			for(int j=0; j<m_points.length; j++){
-				precissionTop1[j]     = precissionTop1[j]     + seqEv.getPrecisionTopAtPoint1(m_points[j]);
-				recallTop1[j]         = recallTop1[j]         + seqEv.getRecallTopAtPoint1(m_points[j]);
-				fmeasureTop1[j]       = fmeasureTop1[j]       + seqEv.getFmeasureTopAtPoint1(m_beta, m_points[j]);
+				if(noCountSeq[j]){
+					precissionTop1[j]     = precissionTop1[j]     + seqEv.getPrecisionTopAtPoint1(m_points[j]);
+					recallTop1[j]         = recallTop1[j]         + seqEv.getRecallTopAtPoint1(m_points[j]);
+					fmeasureTop1[j]       = fmeasureTop1[j]       + seqEv.getFmeasureTopAtPoint1(m_beta, m_points[j]);
+				}
 				cosineSimTop1[j]      = cosineSimTop1[j]      + seqEv.getCosineSimTopAtPoint1(m_points[j]);
 				
-				modelPrecisionTop1[j] = modelPrecisionTop1[j] + seqEv.getPrecisionModelTopAtPoint1(m_points[j]);
-				modelRecallTop1[j]    = modelRecallTop1[j]    + seqEv.getRecallModelTopAtPoint1(m_points[j]);
-				modelFmeasureTop1[j]  = modelFmeasureTop1[j]  + seqEv.getFmeasureModelTopAtPoint1(m_beta, m_points[j]);
+				if(noCountSeq[j]){
+					modelPrecisionTop1[j] = modelPrecisionTop1[j] + seqEv.getPrecisionModelTopAtPoint1(m_points[j]);
+					modelRecallTop1[j]    = modelRecallTop1[j]    + seqEv.getRecallModelTopAtPoint1(m_points[j]);
+					modelFmeasureTop1[j]  = modelFmeasureTop1[j]  + seqEv.getFmeasureModelTopAtPoint1(m_beta, m_points[j]);
+				}
 				modelCosineSimTop1[j] = modelCosineSimTop1[j] + seqEv.getCosineSimModelTopAtPoint1(m_points[j]);
 			}
 			
@@ -329,14 +357,18 @@ public abstract class TestSetEvaluator {
 			hitratioTop2 = hitratioTop2 + seqEv.getHitRatioTop2();
 			clicksoonratioTop2 = clicksoonratioTop2 + seqEv.getClickSoonRatioTop2();
 			for(int j=0; j<m_points.length; j++){
-				precissionTop2[j]     = precissionTop2[j]     + seqEv.getPrecisionTopAtPoint2(m_points[j]);
-				recallTop2[j]         = recallTop2[j]         + seqEv.getRecallTopAtPoint2(m_points[j]);
-				fmeasureTop2[j]       = fmeasureTop2[j]       + seqEv.getFmeasureTopAtPoint2(m_beta, m_points[j]);
+				if(noCountSeq[j]){
+					precissionTop2[j]     = precissionTop2[j]     + seqEv.getPrecisionTopAtPoint2(m_points[j]);
+					recallTop2[j]         = recallTop2[j]         + seqEv.getRecallTopAtPoint2(m_points[j]);
+					fmeasureTop2[j]       = fmeasureTop2[j]       + seqEv.getFmeasureTopAtPoint2(m_beta, m_points[j]);
+				}
 				cosineSimTop2[j]      = cosineSimTop2[j]      + seqEv.getCosineSimTopAtPoint2(m_points[j]);
 				
-				modelPrecisionTop2[j] = modelPrecisionTop2[j] + seqEv.getPrecisionModelTopAtPoint2(m_points[j]);
-				modelRecallTop2[j]    = modelRecallTop2[j]    + seqEv.getRecallModelTopAtPoint2(m_points[j]);
-				modelFmeasureTop2[j]  = modelFmeasureTop2[j]  + seqEv.getFmeasureModelTopAtPoint2(m_beta, m_points[j]);
+				if(noCountSeq[j]){
+					modelPrecisionTop2[j] = modelPrecisionTop2[j] + seqEv.getPrecisionModelTopAtPoint2(m_points[j]);
+					modelRecallTop2[j]    = modelRecallTop2[j]    + seqEv.getRecallModelTopAtPoint2(m_points[j]);
+					modelFmeasureTop2[j]  = modelFmeasureTop2[j]  + seqEv.getFmeasureModelTopAtPoint2(m_beta, m_points[j]);
+				}
 				modelCosineSimTop2[j] = modelCosineSimTop2[j] + seqEv.getCosineSimModelTopAtPoint2(m_points[j]);
 			}
 			
@@ -381,14 +413,16 @@ public abstract class TestSetEvaluator {
 		m_hitratio = hitratio/(float)m_sequences.size();
 		m_clicksoonratio = clicksoonratio/(float)m_sequences.size();
 		for(int j=0; j<m_points.length; j++){
-			m_precision[j]      = precission[j]     / (float)m_sequences.size();
-			m_recall[j]         = recall[j]         / (float)m_sequences.size();
-			m_fmeasure[j]       = fmeasure[j]       / (float)m_sequences.size();
+			float seqlen = m_modePrRe==1 ? (float)numOfSequencesA[j] : (float)m_sequences.size();
+			
+			m_precision[j]      = precission[j]     / seqlen;
+			m_recall[j]         = recall[j]         / seqlen;
+			m_fmeasure[j]       = fmeasure[j]       / seqlen;
 			m_cosineSimilarity[j] = cosineSim[j]      / (float)m_sequences.size();
 			
-			m_ModelPrecision[j] = modelPrecision[j] / (float)m_sequences.size();
-			m_ModelRecall[j]    = modelRecall[j]    / (float)m_sequences.size();
-			m_ModelFmeasure[j]  = modelFmeasure[j]  / (float)m_sequences.size();
+			m_ModelPrecision[j] = modelPrecision[j] / seqlen;
+			m_ModelRecall[j]    = modelRecall[j]    / seqlen;
+			m_ModelFmeasure[j]  = modelFmeasure[j]  / seqlen;
 			m_ModelCosineSimilarity[j] = modelCosineSim[j] / (float)m_sequences.size();
 		}
 		
@@ -396,14 +430,16 @@ public abstract class TestSetEvaluator {
 		m_hitratioTop1 = hitratioTop1/(float)m_sequences.size();
 		m_clicksoonratioTop1 = clicksoonratioTop1/(float)m_sequences.size();
 		for(int j=0; j<m_points.length; j++){
-			m_precisionTop1[j]      = precissionTop1[j]     / (float)m_sequences.size();
-			m_recallTop1[j]         = recallTop1[j]         / (float)m_sequences.size();
-			m_fmeasureTop1[j]       = fmeasureTop1[j]       / (float)m_sequences.size();
+			float seqlen = m_modePrRe==1 ? (float)numOfSequencesA[j] : (float)m_sequences.size();
+			
+			m_precisionTop1[j]      = precissionTop1[j]     / seqlen;
+			m_recallTop1[j]         = recallTop1[j]         / seqlen;
+			m_fmeasureTop1[j]       = fmeasureTop1[j]       / seqlen;
 			m_cosineSimTop1[j]      = cosineSimTop1[j]      / (float)m_sequences.size();
 			
-			m_ModelPrecisionTop1[j] = modelPrecisionTop1[j] / (float)m_sequences.size();
-			m_ModelRecallTop1[j]    = modelRecallTop1[j]    / (float)m_sequences.size();
-			m_ModelFmeasureTop1[j]  = modelFmeasureTop1[j]  / (float)m_sequences.size();
+			m_ModelPrecisionTop1[j] = modelPrecisionTop1[j] / seqlen;
+			m_ModelRecallTop1[j]    = modelRecallTop1[j]    / seqlen;
+			m_ModelFmeasureTop1[j]  = modelFmeasureTop1[j]  / seqlen;
 			m_ModelCosineSimTop1[j] = modelCosineSimTop1[j] / (float)m_sequences.size();
 		}
 		
@@ -411,14 +447,16 @@ public abstract class TestSetEvaluator {
 		m_hitratioTop2 = hitratioTop2/(float)m_sequences.size();
 		m_clicksoonratioTop2 = clicksoonratioTop2/(float)m_sequences.size();
 		for(int j=0; j<m_points.length; j++){
-			m_precisionTop2[j]      = precissionTop2[j]     / (float)m_sequences.size();
-			m_recallTop2[j]         = recallTop2[j]         / (float)m_sequences.size();
-			m_fmeasureTop2[j]       = fmeasureTop2[j]       / (float)m_sequences.size();
+			float seqlen = m_modePrRe==1 ? (float)numOfSequencesA[j] : (float)m_sequences.size();
+			
+			m_precisionTop2[j]      = precissionTop2[j]     / seqlen;
+			m_recallTop2[j]         = recallTop2[j]         / seqlen;
+			m_fmeasureTop2[j]       = fmeasureTop2[j]       / seqlen;
 			m_cosineSimTop2[j]      = cosineSimTop2[j]      / (float)m_sequences.size();
 			
-			m_ModelPrecisionTop2[j] = modelPrecisionTop2[j] / (float)m_sequences.size();
-			m_ModelRecallTop2[j]    = modelRecallTop2[j]    / (float)m_sequences.size();
-			m_ModelFmeasureTop2[j]  = modelFmeasureTop2[j]  / (float)m_sequences.size();
+			m_ModelPrecisionTop2[j] = modelPrecisionTop2[j] / seqlen;
+			m_ModelRecallTop2[j]    = modelRecallTop2[j]    / seqlen;
+			m_ModelFmeasureTop2[j]  = modelFmeasureTop2[j]  / seqlen;
 			m_ModelCosineSimTop2[j] = modelCosineSimTop2[j] / (float)m_sequences.size();
 		}
 		

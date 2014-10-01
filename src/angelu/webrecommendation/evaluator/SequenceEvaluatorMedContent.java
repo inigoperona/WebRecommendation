@@ -19,7 +19,6 @@ public class SequenceEvaluatorMedContent
 	private String[][] m_UrlRelationMatrix = null;
 	private HashMap<Integer,Integer> m_UrlClusteringDict = null;
 	private URLconverterUsaCon m_conv = null;
-	private ArrayList<Integer> m_noProposeURLs = new ArrayList<Integer>();
 	
 	// CREATOR
 	
@@ -351,5 +350,6 @@ public class SequenceEvaluatorMedContent
 		
 		return recommender;
 	}
+	
 	
 }

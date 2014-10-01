@@ -15,6 +15,11 @@ public abstract class SequenceEvaluator {
 
 	// ATTRIBUTES
 	
+	// mode to compute precision and recall
+	protected int m_modePrRe = 1;
+	// URLs to not proposed neither take into account in the evaluation phase
+	protected ArrayList<Integer> m_noProposeURLs = new ArrayList<Integer>();
+	
 	// Classes that simulates the navigation of the user
 	protected Recommender m_recommender = null;
 	protected ArrayList<String> m_sequence = null;
@@ -280,8 +285,22 @@ public abstract class SequenceEvaluator {
 		this.computeClickSoonScoreTop_OkHome(stepIndex, recommendatios);
 		this.computeConfusionMatrixTop_OkHome(stepIndex, recommendatios);
 	}
-		
 	
+	
+	
+	// remove prohibited URLs
+	
+	private ArrayList<String> removeProhibitedURLs(int from, ArrayList<String> sequenceURL){
+		ArrayList<String> sequenceURL2 = new ArrayList<String>(); 
+		for(int i=from; i<sequenceURL.size(); i++){
+			String stepStr = sequenceURL.get(i);
+			int stepInt = Integer.valueOf(stepStr);
+			if( !m_noProposeURLs.contains(new Integer(stepInt)) ){
+				sequenceURL2.add(stepStr);
+			}
+		}
+		return sequenceURL2;
+	}
 	
 	
 	
@@ -338,14 +357,20 @@ public abstract class SequenceEvaluator {
 	private float computePrecision(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
+		// take the 2nd part of the test sequence & remove prohibited URLs
+		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
+		if(sequenceURL.size()==0){return -1f;}
+		
+		// initialize variables
 		int prTP = 0;
 		int prFP = 0;
+		
 		// compute precision related variables
 		for(int i=0; i<recommendatios.size(); i++){
 			boolean itWasUsed = false;
 			String onereco = recommendatios.get(i);
-			for(int j=stepIndex; j<m_sequenceURL.size(); j++){
-				String realstep = m_sequenceURL.get(j);
+			for(int j=0; j<sequenceURL.size(); j++){
+				String realstep = sequenceURL.get(j);
 				if(onereco.equals(realstep)){
 					itWasUsed = true;
 					break;
@@ -359,20 +384,32 @@ public abstract class SequenceEvaluator {
 		}
 		
 		if(prTP==(float)0 && prFP==(float)0){
-			return (float)0;
+			return 0f;
 		} else {
-			return (float)prTP/((float)prTP+(float)prFP);
+			float denominator = (float)prTP+(float)prFP;
+			if(m_modePrRe==1){
+				int recLen = recommendatios.size();
+				int seqLen = sequenceURL.size();
+				int len = Math.min(recLen, seqLen);
+				denominator = (float)len;
+			}
+			return (float)prTP/denominator;
 		}
 	}
 	
 	private float computeRecall(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
+		// take the 2nd part of the test sequence & remove prohibited URLs
+		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
+		if(sequenceURL.size()==0){return -1f;}
+		
+		// initialize variables
 		int reTP = 0;
 		int reFN = 0;
 		// compute precision related variables
-		for(int i=stepIndex; i<m_sequenceURL.size(); i++){
-			String realstep = m_sequenceURL.get(i);
+		for(int i=0; i<sequenceURL.size(); i++){
+			String realstep = sequenceURL.get(i);
 			boolean itWasUsed = false;
 			for(int j=0; j<recommendatios.size(); j++){
 				String onereco = recommendatios.get(j);				
@@ -391,7 +428,8 @@ public abstract class SequenceEvaluator {
 		if(reTP==(float)0 && reFN==(float)0){
 			return (float)0;
 		} else {
-			return (float)reTP/((float)reTP+(float)reFN);
+			float denominator = (float)reTP+(float)reFN;
+			return (float)reTP/denominator;
 		}
 	}
 	
@@ -609,8 +647,14 @@ public abstract class SequenceEvaluator {
 			int stepIndex, 
 			ArrayList<String> recommendatios,
 			boolean isTopic){
-		float prTP = 0;
-		float prFP = 0;
+		// take the 2nd part of the test sequence & remove prohibited URLs
+		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
+		if(sequenceURL.size()==0){return -1f;}
+		
+		// initialize variables
+		float prTP = 0f;
+		float prFP = 0f;
+		float recLen = 0f;
 		
 		// compute precision related variables
 		for(int i=0; i<recommendatios.size(); i++){
@@ -622,8 +666,8 @@ public abstract class SequenceEvaluator {
 			int onerecoInt2 = m_urlIds.indexOf(onerecoInt);
 			int onerecoTop =  this.getTopicID(onerecoInt2, isTopic);
 			
-			for(int j=stepIndex; j<m_sequenceURL.size(); j++){
-				String realstep = m_sequenceURL.get(j);
+			for(int j=0; j<sequenceURL.size(); j++){
+				String realstep = sequenceURL.get(j);
 				int realstepInt = Integer.valueOf(realstep);
 				int realstepInt2 = m_urlIds.indexOf(realstepInt);
 				int realstepTop = this.getTopicID(realstepInt2, isTopic);
@@ -641,17 +685,26 @@ public abstract class SequenceEvaluator {
 			
 			if(hitURL){
 				prTP = prTP + 1f;
+				recLen = recLen + 1f;
 			} else if(hitTopic){				
 				prTP = prTP + m_topicmatch;
+				recLen = recLen + m_topicmatch;
 			} else {
 				prFP = prFP + 1f;
+				recLen = recLen + 1f;
 			}
 		}
 		
 		if(prTP==0f && prFP==0f){
 			return 0f;
 		} else {
-			return prTP/(prTP+prFP);
+			float denominator = prTP+prFP;
+			if(m_modePrRe==1){
+				float seqLen = (float)sequenceURL.size();
+				float len = Math.min(recLen, seqLen);
+				denominator = (float)len;
+			}
+			return prTP/denominator;
 		}
 	}	
 	
@@ -659,15 +712,20 @@ public abstract class SequenceEvaluator {
 			int stepIndex, 
 			ArrayList<String> recommendatios,
 			boolean isTopic){
-		float reTP = 0;
-		float reFN = 0;
+		// take the 2nd part of the test sequence & remove prohibited URLs
+		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
+		if(sequenceURL.size()==0){return -1f;}
+
+		// initialize variables
+		float reTP = 0f;
+		float reFN = 0f;
 		
 		// compute precision related variables
-		for(int i=stepIndex; i<m_sequenceURL.size(); i++){
+		for(int i=0; i<sequenceURL.size(); i++){
 			boolean hitURL = false;
 			boolean hitTopic = false;
 			
-			String realstep = m_sequenceURL.get(i);
+			String realstep = sequenceURL.get(i);
 			int realstepInt = Integer.valueOf(realstep);
 			int realstepInt2 = m_urlIds.indexOf(realstepInt);
 			int realstepTop = this.getTopicID(realstepInt2, isTopic);
@@ -701,7 +759,8 @@ public abstract class SequenceEvaluator {
 		if(reTP==0f && reFN==0f){
 			return 0f;
 		} else {
-			return reTP/(reTP+reFN);
+			float denominator = reTP+reFN;
+			return reTP/denominator;
 		}
 	}
 	
@@ -1461,10 +1520,12 @@ public abstract class SequenceEvaluator {
 			float b2 = (float)Math.pow(beta, 2);
 			float pr = prA[i];
 			float re = reA[i];
-			if(pr==(float)0 && re==(float)0){
-				fmeasure[i] = (float)0;
+			if(pr==-1 || re==-1){
+				fmeasure[i] = -1f;
+			} else if(pr==(float)0 && re==(float)0){
+				fmeasure[i] = 0f;
 			} else {
-				fmeasure[i] = ((float)1+b2) * (pr*re) / ((b2*pr)+re);
+				fmeasure[i] = (1f+b2) * (pr*re) / ((b2*pr)+re);
 			}
 		}
 		return fmeasure;
