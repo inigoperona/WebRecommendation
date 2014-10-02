@@ -86,6 +86,10 @@ public class URLconverterUsaCon {
 		return usageURL;
 	}
 	
+	public ArrayList<Integer> getUsageUrls(){
+		return m_usageURLs;
+	}
+	
 	// MAIN
 	
 	public static void main(String args[]){

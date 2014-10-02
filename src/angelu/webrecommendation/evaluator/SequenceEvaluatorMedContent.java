@@ -46,7 +46,25 @@ public class SequenceEvaluatorMedContent
 		m_UrlClusteringDict = urlClusteringDict;
 		m_conv = conv;
 		m_noProposeURLs = noProposeURLs;
+		this.convertMatrixContent2Url();
 	}
+	
+	private void convertMatrixContent2Url(){
+		m_usageURLs = m_conv.getUsageUrls();
+		int len = m_usageURLs.size();
+		m_UrlSimilarityMatrix_Usage = new float[len][len];
+		for(int i=0; i<len; i++){
+			int url1usa = m_usageURLs.get(i);
+			int url1con = m_conv.getContentURL(url1usa);
+			for(int j=0; j<len; j++){
+				int url2usa = m_usageURLs.get(j);
+				int url2con = m_conv.getContentURL(url2usa);
+				float sim = m_UrlSimilarityMatrix[url1con][url2con];
+				m_UrlSimilarityMatrix_Usage[i][j] = sim;
+			}
+		}
+	}
+	
 	
 	// GET RECOMMENDER
 	

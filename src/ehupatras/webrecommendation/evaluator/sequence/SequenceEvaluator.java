@@ -38,6 +38,9 @@ public abstract class SequenceEvaluator {
 		// topic2: based on url clustering
 	private HashMap<Integer,Integer> m_UrlClusteringDict = null;
 	private int m_nDiffClusters = 10;
+	// Similarity matrixes
+	protected ArrayList<Integer> m_usageURLs = null;
+	protected float[][] m_UrlSimilarityMatrix_Usage = null;
 	
 	// HONEST MODE
 	// URL level metrics
@@ -84,7 +87,7 @@ public abstract class SequenceEvaluator {
 	private float[] m_precisionModelTop_OkHome;
 	private float[] m_recallModelTop_OkHome;
 	
-	//
+	// Measure distance
 	private float[] m_oneNNmetric;
 	
 	
@@ -138,6 +141,8 @@ public abstract class SequenceEvaluator {
 		m_recallTop_OkHome = new float[sequence.size()];
 		m_precisionModelTop_OkHome = new float[sequence.size()];
 		m_recallModelTop_OkHome = new float[sequence.size()];
+		
+		m_oneNNmetric = new float[sequence.size()];
 	}
 	
 	private ArrayList<String> convertToArrayList(String[] strA){
@@ -497,6 +502,59 @@ public abstract class SequenceEvaluator {
 		}
 		return (float)sim;
 	}
+	
+	
+	
+	// the average of each proposed URL' similarity to the navigated URLs
+	// between proposed and 
+	private float oneNNmetric(int stepIndex, 
+					ArrayList<String> recommendatios){
+		// take the 2nd part of the test sequence & remove prohibited URLs
+		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
+		if(sequenceURL.size()==0){return -1f;}
+
+		// initialize variables
+		int prTP = 0;
+		int prFP = 0;
+
+		// compute precision related variables
+		for(int i=0; i<recommendatios.size(); i++){
+			
+			
+			
+			boolean itWasUsed = false;
+			String onereco = recommendatios.get(i);
+			for(int j=0; j<sequenceURL.size(); j++){
+				String realstep = sequenceURL.get(j);
+				if(onereco.equals(realstep)){
+					itWasUsed = true;
+					break;
+				}
+			}
+			if(itWasUsed){
+				prTP++;
+			} else {
+				prFP++;
+			}
+		}
+
+		if(prTP==(float)0 && prFP==(float)0){
+			return 0f;
+		} else {
+			float denominator = (float)prTP+(float)prFP;
+			if(m_modePrRe==1){
+				int recLen = recommendatios.size();
+				int seqLen = sequenceURL.size();
+				int len = Math.min(recLen, seqLen);
+				denominator = (float)len;
+			}
+			return (float)prTP/denominator;
+		}
+	
+	
+		//m_oneNNmetric	
+	}
+	
 	
 		
 	// TOPIC GLOBAL functions.
@@ -1148,7 +1206,6 @@ public abstract class SequenceEvaluator {
 			return reTP/(reTP+reFN);
 		}
 	}
-	
 	
 	
 	
