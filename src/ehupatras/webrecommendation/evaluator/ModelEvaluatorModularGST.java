@@ -21,8 +21,9 @@ public class ModelEvaluatorModularGST
 			Matrix dm,
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, new ArrayList<Integer>());
+			ArrayList<ArrayList<Long>> testAL,
+			int modePrRe){
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe, new ArrayList<Integer>());
 	}
 	
 	
@@ -33,7 +34,7 @@ public class ModelEvaluatorModularGST
 			ArrayList<String[]> testseqs){
 		TestSetEvaluator eval = 
 				new TestSetEvaluatorModST(
-						testseqs, 
+						testseqs, m_modePrRe,
 						m_clustSuffixTreeAL.get(iFold));
 		return eval;
 	}

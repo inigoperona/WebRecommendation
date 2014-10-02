@@ -51,6 +51,9 @@ public abstract class ModelEvaluator {
 	// index pages
 	private int[] m_homepages = null;
 	
+	// not take prohibited URLs into account mode
+	protected int m_modePrRe = 0;
+	
 		
 	// Write the recommendations
 	private String m_lineHeader = null;
@@ -67,7 +70,8 @@ public abstract class ModelEvaluator {
 					Matrix dm,
 					ArrayList<ArrayList<Long>> trainAL,
 					ArrayList<ArrayList<Long>> valAL,
-					ArrayList<ArrayList<Long>> testAL){
+					ArrayList<ArrayList<Long>> testAL,
+					int modePrRe){
 		// prepare all database
 		m_dataset = this.removeUHCTagDB(dataset);
 		m_datasetUHC = dataset;
@@ -88,6 +92,9 @@ public abstract class ModelEvaluator {
 		
 		// have identifyed the homepage-index pages
 		m_homepages = Website.getHomePages();
+		
+		// way to work with prohibited URLs
+		m_modePrRe = modePrRe;
 	}	
 	
 	private ArrayList<String[]> removeUHCTagDB(ArrayList<String[]> dataset){
@@ -252,7 +259,8 @@ public abstract class ModelEvaluator {
 			modelMC = new ModelEvaluatorMarkovChain(
 				m_datasetUHC, m_datasetSplitUHC, 
 				m_distancematrix, 
-				m_trainAL, m_valAL, m_testAL);
+				m_trainAL, m_valAL, m_testAL,
+				m_modePrRe);
 			modelMC.buildMC();
 		}
 		

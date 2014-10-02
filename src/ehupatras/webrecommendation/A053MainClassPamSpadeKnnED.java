@@ -97,6 +97,7 @@ public class A053MainClassPamSpadeKnnED {
 				sequencesUHC, null, 
 				matrix, 
 				trainAL, valAL, testAL,
+				0,
 				new ArrayList<Integer>());
 		
 		// evaluation parameters

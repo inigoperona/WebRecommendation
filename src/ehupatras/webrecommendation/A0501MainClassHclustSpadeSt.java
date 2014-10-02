@@ -94,7 +94,8 @@ public class A0501MainClassHclustSpadeSt {
 		ModelEvaluatorSeqMinSPADE modelev = new ModelEvaluatorSeqMinSPADE(
 				sequencesUHC, null, 
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		
 		// Evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

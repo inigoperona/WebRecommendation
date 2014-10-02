@@ -35,8 +35,9 @@ public class ModelEvaluatorMedoids
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
 			ArrayList<ArrayList<Long>> testAL,
+			int modePrRe,
 			ArrayList<Integer> noProposeURLs){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe);
 		m_noProposeURLs = noProposeURLs;
 	}
 	
@@ -47,7 +48,7 @@ public class ModelEvaluatorMedoids
 			ArrayList<String[]> testseqs){
 		TestSetEvaluator eval = 
 				new TestSetEvaluatorMed(
-						testseqs, 
+						testseqs, m_modePrRe,
 						m_medoidsAL.get(iFold),
 						m_gmedoidsAL.get(iFold),
 						m_recosAL.get(iFold),

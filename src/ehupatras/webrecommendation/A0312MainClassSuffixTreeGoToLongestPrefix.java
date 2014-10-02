@@ -87,7 +87,8 @@ public class A0312MainClassSuffixTreeGoToLongestPrefix {
 		ModelEvaluatorSuffixTreeGlobal modelev = new ModelEvaluatorSuffixTreeGlobal(
 				sequencesUHC, null,
 				matrix, 
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		modelev.buildGST();
 		
 		// evaluation parameters

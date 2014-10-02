@@ -24,6 +24,7 @@ public class SequenceEvaluatorMedContent
 	
 	public SequenceEvaluatorMedContent(
 			String[] sequence,
+			int m_modePrRe,
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			ArrayList<Object[]> recos,
@@ -37,7 +38,7 @@ public class SequenceEvaluatorMedContent
 			HashMap<Integer,Integer> urlClusteringDict,
 			URLconverterUsaCon conv,
 			ArrayList<Integer> noProposeURLs){
-		super(sequence, medoids, gmedoids, recos, isDistance, rolesW, knn);
+		super(sequence, m_modePrRe, medoids, gmedoids, recos, isDistance, rolesW, knn);
 		m_enrichStrategy = enrichStrategy;
 		m_nURLs = nURLs;
 		m_UrlSimilarityMatrix = urlSimilarityMatrix;

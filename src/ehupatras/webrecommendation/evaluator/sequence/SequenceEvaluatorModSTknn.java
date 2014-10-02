@@ -12,13 +12,14 @@ public class SequenceEvaluatorModSTknn
 	
 	public SequenceEvaluatorModSTknn(
 			String[] sequence,
+			int modePrRe,
 			ArrayList<MySuffixTree> clustSuffixTree,
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequence, 
+		super(sequence, modePrRe,
 				clustSuffixTree, 
 				medoids, gmedoids, isDistance, rolesW, knn);
 	}

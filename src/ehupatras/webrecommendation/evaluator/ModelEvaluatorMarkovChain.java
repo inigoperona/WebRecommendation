@@ -22,8 +22,9 @@ public class ModelEvaluatorMarkovChain
 			Matrix dm,
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+			ArrayList<ArrayList<Long>> testAL,
+			int modePrRe){
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe);
 	}
 	
 	// GET TEST EVALUATOR
@@ -33,7 +34,7 @@ public class ModelEvaluatorMarkovChain
 			ArrayList<String[]> testseqs){
 		TestSetEvaluator eval = 
 				new TestSetEvaluatorMC(
-						testseqs, 
+						testseqs, m_modePrRe,
 						m_markovChainAL.get(iFold));
 		return eval;
 	}	

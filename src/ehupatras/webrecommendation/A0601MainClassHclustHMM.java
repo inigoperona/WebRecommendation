@@ -90,7 +90,8 @@ public class A0601MainClassHclustHMM {
 		ModelEvaluatorHMM modelev = new ModelEvaluatorHMM(
 				sequencesUHC, null, 
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

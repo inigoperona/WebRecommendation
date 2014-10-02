@@ -29,6 +29,7 @@ public class A053MainClassPamSpadeKnnEDcv {
 		String profiWD = "/pam_DM_04_edit/spade1";
 		String evalFile = "/evaluation.txt";
 		String noRecURLsStr = "11,74,7,89,152";
+		String modePrReStr = "1";
 
 		preprocessingWD = args[0];
 		logfile = args[1];
@@ -55,6 +56,10 @@ public class A053MainClassPamSpadeKnnEDcv {
 				noProposeUrls.add(norec);
 			}
 		}
+		
+		// how to treat the prohibited URLs
+		int modePrRe = Integer.valueOf(modePrReStr);
+		
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
@@ -111,6 +116,7 @@ public class A053MainClassPamSpadeKnnEDcv {
 				sequencesUHC, null, 
 				matrix,
 				trainAL, valAL, testAL,
+				modePrRe,
 				noProposeUrls);
 		
 		// evaluation parameters

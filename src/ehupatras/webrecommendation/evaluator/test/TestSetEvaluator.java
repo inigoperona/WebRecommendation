@@ -16,7 +16,7 @@ public abstract class TestSetEvaluator {
 	private ArrayList<String[]> m_sequences;
 	
 	// mode to compute precision and recall
-	protected int m_modePrRe = 1;
+	protected int m_modePrRe = 0;
 	
 	// Validation metrics
 	private float[] m_points = {0.10f, 0.25f, 0.50f, 0.75f, 0.90f};
@@ -98,12 +98,13 @@ public abstract class TestSetEvaluator {
 	
 	// CREATOR
 	
-	public TestSetEvaluator(ArrayList<String[]> sequences){
-		this.constructor(sequences);
+	public TestSetEvaluator(ArrayList<String[]> sequences, int modePrRe){
+		this.constructor(sequences, modePrRe);
 	}
 	
-	private void constructor(ArrayList<String[]> sequences){
+	private void constructor(ArrayList<String[]> sequences, int modePrRe){
 		m_sequences = sequences;
+		m_modePrRe = modePrRe;
 		this.constructor2();
 	}
 	

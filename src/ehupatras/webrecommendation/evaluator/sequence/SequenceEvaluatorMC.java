@@ -15,8 +15,9 @@ public class SequenceEvaluatorMC
 	
 	public SequenceEvaluatorMC(
 			String[] sequence,
+			int modePrRe,
 			MarkovChain markovchain){
-		super(sequence);
+		super(sequence, modePrRe);
 		m_markovchain = markovchain;
 	}
 	

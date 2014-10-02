@@ -23,13 +23,14 @@ public class TestSetEvaluatorMed
 	
 	public TestSetEvaluatorMed(
 			ArrayList<String[]> sequences,
+			int modePrRe,
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			ArrayList<Object[]> recos,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequences);
+		super(sequences, modePrRe);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_recos = recos;
@@ -39,18 +40,20 @@ public class TestSetEvaluatorMed
 	}
 	
 	protected TestSetEvaluatorMed(
-			ArrayList<String[]> sequences){
-		super(sequences);
+			ArrayList<String[]> sequences,
+			int modePrRe){
+		super(sequences, modePrRe);
 	}
 	
 	protected TestSetEvaluatorMed(
 			ArrayList<String[]> sequences,
+			int modePrRe,
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequences);
+		super(sequences, modePrRe);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_isDistance = isDistance;
@@ -62,7 +65,7 @@ public class TestSetEvaluatorMed
 	
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
-				new SequenceEvaluatorMed(sequence, 
+				new SequenceEvaluatorMed(sequence, m_modePrRe,
 						m_medoids, m_gmedoids, m_recos,
 						m_isDistance, m_rolesW, m_knn);
 		return seqEva;

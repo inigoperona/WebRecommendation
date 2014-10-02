@@ -94,7 +94,8 @@ public class A0500MainClassHclustMsaStNorm1 {
 		ModelEvaluatorSeqMinMSAWseq modelev = new ModelEvaluatorSeqMinMSAWseq(
 				sequencesUHC, null, 
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		
 		// Parameters to evaluate
 		modelev.setFmeasureBeta(0.5f);

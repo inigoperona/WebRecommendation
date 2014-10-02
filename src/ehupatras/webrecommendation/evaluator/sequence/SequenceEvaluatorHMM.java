@@ -17,9 +17,10 @@ public class SequenceEvaluatorHMM
 	
 	public SequenceEvaluatorHMM(
 			String[] sequence,
+			int modePrRe,
 			HiddenMarkovModel hmm,
 			int nNextSteps){
-		super(sequence);
+		super(sequence, modePrRe);
 		m_hmm = hmm;
 		m_nNextSteps = nNextSteps;
 	}

@@ -103,6 +103,7 @@ public class A052MainClassHclustSpadeKnnEDSplit {
 				sequencesUHC, seqsSplit, 
 				matrix, 
 				trainAL, valAL, testAL,
+				0,
 				new ArrayList<Integer>());
 		
 		// evaluation parameters

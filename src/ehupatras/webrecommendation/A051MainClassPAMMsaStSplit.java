@@ -96,7 +96,8 @@ public class A051MainClassPAMMsaStSplit {
 		ModelEvaluatorSeqMinMSAWseq modelev = new ModelEvaluatorSeqMinMSAWseq(
 				sequencesUHC, seqsSplit, 
 				matrix, 
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		
 		// Evaluation metrics' parameters
 		modelev.setFmeasureBeta(0.5f);

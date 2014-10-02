@@ -19,11 +19,12 @@ public class SequenceEvaluatorST
 	
 	public SequenceEvaluatorST(
 			String[] sequence,
+			int modePrRe,
 			MySuffixTree suffixtree,
 			int failuremode,
 			int maxMemory,
 			int normMode){
-		super(sequence);
+		super(sequence, modePrRe);
 		m_suffixtree = suffixtree;
 		m_failuremode = failuremode;
 		m_maxMemory = maxMemory;

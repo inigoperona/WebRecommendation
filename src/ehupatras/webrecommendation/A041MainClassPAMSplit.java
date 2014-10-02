@@ -84,7 +84,8 @@ public class A041MainClassPAMSplit {
 		ModelEvaluatorClustPAM modelev = new ModelEvaluatorClustPAM(
 				sequencesUHC, seqsSplit,
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		
 		// PAM //
 		for(int j=0; j<ks.length; j++){ // for each height

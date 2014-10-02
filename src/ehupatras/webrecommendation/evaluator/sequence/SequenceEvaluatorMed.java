@@ -23,13 +23,14 @@ public class SequenceEvaluatorMed
 	
 	public SequenceEvaluatorMed(
 			String[] sequence,
+			int modePrRe,
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			ArrayList<Object[]> recos,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequence);
+		super(sequence, modePrRe);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_recos = recos;
@@ -39,18 +40,20 @@ public class SequenceEvaluatorMed
 	}
 	
 	protected SequenceEvaluatorMed(
-			String[] sequence){
-		super(sequence);
+			String[] sequence,
+			int modePrRe){
+		super(sequence, modePrRe);
 	}
 	
 	protected SequenceEvaluatorMed(
 			String[] sequence,
+			int modePrRe,
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequence);
+		super(sequence, modePrRe);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_isDistance = isDistance;

@@ -15,8 +15,9 @@ public class ModelEvaluatorHMMTrainned
 			Matrix dm,
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+			ArrayList<ArrayList<Long>> testAL,
+			int modePrRe){
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe);
 	}
 	
 	// BUILD

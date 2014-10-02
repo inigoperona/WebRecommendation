@@ -20,6 +20,7 @@ public class A041MainClassPAMcv {
 		String dmWD = "/DM_04_edit";
 		String validationWD = base + "/03_VALIDATION_5";
 		String clustWD = "/pam_DM_04_edit";
+		
 		preprocessingWD = args[0];
 		logfile = args[1];
 		databaseWD = args[2];
@@ -76,7 +77,8 @@ public class A041MainClassPAMcv {
 		ModelEvaluatorClustPAM modelev = new ModelEvaluatorClustPAM(
 				sequencesUHC, null,
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				1);
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

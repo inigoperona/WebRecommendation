@@ -16,8 +16,9 @@ public class TestSetEvaluatorMC
 	
 	public TestSetEvaluatorMC(
 			ArrayList<String[]> sequences,
+			int modePrRe,
 			MarkovChain markovchain){
-		super(sequences);
+		super(sequences, modePrRe);
 		m_markovchain = markovchain;
 	}
 	
@@ -25,7 +26,7 @@ public class TestSetEvaluatorMC
 	
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
-				new SequenceEvaluatorMC(sequence, m_markovchain);
+				new SequenceEvaluatorMC(sequence, m_modePrRe, m_markovchain);
 		return seqEva;
 	}
 	

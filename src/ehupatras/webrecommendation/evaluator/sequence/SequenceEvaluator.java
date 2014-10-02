@@ -16,7 +16,7 @@ public abstract class SequenceEvaluator {
 	// ATTRIBUTES
 	
 	// mode to compute precision and recall
-	protected int m_modePrRe = 1;
+	protected int m_modePrRe = 0;
 	// URLs to not proposed neither take into account in the evaluation phase
 	protected ArrayList<Integer> m_noProposeURLs = new ArrayList<Integer>();
 	
@@ -84,6 +84,10 @@ public abstract class SequenceEvaluator {
 	private float[] m_precisionModelTop_OkHome;
 	private float[] m_recallModelTop_OkHome;
 	
+	//
+	private float[] m_oneNNmetric;
+	
+	
 	// write the recommendations done in each step
 	private String m_lineHeader = null;
 	private BufferedWriter m_evalWriter = null;
@@ -92,11 +96,13 @@ public abstract class SequenceEvaluator {
 	
 	// CREATOR
 	
-	public SequenceEvaluator(ArrayList<String> sequence){
+	public SequenceEvaluator(ArrayList<String> sequence, int modePrRe){
+		m_modePrRe = modePrRe;
 		this.constructor2(sequence);
 	}
 	
-	public SequenceEvaluator(String[] sequence){
+	public SequenceEvaluator(String[] sequence, int modePrRe){
+		m_modePrRe = modePrRe;
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		this.constructor2(sequenceAL);
 	}

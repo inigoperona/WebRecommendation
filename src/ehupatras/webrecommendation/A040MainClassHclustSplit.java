@@ -92,7 +92,8 @@ public class A040MainClassHclustSplit {
 		ModelEvaluatorClustHclust modelev = new ModelEvaluatorClustHclust(
 				sequencesUHC, seqsSplit,
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 	
 		// HIERARCHICAL CLUSTERING //
 		for(int j=0; j<cutthA.length; j++){ // for each height

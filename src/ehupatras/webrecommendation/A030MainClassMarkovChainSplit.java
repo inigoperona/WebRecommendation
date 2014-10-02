@@ -93,7 +93,8 @@ public class A030MainClassMarkovChainSplit {
 		ModelEvaluatorMarkovChain modelev = new ModelEvaluatorMarkovChain(
 				sequencesUHC, seqsSplit, 
 				matrix, 
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		modelev.buildMC();
 		
 		// evaluation parameters

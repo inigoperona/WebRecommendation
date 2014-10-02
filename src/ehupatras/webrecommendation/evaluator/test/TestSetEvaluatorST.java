@@ -20,11 +20,12 @@ public class TestSetEvaluatorST
 	
 	public TestSetEvaluatorST(
 			ArrayList<String[]> sequences,
+			int modePrRe,
 			MySuffixTree suffixtree,
 			int failuremode,
 			int maxMemory,
 			int normMode){
-		super(sequences);
+		super(sequences, modePrRe);
 		m_suffixtree = suffixtree;
 		m_failuremode = failuremode;
 		m_maxMemory = maxMemory;
@@ -35,7 +36,7 @@ public class TestSetEvaluatorST
 	
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
-				new SequenceEvaluatorST(sequence, 
+				new SequenceEvaluatorST(sequence, m_modePrRe,
 						m_suffixtree,
 						m_failuremode, m_maxMemory, m_normMode);
 		return seqEva;

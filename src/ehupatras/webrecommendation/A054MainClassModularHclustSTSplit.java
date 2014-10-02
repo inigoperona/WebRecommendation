@@ -99,7 +99,8 @@ public class A054MainClassModularHclustSTSplit {
 		ModelEvaluatorModularGST modelev = new ModelEvaluatorModularGST(
 				sequencesUHC, seqsSplit,
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

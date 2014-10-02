@@ -18,9 +18,10 @@ public class TestSetEvaluatorHMM
 	
 	public TestSetEvaluatorHMM(
 			ArrayList<String[]> sequences,
+			int modePrRe,
 			HiddenMarkovModel hmm,
 			int nNextSteps){
-		super(sequences);
+		super(sequences, modePrRe);
 		m_hmm = hmm;
 		m_nNextSteps = nNextSteps;
 	}
@@ -29,7 +30,7 @@ public class TestSetEvaluatorHMM
 	
 	public SequenceEvaluator getSequenceEvaluator(String[] testseq){
 		SequenceEvaluator seqEva = 
-				new SequenceEvaluatorHMM(testseq, m_hmm, m_nNextSteps);
+				new SequenceEvaluatorHMM(testseq, m_modePrRe, m_hmm, m_nNextSteps);
 		return seqEva;
 	}
 	

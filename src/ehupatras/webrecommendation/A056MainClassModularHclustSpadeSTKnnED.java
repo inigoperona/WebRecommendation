@@ -100,7 +100,8 @@ public class A056MainClassModularHclustSpadeSTKnnED {
 		ModelEvaluatorModularSpadeST modelev = new ModelEvaluatorModularSpadeST(
 				sequencesUHC, null,
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

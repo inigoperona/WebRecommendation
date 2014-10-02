@@ -16,20 +16,22 @@ public class TestSetEvaluatorModST
 	
 	public TestSetEvaluatorModST(
 			ArrayList<String[]> sequences,
+			int modePrRe,
 			ArrayList<MySuffixTree> clustSuffixTree){
-		super(sequences);
+		super(sequences, modePrRe);
 		m_clustSuffixTree = clustSuffixTree;
 	}
 	
 	protected TestSetEvaluatorModST(
 			ArrayList<String[]> sequences,
+			int modePrRe,
 			ArrayList<MySuffixTree> clustSuffixTree,
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequences, 
+		super(sequences, modePrRe,
 				medoids, gmedoids, isDistance, rolesW, knn);
 		m_clustSuffixTree = clustSuffixTree;
 	}
@@ -38,7 +40,7 @@ public class TestSetEvaluatorModST
 	
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
-				new SequenceEvaluatorModST(sequence, m_clustSuffixTree);
+				new SequenceEvaluatorModST(sequence, m_modePrRe, m_clustSuffixTree);
 		return seqEva;
 	}
 	

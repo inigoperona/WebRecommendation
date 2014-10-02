@@ -88,7 +88,8 @@ public class A030MainClassMarkovChain {
 		ModelEvaluatorMarkovChain modelev = new ModelEvaluatorMarkovChain(
 				sequencesUHC, null, 
 				matrix, 
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		modelev.buildMC();
 		
 		// Evaluation parameters

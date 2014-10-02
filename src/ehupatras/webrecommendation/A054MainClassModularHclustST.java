@@ -96,7 +96,8 @@ public class A054MainClassModularHclustST {
 		ModelEvaluatorModularGST modelev = new ModelEvaluatorModularGST(
 				sequencesUHC, null,
 				matrix,
-				trainAL, valAL, testAL);
+				trainAL, valAL, testAL,
+				0);
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

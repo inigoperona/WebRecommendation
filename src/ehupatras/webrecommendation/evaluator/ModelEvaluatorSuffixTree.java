@@ -25,8 +25,9 @@ public abstract class ModelEvaluatorSuffixTree
 			Matrix dm,
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL);
+			ArrayList<ArrayList<Long>> testAL,
+			int modePrRe){
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe);
 	}
 	
 	// GET EVALUATOR
@@ -36,7 +37,7 @@ public abstract class ModelEvaluatorSuffixTree
 			ArrayList<String[]> testseqs){
 		TestSetEvaluator eval = 
 				new TestSetEvaluatorST(
-						testseqs, 
+						testseqs, m_modePrRe,
 						m_suffixtreeAL.get(iFold),
 						m_failuremode, m_maxMemory, m_normMode);
 		return eval;
