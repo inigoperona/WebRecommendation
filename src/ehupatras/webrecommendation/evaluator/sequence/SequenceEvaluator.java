@@ -49,9 +49,11 @@ public abstract class SequenceEvaluator {
 	private float[] m_precision;
 	private float[] m_recall;
 	private float[] m_cosineSim;
+	private float[] m_oneNNmetric;
 	private float[] m_precisionModel;
 	private float[] m_recallModel;
 	private float[] m_cosineSimModel;
+	private float[] m_oneNNmetricModel;
 	// TOPIC1 level metrics
 	private float m_hitscoreTop1 = 0;
 	private float m_clicksoonscoreTop1 = 0;
@@ -87,9 +89,6 @@ public abstract class SequenceEvaluator {
 	private float[] m_precisionModelTop_OkHome;
 	private float[] m_recallModelTop_OkHome;
 	
-	// Measure distance
-	private float[] m_oneNNmetric;
-	
 	
 	// write the recommendations done in each step
 	private String m_lineHeader = null;
@@ -117,9 +116,11 @@ public abstract class SequenceEvaluator {
 		m_precision = new float[sequence.size()];
 		m_recall = new float[sequence.size()];
 		m_cosineSim = new float[sequence.size()];
+		m_oneNNmetric = new float[sequence.size()];
 		m_precisionModel = new float[sequence.size()];
 		m_recallModel = new float[sequence.size()];
 		m_cosineSimModel = new float[sequence.size()];
+		m_oneNNmetricModel = new float[sequence.size()];
 		m_precisionTop1 = new float[sequence.size()];
 		m_recallTop1 = new float[sequence.size()];
 		m_cosineSimTop1 = new float[sequence.size()];
@@ -356,6 +357,8 @@ public abstract class SequenceEvaluator {
 		m_recall[stepIndex] = re;
 		float cs = this.cosineEvaluation(stepIndex, recommendatios);
 		m_cosineSim[stepIndex] = cs;
+		float onenn = this.oneNNmetric(stepIndex, recommendatios);
+		m_oneNNmetric[stepIndex] = onenn;
 		
 		float prModel = this.computePrecision(0, recommendatios);
 		float reModel = this.computeRecall(0, recommendatios);
@@ -363,6 +366,8 @@ public abstract class SequenceEvaluator {
 		m_recallModel[stepIndex] = reModel;
 		float csModel = this.cosineEvaluation(0, recommendatios);
 		m_cosineSimModel[stepIndex] = csModel;
+		float onennModel = this.oneNNmetric(0, recommendatios);
+		m_oneNNmetricModel[stepIndex] = onennModel;
 	}
 	
 	private float computePrecision(
@@ -514,45 +519,26 @@ public abstract class SequenceEvaluator {
 		if(sequenceURL.size()==0){return -1f;}
 
 		// initialize variables
-		int prTP = 0;
-		int prFP = 0;
+		float simsum = 0f;
 
-		// compute precision related variables
+		// compute 1-NN similarity average 
 		for(int i=0; i<recommendatios.size(); i++){
-			
-			
-			
-			boolean itWasUsed = false;
-			String onereco = recommendatios.get(i);
+			String recStr = recommendatios.get(i);
+			int recInt = Integer.valueOf(recStr);
+			int recind = m_usageURLs.indexOf(recInt);
+			float maxsim = 0f; 
 			for(int j=0; j<sequenceURL.size(); j++){
-				String realstep = sequenceURL.get(j);
-				if(onereco.equals(realstep)){
-					itWasUsed = true;
-					break;
+				String stepStr = sequenceURL.get(j);
+				int stepInt = Integer.valueOf(stepStr);
+				int stepind = m_usageURLs.indexOf(stepInt);
+				float sim = m_UrlSimilarityMatrix_Usage[recind][stepind];
+				if(maxsim<sim){
+					maxsim = sim;
 				}
 			}
-			if(itWasUsed){
-				prTP++;
-			} else {
-				prFP++;
-			}
+			simsum = simsum + maxsim;
 		}
-
-		if(prTP==(float)0 && prFP==(float)0){
-			return 0f;
-		} else {
-			float denominator = (float)prTP+(float)prFP;
-			if(m_modePrRe==1){
-				int recLen = recommendatios.size();
-				int seqLen = sequenceURL.size();
-				int len = Math.min(recLen, seqLen);
-				denominator = (float)len;
-			}
-			return (float)prTP/denominator;
-		}
-	
-	
-		//m_oneNNmetric	
+		return (float)simsum/(float)recommendatios.size();	
 	}
 	
 	
@@ -1238,6 +1224,9 @@ public abstract class SequenceEvaluator {
 	public float[] getCosineSimilarities(){
 		return m_cosineSim;
 	}
+	public float[] getOneNNmetric(){
+		return m_oneNNmetric;
+	}
 	public float[] getPrecissionsModel(){
 		return m_precisionModel;
 	}	
@@ -1249,6 +1238,9 @@ public abstract class SequenceEvaluator {
 	}
 	public float[] getCosineSimilaritiesModel(){
 		return m_cosineSimModel;
+	}
+	public float[] getOneNNmetricModel(){
+		return m_oneNNmetricModel;
 	}
 	protected void printPrecision(){
 		System.out.print("Precision: ");
@@ -1289,6 +1281,10 @@ public abstract class SequenceEvaluator {
 		int index = this.getPosition(point);
 		return m_cosineSim[index];
 	}
+	public float getOneNNmetricAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_oneNNmetric[index];
+	}
 	public float getPrecisionModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_precisionModel[index];
@@ -1305,6 +1301,10 @@ public abstract class SequenceEvaluator {
 	public float getCosineSimilarityModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_cosineSimModel[index];
+	}
+	public float getOneNNmetricModelAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_oneNNmetricModel[index];
 	}
 	
 	

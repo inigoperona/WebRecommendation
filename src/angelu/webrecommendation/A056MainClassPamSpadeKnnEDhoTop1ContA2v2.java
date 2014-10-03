@@ -4,7 +4,7 @@ public class A056MainClassPamSpadeKnnEDhoTop1ContA2v2 {
 
 	public static void main(String[] args) {
 		
-		A0000ParameterControl param = new A0000ParameterControl();
+		A0000ParameterControl param = new A0000ParameterControl(args);
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();

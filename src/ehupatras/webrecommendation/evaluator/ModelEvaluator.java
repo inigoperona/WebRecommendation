@@ -204,10 +204,12 @@ public abstract class ModelEvaluator {
 		float[] reA = new float[m_confusionPoints.length];
 		float[] fmA = new float[m_confusionPoints.length];
 		float[] coSimA = new float[m_confusionPoints.length];
+		float[] oneNNA = new float[m_confusionPoints.length];
 		float[] moPrA = new float[m_confusionPoints.length];
 		float[] moReA = new float[m_confusionPoints.length];
 		float[] moFmA = new float[m_confusionPoints.length];
 		float[] moCoSimA = new float[m_confusionPoints.length];
+		float[] moOneNNA = new float[m_confusionPoints.length];
 		// TOPIC1 level metrics
 		float hitratioTop1 = 0f;
 		float clicksoonrationTop1 = 0f;
@@ -349,20 +351,24 @@ public abstract class ModelEvaluator {
 			float[] reA2 = eval.getRecalls();
 			float[] fmA2 = eval.getFmeasures();
 			float[] coSimA2 = eval.getCosineSimilarity();
+			float[] oneNNA2 = eval.getOneNNmetric();
 			float[] moPrA2 = eval.getModelPrecisions();
 			float[] moReA2 = eval.getModelRecalls();
 			float[] moFmA2 = eval.getModelFmeasures();
 			float[] moCoSimA2 = eval.getModelCosineSimilarity();
+			float[] moOneNNA2 = eval.getModelOneNNmetric();
 			for(int j=0; j<m_confusionPoints.length; j++){
 				prA[j] = prA[j] + prA2[j];
 				reA[j] = reA[j] + reA2[j];
 				fmA[j] = fmA[j] + fmA2[j];
 				coSimA[j] = coSimA[j] + coSimA2[j];
+				oneNNA[j] = oneNNA[j] + oneNNA2[j]; 
 				
 				moPrA[j] = moPrA[j] + moPrA2[j];
 				moReA[j] = moReA[j] + moReA2[j];
 				moFmA[j] = moFmA[j] + moFmA2[j];
 				moCoSimA[j] = moCoSimA[j] + moCoSimA2[j];
+				moOneNNA[j] = moOneNNA[j] + moOneNNA2[j];
 			}
 			
 			// TOPIC1 level metrics
@@ -481,11 +487,13 @@ public abstract class ModelEvaluator {
 			reA[j] = reA[j] / (float)m_nFolds;
 			fmA[j] = fmA[j] / (float)m_nFolds;
 			coSimA[j] = coSimA[j] / (float)m_nFolds;
+			oneNNA[j] = oneNNA[j] / (float)m_nFolds;
 			
 			moPrA[j] = moPrA[j] / (float)m_nFolds;
 			moReA[j] = moReA[j] / (float)m_nFolds;
 			moFmA[j] = moFmA[j] / (float)m_nFolds;
 			moCoSimA[j] = moCoSimA[j] / (float)m_nFolds;
+			moOneNNA[j] = moOneNNA[j] / (float)m_nFolds;
 		}
 		
 		// TOPIC1 level metrics
@@ -567,11 +575,13 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + reA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + fmA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + coSimA[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + oneNNA[j];}
 		
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moPrA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moCoSimA[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moOneNNA[j];}
 		
 		// TOPIC1 level statistics
 		results = results + "," + hitratioTop1;
@@ -657,11 +667,13 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",re_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",fm" + m_fmeasurebeta + "_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",cs_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",1nn_" + m_confusionPoints[j];}
 		
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mPr_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mRe_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mCs_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",m1nn_" + m_confusionPoints[j];}
 		
 		// TOPIC1 level metrics
 		header = header + ",hitratioTop1";
