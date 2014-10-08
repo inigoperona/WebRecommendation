@@ -85,7 +85,7 @@ public class A041MainClassPAMSplit {
 				sequencesUHC, seqsSplit,
 				matrix,
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		
 		// PAM //
 		for(int j=0; j<ks.length; j++){ // for each height

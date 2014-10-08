@@ -104,7 +104,7 @@ public class A055MainClassModularHclustST2KnnEDSplit {
 				sequencesUHC, seqsSplit,
 				matrix,
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

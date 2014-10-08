@@ -1,6 +1,7 @@
 package ehupatras.webrecommendation.structures;
 
 import ehupatras.webrecommendation.structures.page.Page;
+import ehupatras.webrecommendation.structures.request.Request;
 import ehupatras.webrecommendation.utils.*;
 import java.util.Enumeration;
 import java.util.Hashtable;

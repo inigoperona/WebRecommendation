@@ -12,7 +12,6 @@ public abstract class ModelEvaluatorSuffixTree
 	// ATTRIBUTES
 	
 	protected ArrayList<MySuffixTree> m_suffixtreeAL;
-	
 	protected int m_failuremode = 0;
 	protected int m_maxMemory = 100;
 	protected int m_normMode = 0;
@@ -26,8 +25,10 @@ public abstract class ModelEvaluatorSuffixTree
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
 			ArrayList<ArrayList<Long>> testAL,
-			int modePrRe){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe);
+			int modePrRe,
+			String usage2contentFile,
+			String resSimilarityFile){
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe, usage2contentFile, resSimilarityFile);
 	}
 	
 	// GET EVALUATOR
@@ -37,7 +38,9 @@ public abstract class ModelEvaluatorSuffixTree
 			ArrayList<String[]> testseqs){
 		TestSetEvaluator eval = 
 				new TestSetEvaluatorST(
-						testseqs, m_modePrRe,
+						testseqs, m_modePrRe, m_conv,
+						m_nURLs, m_UrlSimilarityMatrix_Content,
+						
 						m_suffixtreeAL.get(iFold),
 						m_failuremode, m_maxMemory, m_normMode);
 		return eval;

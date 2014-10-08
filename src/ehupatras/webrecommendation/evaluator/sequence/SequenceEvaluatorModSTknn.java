@@ -1,6 +1,8 @@
 package ehupatras.webrecommendation.evaluator.sequence;
 
 import java.util.ArrayList;
+
+import angelu.webrecommendation.converter.URLconverterUsaCon;
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderKnnToSuffixTrees2;
@@ -13,13 +15,16 @@ public class SequenceEvaluatorModSTknn
 	public SequenceEvaluatorModSTknn(
 			String[] sequence,
 			int modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix,
+			
 			ArrayList<MySuffixTree> clustSuffixTree,
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequence, modePrRe,
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix,
 				clustSuffixTree, 
 				medoids, gmedoids, isDistance, rolesW, knn);
 	}

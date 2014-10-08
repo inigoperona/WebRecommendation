@@ -23,8 +23,10 @@ public class ModelEvaluatorMarkovChain
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
 			ArrayList<ArrayList<Long>> testAL,
-			int modePrRe){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe);
+			int modePrRe,
+			String usage2contentFile,
+			String resSimilarityFile){
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe, usage2contentFile, resSimilarityFile);
 	}
 	
 	// GET TEST EVALUATOR
@@ -34,7 +36,9 @@ public class ModelEvaluatorMarkovChain
 			ArrayList<String[]> testseqs){
 		TestSetEvaluator eval = 
 				new TestSetEvaluatorMC(
-						testseqs, m_modePrRe,
+						testseqs, m_modePrRe, m_conv,
+						m_nURLs, m_UrlSimilarityMatrix_Content,
+						
 						m_markovChainAL.get(iFold));
 		return eval;
 	}	

@@ -97,7 +97,7 @@ public class A051MainClassPAMMsaStSplit {
 				sequencesUHC, seqsSplit, 
 				matrix, 
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		
 		// Evaluation metrics' parameters
 		modelev.setFmeasureBeta(0.5f);

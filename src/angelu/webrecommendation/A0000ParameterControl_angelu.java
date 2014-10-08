@@ -13,88 +13,89 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidatio
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
-public class A0000ParameterControl {
+public class A0000ParameterControl_angelu {
 
-	private String m_base;
+	protected String m_base;
 	
 	// preprocess
-	private String m_preprocessingWD;
-	private String m_logfile;
+	protected String m_preprocessingWD;
+	protected String m_logfile;
 	
 	// content
-	private String m_url2topicFile;
-	private String m_urlSimilarityMatrix;
-	private String m_urlRelationMatrix;
-	private String m_clusterPartitionFile;
-	private String m_usage2contentFile;
-	private ArrayList<Integer> m_urlIDs;
-	private int[] m_url2topic;
-	private int m_difftopics;
+	protected String m_url2topicFile;
+	protected String m_urlSimilarityMatrix;
+	protected String m_urlRelationMatrix;
+	protected String m_clusterPartitionFile;
+	protected String m_usage2contentFile;
+	protected ArrayList<Integer> m_urlIDs;
+	protected int[] m_url2topic;
+	protected int m_difftopics;
 	
 	// database
-	private String m_databaseWD;
-	private String m_dmWD;
-	private ArrayList<Long> m_sampleSessionIDs;
-	private ArrayList<String[]> m_sequencesUHC;
-	private Matrix m_matrix;
-	private ArrayList<ArrayList<Long>> m_trainAL;
-	private ArrayList<ArrayList<Long>> m_valAL;
-	private ArrayList<ArrayList<Long>> m_testAL;
+	protected String m_databaseWD;
+	protected String m_dmWD;
+	protected ArrayList<Long> m_sampleSessionIDs;
+	protected ArrayList<String[]> m_sequencesUHC;
+	protected Matrix m_matrix;
+	protected ArrayList<ArrayList<Long>> m_trainAL;
+	protected ArrayList<ArrayList<Long>> m_valAL;
+	protected ArrayList<ArrayList<Long>> m_testAL;
 	
 	// validation
-	private String m_validationWD;
-	private String m_clustWD;
-	private String m_profiWD;
-	private String m_evalFile;
-	private ArrayList<Integer> m_noProposeUrls;
-	private int m_modePrRe;
-	private ModelEvaluatorMedoids m_modelevM = null;
-	private ModelEvaluatorMedoidsContent m_modelevMC = null;
+	protected String m_validationWD;
+	protected String m_clustWD;
+	protected String m_profiWD;
+	protected String m_evalFile;
+	protected ArrayList<Integer> m_noProposeUrls;
+	protected int m_modePrRe;
+	
+	// Model Evaluator
+	protected ModelEvaluatorMedoids m_modelevM = null;
+	protected ModelEvaluatorMedoidsContent m_modelevMC = null;
 	
 	
 	// SYSTEM PARAMETERS //
 	
 	// PAM: k
 	//int[] m_ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
-	private int[] m_ks = {150};
+	protected int[] m_ks = {150};
 	
 	// SPADE: minimum support
 	//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
 	//float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
 	//float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};
-	private float[] m_seqweights = {0.20f};
+	protected float[] m_seqweights = {0.20f};
 	
 	// Weights among roles
-	private float[][] m_rolesW = {	{ 0f, 0f, 0f},
+	protected float[][] m_rolesW = {{ 0f, 0f, 0f},
   									{ 0f, 0f, 0f},
   									{ 0f, 0f, 0f}};
 	
 	// F-measure: beta
-	private float m_beta = 1f;
+	protected float m_beta = 1f;
 	
 	// Navigation stages to analyze
-	private float[] m_confusionPoints = {0.25f,0.50f,0.75f};
+	protected float[] m_confusionPoints = {0.25f,0.50f,0.75f};
 	
 	// topic match
-	private float m_topicmatch = 1f;
+	protected float m_topicmatch = 1f;
 	
 	// number of recommendations
-	//int[] nrecsA = new int[]{4,5,10,20};
-	int[] nrecsA = new int[]{4};
+	protected int[] m_nrecsA = new int[]{4};
 	
 	//////////////////////////////////
 	
 	
 	// CREATOR
-	public A0000ParameterControl(){
+	public A0000ParameterControl_angelu(){
 		this.exampleParameters();
 		this.initializeStructures();
 	}
-	public A0000ParameterControl(String[] args){
+	public A0000ParameterControl_angelu(String[] args){
 		this.readParameters(args);
 		this.initializeStructures();
 	}
-	private void initializeStructures(){
+	protected void initializeStructures(){
 		WebAccessSequencesUHC.setWorkDirectory(m_preprocessingWD);
 		Website.setWorkDirectory(m_preprocessingWD);
 	}
@@ -103,7 +104,7 @@ public class A0000ParameterControl {
 	
 	// functions
 
-	private void readParameters(String[] args){
+	protected void readParameters(String[] args){
 		
 		m_preprocessingWD = args[0];
 		m_logfile = args[1];
@@ -182,15 +183,14 @@ public class A0000ParameterControl {
 	
 	public void loadDatabase(){
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
-		//database.createDatabase(databaseWD);
 		database.loadDatabase(m_databaseWD);
 		m_sampleSessionIDs = database.getSessionsIDs();
 		m_sequencesUHC = database.getInstantiatedSequences();
 	}
 	
-	public void loadDM(){
+	public void loadDM(String splitStr){
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
-		dm.loadDistanceMatrix(m_databaseWD + m_dmWD);
+		dm.loadDistanceMatrix(m_databaseWD + m_dmWD + splitStr);
 		m_matrix = dm.getMatrix();
 	}
 
@@ -230,7 +230,7 @@ public class A0000ParameterControl {
 						m_sequencesUHC, null, 
 						m_matrix,
 						m_trainAL, m_valAL, m_testAL,
-						m_modePrRe,
+						m_modePrRe, m_usage2contentFile, m_urlSimilarityMatrix,
 						m_noProposeUrls);
 		modelev.setFmeasureBeta(m_beta);
 		modelev.setConfusionPoints(m_confusionPoints);
@@ -243,7 +243,7 @@ public class A0000ParameterControl {
 
 	public void runModelEvaluatorM(){
 		// Results' header
-		System.out.print("options," + m_modelevMC.getEvaluationHeader());
+		System.out.print("options," + m_modelevM.getEvaluationHeader());
 		
 		// open the file in which we save the evaluation process
 		BufferedWriter evalWriter = null;
@@ -262,34 +262,34 @@ public class A0000ParameterControl {
 			int k = m_ks[j];				
 			String esperimentationStr = "pam" + k;
 			String clustFile = m_validationWD + m_clustWD + "/" + esperimentationStr + ".javaData";
-			m_modelevMC.loadClusters(clustFile);
+			m_modelevM.loadClusters(clustFile);
 
 			// for each SPADE: minsup
 			for(int l=0; l<m_seqweights.length; l++){
 				float minsup = m_seqweights[l];
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
-				m_modelevMC.buildMedoids(minsup, true);
+				m_modelevM.buildMedoids(minsup, true);
 								
 				// VALIDATION //
 				String results = "";
 				String resultInfo = "";	
 				// for each number of recommendation
-				for(int ind=0; ind<nrecsA.length; ind++ ){
-					int nrec = nrecsA[ind];
+				for(int ind=0; ind<m_nrecsA.length; ind++ ){
+					int nrec = m_nrecsA[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val";					
-					m_modelevMC.setLineHeader(resultInfo + ";", evalWriter);
-					m_modelevMC.setEsploitationParameters(true, m_rolesW, 100);
-					results = m_modelevMC.computeEvaluationVal("weighted", nrec, (long)0);
+					m_modelevM.setLineHeader(resultInfo + ";", evalWriter);
+					m_modelevM.setEsploitationParameters(true, m_rolesW, 100);
+					results = m_modelevM.computeEvaluationVal("weighted", nrec, (long)0);
 					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}				
 				// TEST //
-				for(int ind=0; ind<nrecsA.length; ind++ ){
-					int nrec = nrecsA[ind];
+				for(int ind=0; ind<m_nrecsA.length; ind++ ){
+					int nrec = m_nrecsA[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";					
-					m_modelevMC.setLineHeader(resultInfo + ";", evalWriter);
-					m_modelevMC.setEsploitationParameters(true, m_rolesW, 100);
-					results = m_modelevMC.computeEvaluationTest("weighted", nrec, (long)0);					
+					m_modelevM.setLineHeader(resultInfo + ";", evalWriter);
+					m_modelevM.setEsploitationParameters(true, m_rolesW, 100);
+					results = m_modelevM.computeEvaluationTest("weighted", nrec, (long)0);					
 					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}			
@@ -316,7 +316,7 @@ public class A0000ParameterControl {
 						m_sequencesUHC, null, 
 						m_matrix,
 						m_trainAL, m_valAL, m_testAL,
-						m_modePrRe,
+						m_modePrRe, m_usage2contentFile,
 						m_noProposeUrls);
 		modelev.setFmeasureBeta(m_beta);
 		modelev.setConfusionPoints(m_confusionPoints);
@@ -360,25 +360,25 @@ public class A0000ParameterControl {
 				String results = "";
 				String resultInfo = "";	
 				// for each number of recommendation
-				for(int ind=0; ind<nrecsA.length; ind++ ){
-					int nrec = nrecsA[ind];
+				for(int ind=0; ind<m_nrecsA.length; ind++ ){
+					int nrec = m_nrecsA[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val";					
 					m_modelevMC.setLineHeader(resultInfo + ";", evalWriter);
 					m_modelevMC.setEsploitationParameters(true, m_rolesW, 100);
 					m_modelevMC.setEsploitationParameters(recommender, 
-							m_urlSimilarityMatrix, m_urlRelationMatrix, m_usage2contentFile);
+							m_urlRelationMatrix);
 					results = m_modelevMC.computeEvaluationVal("weighted", nrec, (long)0);
 					System.out.print(resultInfo + ",");
 					System.out.print(results);
 				}				
 				// TEST //
-				for(int ind=0; ind<nrecsA.length; ind++ ){
-					int nrec = nrecsA[ind];
+				for(int ind=0; ind<m_nrecsA.length; ind++ ){
+					int nrec = m_nrecsA[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";					
 					m_modelevMC.setLineHeader(resultInfo + ";", evalWriter);
 					m_modelevMC.setEsploitationParameters(true, m_rolesW, 100);
 					m_modelevMC.setEsploitationParameters(recommender,
-							m_urlSimilarityMatrix, m_urlRelationMatrix, m_usage2contentFile);
+							m_urlRelationMatrix);
 					results = m_modelevMC.computeEvaluationTest("weighted", nrec, (long)0);					
 					System.out.print(resultInfo + ",");
 					System.out.print(results);

@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 import javax.swing.text.html.MinimalHTMLWriter;
 
+import angelu.webrecommendation.converter.URLconverterUsaCon;
+
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderMarkovChain;
@@ -38,9 +40,14 @@ public abstract class SequenceEvaluator {
 		// topic2: based on url clustering
 	private HashMap<Integer,Integer> m_UrlClusteringDict = null;
 	private int m_nDiffClusters = 10;
+	
 	// Similarity matrixes
 	protected ArrayList<Integer> m_usageURLs = null;
+	protected URLconverterUsaCon m_conv = null;
+	protected float[][] m_UrlSimilarityMatrix_Content = null;
+	protected int m_nURLs = 0;
 	protected float[][] m_UrlSimilarityMatrix_Usage = null;
+	
 	
 	// HONEST MODE
 	// URL level metrics
@@ -98,18 +105,30 @@ public abstract class SequenceEvaluator {
 	
 	// CREATOR
 	
-	public SequenceEvaluator(ArrayList<String> sequence, int modePrRe){
+	public SequenceEvaluator(ArrayList<String> sequence, 
+			int modePrRe, URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix){
 		m_modePrRe = modePrRe;
+		m_conv = conv;
+		m_nURLs = nURLs;
+		m_UrlSimilarityMatrix_Content = urlSimilarityMatrix;
 		this.constructor2(sequence);
 	}
 	
-	public SequenceEvaluator(String[] sequence, int modePrRe){
-		m_modePrRe = modePrRe;
+	public SequenceEvaluator(String[] sequence, 
+			int modePrRe, URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
+		m_modePrRe = modePrRe;
+		m_conv = conv;
+		m_nURLs = nURLs;
+		m_UrlSimilarityMatrix_Content = urlSimilarityMatrix;
 		this.constructor2(sequenceAL);
 	}
 	
-	private void constructor2(ArrayList<String> sequence){		
+	private void constructor2(ArrayList<String> sequence){
+		this.convertMatrixContent2Url();
+		
 		m_sequence = sequence;
 		m_sequenceURL = sequence;
 		
@@ -459,7 +478,7 @@ public abstract class SequenceEvaluator {
 			String realstep = m_sequenceURL.get(i);
 			int realstepInt = Integer.valueOf(realstep);
 			int ind = m_urlIds.indexOf(realstepInt);
-			wayA[ind] = 1;
+			if(ind!=-1){ wayA[ind] = 1; }
 		}
 		
 		// recommendations
@@ -468,7 +487,7 @@ public abstract class SequenceEvaluator {
 			String recStr = recommendatios.get(i);
 			int recInt = Integer.valueOf(recStr);
 			int ind = m_urlIds.indexOf(recInt);
-			recosA[ind] = 1;
+			if(ind!=-1){ recosA[ind] = 1; }
 		}
 		
 		// cosine similarity
@@ -526,12 +545,15 @@ public abstract class SequenceEvaluator {
 			String recStr = recommendatios.get(i);
 			int recInt = Integer.valueOf(recStr);
 			int recind = m_usageURLs.indexOf(recInt);
-			float maxsim = 0f; 
+			float maxsim = 0f;
 			for(int j=0; j<sequenceURL.size(); j++){
 				String stepStr = sequenceURL.get(j);
 				int stepInt = Integer.valueOf(stepStr);
 				int stepind = m_usageURLs.indexOf(stepInt);
-				float sim = m_UrlSimilarityMatrix_Usage[recind][stepind];
+				float sim = 0f;
+				if(recind!=-1 && stepind!=-1){
+					sim = m_UrlSimilarityMatrix_Usage[recind][stepind];
+				}
 				if(maxsim<sim){
 					maxsim = sim;
 				}
@@ -1603,6 +1625,22 @@ public abstract class SequenceEvaluator {
 			}
 		}
 		return false;
+	}
+	
+	protected void convertMatrixContent2Url(){
+		m_usageURLs = m_conv.getUsageUrls();
+		int len = m_usageURLs.size();
+		m_UrlSimilarityMatrix_Usage = new float[len][len];
+		for(int i=0; i<len; i++){
+			int url1usa = m_usageURLs.get(i);
+			int url1con = m_conv.getContentURL(url1usa);
+			for(int j=0; j<len; j++){
+				int url2usa = m_usageURLs.get(j);
+				int url2con = m_conv.getContentURL(url2usa);
+				float sim = m_UrlSimilarityMatrix_Content[url1con][url2con];
+				m_UrlSimilarityMatrix_Usage[i][j] = sim;
+			}
+		}
 	}
 	
 }

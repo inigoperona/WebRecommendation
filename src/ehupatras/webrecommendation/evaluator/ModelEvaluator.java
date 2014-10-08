@@ -9,12 +9,15 @@ import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import angelu.webrecommendation.converter.URLconverterUsaCon;
 
 public abstract class ModelEvaluator {
 
@@ -54,6 +57,14 @@ public abstract class ModelEvaluator {
 	// not take prohibited URLs into account mode
 	protected int m_modePrRe = 0;
 	
+	// to convert from usage-url-id to content-url-id and vice versa 
+	private String m_usage2contentFile = "";
+	protected URLconverterUsaCon m_conv = null;
+	
+	// URL similarity matrix
+	private String m_resSimilarityFile = "";
+	protected float[][] m_UrlSimilarityMatrix_Content = null;
+	protected int m_nURLs = 0;
 		
 	// Write the recommendations
 	private String m_lineHeader = null;
@@ -71,7 +82,9 @@ public abstract class ModelEvaluator {
 					ArrayList<ArrayList<Long>> trainAL,
 					ArrayList<ArrayList<Long>> valAL,
 					ArrayList<ArrayList<Long>> testAL,
-					int modePrRe){
+					int modePrRe,
+					String usage2contentFile,
+					String resSimilarityFile){
 		// prepare all database
 		m_dataset = this.removeUHCTagDB(dataset);
 		m_datasetUHC = dataset;
@@ -95,6 +108,15 @@ public abstract class ModelEvaluator {
 		
 		// way to work with prohibited URLs
 		m_modePrRe = modePrRe;
+		
+		// to convert from usage to URL
+		m_usage2contentFile = usage2contentFile;
+		m_conv = new URLconverterUsaCon(usage2contentFile);
+		
+		// read similarity matrix
+		m_resSimilarityFile = resSimilarityFile;
+		this.readSimilarityMatrix(resSimilarityFile);
+		m_nURLs = m_UrlSimilarityMatrix_Content.length;
 	}	
 	
 	private ArrayList<String[]> removeUHCTagDB(ArrayList<String[]> dataset){
@@ -262,7 +284,7 @@ public abstract class ModelEvaluator {
 				m_datasetUHC, m_datasetSplitUHC, 
 				m_distancematrix, 
 				m_trainAL, m_valAL, m_testAL,
-				m_modePrRe);
+				m_modePrRe, m_usage2contentFile, m_resSimilarityFile);
 			modelMC.buildMC();
 		}
 		
@@ -777,7 +799,7 @@ public abstract class ModelEvaluator {
 		m_nDiffClusters = clusterIDs.size();
 	}
 	
-	private ArrayList<String> readLineByLine(String filename){
+	protected ArrayList<String> readLineByLine(String filename){
 		ArrayList<String> linebyline = new ArrayList<String>();
 		FileInputStream fstream = null;
 		try{
@@ -809,5 +831,38 @@ public abstract class ModelEvaluator {
 		return linebyline;
 	}
 	
+	// Read similarity matrix	
+	private void readSimilarityMatrix(String similarityMatrix){
+		ArrayList<String> linebyline = this.readLineByLine(similarityMatrix);
+		// parse the lines
+		int nURL = linebyline.size();
+		m_UrlSimilarityMatrix_Content = new float[nURL][nURL];
+		for(int i=0; i<linebyline.size(); i++){
+			String line = linebyline.get(i);
+			String[] lineA = line.split(";");
+			for(int j=0; j<lineA.length; j++){
+				m_UrlSimilarityMatrix_Content[i][j] = this.parseToFloat(lineA[j], '.'); 
+			}
+		} 
+	}
+	
+	private float parseToFloat(String floatStr, char sep){
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator(sep);
+		DecimalFormat format = new DecimalFormat();
+		format.setDecimalFormatSymbols(symbols);
+		float f = -1f;
+		try {
+			f = format.parse(floatStr).floatValue();
+		} catch(ParseException ex){
+			System.err.println(
+					"[angelu.webrecommendation.evaluator." +
+					"RecommenderKnnToClustersTopURLsAndContentsA1] " +
+					"Problems parsing to float: " + floatStr);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		return f;
+	}
 	
 }

@@ -1,6 +1,8 @@
 package ehupatras.webrecommendation.evaluator.sequence;
 
 import java.util.ArrayList;
+
+import angelu.webrecommendation.converter.URLconverterUsaCon;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderKnnToClustersTopURLs;
 
@@ -24,13 +26,16 @@ public class SequenceEvaluatorMed
 	public SequenceEvaluatorMed(
 			String[] sequence,
 			int modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix,
+			
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			ArrayList<Object[]> recos,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequence, modePrRe);
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_recos = recos;
@@ -41,19 +46,24 @@ public class SequenceEvaluatorMed
 	
 	protected SequenceEvaluatorMed(
 			String[] sequence,
-			int modePrRe){
-		super(sequence, modePrRe);
+			int modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix){
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix);
 	}
 	
 	protected SequenceEvaluatorMed(
 			String[] sequence,
 			int modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix,
+			
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequence, modePrRe);
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_isDistance = isDistance;

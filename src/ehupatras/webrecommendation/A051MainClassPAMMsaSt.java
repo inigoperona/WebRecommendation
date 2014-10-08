@@ -94,7 +94,7 @@ public class A051MainClassPAMMsaSt {
 				sequencesUHC, null, 
 				matrix,
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		
 		// Evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

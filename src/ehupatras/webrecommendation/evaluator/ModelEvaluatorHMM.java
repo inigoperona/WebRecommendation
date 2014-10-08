@@ -26,8 +26,10 @@ public class ModelEvaluatorHMM
 			ArrayList<ArrayList<Long>> trainAL,
 			ArrayList<ArrayList<Long>> valAL,
 			ArrayList<ArrayList<Long>> testAL,
-			int modePrRe){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe);
+			int modePrRe,
+			String usage2contentFile,
+			String resSimilarityFile){
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe, usage2contentFile, resSimilarityFile);
 	}
 	
 	// GET TEST EVALUATOR
@@ -37,7 +39,9 @@ public class ModelEvaluatorHMM
 			ArrayList<String[]> testseqs){
 		TestSetEvaluator eval = 
 				new TestSetEvaluatorHMM(
-						testseqs, m_modePrRe,
+						testseqs, m_modePrRe, m_conv,
+						m_nURLs, m_UrlSimilarityMatrix_Content,
+						
 						m_hmmAL.get(iFold),
 						m_nNextSteps);
 		return eval;

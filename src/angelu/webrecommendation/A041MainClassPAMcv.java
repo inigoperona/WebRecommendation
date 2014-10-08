@@ -78,7 +78,7 @@ public class A041MainClassPAMcv {
 				sequencesUHC, null,
 				matrix,
 				trainAL, valAL, testAL,
-				1);
+				1, "", "");
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

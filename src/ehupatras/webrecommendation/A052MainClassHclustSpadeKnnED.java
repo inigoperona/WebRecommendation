@@ -99,7 +99,7 @@ public class A052MainClassHclustSpadeKnnED {
 				sequencesUHC, null, 
 				matrix, 
 				trainAL, valAL, testAL,
-				0,
+				0, "", "",
 				new ArrayList<Integer>());
 		
 		// Evaluation parameters

@@ -1,5 +1,6 @@
 package ehupatras.webrecommendation.evaluator.sequence;
 
+import angelu.webrecommendation.converter.URLconverterUsaCon;
 import ehupatras.markovmodel.hmm.HiddenMarkovModel;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderHMM;
@@ -18,9 +19,12 @@ public class SequenceEvaluatorHMM
 	public SequenceEvaluatorHMM(
 			String[] sequence,
 			int modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix,
+			
 			HiddenMarkovModel hmm,
 			int nNextSteps){
-		super(sequence, modePrRe);
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix);
 		m_hmm = hmm;
 		m_nNextSteps = nNextSteps;
 	}

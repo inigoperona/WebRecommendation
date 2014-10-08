@@ -94,7 +94,7 @@ public class A030MainClassMarkovChainSplit {
 				sequencesUHC, seqsSplit, 
 				matrix, 
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		modelev.buildMC();
 		
 		// evaluation parameters

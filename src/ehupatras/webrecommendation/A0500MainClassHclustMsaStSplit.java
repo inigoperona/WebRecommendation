@@ -98,7 +98,7 @@ public class A0500MainClassHclustMsaStSplit {
 				sequencesUHC, seqsSplit, 
 				matrix,
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

@@ -116,7 +116,7 @@ public class A053MainClassPamSpadeKnnEDcv {
 				sequencesUHC, null, 
 				matrix,
 				trainAL, valAL, testAL,
-				modePrRe,
+				modePrRe, usage2contentFile, urlSimilarityMatrix,
 				noProposeUrls);
 		
 		// evaluation parameters

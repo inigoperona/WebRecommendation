@@ -82,7 +82,7 @@ public class A041MainClassPAM {
 				sequencesUHC, null,
 				matrix,
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		
 		// PAM //
 		for(int j=0; j<ks.length; j++){ // for each height

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import angelu.webrecommendation.converter.URLconverterUsaCon;
+
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluator;
 
@@ -33,8 +35,13 @@ public abstract class TestSetEvaluator {
 	private int m_nDiffTopics = 10;
 	private float m_topicmatch = 0.5f;
 		// topic2: based on url clustering
-	private HashMap<Integer,Integer> m_urlClusteringDict = null;
+	protected HashMap<Integer,Integer> m_urlClusteringDict = null;
 	private int m_nDiffClusters = 10;
+	
+	// Similarity matrix
+	protected URLconverterUsaCon m_conv = null;
+	protected float[][] m_UrlSimilarityMatrix_Content = null;
+	protected int m_nURLs = 0;
 	
 	// URL level metrics - HONEST
 	private float m_hitratio = 0f;
@@ -100,13 +107,21 @@ public abstract class TestSetEvaluator {
 	
 	// CREATOR
 	
-	public TestSetEvaluator(ArrayList<String[]> sequences, int modePrRe){
-		this.constructor(sequences, modePrRe);
+	public TestSetEvaluator(ArrayList<String[]> sequences, 
+			int modePrRe, URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix){
+		this.constructor(sequences, modePrRe, conv, 
+				nURLs, urlSimilarityMatrix);
 	}
 	
-	private void constructor(ArrayList<String[]> sequences, int modePrRe){
+	private void constructor(ArrayList<String[]> sequences, 
+			int modePrRe, URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix){
 		m_sequences = sequences;
 		m_modePrRe = modePrRe;
+		m_conv = conv;
+		m_nURLs = nURLs;
+		m_UrlSimilarityMatrix_Content = urlSimilarityMatrix;
 		this.constructor2();
 	}
 	

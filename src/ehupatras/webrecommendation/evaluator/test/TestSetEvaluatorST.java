@@ -1,6 +1,8 @@
 package ehupatras.webrecommendation.evaluator.test;
 
 import java.util.ArrayList;
+
+import angelu.webrecommendation.converter.URLconverterUsaCon;
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluator;
 import ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluatorST;
@@ -21,11 +23,15 @@ public class TestSetEvaluatorST
 	public TestSetEvaluatorST(
 			ArrayList<String[]> sequences,
 			int modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, 
+			float[][] urlSimilarityMatrix,
+			
 			MySuffixTree suffixtree,
 			int failuremode,
 			int maxMemory,
 			int normMode){
-		super(sequences, modePrRe);
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
 		m_suffixtree = suffixtree;
 		m_failuremode = failuremode;
 		m_maxMemory = maxMemory;
@@ -36,7 +42,8 @@ public class TestSetEvaluatorST
 	
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
-				new SequenceEvaluatorST(sequence, m_modePrRe,
+				new SequenceEvaluatorST(sequence, m_modePrRe, m_conv,
+						m_nURLs, m_UrlSimilarityMatrix_Content,
 						m_suffixtree,
 						m_failuremode, m_maxMemory, m_normMode);
 		return seqEva;

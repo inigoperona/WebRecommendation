@@ -9,9 +9,6 @@ import java.util.*;
 
 public class A040MainClassHclust {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
@@ -91,7 +88,7 @@ public class A040MainClassHclust {
 				sequencesUHC, null,
 				matrix, 
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		
 		// HIERARCHICAL CLUSTERING //
 		for(int j=0; j<cutthA.length; j++){ // for each height

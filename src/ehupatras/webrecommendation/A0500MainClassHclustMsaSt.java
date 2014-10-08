@@ -95,7 +95,7 @@ public class A0500MainClassHclustMsaSt {
 				sequencesUHC, null, 
 				matrix,
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 
 		// Parameters to evaluate
 		modelev.setFmeasureBeta(0.5f);

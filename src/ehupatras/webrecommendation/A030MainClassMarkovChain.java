@@ -89,7 +89,7 @@ public class A030MainClassMarkovChain {
 				sequencesUHC, null, 
 				matrix, 
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		modelev.buildMC();
 		
 		// Evaluation parameters

@@ -102,7 +102,7 @@ public class A055MainClassModularHclustST2KnnED {
 				sequencesUHC, null,
 				matrix,
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

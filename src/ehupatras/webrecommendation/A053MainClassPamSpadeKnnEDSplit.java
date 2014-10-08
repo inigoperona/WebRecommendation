@@ -100,7 +100,7 @@ public class A053MainClassPamSpadeKnnEDSplit {
 				sequencesUHC, seqsSplit, 
 				matrix, 
 				trainAL, valAL, testAL,
-				0,
+				0, "", "",
 				new ArrayList<Integer>());
 		
 		// evaluation parameters

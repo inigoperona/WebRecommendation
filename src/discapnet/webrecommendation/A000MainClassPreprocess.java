@@ -35,6 +35,7 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
+		Website.save();
 
 		// ensure a minimum amount of apparitions of URLs.
 			starttime = System.currentTimeMillis();
@@ -51,7 +52,7 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
-		
+		Website.save();
 
 		
 		// SESSIONING //
@@ -65,10 +66,11 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 
-		// join consecutive same URLs
+			// join consecutive same URLs
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start joining consecutive same URLs.");
 		ses.joinConsecutiveSameUrls();
+			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		

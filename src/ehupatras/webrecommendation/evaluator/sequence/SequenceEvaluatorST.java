@@ -1,5 +1,6 @@
 package ehupatras.webrecommendation.evaluator.sequence;
 
+import angelu.webrecommendation.converter.URLconverterUsaCon;
 import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderSuffixTree2;
@@ -20,11 +21,14 @@ public class SequenceEvaluatorST
 	public SequenceEvaluatorST(
 			String[] sequence,
 			int modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix,
+			
 			MySuffixTree suffixtree,
 			int failuremode,
 			int maxMemory,
 			int normMode){
-		super(sequence, modePrRe);
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix);
 		m_suffixtree = suffixtree;
 		m_failuremode = failuremode;
 		m_maxMemory = maxMemory;

@@ -15,16 +15,17 @@ public class SequenceEvaluatorMedContent
 	
 	private String m_enrichStrategy = "ContentsA1";
 	private int m_nURLs = 0;
-	private float[][] m_UrlSimilarityMatrix = null;
 	private String[][] m_UrlRelationMatrix = null;
 	private HashMap<Integer,Integer> m_UrlClusteringDict = null;
-	private URLconverterUsaCon m_conv = null;
 	
 	// CREATOR
 	
 	public SequenceEvaluatorMedContent(
 			String[] sequence,
 			int m_modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, float[][] urlSimilarityMatrix,
+			
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			ArrayList<Object[]> recos,
@@ -32,37 +33,18 @@ public class SequenceEvaluatorMedContent
 			float[][] rolesW,
 			int knn,
 			String enrichStrategy,
-			int nURLs,
-			float[][] urlSimilarityMatrix,
 			String[][] urlRelationMatrix,
 			HashMap<Integer,Integer> urlClusteringDict,
-			URLconverterUsaCon conv,
 			ArrayList<Integer> noProposeURLs){
-		super(sequence, m_modePrRe, medoids, gmedoids, recos, isDistance, rolesW, knn);
+		super(sequence, m_modePrRe, conv, nURLs, urlSimilarityMatrix,
+				medoids, gmedoids, recos, isDistance, rolesW, knn);
 		m_enrichStrategy = enrichStrategy;
 		m_nURLs = nURLs;
-		m_UrlSimilarityMatrix = urlSimilarityMatrix;
+		m_UrlSimilarityMatrix_Content = urlSimilarityMatrix;
 		m_UrlRelationMatrix = urlRelationMatrix;
 		m_UrlClusteringDict = urlClusteringDict;
 		m_conv = conv;
 		m_noProposeURLs = noProposeURLs;
-		this.convertMatrixContent2Url();
-	}
-	
-	private void convertMatrixContent2Url(){
-		m_usageURLs = m_conv.getUsageUrls();
-		int len = m_usageURLs.size();
-		m_UrlSimilarityMatrix_Usage = new float[len][len];
-		for(int i=0; i<len; i++){
-			int url1usa = m_usageURLs.get(i);
-			int url1con = m_conv.getContentURL(url1usa);
-			for(int j=0; j<len; j++){
-				int url2usa = m_usageURLs.get(j);
-				int url2con = m_conv.getContentURL(url2usa);
-				float sim = m_UrlSimilarityMatrix[url1con][url2con];
-				m_UrlSimilarityMatrix_Usage[i][j] = sim;
-			}
-		}
 	}
 	
 	
@@ -76,7 +58,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -86,7 +68,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -96,7 +78,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -106,7 +88,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -116,7 +98,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -126,7 +108,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -137,7 +119,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -147,7 +129,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -157,7 +139,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -167,7 +149,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -177,7 +159,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -187,7 +169,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -198,7 +180,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -209,7 +191,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -219,7 +201,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -229,7 +211,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -239,7 +221,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -249,7 +231,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -260,7 +242,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -270,7 +252,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -280,7 +262,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -290,7 +272,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -300,7 +282,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -310,7 +292,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -320,7 +302,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,
@@ -330,7 +312,7 @@ public class SequenceEvaluatorMedContent
 					m_medoids, m_gmedoids, m_recos,
 					m_isDistance, m_rolesW,
 					m_nURLs,
-					m_UrlSimilarityMatrix,
+					m_UrlSimilarityMatrix_Content,
 					m_UrlRelationMatrix,
 					m_UrlClusteringDict,
 					m_conv,

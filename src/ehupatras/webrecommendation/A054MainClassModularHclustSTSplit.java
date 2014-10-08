@@ -100,7 +100,7 @@ public class A054MainClassModularHclustSTSplit {
 				sequencesUHC, seqsSplit,
 				matrix,
 				trainAL, valAL, testAL,
-				0);
+				0, "", "");
 		
 		// evaluation parameters
 		modelev.setFmeasureBeta(0.5f);

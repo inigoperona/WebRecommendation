@@ -1,6 +1,8 @@
 package ehupatras.webrecommendation.evaluator.test;
 
 import java.util.ArrayList;
+
+import angelu.webrecommendation.converter.URLconverterUsaCon;
 import ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluator;
 import ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluatorMed;
 
@@ -24,13 +26,17 @@ public class TestSetEvaluatorMed
 	public TestSetEvaluatorMed(
 			ArrayList<String[]> sequences,
 			int modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, 
+			float[][] urlSimilarityMatrix,
+			
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			ArrayList<Object[]> recos,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequences, modePrRe);
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_recos = recos;
@@ -41,19 +47,26 @@ public class TestSetEvaluatorMed
 	
 	protected TestSetEvaluatorMed(
 			ArrayList<String[]> sequences,
-			int modePrRe){
-		super(sequences, modePrRe);
+			int modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, 
+			float[][] urlSimilarityMatrix){
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
 	}
 	
 	protected TestSetEvaluatorMed(
 			ArrayList<String[]> sequences,
 			int modePrRe,
+			URLconverterUsaCon conv,
+			int nURLs, 
+			float[][] urlSimilarityMatrix,
+			
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequences, modePrRe);
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_isDistance = isDistance;
@@ -65,7 +78,8 @@ public class TestSetEvaluatorMed
 	
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
-				new SequenceEvaluatorMed(sequence, m_modePrRe,
+				new SequenceEvaluatorMed(sequence, m_modePrRe, m_conv,
+						m_nURLs, m_UrlSimilarityMatrix_Content,
 						m_medoids, m_gmedoids, m_recos,
 						m_isDistance, m_rolesW, m_knn);
 		return seqEva;
