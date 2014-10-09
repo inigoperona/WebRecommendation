@@ -15,7 +15,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 		param.loadHoldOut();
 		param.loadTopicInf();
 		param.createModelEvaluatorMedoids();
-		param.runModelEvaluatorM();
+		param.runModelEvaluatorM_pam();
 				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

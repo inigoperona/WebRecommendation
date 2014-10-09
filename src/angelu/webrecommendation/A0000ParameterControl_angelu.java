@@ -46,7 +46,7 @@ public class A0000ParameterControl_angelu {
 	protected String m_clustWD;
 	protected String m_profiWD;
 	protected String m_evalFile;
-	protected ArrayList<Integer> m_noProposeUrls;
+	protected ArrayList<Integer> m_noProposeUrls = new ArrayList<Integer>();
 	protected int m_modePrRe;
 	
 	// Model Evaluator
@@ -92,7 +92,8 @@ public class A0000ParameterControl_angelu {
 		this.initializeStructures();
 	}
 	public A0000ParameterControl_angelu(String[] args){
-		this.readParameters(args);
+		//this.readParameters(args);
+		this.exampleParameters();
 		this.initializeStructures();
 	}
 	protected void initializeStructures(){
@@ -188,9 +189,9 @@ public class A0000ParameterControl_angelu {
 		m_sequencesUHC = database.getInstantiatedSequences();
 	}
 	
-	public void loadDM(String splitStr){
+	public void loadDM(){
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
-		dm.loadDistanceMatrix(m_databaseWD + m_dmWD + splitStr);
+		dm.loadDistanceMatrix(m_databaseWD + m_dmWD);
 		m_matrix = dm.getMatrix();
 	}
 
@@ -241,21 +242,11 @@ public class A0000ParameterControl_angelu {
 		m_modelevM = modelev;
 	}	
 
-	public void runModelEvaluatorM(){
+	public void runModelEvaluatorM_pam(){
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+
 		// Results' header
 		System.out.print("options," + m_modelevM.getEvaluationHeader());
-		
-		// open the file in which we save the evaluation process
-		BufferedWriter evalWriter = null;
-		try{
-			evalWriter = new BufferedWriter(new FileWriter(m_validationWD + m_evalFile));
-		} catch(IOException ex){
-			System.err.println("[angelu.webrecommendation.A0000ParameterControl] " +
-					"Not possible to open the file: " + m_evalFile);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
 		// RUN THE EXPERIMENTS
 		// for each PAM: k
 		for(int j=0; j<m_ks.length; j++){
@@ -296,15 +287,7 @@ public class A0000ParameterControl_angelu {
 			}
 		}
 		
-		// close the file in which we save the evaluation process
-		try{
-			evalWriter.close();
-		} catch (IOException ex){
-			System.err.println("[[angelu.webrecommendation.A0000ParameterControl]] " +
-					"Problems at closing the file: " + m_evalFile);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
+		this.closeFile(evalWriter);
 	}
 	
 	
@@ -328,20 +311,10 @@ public class A0000ParameterControl_angelu {
 	}
 
 	public void runModelEvaluatorMC(String recommender){
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		
 		// Results' header
 		System.out.print("options," + m_modelevMC.getEvaluationHeader());
-		
-		// open the file in which we save the evaluation process
-		BufferedWriter evalWriter = null;
-		try{
-			evalWriter = new BufferedWriter(new FileWriter(m_validationWD + m_evalFile));
-		} catch(IOException ex){
-			System.err.println("[angelu.webrecommendation.A0000ParameterControl] " +
-					"Not possible to open the file: " + m_evalFile);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
 		// RUN THE EXPERIMENTS
 		// for each PAM: k
 		for(int j=0; j<m_ks.length; j++){
@@ -386,9 +359,31 @@ public class A0000ParameterControl_angelu {
 			}
 		}
 		
+		this.closeFile(evalWriter);
+	}
+	
+	
+	
+	// utilities
+	
+	protected BufferedWriter openFile(String filename){
+		// open the file in which we save the evaluation process
+		BufferedWriter evalWriter = null;
+		try{
+			evalWriter = new BufferedWriter(new FileWriter(filename));
+		} catch(IOException ex){
+			System.err.println("[angelu.webrecommendation.A0000ParameterControl] " +
+					"Not possible to open the file: " + m_evalFile);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		return evalWriter;
+	}
+	
+	protected void closeFile(BufferedWriter writer){
 		// close the file in which we save the evaluation process
 		try{
-			evalWriter.close();
+			writer.close();
 		} catch (IOException ex){
 			System.err.println("[[angelu.webrecommendation.A0000ParameterControl]] " +
 					"Problems at closing the file: " + m_evalFile);

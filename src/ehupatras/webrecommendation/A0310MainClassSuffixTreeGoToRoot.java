@@ -11,7 +11,7 @@ public class A0310MainClassSuffixTreeGoToRoot {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM("");
+		param.loadDM();
 		param.loadHoldOut();
 		param.loadTopicInf();		
 		param.setTopicMatchWeight(0.5f);

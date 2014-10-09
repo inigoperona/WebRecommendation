@@ -16,7 +16,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 		param.loadTopicInf();
 		param.setTopicMatchWeight(0.5f);
 		param.createModelEvaluatorMedoids();
-		param.runModelEvaluatorM();
+		param.runModelEvaluatorM_pam();
 				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
