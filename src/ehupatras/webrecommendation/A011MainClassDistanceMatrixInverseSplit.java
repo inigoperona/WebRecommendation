@@ -1,15 +1,50 @@
 package ehupatras.webrecommendation;
 
 import java.util.ArrayList;
-import java.io.File;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverse;
-import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
-import ehupatras.webrecommendation.structures.Website;
 
 public class A011MainClassDistanceMatrixInverseSplit {
 	
 	private Matrix m_matrix;
+	
+	public static void main(String[] args) {
+		
+		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
+		
+		// take the start time of the program
+		long starttimeprogram = System.currentTimeMillis();
+
+		// RUN
+		param.loadDatabase();
+		
+		// DISTANCE MATRIX
+		float[][] rolesW;
+		int[] sessionBreakers = new int[]{11};
+		
+		// No role: equal_UHC
+		rolesW = new float[][]{	{ 1f, 1f, 1f},
+	    						{ 1f, 1f, 1f},
+	    						{ 1f, 1f, 1f}};
+		param.createDM("SimilarityMatrixNormalize_Split", rolesW, 
+				"/DM_00_no_role_dist_split", sessionBreakers);
+		
+		// 2 roles: similar_HC
+		rolesW = new float[][]{	{ 0f,    0f,    0f},
+	    						{ 0f,    1f, 0.75f},
+	    						{ 0f, 0.75f,    1f}};
+		param.createDM("SimilarityMatrixNormalize_Split", rolesW, 
+				"/DM_04_similarHC2_dist_split", sessionBreakers);
+		
+		// ending the program
+		long endtimeprogram = System.currentTimeMillis();
+		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
+	}
+
+
+	
+	
+	
 	
 	public void createDistanceMatrix(String databaseWD,
 			ArrayList<Long> sampleSessionIDs,
@@ -17,11 +52,6 @@ public class A011MainClassDistanceMatrixInverseSplit {
 			float[][] roleWeights,
 			int[] starters){
 		m_matrix = new SimilarityMatrixInverse(sampleSessionIDs);
-		
-		// create the distance matrix without splitting sequences
-		//m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
-		//m_matrix.writeMatrix(m_matrix.getMatrix(false),
-		//			databaseWD + "/distance_matrix.txt");
 		
 		// split the sequences 
 		m_matrix.setSplitParameters(starters, 3);
@@ -46,69 +76,6 @@ public class A011MainClassDistanceMatrixInverseSplit {
 	
 	public Matrix getMatrix(){
 		return m_matrix;
-	}
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		// Parameter control
-		String preprocessingWD = "experiments/DATA";
-		String logfile = "/log20000.log";
-		String databaseWD = "experiments/DATA";
-		preprocessingWD = args[0];
-		logfile = args[1];
-		databaseWD = args[2];
-		
-		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
-		Website.setWorkDirectory(preprocessingWD);
-		
-		// take the start time of the program
-		long starttimeprogram = System.currentTimeMillis();
-		
-		
-		
-		// LOAD PREPROCESSED LOGS //
-		//A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
-		//preprocess.preprocessLogs(preprocessingWD, logfile);
-		//preprocess.loadPreprocess();
-		
-		
-		// LOAD DATABASE //
-		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
-		//database.createDatabase(databaseWD);
-		database.loadDatabase(databaseWD);
-		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
-		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
-		
-		
-		// DISTANCE MATRIX //
-		A011MainClassDistanceMatrixInverseSplit dm;
-		
-
-		// No role
-		float[][] roleW1 = {{ 1f, 1f, 1f},
-				            { 1f, 1f, 1f},
-				            { 1f, 1f, 1f}};
-		dm = new A011MainClassDistanceMatrixInverseSplit();
-		dm.createDistanceMatrix(databaseWD + "/DM00-no_role-split", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW1, new int[]{11});
-		
-		// Treat the role intelligently2
-		float[][] roleW5 = {{ 0f,    0f,    0f},
-	  		    			{ 0f,    1f, 0.75f},
-	  		    			{ 0f, 0.75f,    1f}};
-		dm = new A011MainClassDistanceMatrixInverseSplit();
-		dm.createDistanceMatrix(databaseWD + "/DM03-U_HC2-split", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW5, new int[]{11});
-		
-		
-		
-		// ending the program
-		long endtimeprogram = System.currentTimeMillis();
-		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
 	}
 	
 }

@@ -7,6 +7,25 @@ import ehupatras.webrecommendation.usage.preprocess.log.LogReaderBidasoaTurismo;
 
 public class A000MainClassPreprocess {
 
+	public static void main(String[] args) {
+		
+		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
+		
+		// take the start time of the program
+		long starttimeprogram = System.currentTimeMillis();
+
+		// RUN
+		param.preprocessLogs();
+		
+		// ending the program
+		long endtimeprogram = System.currentTimeMillis();
+		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
+	}
+	
+	
+	
+	
+		
 	public void preprocessLogs(String basedirectory, String logfile){
 		long starttime;
 		long endtime;
@@ -128,7 +147,7 @@ public class A000MainClassPreprocess {
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
 		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
-						
+		
 		// save the sessions structure we have created
 		WebAccessSequences.saveStructure();
 		WebAccessSequences.saveSequences();
@@ -147,35 +166,6 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		// Parameter control
-		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
-		String basedirectory = "experiments/DATA";
-		String filename1 = "/log20000.log";
-		basedirectory = args[0];
-		filename1 = args[1];
-		
-		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(basedirectory);
-		Website.setWorkDirectory(basedirectory);
-		
-		// take the start time of the program
-		long starttimeprogram = System.currentTimeMillis();
-		A000MainClassPreprocess main = new A000MainClassPreprocess();
-			
-		// READ THE LOG FILE(S) //
-		main.preprocessLogs(basedirectory, filename1);
-			
-		// ending the program
-		long endtimeprogram = System.currentTimeMillis();
-		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
 	}
 
 }

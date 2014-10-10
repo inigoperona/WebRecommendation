@@ -9,6 +9,27 @@ public class A001MainClassCreateDatabase {
 
 	private ArrayList<Integer> m_sessionsIDs;
 	private ArrayList<String[]> m_sequences;
+
+	public static void main(String[] args) {
+
+		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
+		
+		// take the start time of the program
+		long starttimeprogram = System.currentTimeMillis();
+
+		// RUN
+		param.loadLogs();
+		param.createDatabase();
+		
+		// ending the program
+		long endtimeprogram = System.currentTimeMillis();
+		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
+	}
+	
+	
+	
+	
+	
 	
 	public void createDatabase(String databaseWD){
 		// CREATE THE DATABASE
@@ -49,40 +70,6 @@ public class A001MainClassCreateDatabase {
 	
 	public ArrayList<String[]> getInstantiatedSequences(){
 		return m_sequences;
-	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		// Parameter control
-		String preprocessingWD = "experiments/DATA";
-		String logfile = "/log20000.log";
-		String databaseWD = "experiments/DATA";
-		preprocessingWD = args[0];
-		logfile = args[1];
-		databaseWD = args[2];
-		
-		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
-		Website.setWorkDirectory(preprocessingWD);
-		
-		// take the start time of the program
-		long starttimeprogram = System.currentTimeMillis();
-		
-		// LOAD PREPROCESSED LOGS //
-		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
-		preprocess.loadPreprocess();
-		
-		// CREATE THE DATABSE //
-		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
-		database.createDatabase(databaseWD);
-		
-		// ending the program
-		long endtimeprogram = System.currentTimeMillis();
-		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
 	}
 
 }

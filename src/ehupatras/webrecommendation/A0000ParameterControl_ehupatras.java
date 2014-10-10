@@ -9,6 +9,7 @@ import ehupatras.webrecommendation.evaluator.ModelEvaluatorSeqMinMSAWseq;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorSeqMinSPADE;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorSuffixTreeGlobal;
 import angelu.webrecommendation.A0000ParameterControl_angelu;
+import angelu.webrecommendation.A012MainClassDistanceMatrixED;
 
 public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angelu {
 
@@ -108,6 +109,49 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_modePrRe = 0;
 	}
 	
+	public void preprocessLogs(){
+		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
+		preprocess.preprocessLogs(m_base, m_logfile);
+	}
+	
+	public void createDM(String strategyNormalize, float[][] rolesW, 
+			String dmWD, int[] sessionBreakers){
+		this.loadDatabase();
+		dmWD = dmWD.equals("-") ? m_dmWD : dmWD;
+		if(strategyNormalize.equals("SimilarityMatrixAsDataMatrix")){
+			A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
+			dm.createDistanceMatrix(m_databaseWD + dmWD, 
+				m_sampleSessionIDs, m_sequencesUHC, 
+				rolesW);
+		} else if(strategyNormalize.equals("SimilarityMatrixNormalize")) {
+			A011MainClassDistanceMatrixInverse dm = new A011MainClassDistanceMatrixInverse();
+			dm.createDistanceMatrix(m_databaseWD + dmWD, 
+					m_sampleSessionIDs, m_sequencesUHC, 
+					rolesW);
+		} else if(strategyNormalize.equals("SimilarityMatrixNormalize_Split")){
+			A011MainClassDistanceMatrixInverseSplit dm = new A011MainClassDistanceMatrixInverseSplit();
+			dm.createDistanceMatrix(m_databaseWD + dmWD, 
+					m_sampleSessionIDs, m_sequencesUHC, 
+					rolesW, sessionBreakers);
+		} else if(strategyNormalize.equals("EditDistance")){
+			A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
+			dm.createDistanceMatrix(m_databaseWD + dmWD, 
+					m_sampleSessionIDs, m_sequencesUHC, 
+					rolesW);
+		} else if(strategyNormalize.equals("EditDistance_Split")){
+			A012MainClassDistanceMatrixEDSplit dm = new A012MainClassDistanceMatrixEDSplit();
+			dm.createDistanceMatrix(m_databaseWD + dmWD, 
+					m_sampleSessionIDs, m_sequencesUHC, 
+					rolesW, sessionBreakers);
+		}
+	}
+	
+	public void loadDM_split(String splitedFile){
+		Object[] objA = m_matrix.readSeqs(m_databaseWD + m_dmWD + splitedFile);
+		m_sampleSessionIDs_split = (ArrayList<Long>)objA[0];
+		m_sequencesUHC_split = (ArrayList<String[]>)objA[1];		
+	}
+	
 	public void loadHoldOut(){
 		A020MainClassHoldOut ho = new A020MainClassHoldOut();
 		ho.loadParts(m_validationWD, m_sampleSessionIDs);
@@ -115,12 +159,6 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_trainAL = mv.getTrain();
 		m_valAL   = mv.getValidation();
 		m_testAL  = mv.getTest();
-	}
-
-	public void loadDM_split(String splitedFile){
-		Object[] objA = m_matrix.readSeqs(m_databaseWD + m_dmWD + splitedFile);
-		m_sampleSessionIDs_split = (ArrayList<Long>)objA[0];
-		m_sequencesUHC_split = (ArrayList<String[]>)objA[1];		
 	}
 	
 	

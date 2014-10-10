@@ -4,9 +4,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 import angelu.webrecommendation.evaluator.ModelEvaluatorMedoidsContent;
+import angelu.webrecommendation.A000MainClassPreprocess;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
@@ -171,8 +171,13 @@ public class A0000ParameterControl_angelu {
 	}
 	
 	public void preprocessLogs(){
-		A000MainClassPreprocess main = new A000MainClassPreprocess();
-		main.preprocessLogs(m_preprocessingWD, m_logfile);
+		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
+		preprocess.preprocessLogs(m_preprocessingWD, m_logfile);
+	}
+	
+	public void loadLogs(){
+		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
+		preprocess.loadPreprocess();
 	}
 	
 	public void createDatabase(){
@@ -187,6 +192,14 @@ public class A0000ParameterControl_angelu {
 		database.loadDatabase(m_databaseWD);
 		m_sampleSessionIDs = database.getSessionsIDs();
 		m_sequencesUHC = database.getInstantiatedSequences();
+	}
+	
+	public void createDM(){
+		this.loadDatabase();
+		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
+		dm.createDistanceMatrix(m_databaseWD + m_dmWD, 
+				m_sampleSessionIDs, m_sequencesUHC, 
+				m_rolesW);
 	}
 	
 	public void loadDM(){

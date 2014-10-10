@@ -4,12 +4,41 @@ import java.util.ArrayList;
 import ehupatras.webrecommendation.distmatrix.DistanceMatrixEdit;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.distmatrix.SimilarityMatrixEuclidean;
-import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
-import ehupatras.webrecommendation.structures.Website;
 
 public class A012MainClassDistanceMatrixEDSplit {
 
 	private Matrix m_matrix;
+
+	public static void main(String[] args){
+		
+		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
+		
+		// take the start time of the program
+		long starttimeprogram = System.currentTimeMillis();
+
+		// RUN
+		param.loadDatabase();
+		
+		// DISTANCE MATRIX
+		float[][] rolesW;
+		int[] sessionBreakers = new int[]{11};
+		
+		// No role: equal_UHC
+		rolesW = new float[][]{	{ 1f, 1f, 1f},
+	    						{ 1f, 1f, 1f},
+	    						{ 1f, 1f, 1f}};
+		param.createDM("EditDistance_Split", rolesW, 
+				"/DM_04_edit_split", sessionBreakers);
+		
+		// ending the program
+		long endtimeprogram = System.currentTimeMillis();
+		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
+	}
+
+	
+	
+	
+	
 	
 	public void createDistanceMatrix(String databaseWD,
 			ArrayList<Long> sampleSessionIDs,
@@ -41,57 +70,5 @@ public class A012MainClassDistanceMatrixEDSplit {
 	
 	public Matrix getMatrix(){
 		return m_matrix;
-	}
-	
-	public static void main(String[] args){
-		// Parameter control
-		String base = "experiments_ehupatras";
-		String preprocessingWD = base + "/01_preprocess";
-		String logfile = "/log20000.log";
-		String databaseWD = base + "/02_DATABASE_5";
-		preprocessingWD = args[0];
-		logfile = args[1];
-		databaseWD = args[2];
-		
-		
-		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
-		Website.setWorkDirectory(preprocessingWD);
-		
-		// take the start time of the program
-		long starttimeprogram = System.currentTimeMillis();
-		
-		
-		
-		// LOAD PREPROCESSED LOGS //
-		//A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
-		//preprocess.preprocessLogs(preprocessingWD, logfile);
-		//preprocess.loadPreprocess();
-		
-		
-		// LOAD DATABASE //
-		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
-		//database.createDatabase(databaseWD);
-		database.loadDatabase(databaseWD);
-		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
-		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
-		
-		
-		// DISTANCE MATRIX //
-		A012MainClassDistanceMatrixEDSplit dm;
-		
-		// No role
-		float[][] roleW1 = {{ 0f, 0f, 0f},
-	            			{ 0f, 0f, 0f},
-	            			{ 0f, 0f, 0f}};
-		dm = new A012MainClassDistanceMatrixEDSplit();
-		dm.createDistanceMatrix(databaseWD + "/DM_04_edit-split", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW1, new int[]{11});
-		
-		// ending the program
-		long endtimeprogram = System.currentTimeMillis();
-		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
-	}
-	
+	}	
 }
