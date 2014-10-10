@@ -62,8 +62,7 @@ for mod in "IDhutsa" "Modua0" "Modua1" "Modua2"
 do
   ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar ehupatras.webrecommendation.A100MainClassAddContent \
   $preprocess \
-  $preprocess \
-  "/document-topic-distributions1_${mod}_usageID.csv" 0.4 \
+  $preprocess "/document-topic-distributions1_${mod}_usageID.csv" 0.4 \
   "/URLs_DM_${mod}_th04.txt" \
   "/URLs_to_topic_${mod}_th04.txt"
 done
@@ -73,8 +72,7 @@ for mod in "IDhutsa" "Modua0" "Modua1" "Modua2"
 do
   ../jre1.7.0/bin/java -Xmx2048m -cp webreco.jar ehupatras.webrecommendation.A100MainClassAddContent \
   $preprocess \
-  $preprocess \
-  "/document-topic-distributions1_${mod}_usageID.csv" 0 \
+  $preprocess "/document-topic-distributions1_${mod}_usageID.csv" 0 \
   "/URLs_DM_${mod}_th0.txt" \
   "/URLs_to_topic_${mod}_th0.txt"
 done
