@@ -24,7 +24,8 @@ public class WebAccessSequences {
 	private static ArrayList<Integer> m_actualloadedmodulusS;
 	
 	// Necessary attributes when we are adding requests
-	private static int m_maxloadrequests = 100000;
+	//private static int m_maxloadrequests = 100000;
+	private static int m_maxloadrequests = 10000;
 	// 1
 	private static int m_actualloadedrequest = 0;
 	private static int m_lastloadedrequest = 0;
@@ -150,7 +151,7 @@ public class WebAccessSequences {
 		int iindex = i % m_maxloadrequests;
 		
 		// if we have in memory return it
-		int iMem = m_actualloadedmodulusS.indexOf(imodulus);
+		int iMem = m_actualloadedmodulusS.indexOf(new Integer(imodulus));
 		if(iMem!=-1){
 			return m_filterlogS.get(iMem).get(iindex);
 		}
@@ -162,8 +163,11 @@ public class WebAccessSequences {
 			savemodulus(m_actualloadedmodulus, m_filterlog, basenamejavadata);
 			loadmodulus(imodulus, basenamejavadata, false, false);
 			long endtime = System.currentTimeMillis();
+			String inmem = "(" + m_actualloadedmodulus + ")";
+			for(int j=0; j<m_actualloadedmodulusS.size(); j++){inmem=inmem+","+m_actualloadedmodulusS.get(j);}
 			System.out.println("  [" + endtime + "] End swaping modulus. " +
 					oldmod + " <-> " + m_actualloadedmodulus + ". " +
+					inmem + ". " +
 					(endtime-starttime)/1000 + " seconds. [getRequest]");
 		}
 		return m_filterlog.get(iindex);
@@ -183,7 +187,6 @@ public class WebAccessSequences {
 			m_filterlogS.get(iMem).remove(iindex);
 			m_filterlogS.get(iMem).add(iindex, req);
 		} else {
-			
 			// the main modulus
 			if(m_actualloadedmodulus!=imodulus){
 				long starttime = System.currentTimeMillis();
@@ -203,8 +206,7 @@ public class WebAccessSequences {
 	private static void loadmodulus(int mod, String basenamejavadata, boolean isAddReq, boolean modeOrd){
 		if(!isAddReq){
 		// save the loaded modulus in the memory
-		int i1Mod = m_actualloadedmodulusS.indexOf(0);
-		int i2Mem = -1;
+		int i1Mod = m_actualloadedmodulusS.get(0);
 		if(i1Mod!=-1){
 			// save the last element
 			int lastIndexMem = m_nMemory-1;
@@ -216,7 +218,7 @@ public class WebAccessSequences {
 				m_filterlogS.set(lastIndexMem, null);
 			}
 			// move all other modulus in the memory
-			for(i2Mem=m_nMemory-2; i2Mem>=0; i2Mem--){
+			for(int i2Mem=m_nMemory-2; i2Mem>=0; i2Mem--){
 				int i2Mod = m_actualloadedmodulusS.get(i2Mem);
 				if(i2Mod==-1){
 					continue;
@@ -230,8 +232,8 @@ public class WebAccessSequences {
 			}
 		}
 		if(m_filterlog.size()>0){
-			m_filterlogS.set(i2Mem+1, m_filterlog);
-			m_actualloadedmodulusS.set(i2Mem+1, m_actualloadedmodulus);
+			m_filterlogS.set(0, m_filterlog);
+			m_actualloadedmodulusS.set(0, m_actualloadedmodulus);
 		}
 		} // if(!isAddReq)
 		

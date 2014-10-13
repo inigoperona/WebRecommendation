@@ -69,7 +69,7 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-
+/*
 			// join consecutive same URLs
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start joining consecutive same URLs.");
@@ -127,7 +127,7 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-			
+		*/	
 		/*
 		// remove those ssequences that have many Unimportant
 			starttime = System.currentTimeMillis();
@@ -140,12 +140,12 @@ public class A000MainClassPreprocess {
 		
 		// write preprocessed logs
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
-		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
-		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
+		//WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
+		//WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
 						
 		// save the sessions structure we have created
 		WebAccessSequences.saveStructure();
-		WebAccessSequences.saveSequences();
+		//WebAccessSequences.saveSequences();
 		Website.save();
 	}
 	
