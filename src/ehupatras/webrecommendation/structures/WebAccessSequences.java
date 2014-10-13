@@ -203,8 +203,9 @@ public class WebAccessSequences {
 	private static void loadmodulus(int mod, String basenamejavadata, boolean isAddReq, boolean modeOrd){
 		if(!isAddReq){
 		// save the loaded modulus in the memory
-		int i1Mem = m_actualloadedmodulusS.indexOf(0);
-		if(i1Mem!=-1){
+		int i1Mod = m_actualloadedmodulusS.indexOf(0);
+		int i2Mem = -1;
+		if(i1Mod!=-1){
 			// save the last element
 			int lastIndexMem = m_nMemory-1;
 			int modtosave = m_actualloadedmodulusS.get(lastIndexMem);
@@ -213,24 +214,24 @@ public class WebAccessSequences {
 				savemodulus(modtosave, filterlogAux, basenamejavadata);
 				m_actualloadedmodulusS.set(lastIndexMem, -1);
 				m_filterlogS.set(lastIndexMem, null);
-			}			
+			}
 			// move all other modulus in the memory
-			for(int i2Mem=m_nMemory-2; i2Mem>=0; i2Mem--){
-				int iMod = m_actualloadedmodulusS.get(i2Mem);
-				if(iMod==-1){
+			for(i2Mem=m_nMemory-2; i2Mem>=0; i2Mem--){
+				int i2Mod = m_actualloadedmodulusS.get(i2Mem);
+				if(i2Mod==-1){
 					continue;
 				} else {
 					ArrayList<Request> filterlogAux2 = m_filterlogS.get(i2Mem);
 					m_filterlogS.set(i2Mem+1, filterlogAux2);
-					m_actualloadedmodulusS.set(i2Mem+1, iMod);
+					m_actualloadedmodulusS.set(i2Mem+1, i2Mod);
 					m_filterlogS.set(i2Mem, null);
 					m_actualloadedmodulusS.set(i2Mem, -1);
 				}
 			}
 		}
 		if(m_filterlog.size()>0){
-			m_filterlogS.set(0, m_filterlog);
-			m_actualloadedmodulusS.set(0, m_actualloadedmodulus);
+			m_filterlogS.set(i2Mem+1, m_filterlog);
+			m_actualloadedmodulusS.set(i2Mem+1, m_actualloadedmodulus);
 		}
 		} // if(!isAddReq)
 		
@@ -507,6 +508,11 @@ public class WebAccessSequences {
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
+	}
+	
+	public static void loadStructure(String basenamejavadata){
+		m_basenamejavadata = basenamejavadata;
+		WebAccessSequences.loadStructure();
 	}
 	
 	public static void loadStructure(){

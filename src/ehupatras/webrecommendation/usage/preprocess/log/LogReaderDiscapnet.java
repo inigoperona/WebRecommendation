@@ -131,5 +131,4 @@ public class LogReaderDiscapnet extends LogReader {
 		WebAccessSequences.orderRequests();
 	}
 	
-	
 }

@@ -26,7 +26,7 @@ public class A000MainClassPreprocess {
 
 		// FILTER LOGS //
 		LogReader logreader = new LogReaderDiscapnet();
-		
+/*		
 		// It reads the log file and store the valid requests in [ehupatras.webrecommendation.structures.WebAccessSequences]
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start reading the log files and analyzing the URLs.");
@@ -53,7 +53,11 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 		Website.save();
-
+*/
+		Website.load();
+		System.out.println("Website. loaded items: " + Website.size());
+		WebAccessSequences.loadStructure("orderedrequests.javaData");
+		System.out.println("WebAccessSequences. loaded items: " + WebAccessSequences.filteredlogsize());
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
@@ -214,12 +218,7 @@ public class A000MainClassPreprocess {
 	}
 	
 	
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
 		// Parameter control
 		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
 		String basedirectory = "experiments_discapnet/01_preprocess";
