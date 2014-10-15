@@ -247,8 +247,8 @@ public abstract class RequestAbstract
 				"sesssionID " +
 				"elapsedtime " +
 				"pageRoleUHC " +
-				"isbot" + " " +
-				"isvalidLinkPrediction" +
+				"isbot " +
+				"isvalidLinkPrediction " +
 				page.toStringLongHeader();
 	}
 	

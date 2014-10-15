@@ -169,9 +169,9 @@ public abstract class PageAbstract
 		return 	"urlname " +
 				"formatedurlname " +
 				"language " +
-				"nStaticPeriods" +
+				"nStaticPeriods " +
 				"isStatic " +
-				"nFrequency" +
+				"nFrequency " +
 				"isFrequent " +
 				"labelByHand " +
 				"ishtml " +

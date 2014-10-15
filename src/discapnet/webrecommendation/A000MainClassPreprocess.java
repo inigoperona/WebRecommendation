@@ -26,7 +26,7 @@ public class A000MainClassPreprocess {
 
 		// FILTER LOGS //
 		LogReader logreader = new LogReaderDiscapnet();
-/*		
+		
 		// It reads the log file and store the valid requests in [ehupatras.webrecommendation.structures.WebAccessSequences]
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start reading the log files and analyzing the URLs.");
@@ -36,6 +36,7 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 		Website.save();
+		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog1.log");
 
 		// ensure a minimum amount of apparitions of URLs.
 			starttime = System.currentTimeMillis();
@@ -53,11 +54,12 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 		Website.save();
-*/
-		Website.load();
-		System.out.println("Website. loaded items: " + Website.size());
-		WebAccessSequences.loadStructure("orderedrequests.javaData");
-		System.out.println("WebAccessSequences. loaded items: " + WebAccessSequences.filteredlogsize());
+		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
+
+		//Website.load();
+		//System.out.println("Website. loaded items: " + Website.size());
+		//WebAccessSequences.loadStructure("orderedrequests.javaData");
+		//System.out.println("WebAccessSequences. loaded items: " + WebAccessSequences.filteredlogsize());
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
@@ -69,7 +71,8 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-/*
+		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog3.log");
+
 			// join consecutive same URLs
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start joining consecutive same URLs.");
@@ -127,7 +130,7 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-		*/	
+	
 		/*
 		// remove those ssequences that have many Unimportant
 			starttime = System.currentTimeMillis();
@@ -140,12 +143,12 @@ public class A000MainClassPreprocess {
 		
 		// write preprocessed logs
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
-		//WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
-		//WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
+		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
+		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
 						
 		// save the sessions structure we have created
 		WebAccessSequences.saveStructure();
-		//WebAccessSequences.saveSequences();
+		WebAccessSequences.saveSequences();
 		Website.save();
 	}
 	

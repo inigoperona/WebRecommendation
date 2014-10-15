@@ -3,8 +3,6 @@ package ehupatras.webrecommendation.evaluator;
 import ehupatras.clustering.ClusteringHierarchical;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
-import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorMC;
-
 import java.util.ArrayList;
 
 public class ModelEvaluatorClustHclust 
