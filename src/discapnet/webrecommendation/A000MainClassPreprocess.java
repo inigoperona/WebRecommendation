@@ -23,7 +23,7 @@ public class A000MainClassPreprocess {
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] PREPROCESSING.");
 		
-
+/*
 		// FILTER LOGS //
 		LogReader logreader = new LogReaderDiscapnet();
 		
@@ -55,15 +55,15 @@ public class A000MainClassPreprocess {
 				+ (endtime-starttime)/1000 + " seconds.");
 		Website.save();
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
-
-		//Website.load();
-		//System.out.println("Website. loaded items: " + Website.size());
-		//WebAccessSequences.loadStructure("orderedrequests.javaData");
-		//System.out.println("WebAccessSequences. loaded items: " + WebAccessSequences.filteredlogsize());
+*/
+		Website.load();
+		System.out.println("Website. loaded items: " + Website.size());
+		WebAccessSequences.loadStructure("orderedrequests.javaData");
+		System.out.println("WebAccessSequences. loaded items: " + WebAccessSequences.filteredlogsize());
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
-		
+/*	
 		// create sessions
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
@@ -72,7 +72,7 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog3.log");
-
+*/
 			// join consecutive same URLs
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start joining consecutive same URLs.");
@@ -227,8 +227,8 @@ public class A000MainClassPreprocess {
 		String basedirectory = "experiments_discapnet/01_preprocess";
 		String logfilesIndex = "/logFilesIndex.txt";
 		
-		basedirectory = args[0];
-		logfilesIndex = args[1];
+		//basedirectory = args[0];
+		//logfilesIndex = args[1];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(basedirectory);

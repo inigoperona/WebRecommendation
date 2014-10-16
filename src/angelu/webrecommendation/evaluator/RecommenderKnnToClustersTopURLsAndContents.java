@@ -193,7 +193,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		return recomendations;
 	}
 	
-	protected int[] gertueneko_urla(int url1,int zenbat, boolean clusterrakEzDuAxola)
+	protected int[] gertueneko_urla(int url1, int zenbat, boolean clusterrakEzDuAxola)
 	{	final float[] similarityak= new float[m_nURLs];
 		final Integer[] indizeak= new Integer[m_nURLs];
 		ArrayList<Integer> gertuenekoURLak = new ArrayList<Integer>();

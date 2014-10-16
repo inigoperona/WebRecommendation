@@ -92,8 +92,8 @@ public class A0000ParameterControl_angelu {
 		this.initializeStructures();
 	}
 	public A0000ParameterControl_angelu(String[] args){
-		//this.readParameters(args);
-		this.exampleParameters();
+		this.readParameters(args);
+		//this.exampleParameters();
 		this.initializeStructures();
 	}
 	protected void initializeStructures(){
@@ -312,7 +312,7 @@ public class A0000ParameterControl_angelu {
 						m_sequencesUHC, null, 
 						m_matrix,
 						m_trainAL, m_valAL, m_testAL,
-						m_modePrRe, m_usage2contentFile,
+						m_modePrRe, m_usage2contentFile, m_urlSimilarityMatrix,
 						m_noProposeUrls);
 		modelev.setFmeasureBeta(m_beta);
 		modelev.setConfusionPoints(m_confusionPoints);

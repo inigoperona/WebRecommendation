@@ -7,6 +7,8 @@ import ehupatras.webrecommendation.structures.request.Request;
 
 import java.util.*;
 
+import javax.swing.JComboBox.KeySelectionManager;
+
 public class Sessioning {
 
 	private int m_maxLenghtOfTheSequence = 200;
@@ -57,7 +59,7 @@ public class Sessioning {
 		}
 		// close the sessions that there are in the hashtable
 		// order the keys to optimized the access to each module.
-		ArrayList<Integer> keysOrd = WebAccessSequences.orderHashtableKeys(oldrequests.keys());
+		ArrayList<Integer> keysOrd = this.orderHashtableKeysByData(oldrequests, 2);
 		// close the sessions
 		for(int i=0; i<keysOrd.size(); i++){
 			int userid = keysOrd.get(i).intValue();
@@ -145,7 +147,7 @@ public class Sessioning {
 		}
 		// close the join actions that remain in the hashtable
 		// order the keys to optimized the access to each module.
-		ArrayList<Integer> keysOrd = WebAccessSequences.orderHashtableKeys(oldrequests.keys());
+		ArrayList<Integer> keysOrd = this.orderHashtableKeysByData(oldrequests, 0);
 		// close the join actions
 		for(int i=0; i<keysOrd.size(); i++){
 			int sessionID = keysOrd.get(i).intValue();
@@ -158,7 +160,30 @@ public class Sessioning {
 			WebAccessSequences.replaceRequest(oldindex, oldreq);
 		}
 	}
-		
+	
+	private ArrayList<Integer> orderHashtableKeysByData(Hashtable<Integer,Object[]> objHt, int iData){
+		Enumeration<Integer> keys = objHt.keys();
+		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement().intValue();
+			Object[] objA1 = objHt.get(sessionID);
+			int oldindex1 = ((Integer)objA1[iData]).intValue();
+			int mod1 = WebAccessSequences.getModulusAfterGetRequest(oldindex1);
+			int i;
+			for(i=0; i<keysOrd.size(); i++){
+				int sessionID2 = keysOrd.get(i);
+				Object[] objA2 = objHt.get(sessionID2);
+				int oldindex2 = ((Integer)objA2[iData]).intValue();
+				int mod2 = WebAccessSequences.getModulusAfterGetRequest(oldindex2);
+				if(mod1<=mod2){
+					break;
+				}
+			}
+			keysOrd.add(i, sessionID);
+		}
+		return keysOrd;		
+	}
+	
 	public void createSequences(){
 		// to measure the proportion of valid URLs in a session
 		Hashtable<Integer,Integer[]> validnessOfSequences = new Hashtable<Integer,Integer[]>();

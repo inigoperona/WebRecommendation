@@ -25,8 +25,9 @@ public class ModelEvaluatorMedoidsContent
 			ArrayList<ArrayList<Long>> testAL,
 			int modePrRe,
 			String usage2contentFile,
+			String resSimilarityFile,
 			ArrayList<Integer> noProposeURLs){
-		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe, usage2contentFile, usage2contentFile, noProposeURLs);
+		super(dataset, datasetSplit, dm, trainAL, valAL, testAL, modePrRe, usage2contentFile, resSimilarityFile, noProposeURLs);
 	}
 	
 	// GET TEST EVALUATOR
