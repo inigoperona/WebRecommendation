@@ -29,6 +29,7 @@ public class TestSetEvaluatorMed
 			URLconverterUsaCon conv,
 			int nURLs, 
 			float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
@@ -36,7 +37,8 @@ public class TestSetEvaluatorMed
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_recos = recos;
@@ -50,8 +52,10 @@ public class TestSetEvaluatorMed
 			int modePrRe,
 			URLconverterUsaCon conv,
 			int nURLs, 
-			float[][] urlSimilarityMatrix){
-		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
+			float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min){
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 	}
 	
 	protected TestSetEvaluatorMed(
@@ -60,13 +64,15 @@ public class TestSetEvaluatorMed
 			URLconverterUsaCon conv,
 			int nURLs, 
 			float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_isDistance = isDistance;
@@ -79,7 +85,8 @@ public class TestSetEvaluatorMed
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
 				new SequenceEvaluatorMed(sequence, m_modePrRe, m_conv,
-						m_nURLs, m_UrlSimilarityMatrix_Content,
+						m_nURLs, m_UrlSimilarityMatrix_Content, 
+						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						m_medoids, m_gmedoids, m_recos,
 						m_isDistance, m_rolesW, m_knn);
 		return seqEva;

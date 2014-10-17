@@ -38,6 +38,7 @@ public class ModelEvaluatorModularGST
 				new TestSetEvaluatorModST(
 						testseqs, m_modePrRe, m_conv,
 						m_nURLs, m_UrlSimilarityMatrix_Content,
+						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						
 						m_clustSuffixTreeAL.get(iFold));
 		return eval;

@@ -24,10 +24,12 @@ public class TestSetEvaluatorHMM
 			URLconverterUsaCon conv,
 			int nURLs,
 			float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			HiddenMarkovModel hmm,
 			int nNextSteps){
-		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_hmm = hmm;
 		m_nNextSteps = nNextSteps;
 	}
@@ -37,7 +39,8 @@ public class TestSetEvaluatorHMM
 	public SequenceEvaluator getSequenceEvaluator(String[] testseq){
 		SequenceEvaluator seqEva = 
 				new SequenceEvaluatorHMM(testseq, m_modePrRe, m_conv,
-						m_nURLs, m_UrlSimilarityMatrix_Content,
+						m_nURLs, m_UrlSimilarityMatrix_Content, 
+						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						m_hmm, m_nNextSteps);
 		return seqEva;
 	}

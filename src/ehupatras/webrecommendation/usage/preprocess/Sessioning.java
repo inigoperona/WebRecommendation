@@ -4,10 +4,7 @@ import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.request.Request;
-
 import java.util.*;
-
-import javax.swing.JComboBox.KeySelectionManager;
 
 public class Sessioning {
 
@@ -61,7 +58,12 @@ public class Sessioning {
 		// order the keys to optimized the access to each module.
 		ArrayList<Integer> keysOrd = this.orderHashtableKeysByData(oldrequests, 2);
 		// close the sessions
+		System.out.println("  Number of connections to close: " + keysOrd.size());
 		for(int i=0; i<keysOrd.size(); i++){
+			if(i%100000==0){
+				System.out.println("  " + i + "/" + keysOrd.size() +
+						" closing connections [createSessions]");
+			}
 			int userid = keysOrd.get(i).intValue();
 			Object[] objA = oldrequests.get(userid);
 			int oldsessioni = ((Integer)objA[0]).intValue();
@@ -149,7 +151,12 @@ public class Sessioning {
 		// order the keys to optimized the access to each module.
 		ArrayList<Integer> keysOrd = this.orderHashtableKeysByData(oldrequests, 0);
 		// close the join actions
+		System.out.println("  Number of connections to close: " + keysOrd.size());
 		for(int i=0; i<keysOrd.size(); i++){
+			if(i%100000==0){
+				System.out.println("  " + i + "/" + keysOrd.size() +
+						" closing connections [joinConsecutiveSameUrls]");
+			}
 			int sessionID = keysOrd.get(i).intValue();
 			Object[] objA = oldrequests.get(sessionID);
 			int oldindex = ((Integer)objA[0]).intValue();

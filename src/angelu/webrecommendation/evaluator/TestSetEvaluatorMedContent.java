@@ -25,6 +25,7 @@ public class TestSetEvaluatorMedContent
 			URLconverterUsaCon conv,
 			int nURLs, 
 			float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
@@ -36,7 +37,8 @@ public class TestSetEvaluatorMedContent
 			String[][] m_urlRelationMatrix,
 			HashMap<Integer,Integer> urlClusteringDict,
 			ArrayList<Integer> noProposeURLs){
-		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix,
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min,
 				medoids, gmedoids, recos, isDistance, rolesW, knn);
 		m_enrichStrategy = enrichStrategy;
 		m_UrlRelationMatrix = m_urlRelationMatrix;
@@ -51,6 +53,7 @@ public class TestSetEvaluatorMedContent
 				new SequenceEvaluatorMedContent(
 						sequence, m_modePrRe, m_conv,
 						m_nURLs, m_UrlSimilarityMatrix_Content,
+						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						
 						m_medoids, m_gmedoids, m_recos,
 						m_isDistance, m_rolesW, m_knn,

@@ -26,12 +26,14 @@ public class TestSetEvaluatorST
 			URLconverterUsaCon conv,
 			int nURLs, 
 			float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			MySuffixTree suffixtree,
 			int failuremode,
 			int maxMemory,
 			int normMode){
-		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_suffixtree = suffixtree;
 		m_failuremode = failuremode;
 		m_maxMemory = maxMemory;
@@ -43,7 +45,8 @@ public class TestSetEvaluatorST
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
 				new SequenceEvaluatorST(sequence, m_modePrRe, m_conv,
-						m_nURLs, m_UrlSimilarityMatrix_Content,
+						m_nURLs, m_UrlSimilarityMatrix_Content, 
+						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						m_suffixtree,
 						m_failuremode, m_maxMemory, m_normMode);
 		return seqEva;

@@ -42,6 +42,9 @@ public abstract class TestSetEvaluator {
 	protected URLconverterUsaCon m_conv = null;
 	protected float[][] m_UrlSimilarityMatrix_Content = null;
 	protected int m_nURLs = 0;
+	protected float[][] m_UrlSimilarityMatrix_Usage = null;
+	protected float[] m_UrlSimilarityMatrix_Usage_max = null;
+	protected float[] m_UrlSimilarityMatrix_Usage_min = null;
 	
 	// URL level metrics - HONEST
 	private float m_hitratio = 0f;
@@ -51,11 +54,15 @@ public abstract class TestSetEvaluator {
 	private float[] m_fmeasure;
 	private float[] m_cosineSimilarity;
 	private float[] m_oneNNmetric;
+	private float[] m_oneNNmetricNorm1;
+	private float[] m_oneNNmetricNorm2;
 	private float[] m_ModelPrecision;
 	private float[] m_ModelRecall;
 	private float[] m_ModelFmeasure;
 	private float[] m_ModelCosineSimilarity;
 	private float[] m_ModelOneNNmetric;
+	private float[] m_ModelOneNNmetricNorm1;
+	private float[] m_ModelOneNNmetricNorm2;
 	
 	// Topic1 level metrics
 	private float m_hitratioTop1 = 0f;
@@ -109,19 +116,25 @@ public abstract class TestSetEvaluator {
 	
 	public TestSetEvaluator(ArrayList<String[]> sequences, 
 			int modePrRe, URLconverterUsaCon conv,
-			int nURLs, float[][] urlSimilarityMatrix){
+			int nURLs, float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min){
 		this.constructor(sequences, modePrRe, conv, 
-				nURLs, urlSimilarityMatrix);
+				nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 	}
 	
 	private void constructor(ArrayList<String[]> sequences, 
 			int modePrRe, URLconverterUsaCon conv,
-			int nURLs, float[][] urlSimilarityMatrix){
+			int nURLs, float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min){
 		m_sequences = sequences;
 		m_modePrRe = modePrRe;
 		m_conv = conv;
 		m_nURLs = nURLs;
 		m_UrlSimilarityMatrix_Content = urlSimilarityMatrix;
+		m_UrlSimilarityMatrix_Usage = urlSimilarityMatrix_Usage;
+		m_UrlSimilarityMatrix_Usage_max = urlSimilarityMatrix_Usage_max;
+		m_UrlSimilarityMatrix_Usage_min = urlSimilarityMatrix_Usage_min;
 		this.constructor2();
 	}
 	
@@ -132,11 +145,16 @@ public abstract class TestSetEvaluator {
 		m_fmeasure = new float[m_points.length];
 		m_cosineSimilarity = new float[m_points.length];
 		m_oneNNmetric = new float[m_points.length];
+		m_oneNNmetricNorm1 = new float[m_points.length];
+		m_oneNNmetricNorm2 = new float[m_points.length];
 		m_ModelPrecision = new float[m_points.length];
 		m_ModelRecall = new float[m_points.length];
 		m_ModelFmeasure = new float[m_points.length];
 		m_ModelCosineSimilarity = new float[m_points.length];
 		m_ModelOneNNmetric = new float[m_points.length];
+		m_ModelOneNNmetricNorm1 = new float[m_points.length];
+		m_ModelOneNNmetricNorm2 = new float[m_points.length];
+		
 		m_precisionTop1 = new float[m_points.length];
 		m_recallTop1 = new float[m_points.length];
 		m_fmeasureTop1 = new float[m_points.length];
@@ -199,11 +217,15 @@ public abstract class TestSetEvaluator {
 		float[] fmeasure = new float[m_points.length];
 		float[] cosineSim = new float[m_points.length];
 		float[] oneNNmetric = new float[m_points.length];
+		float[] oneNNmetricNorm1 = new float[m_points.length];
+		float[] oneNNmetricNorm2 = new float[m_points.length];
 		float[] modelPrecision = new float[m_points.length];
 		float[] modelRecall = new float[m_points.length];
 		float[] modelFmeasure = new float[m_points.length];
 		float[] modelCosineSim = new float[m_points.length];
 		float[] modelOneNNmetric = new float[m_points.length];
+		float[] modelOneNNmetricNorm1 = new float[m_points.length];
+		float[] modelOneNNmetricNorm2 = new float[m_points.length];
 		
 		// TOPIC level metrics
 		float hitratioTop1 = 0f;
@@ -336,19 +358,23 @@ public abstract class TestSetEvaluator {
 				
 				// prediction
 				if(noCountSeq[j]){
-					precission[j]     = precission[j]     + seqEv.getPrecisionAtPoint(m_points[j]);
-					recall[j]         = recall[j]         + seqEv.getRecallAtPoint(m_points[j]);
-					fmeasure[j]       = fmeasure[j]       + seqEv.getFmeasureAtPoint(m_beta, m_points[j]);
-					oneNNmetric[j]    = oneNNmetric[j]    + seqEv.getOneNNmetricAtPoint(m_points[j]);
+					precission[j]       = precission[j]       + seqEv.getPrecisionAtPoint(m_points[j]);
+					recall[j]           = recall[j]           + seqEv.getRecallAtPoint(m_points[j]);
+					fmeasure[j]         = fmeasure[j]         + seqEv.getFmeasureAtPoint(m_beta, m_points[j]);
+					oneNNmetric[j]      = oneNNmetric[j]      + seqEv.getOneNNmetricAtPoint(m_points[j]);
+					oneNNmetricNorm1[j] = oneNNmetricNorm1[j] + seqEv.getOneNNmetricNorm1AtPoint(m_points[j]);
+					oneNNmetricNorm2[j] = oneNNmetricNorm2[j] + seqEv.getOneNNmetricNorm2AtPoint(m_points[j]);
 				}
 				cosineSim[j]      = cosineSim[j]      + seqEv.getCosineSimilarityAtPoint(m_points[j]);
 				
 				// model
 				if(noCountSeq[j]){
-					modelPrecision[j]   = modelPrecision[j]   + seqEv.getPrecisionModelAtPoint(m_points[j]);
-					modelRecall[j]      = modelRecall[j]      + seqEv.getRecallModelAtPoint(m_points[j]);
-					modelFmeasure[j]    = modelFmeasure[j]    + seqEv.getFmeasureModelAtPoint(m_beta, m_points[j]);
-					modelOneNNmetric[j] = modelOneNNmetric[j] + seqEv.getOneNNmetricModelAtPoint(m_points[j]);
+					modelPrecision[j]        = modelPrecision[j]        + seqEv.getPrecisionModelAtPoint(m_points[j]);
+					modelRecall[j]           = modelRecall[j]           + seqEv.getRecallModelAtPoint(m_points[j]);
+					modelFmeasure[j]         = modelFmeasure[j]         + seqEv.getFmeasureModelAtPoint(m_beta, m_points[j]);
+					modelOneNNmetric[j]      = modelOneNNmetric[j]      + seqEv.getOneNNmetricModelAtPoint(m_points[j]);
+					modelOneNNmetricNorm1[j] = modelOneNNmetricNorm1[j] + seqEv.getOneNNmetricNorm1ModelAtPoint(m_points[j]);
+					modelOneNNmetricNorm2[j] = modelOneNNmetricNorm2[j] + seqEv.getOneNNmetricNorm2ModelAtPoint(m_points[j]);
 				}
 				modelCosineSim[j] = modelCosineSim[j] + seqEv.getCosineSimilarityModelAtPoint(m_points[j]);
 				
@@ -439,17 +465,21 @@ public abstract class TestSetEvaluator {
 		for(int j=0; j<m_points.length; j++){
 			float seqlen = m_modePrRe==1 ? (float)numOfSequencesA[j] : (float)m_sequences.size();
 			
-			m_precision[j]        = precission[j]     / seqlen;
-			m_recall[j]           = recall[j]         / seqlen;
-			m_fmeasure[j]         = fmeasure[j]       / seqlen;
-			m_cosineSimilarity[j] = cosineSim[j]      / (float)m_sequences.size();
-			m_oneNNmetric[j]      = oneNNmetric[j]    / seqlen;
+			m_precision[j]        = precission[j]       / seqlen;
+			m_recall[j]           = recall[j]           / seqlen;
+			m_fmeasure[j]         = fmeasure[j]         / seqlen;
+			m_cosineSimilarity[j] = cosineSim[j]        / (float)m_sequences.size();
+			m_oneNNmetric[j]      = oneNNmetric[j]      / seqlen;
+			m_oneNNmetricNorm1[j] = oneNNmetricNorm1[j] / seqlen;
+			m_oneNNmetricNorm2[j] = oneNNmetricNorm2[j] / seqlen;
 			
-			m_ModelPrecision[j]        = modelPrecision[j]   / seqlen;
-			m_ModelRecall[j]           = modelRecall[j]      / seqlen;
-			m_ModelFmeasure[j]         = modelFmeasure[j]    / seqlen;
-			m_ModelCosineSimilarity[j] = modelCosineSim[j]   / (float)m_sequences.size();
-			m_ModelOneNNmetric[j]      = modelOneNNmetric[j] / seqlen;
+			m_ModelPrecision[j]        = modelPrecision[j]        / seqlen;
+			m_ModelRecall[j]           = modelRecall[j]           / seqlen;
+			m_ModelFmeasure[j]         = modelFmeasure[j]         / seqlen;
+			m_ModelCosineSimilarity[j] = modelCosineSim[j]        / (float)m_sequences.size();
+			m_ModelOneNNmetric[j]      = modelOneNNmetric[j]      / seqlen;
+			m_ModelOneNNmetricNorm1[j] = modelOneNNmetricNorm1[j] / seqlen;
+			m_ModelOneNNmetricNorm2[j] = modelOneNNmetricNorm2[j] / seqlen;
 		}
 		
 		// TOPIC1 level metrics - HONEST
@@ -589,6 +619,12 @@ public abstract class TestSetEvaluator {
 	public float[] getOneNNmetric(){
 		return m_oneNNmetric;
 	}
+	public float[] getOneNNmetricNorm1(){
+		return m_oneNNmetricNorm1;
+	}
+	public float[] getOneNNmetricNorm2(){
+		return m_oneNNmetricNorm2;
+	}
 	public float[] getModelPrecisions(){
 		return m_ModelPrecision;
 	}
@@ -603,6 +639,12 @@ public abstract class TestSetEvaluator {
 	}
 	public float[] getModelOneNNmetric(){
 		return m_ModelOneNNmetric;
+	}
+	public float[] getModelOneNNmetricNorm1(){
+		return m_ModelOneNNmetricNorm1;
+	}
+	public float[] getModelOneNNmetricNorm2(){
+		return m_ModelOneNNmetricNorm2;
 	}
 	
 	

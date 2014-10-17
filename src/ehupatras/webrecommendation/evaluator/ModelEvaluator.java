@@ -65,6 +65,9 @@ public abstract class ModelEvaluator {
 	private String m_resSimilarityFile = "";
 	protected float[][] m_UrlSimilarityMatrix_Content = null;
 	protected int m_nURLs = 0;
+	protected float[][] m_UrlSimilarityMatrix_Usage = null;
+	protected float[] m_UrlSimilarityMatrix_Usage_max = null;
+	protected float[] m_UrlSimilarityMatrix_Usage_min = null;
 		
 	// Write the recommendations
 	private String m_lineHeader = null;
@@ -117,6 +120,9 @@ public abstract class ModelEvaluator {
 		m_resSimilarityFile = resSimilarityFile;
 		this.readSimilarityMatrix(resSimilarityFile);
 		m_nURLs = m_UrlSimilarityMatrix_Content.length;
+		
+		// convert the URL similarity matrix contentIDs to usageIDs
+		this.convertMatrixContent2Url();
 	}	
 	
 	private ArrayList<String[]> removeUHCTagDB(ArrayList<String[]> dataset){
@@ -227,11 +233,15 @@ public abstract class ModelEvaluator {
 		float[] fmA = new float[m_confusionPoints.length];
 		float[] coSimA = new float[m_confusionPoints.length];
 		float[] oneNNA = new float[m_confusionPoints.length];
+		float[] oneNNA_N1 = new float[m_confusionPoints.length];
+		float[] oneNNA_N2 = new float[m_confusionPoints.length];
 		float[] moPrA = new float[m_confusionPoints.length];
 		float[] moReA = new float[m_confusionPoints.length];
 		float[] moFmA = new float[m_confusionPoints.length];
 		float[] moCoSimA = new float[m_confusionPoints.length];
 		float[] moOneNNA = new float[m_confusionPoints.length];
+		float[] moOneNNA_N1 = new float[m_confusionPoints.length];
+		float[] moOneNNA_N2 = new float[m_confusionPoints.length];
 		// TOPIC1 level metrics
 		float hitratioTop1 = 0f;
 		float clicksoonrationTop1 = 0f;
@@ -374,23 +384,31 @@ public abstract class ModelEvaluator {
 			float[] fmA2 = eval.getFmeasures();
 			float[] coSimA2 = eval.getCosineSimilarity();
 			float[] oneNNA2 = eval.getOneNNmetric();
+			float[] oneNNA2_N1 = eval.getOneNNmetricNorm1();
+			float[] oneNNA2_N2 = eval.getOneNNmetricNorm2();
 			float[] moPrA2 = eval.getModelPrecisions();
 			float[] moReA2 = eval.getModelRecalls();
 			float[] moFmA2 = eval.getModelFmeasures();
 			float[] moCoSimA2 = eval.getModelCosineSimilarity();
 			float[] moOneNNA2 = eval.getModelOneNNmetric();
+			float[] moOneNNA2_N1 = eval.getModelOneNNmetricNorm1();
+			float[] moOneNNA2_N2 = eval.getModelOneNNmetricNorm2();
 			for(int j=0; j<m_confusionPoints.length; j++){
 				prA[j] = prA[j] + prA2[j];
 				reA[j] = reA[j] + reA2[j];
 				fmA[j] = fmA[j] + fmA2[j];
 				coSimA[j] = coSimA[j] + coSimA2[j];
-				oneNNA[j] = oneNNA[j] + oneNNA2[j]; 
+				oneNNA[j] = oneNNA[j] + oneNNA2[j];
+				oneNNA_N1[j] = oneNNA_N1[j] + oneNNA2_N1[j];
+				oneNNA_N2[j] = oneNNA_N2[j] + oneNNA2_N2[j];
 				
 				moPrA[j] = moPrA[j] + moPrA2[j];
 				moReA[j] = moReA[j] + moReA2[j];
 				moFmA[j] = moFmA[j] + moFmA2[j];
 				moCoSimA[j] = moCoSimA[j] + moCoSimA2[j];
 				moOneNNA[j] = moOneNNA[j] + moOneNNA2[j];
+				moOneNNA_N1[j] = moOneNNA_N1[j] + moOneNNA2_N1[j];
+				moOneNNA_N2[j] = moOneNNA_N2[j] + moOneNNA2_N2[j];
 			}
 			
 			// TOPIC1 level metrics
@@ -510,12 +528,16 @@ public abstract class ModelEvaluator {
 			fmA[j] = fmA[j] / (float)m_nFolds;
 			coSimA[j] = coSimA[j] / (float)m_nFolds;
 			oneNNA[j] = oneNNA[j] / (float)m_nFolds;
+			oneNNA_N1[j] = oneNNA_N1[j] / (float)m_nFolds;
+			oneNNA_N2[j] = oneNNA_N2[j] / (float)m_nFolds;
 			
 			moPrA[j] = moPrA[j] / (float)m_nFolds;
 			moReA[j] = moReA[j] / (float)m_nFolds;
 			moFmA[j] = moFmA[j] / (float)m_nFolds;
 			moCoSimA[j] = moCoSimA[j] / (float)m_nFolds;
 			moOneNNA[j] = moOneNNA[j] / (float)m_nFolds;
+			moOneNNA_N1[j] = moOneNNA_N1[j] / (float)m_nFolds;
+			moOneNNA_N2[j] = moOneNNA_N2[j] / (float)m_nFolds;
 		}
 		
 		// TOPIC1 level metrics
@@ -598,12 +620,16 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + fmA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + coSimA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + oneNNA[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + oneNNA_N1[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + oneNNA_N2[j];}
 		
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moPrA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moCoSimA[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moOneNNA[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moOneNNA_N1[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moOneNNA_N2[j];}
 		
 		// TOPIC1 level statistics
 		results = results + "," + hitratioTop1;
@@ -690,12 +716,16 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",fm" + m_fmeasurebeta + "_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",cs_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",1nn_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",1nnN1_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",1nnN2_" + m_confusionPoints[j];}
 		
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mPr_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mRe_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mFm" + m_fmeasurebeta + "_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",mCs_" + m_confusionPoints[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",m1nn_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",m1nnN1_" + m_confusionPoints[j];}
+		for(int j=0; j<m_confusionPoints.length; j++){header = header + ",m1nnN2_" + m_confusionPoints[j];}
 		
 		// TOPIC1 level metrics
 		header = header + ",hitratioTop1";
@@ -863,6 +893,31 @@ public abstract class ModelEvaluator {
 			System.exit(1);
 		}
 		return f;
+	}
+
+	// convert to URL similarity matrix (usage)
+	private void convertMatrixContent2Url(){
+		ArrayList<Integer> usageURLs = m_conv.getUsageUrls();
+		int len = usageURLs.size();
+		m_UrlSimilarityMatrix_Usage = new float[len][len];
+		m_UrlSimilarityMatrix_Usage_max = new float[len];
+		m_UrlSimilarityMatrix_Usage_min = new float[len];
+		for(int i=0; i<len; i++){
+			int url1usa = usageURLs.get(i);
+			int url1con = m_conv.getContentURL(url1usa);
+			float maxsim = 0f;
+			float minsim = Float.MAX_VALUE;
+			for(int j=0; j<len; j++){
+				int url2usa = usageURLs.get(j);
+				int url2con = m_conv.getContentURL(url2usa);
+				float sim = m_UrlSimilarityMatrix_Content[url1con][url2con];
+				if(maxsim<sim){	maxsim = sim; }
+				if(minsim>sim){	minsim = sim; }
+				m_UrlSimilarityMatrix_Usage[i][j] = sim;
+			}
+			m_UrlSimilarityMatrix_Usage_max[i] = maxsim;
+			m_UrlSimilarityMatrix_Usage_min[i] = minsim;
+		}
 	}
 	
 }

@@ -17,6 +17,7 @@ public class SequenceEvaluatorModSTknn
 			int modePrRe,
 			URLconverterUsaCon conv,
 			int nURLs, float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min, 
 			
 			ArrayList<MySuffixTree> clustSuffixTree,
 			ArrayList<String[]> medoids,
@@ -24,7 +25,8 @@ public class SequenceEvaluatorModSTknn
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix,
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min,
 				clustSuffixTree, 
 				medoids, gmedoids, isDistance, rolesW, knn);
 	}

@@ -21,10 +21,12 @@ public class SequenceEvaluatorHMM
 			int modePrRe,
 			URLconverterUsaCon conv,
 			int nURLs, float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			HiddenMarkovModel hmm,
 			int nNextSteps){
-		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix);
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_hmm = hmm;
 		m_nNextSteps = nNextSteps;
 	}

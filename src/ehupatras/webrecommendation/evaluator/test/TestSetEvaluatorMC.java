@@ -21,10 +21,12 @@ public class TestSetEvaluatorMC
 			int modePrRe,
 			URLconverterUsaCon conv,
 			int nURLs, 
-			float[][] urlSimilarityMatrix,			
+			float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			MarkovChain markovchain){
-		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_markovchain = markovchain;
 	}
 	
@@ -33,7 +35,8 @@ public class TestSetEvaluatorMC
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
 				new SequenceEvaluatorMC(sequence, m_modePrRe, m_conv,
-						m_nURLs, m_UrlSimilarityMatrix_Content,
+						m_nURLs, m_UrlSimilarityMatrix_Content, 
+						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						m_markovchain);
 		return seqEva;
 	}

@@ -28,6 +28,7 @@ public class SequenceEvaluatorMed
 			int modePrRe,
 			URLconverterUsaCon conv,
 			int nURLs, float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
@@ -35,7 +36,8 @@ public class SequenceEvaluatorMed
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix);
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_recos = recos;
@@ -48,8 +50,10 @@ public class SequenceEvaluatorMed
 			String[] sequence,
 			int modePrRe,
 			URLconverterUsaCon conv,
-			int nURLs, float[][] urlSimilarityMatrix){
-		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix);
+			int nURLs, float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min){
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 	}
 	
 	protected SequenceEvaluatorMed(
@@ -57,13 +61,17 @@ public class SequenceEvaluatorMed
 			int modePrRe,
 			URLconverterUsaCon conv,
 			int nURLs, float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage,
+			float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
+			
 			
 			ArrayList<String[]> medoids,
 			int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix);
+		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_medoids = medoids;
 		m_gmedoids = gmedoids;
 		m_isDistance = isDistance;

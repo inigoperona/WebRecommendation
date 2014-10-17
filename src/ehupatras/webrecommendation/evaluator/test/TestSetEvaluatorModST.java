@@ -22,9 +22,11 @@ public class TestSetEvaluatorModST
 			URLconverterUsaCon conv,
 			int nURLs, 
 			float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			ArrayList<MySuffixTree> clustSuffixTree){
-		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix);
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_clustSuffixTree = clustSuffixTree;
 	}
 	
@@ -34,6 +36,7 @@ public class TestSetEvaluatorModST
 			URLconverterUsaCon conv,
 			int nURLs, 
 			float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			ArrayList<MySuffixTree> clustSuffixTree,
 			ArrayList<String[]> medoids,
@@ -41,7 +44,8 @@ public class TestSetEvaluatorModST
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
-		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix,
+		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
+				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min,
 				medoids, gmedoids, isDistance, rolesW, knn);
 		m_clustSuffixTree = clustSuffixTree;
 	}
@@ -51,7 +55,8 @@ public class TestSetEvaluatorModST
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
 				new SequenceEvaluatorModST(sequence, m_modePrRe, m_conv,
-						m_nURLs, m_UrlSimilarityMatrix_Content,
+						m_nURLs, m_UrlSimilarityMatrix_Content, 
+						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						m_clustSuffixTree);
 		return seqEva;
 	}

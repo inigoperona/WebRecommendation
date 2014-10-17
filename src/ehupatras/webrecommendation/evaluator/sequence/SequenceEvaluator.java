@@ -47,7 +47,8 @@ public abstract class SequenceEvaluator {
 	protected float[][] m_UrlSimilarityMatrix_Content = null;
 	protected int m_nURLs = 0;
 	protected float[][] m_UrlSimilarityMatrix_Usage = null;
-	
+	protected float[] m_UrlSimilarityMatrix_Usage_max = null;
+	protected float[] m_UrlSimilarityMatrix_Usage_min = null;	
 	
 	// HONEST MODE
 	// URL level metrics
@@ -57,10 +58,14 @@ public abstract class SequenceEvaluator {
 	private float[] m_recall;
 	private float[] m_cosineSim;
 	private float[] m_oneNNmetric;
+	private float[] m_oneNNmetricNorm1;
+	private float[] m_oneNNmetricNorm2;
 	private float[] m_precisionModel;
 	private float[] m_recallModel;
 	private float[] m_cosineSimModel;
 	private float[] m_oneNNmetricModel;
+	private float[] m_oneNNmetricNorm1Model;
+	private float[] m_oneNNmetricNorm2Model;
 	// TOPIC1 level metrics
 	private float m_hitscoreTop1 = 0;
 	private float m_clicksoonscoreTop1 = 0;
@@ -107,27 +112,35 @@ public abstract class SequenceEvaluator {
 	
 	public SequenceEvaluator(ArrayList<String> sequence, 
 			int modePrRe, URLconverterUsaCon conv,
-			int nURLs, float[][] urlSimilarityMatrix){
+			int nURLs, float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min){
 		m_modePrRe = modePrRe;
 		m_conv = conv;
 		m_nURLs = nURLs;
 		m_UrlSimilarityMatrix_Content = urlSimilarityMatrix;
+		m_UrlSimilarityMatrix_Usage = urlSimilarityMatrix_Usage;
+		m_UrlSimilarityMatrix_Usage_max = urlSimilarityMatrix_Usage_max;
+		m_UrlSimilarityMatrix_Usage_min = urlSimilarityMatrix_Usage_min;
 		this.constructor2(sequence);
 	}
 	
 	public SequenceEvaluator(String[] sequence, 
 			int modePrRe, URLconverterUsaCon conv,
-			int nURLs, float[][] urlSimilarityMatrix){
+			int nURLs, float[][] urlSimilarityMatrix,
+			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min){
 		ArrayList<String> sequenceAL = this.convertToArrayList(sequence);
 		m_modePrRe = modePrRe;
 		m_conv = conv;
 		m_nURLs = nURLs;
 		m_UrlSimilarityMatrix_Content = urlSimilarityMatrix;
+		m_UrlSimilarityMatrix_Usage = urlSimilarityMatrix_Usage;
+		m_UrlSimilarityMatrix_Usage_max = urlSimilarityMatrix_Usage_max;
+		m_UrlSimilarityMatrix_Usage_min = urlSimilarityMatrix_Usage_min;
 		this.constructor2(sequenceAL);
 	}
 	
 	private void constructor2(ArrayList<String> sequence){
-		this.convertMatrixContent2Url();
+		m_usageURLs = m_conv.getUsageUrls();
 		
 		m_sequence = sequence;
 		m_sequenceURL = sequence;
@@ -136,10 +149,15 @@ public abstract class SequenceEvaluator {
 		m_recall = new float[sequence.size()];
 		m_cosineSim = new float[sequence.size()];
 		m_oneNNmetric = new float[sequence.size()];
+		m_oneNNmetricNorm1 = new float[sequence.size()];
+		m_oneNNmetricNorm2 = new float[sequence.size()];
 		m_precisionModel = new float[sequence.size()];
 		m_recallModel = new float[sequence.size()];
 		m_cosineSimModel = new float[sequence.size()];
 		m_oneNNmetricModel = new float[sequence.size()];
+		m_oneNNmetricNorm1Model = new float[sequence.size()];
+		m_oneNNmetricNorm2Model = new float[sequence.size()];
+		
 		m_precisionTop1 = new float[sequence.size()];
 		m_recallTop1 = new float[sequence.size()];
 		m_cosineSimTop1 = new float[sequence.size()];
@@ -378,6 +396,10 @@ public abstract class SequenceEvaluator {
 		m_cosineSim[stepIndex] = cs;
 		float onenn = this.oneNNmetric(stepIndex, recommendatios);
 		m_oneNNmetric[stepIndex] = onenn;
+		float onennN1 = this.oneNNmetricNorm1(stepIndex, recommendatios);
+		m_oneNNmetricNorm1[stepIndex] = onennN1;
+		float onennN2 = this.oneNNmetricNorm2(stepIndex, recommendatios);
+		m_oneNNmetricNorm2[stepIndex] = onennN2;
 		
 		float prModel = this.computePrecision(0, recommendatios);
 		float reModel = this.computeRecall(0, recommendatios);
@@ -387,6 +409,10 @@ public abstract class SequenceEvaluator {
 		m_cosineSimModel[stepIndex] = csModel;
 		float onennModel = this.oneNNmetric(0, recommendatios);
 		m_oneNNmetricModel[stepIndex] = onennModel;
+		float onennNorm1Model = this.oneNNmetricNorm1(0, recommendatios);
+		m_oneNNmetricNorm1Model[stepIndex] = onennNorm1Model;
+		float onennNorm2Model = this.oneNNmetricNorm2(0, recommendatios);
+		m_oneNNmetricNorm2Model[stepIndex] = onennNorm2Model;
 	}
 	
 	private float computePrecision(
@@ -559,6 +585,72 @@ public abstract class SequenceEvaluator {
 				}
 			}
 			simsum = simsum + maxsim;
+		}
+		return (float)simsum/(float)recommendatios.size();	
+	}
+	
+	private float oneNNmetricNorm1(int stepIndex, 
+			ArrayList<String> recommendatios){
+		// take the 2nd part of the test sequence & remove prohibited URLs
+		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
+		if(sequenceURL.size()==0){return -1f;}
+
+		// initialize variables
+		float simsum = 0f;
+
+		// compute 1-NN similarity average 
+		for(int i=0; i<recommendatios.size(); i++){
+			String recStr = recommendatios.get(i);
+			int recInt = Integer.valueOf(recStr);
+			int recind = m_usageURLs.indexOf(recInt);
+			float maxsim = 0f;
+			for(int j=0; j<sequenceURL.size(); j++){
+				String stepStr = sequenceURL.get(j);
+				int stepInt = Integer.valueOf(stepStr);
+				int stepind = m_usageURLs.indexOf(stepInt);
+				float sim = 0f;
+				if(recind!=-1 && stepind!=-1){
+					sim = m_UrlSimilarityMatrix_Usage[recind][stepind];
+				}
+				if(maxsim<sim){
+					maxsim = sim;
+				}
+			}
+			simsum = simsum + (maxsim/m_UrlSimilarityMatrix_Usage_max[recind]);
+		}
+		return (float)simsum/(float)recommendatios.size();	
+	}
+	
+	private float oneNNmetricNorm2(int stepIndex, 
+			ArrayList<String> recommendatios){
+		// take the 2nd part of the test sequence & remove prohibited URLs
+		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
+		if(sequenceURL.size()==0){return -1f;}
+
+		// initialize variables
+		float simsum = 0f;
+
+		// compute 1-NN similarity average 
+		for(int i=0; i<recommendatios.size(); i++){
+			String recStr = recommendatios.get(i);
+			int recInt = Integer.valueOf(recStr);
+			int recind = m_usageURLs.indexOf(recInt);
+			float maxsim = 0f;
+			for(int j=0; j<sequenceURL.size(); j++){
+				String stepStr = sequenceURL.get(j);
+				int stepInt = Integer.valueOf(stepStr);
+				int stepind = m_usageURLs.indexOf(stepInt);
+				float sim = 0f;
+				if(recind!=-1 && stepind!=-1){
+					sim = m_UrlSimilarityMatrix_Usage[recind][stepind];
+				}
+				if(maxsim<sim){
+					maxsim = sim;
+				}
+			}
+			simsum = simsum + 
+					(maxsim-m_UrlSimilarityMatrix_Usage_min[recind])/
+					(m_UrlSimilarityMatrix_Usage_max[recind]-m_UrlSimilarityMatrix_Usage_min[recind]);
 		}
 		return (float)simsum/(float)recommendatios.size();	
 	}
@@ -1249,6 +1341,12 @@ public abstract class SequenceEvaluator {
 	public float[] getOneNNmetric(){
 		return m_oneNNmetric;
 	}
+	public float[] getOneNNmetricNorm1(){
+		return m_oneNNmetricNorm1;
+	}
+	public float[] getOneNNmetricNorm2(){
+		return m_oneNNmetricNorm2;
+	}
 	public float[] getPrecissionsModel(){
 		return m_precisionModel;
 	}	
@@ -1263,6 +1361,12 @@ public abstract class SequenceEvaluator {
 	}
 	public float[] getOneNNmetricModel(){
 		return m_oneNNmetricModel;
+	}
+	public float[] getOneNNmetricNorm1Model(){
+		return m_oneNNmetricNorm1Model;
+	}
+	public float[] getOneNNmetricNorm2Model(){
+		return m_oneNNmetricNorm2Model;
 	}
 	protected void printPrecision(){
 		System.out.print("Precision: ");
@@ -1307,6 +1411,14 @@ public abstract class SequenceEvaluator {
 		int index = this.getPosition(point);
 		return m_oneNNmetric[index];
 	}
+	public float getOneNNmetricNorm1AtPoint(float point){
+		int index = this.getPosition(point);
+		return m_oneNNmetricNorm1[index];
+	}
+	public float getOneNNmetricNorm2AtPoint(float point){
+		int index = this.getPosition(point);
+		return m_oneNNmetricNorm2[index];
+	}
 	public float getPrecisionModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_precisionModel[index];
@@ -1327,6 +1439,14 @@ public abstract class SequenceEvaluator {
 	public float getOneNNmetricModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_oneNNmetricModel[index];
+	}
+	public float getOneNNmetricNorm1ModelAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_oneNNmetricNorm1Model[index];
+	}
+	public float getOneNNmetricNorm2ModelAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_oneNNmetricNorm2Model[index];
 	}
 	
 	
@@ -1625,22 +1745,6 @@ public abstract class SequenceEvaluator {
 			}
 		}
 		return false;
-	}
-	
-	protected void convertMatrixContent2Url(){
-		m_usageURLs = m_conv.getUsageUrls();
-		int len = m_usageURLs.size();
-		m_UrlSimilarityMatrix_Usage = new float[len][len];
-		for(int i=0; i<len; i++){
-			int url1usa = m_usageURLs.get(i);
-			int url1con = m_conv.getContentURL(url1usa);
-			for(int j=0; j<len; j++){
-				int url2usa = m_usageURLs.get(j);
-				int url2con = m_conv.getContentURL(url2usa);
-				float sim = m_UrlSimilarityMatrix_Content[url1con][url2con];
-				m_UrlSimilarityMatrix_Usage[i][j] = sim;
-			}
-		}
 	}
 	
 }

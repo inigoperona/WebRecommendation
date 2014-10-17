@@ -40,6 +40,7 @@ public abstract class ModelEvaluatorSuffixTree
 				new TestSetEvaluatorST(
 						testseqs, m_modePrRe, m_conv,
 						m_nURLs, m_UrlSimilarityMatrix_Content,
+						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						
 						m_suffixtreeAL.get(iFold),
 						m_failuremode, m_maxMemory, m_normMode);
