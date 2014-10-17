@@ -60,12 +60,14 @@ public abstract class SequenceEvaluator {
 	private float[] m_oneNNmetric;
 	private float[] m_oneNNmetricNorm1;
 	private float[] m_oneNNmetricNorm2;
+	private float[] m_oneNNmetricRank;
 	private float[] m_precisionModel;
 	private float[] m_recallModel;
 	private float[] m_cosineSimModel;
 	private float[] m_oneNNmetricModel;
 	private float[] m_oneNNmetricNorm1Model;
 	private float[] m_oneNNmetricNorm2Model;
+	private float[] m_oneNNmetricRankModel;
 	// TOPIC1 level metrics
 	private float m_hitscoreTop1 = 0;
 	private float m_clicksoonscoreTop1 = 0;
@@ -151,12 +153,14 @@ public abstract class SequenceEvaluator {
 		m_oneNNmetric = new float[sequence.size()];
 		m_oneNNmetricNorm1 = new float[sequence.size()];
 		m_oneNNmetricNorm2 = new float[sequence.size()];
+		m_oneNNmetricRank = new float[sequence.size()];
 		m_precisionModel = new float[sequence.size()];
 		m_recallModel = new float[sequence.size()];
 		m_cosineSimModel = new float[sequence.size()];
 		m_oneNNmetricModel = new float[sequence.size()];
 		m_oneNNmetricNorm1Model = new float[sequence.size()];
 		m_oneNNmetricNorm2Model = new float[sequence.size()];
+		m_oneNNmetricRankModel = new float[sequence.size()];
 		
 		m_precisionTop1 = new float[sequence.size()];
 		m_recallTop1 = new float[sequence.size()];
@@ -400,6 +404,8 @@ public abstract class SequenceEvaluator {
 		m_oneNNmetricNorm1[stepIndex] = onennN1;
 		float onennN2 = this.oneNNmetricNorm2(stepIndex, recommendatios);
 		m_oneNNmetricNorm2[stepIndex] = onennN2;
+		float onennRank = this.oneNNmetricRank(stepIndex, recommendatios);
+		m_oneNNmetricRank[stepIndex] = onennRank;
 		
 		float prModel = this.computePrecision(0, recommendatios);
 		float reModel = this.computeRecall(0, recommendatios);
@@ -413,6 +419,8 @@ public abstract class SequenceEvaluator {
 		m_oneNNmetricNorm1Model[stepIndex] = onennNorm1Model;
 		float onennNorm2Model = this.oneNNmetricNorm2(0, recommendatios);
 		m_oneNNmetricNorm2Model[stepIndex] = onennNorm2Model;
+		float onennRankModel = this.oneNNmetricNorm2(0, recommendatios);
+		m_oneNNmetricRankModel[stepIndex] = onennRankModel;
 	}
 	
 	private float computePrecision(
@@ -653,6 +661,49 @@ public abstract class SequenceEvaluator {
 					(m_UrlSimilarityMatrix_Usage_max[recind]-m_UrlSimilarityMatrix_Usage_min[recind]);
 		}
 		return (float)simsum/(float)recommendatios.size();	
+	}
+	
+	private float oneNNmetricRank(int stepIndex, 
+			ArrayList<String> recommendatios){
+		// take the 2nd part of the test sequence & remove prohibited URLs
+		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
+		if(sequenceURL.size()==0){return -1f;}
+
+		// initialize variables
+		float ranksum = 0f;
+
+		// compute 1-NN similarity average 
+		for(int i=0; i<recommendatios.size(); i++){
+			String recStr = recommendatios.get(i);
+			int recInt = Integer.valueOf(recStr);
+			int recind = m_usageURLs.indexOf(recInt);
+			float maxsim = 0f;
+			for(int j=0; j<sequenceURL.size(); j++){
+				String stepStr = sequenceURL.get(j);
+				int stepInt = Integer.valueOf(stepStr);
+				int stepind = m_usageURLs.indexOf(stepInt);
+				float sim = 0f;
+				if(recind!=-1 && stepind!=-1){
+					sim = m_UrlSimilarityMatrix_Usage[recind][stepind];
+				}
+				if(maxsim<sim){
+					maxsim = sim;
+				}
+			}
+			
+			// compute the rank of the value
+			int rank = 1;
+			for(int j=0; j<m_UrlSimilarityMatrix_Usage.length; j++){
+				float val = m_UrlSimilarityMatrix_Usage[recind][j];
+				if(val>maxsim){
+					rank++;
+				}
+			}
+			
+			// sum of ranks
+			ranksum = ranksum + (float)rank;
+		}
+		return ranksum/(float)recommendatios.size();	
 	}
 	
 	
@@ -1347,6 +1398,9 @@ public abstract class SequenceEvaluator {
 	public float[] getOneNNmetricNorm2(){
 		return m_oneNNmetricNorm2;
 	}
+	public float[] getOneNNmetricRank(){
+		return m_oneNNmetricRank;
+	}
 	public float[] getPrecissionsModel(){
 		return m_precisionModel;
 	}	
@@ -1367,6 +1421,9 @@ public abstract class SequenceEvaluator {
 	}
 	public float[] getOneNNmetricNorm2Model(){
 		return m_oneNNmetricNorm2Model;
+	}
+	public float[] getOneNNmetricRankModel(){
+		return m_oneNNmetricRankModel;
 	}
 	protected void printPrecision(){
 		System.out.print("Precision: ");
@@ -1419,6 +1476,10 @@ public abstract class SequenceEvaluator {
 		int index = this.getPosition(point);
 		return m_oneNNmetricNorm2[index];
 	}
+	public float getOneNNmetricRankAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_oneNNmetricRank[index];
+	}
 	public float getPrecisionModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_precisionModel[index];
@@ -1447,6 +1508,10 @@ public abstract class SequenceEvaluator {
 	public float getOneNNmetricNorm2ModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_oneNNmetricNorm2Model[index];
+	}
+	public float getOneNNmetricRankModelAtPoint(float point){
+		int index = this.getPosition(point);
+		return m_oneNNmetricRankModel[index];
 	}
 	
 	

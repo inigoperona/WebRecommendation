@@ -56,6 +56,7 @@ public abstract class TestSetEvaluator {
 	private float[] m_oneNNmetric;
 	private float[] m_oneNNmetricNorm1;
 	private float[] m_oneNNmetricNorm2;
+	private float[] m_oneNNmetricRank;
 	private float[] m_ModelPrecision;
 	private float[] m_ModelRecall;
 	private float[] m_ModelFmeasure;
@@ -63,6 +64,7 @@ public abstract class TestSetEvaluator {
 	private float[] m_ModelOneNNmetric;
 	private float[] m_ModelOneNNmetricNorm1;
 	private float[] m_ModelOneNNmetricNorm2;
+	private float[] m_ModelOneNNmetricRank;
 	
 	// Topic1 level metrics
 	private float m_hitratioTop1 = 0f;
@@ -147,6 +149,7 @@ public abstract class TestSetEvaluator {
 		m_oneNNmetric = new float[m_points.length];
 		m_oneNNmetricNorm1 = new float[m_points.length];
 		m_oneNNmetricNorm2 = new float[m_points.length];
+		m_oneNNmetricRank = new float[m_points.length];
 		m_ModelPrecision = new float[m_points.length];
 		m_ModelRecall = new float[m_points.length];
 		m_ModelFmeasure = new float[m_points.length];
@@ -154,6 +157,7 @@ public abstract class TestSetEvaluator {
 		m_ModelOneNNmetric = new float[m_points.length];
 		m_ModelOneNNmetricNorm1 = new float[m_points.length];
 		m_ModelOneNNmetricNorm2 = new float[m_points.length];
+		m_ModelOneNNmetricRank = new float[m_points.length];
 		
 		m_precisionTop1 = new float[m_points.length];
 		m_recallTop1 = new float[m_points.length];
@@ -219,6 +223,7 @@ public abstract class TestSetEvaluator {
 		float[] oneNNmetric = new float[m_points.length];
 		float[] oneNNmetricNorm1 = new float[m_points.length];
 		float[] oneNNmetricNorm2 = new float[m_points.length];
+		float[] oneNNmetricRank = new float[m_points.length];
 		float[] modelPrecision = new float[m_points.length];
 		float[] modelRecall = new float[m_points.length];
 		float[] modelFmeasure = new float[m_points.length];
@@ -226,6 +231,7 @@ public abstract class TestSetEvaluator {
 		float[] modelOneNNmetric = new float[m_points.length];
 		float[] modelOneNNmetricNorm1 = new float[m_points.length];
 		float[] modelOneNNmetricNorm2 = new float[m_points.length];
+		float[] modelOneNNmetricRank = new float[m_points.length];
 		
 		// TOPIC level metrics
 		float hitratioTop1 = 0f;
@@ -364,6 +370,7 @@ public abstract class TestSetEvaluator {
 					oneNNmetric[j]      = oneNNmetric[j]      + seqEv.getOneNNmetricAtPoint(m_points[j]);
 					oneNNmetricNorm1[j] = oneNNmetricNorm1[j] + seqEv.getOneNNmetricNorm1AtPoint(m_points[j]);
 					oneNNmetricNorm2[j] = oneNNmetricNorm2[j] + seqEv.getOneNNmetricNorm2AtPoint(m_points[j]);
+					oneNNmetricRank[j]  = oneNNmetricRank[j]  + seqEv.getOneNNmetricRankAtPoint(m_points[j]);
 				}
 				cosineSim[j]      = cosineSim[j]      + seqEv.getCosineSimilarityAtPoint(m_points[j]);
 				
@@ -375,6 +382,7 @@ public abstract class TestSetEvaluator {
 					modelOneNNmetric[j]      = modelOneNNmetric[j]      + seqEv.getOneNNmetricModelAtPoint(m_points[j]);
 					modelOneNNmetricNorm1[j] = modelOneNNmetricNorm1[j] + seqEv.getOneNNmetricNorm1ModelAtPoint(m_points[j]);
 					modelOneNNmetricNorm2[j] = modelOneNNmetricNorm2[j] + seqEv.getOneNNmetricNorm2ModelAtPoint(m_points[j]);
+					modelOneNNmetricRank[j]  = modelOneNNmetricRank[j]  + seqEv.getOneNNmetricRankModelAtPoint(m_points[j]);
 				}
 				modelCosineSim[j] = modelCosineSim[j] + seqEv.getCosineSimilarityModelAtPoint(m_points[j]);
 				
@@ -472,6 +480,7 @@ public abstract class TestSetEvaluator {
 			m_oneNNmetric[j]      = oneNNmetric[j]      / seqlen;
 			m_oneNNmetricNorm1[j] = oneNNmetricNorm1[j] / seqlen;
 			m_oneNNmetricNorm2[j] = oneNNmetricNorm2[j] / seqlen;
+			m_oneNNmetricRank[j]  = oneNNmetricRank[j]  / seqlen;
 			
 			m_ModelPrecision[j]        = modelPrecision[j]        / seqlen;
 			m_ModelRecall[j]           = modelRecall[j]           / seqlen;
@@ -480,6 +489,7 @@ public abstract class TestSetEvaluator {
 			m_ModelOneNNmetric[j]      = modelOneNNmetric[j]      / seqlen;
 			m_ModelOneNNmetricNorm1[j] = modelOneNNmetricNorm1[j] / seqlen;
 			m_ModelOneNNmetricNorm2[j] = modelOneNNmetricNorm2[j] / seqlen;
+			m_ModelOneNNmetricRank[j]  = modelOneNNmetricRank[j]  / seqlen;
 		}
 		
 		// TOPIC1 level metrics - HONEST
@@ -625,6 +635,9 @@ public abstract class TestSetEvaluator {
 	public float[] getOneNNmetricNorm2(){
 		return m_oneNNmetricNorm2;
 	}
+	public float[] getOneNNmetricRank(){
+		return m_oneNNmetricRank;
+	}
 	public float[] getModelPrecisions(){
 		return m_ModelPrecision;
 	}
@@ -645,6 +658,9 @@ public abstract class TestSetEvaluator {
 	}
 	public float[] getModelOneNNmetricNorm2(){
 		return m_ModelOneNNmetricNorm2;
+	}
+	public float[] getModelOneNNmetricRank(){
+		return m_ModelOneNNmetricRank;
 	}
 	
 	
