@@ -149,6 +149,7 @@ public class Sessioning {
 		}
 		// close the join actions that remain in the hashtable
 		// order the keys to optimized the access to each module.
+		System.out.println("  Start ordering elements: " + oldrequests.size());
 		ArrayList<Integer> keysOrd = this.orderHashtableKeysByData(oldrequests, 0);
 		// close the join actions
 		System.out.println("  Number of connections to close: " + keysOrd.size());
@@ -176,8 +177,20 @@ public class Sessioning {
 			Object[] objA1 = objHt.get(sessionID);
 			int oldindex1 = ((Integer)objA1[iData]).intValue();
 			int mod1 = WebAccessSequences.getModulusAfterGetRequest(oldindex1);
-			int i;
-			for(i=0; i<keysOrd.size(); i++){
+			int i = 0;
+			// fast approach to the exact point
+			for(; i<keysOrd.size(); i=i+10000){
+				int sessionID2 = keysOrd.get(i);
+				Object[] objA2 = objHt.get(sessionID2);
+				int oldindex2 = ((Integer)objA2[iData]).intValue();
+				int mod2 = WebAccessSequences.getModulusAfterGetRequest(oldindex2);
+				if(mod1<mod2){
+					break;
+				}
+			}
+			i = i>0 ? i-10000 : 0;
+			// the very exact point 
+			for(; i<keysOrd.size(); i++){
 				int sessionID2 = keysOrd.get(i);
 				Object[] objA2 = objHt.get(sessionID2);
 				int oldindex2 = ((Integer)objA2[iData]).intValue();
@@ -187,6 +200,9 @@ public class Sessioning {
 				}
 			}
 			keysOrd.add(i, sessionID);
+			if(keysOrd.size() % 100000==0){
+				System.out.println("  [" + System.currentTimeMillis() + "] Ordering elements: " + keysOrd.size());
+			}
 		}
 		return keysOrd;		
 	}

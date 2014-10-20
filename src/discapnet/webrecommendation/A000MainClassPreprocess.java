@@ -23,7 +23,7 @@ public class A000MainClassPreprocess {
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] PREPROCESSING.");
 		
-
+/*
 		// FILTER LOGS //
 		LogReader logreader = new LogReaderDiscapnet();
 		
@@ -55,7 +55,7 @@ public class A000MainClassPreprocess {
 				+ (endtime-starttime)/1000 + " seconds.");
 		Website.save();
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
-
+*/
 		Website.load();
 		System.out.println("Website. loaded items: " + Website.size());
 		WebAccessSequences.loadStructure("orderedrequests.javaData");
@@ -63,7 +63,7 @@ public class A000MainClassPreprocess {
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
-	
+/*	
 		// create sessions
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
@@ -72,7 +72,7 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog3.log");
-
+*/
 			// join consecutive same URLs
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start joining consecutive same URLs.");
