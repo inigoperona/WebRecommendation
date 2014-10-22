@@ -4,12 +4,45 @@ import java.util.ArrayList;
 
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverseTopics2;
-import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
-import ehupatras.webrecommendation.structures.Website;
 
 public class A113MainClassDistanceMatrixInverseTopics2 {
 
 	private Matrix m_matrix;
+	
+	public static void main(String[] args) {
+		
+		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
+		
+		// take the start time of the program
+		long starttimeprogram = System.currentTimeMillis();
+
+		// RUN
+		param.loadDatabase();
+		
+		// DISTANCE MATRIX
+		float[][] rolesW;
+		
+		// No role: equal_UHC
+		rolesW = new float[][]{	{ 1f, 1f, 1f},
+	    						{ 1f, 1f, 1f},
+	    						{ 1f, 1f, 1f}};
+		param.createDM("SimilarityMatrixNormalize_TopicDisc", rolesW, 
+				"/DM_00_no_role_dist_topicsDisc", new int[0]);
+		
+		// 2 roles: similar_HC
+		rolesW = new float[][]{	{ 0f,    0f,    0f},
+	    						{ 0f,    1f, 0.75f},
+	    						{ 0f, 0.75f,    1f}};
+		param.createDM("SimilarityMatrixNormalize_TopicDisc", rolesW, 
+				"/DM_03_intelligent2_dist_topicsDisc", new int[0]);
+		
+		// ending the program
+		long endtimeprogram = System.currentTimeMillis();
+		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
+	}
+	
+	
+	
 	
 	public void createDistanceMatrix(String databaseWD,
 			ArrayList<Long> sampleSessionIDs,
@@ -32,66 +65,6 @@ public class A113MainClassDistanceMatrixInverseTopics2 {
 	
 	public Matrix getMatrix(){
 		return m_matrix;
-	}
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		// Parameter control
-		String preprocessingWD = "experiments/DATA";
-		String logfile = "/log20000.log";
-		String url2topicFile = "/URLs_to_topic.txt";
-		String databaseWD = "experiments/DATA";
-		preprocessingWD = args[0];
-		logfile = args[1];
-		url2topicFile = args[2];
-		databaseWD = args[3];
-		
-		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
-		Website.setWorkDirectory(preprocessingWD);
-		
-		// take the start time of the program
-		long starttimeprogram = System.currentTimeMillis();
-		
-		
-		// LOAD DATABASE //
-		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
-		//database.createDatabase(databaseWD);
-		database.loadDatabase(databaseWD);
-		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
-		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();		
-		
-		
-		// DISTANCE MATRIX //
-		A113MainClassDistanceMatrixInverseTopics2 dm;
-		
-
-		// No role
-		float[][] roleW1 = {{ 1f, 1f, 1f},
-				            { 1f, 1f, 1f},
-				            { 1f, 1f, 1f}};
-		dm = new A113MainClassDistanceMatrixInverseTopics2();
-		dm.createDistanceMatrix(databaseWD + "/DM_00_no_role_dist_topics2", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW1,
-				preprocessingWD + url2topicFile, 0.5f);
-		
-		// Treat the role intelligently2
-		float[][] roleW5 = {{ 0f,    0f,    0f},
-	  		    			{ 0f,    1f, 0.75f},
-	  		    			{ 0f, 0.75f,    1f}};
-		dm = new A113MainClassDistanceMatrixInverseTopics2();
-		dm.createDistanceMatrix(databaseWD + "/DM_03_intelligent2_dist_topics2", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW5,
-				preprocessingWD + url2topicFile, 0.5f);
-		
-		
-		
-		// ending the program
-		long endtimeprogram = System.currentTimeMillis();
-		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
 	}
 	
 }

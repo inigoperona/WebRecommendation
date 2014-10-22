@@ -24,8 +24,8 @@ public class WebAccessSequences {
 	private static ArrayList<Integer> m_actualloadedmodulusS;
 	
 	// Necessary attributes when we are adding requests
-	//private static int m_maxloadrequests = 10000;
-	private static int m_maxloadrequests = 100000;
+	private static int m_maxloadrequests = 10000;
+	//private static int m_maxloadrequests = 100000;
 	// 1
 	private static int m_actualloadedrequest = 0;
 	private static int m_lastloadedrequest = 0;

@@ -37,6 +37,12 @@ public class A0000ParameterControl_angelu {
 	protected ArrayList<Long> m_sampleSessionIDs;
 	protected ArrayList<String[]> m_sequencesUHC;
 	protected Matrix m_matrix;
+	
+	// holdout / cross-validation
+	protected int m_nFold = 10;
+	protected int m_ptrain = 70;
+	protected int m_pval = 20;
+	protected int m_ptest = 10;
 	protected ArrayList<ArrayList<Long>> m_trainAL;
 	protected ArrayList<ArrayList<Long>> m_valAL;
 	protected ArrayList<ArrayList<Long>> m_testAL;

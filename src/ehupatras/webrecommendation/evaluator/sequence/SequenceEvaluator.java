@@ -624,7 +624,8 @@ public abstract class SequenceEvaluator {
 					maxsim = sim;
 				}
 			}
-			simsum = simsum + (maxsim/m_UrlSimilarityMatrix_Usage_max[recind]);
+			float maxsimToNorm = recind==-1 ? 1f : m_UrlSimilarityMatrix_Usage_max[recind];
+			simsum = simsum + (maxsim/maxsimToNorm);
 		}
 		return (float)simsum/(float)recommendatios.size();	
 	}
@@ -656,9 +657,9 @@ public abstract class SequenceEvaluator {
 					maxsim = sim;
 				}
 			}
-			simsum = simsum + 
-					(maxsim-m_UrlSimilarityMatrix_Usage_min[recind])/
-					(m_UrlSimilarityMatrix_Usage_max[recind]-m_UrlSimilarityMatrix_Usage_min[recind]);
+			float maxsimToNorm = recind==-1 ? 1f : m_UrlSimilarityMatrix_Usage_max[recind];
+			float minsimToNorm = recind==-1 ? 1f : m_UrlSimilarityMatrix_Usage_min[recind];
+			simsum = simsum + (maxsim-minsimToNorm)/(maxsimToNorm-minsimToNorm);
 		}
 		return (float)simsum/(float)recommendatios.size();	
 	}
@@ -694,7 +695,7 @@ public abstract class SequenceEvaluator {
 			// compute the rank of the value
 			int rank = 1;
 			for(int j=0; j<m_UrlSimilarityMatrix_Usage.length; j++){
-				float val = m_UrlSimilarityMatrix_Usage[recind][j];
+				float val = recind==-1 ? 1f : m_UrlSimilarityMatrix_Usage[recind][j];
 				if(val>maxsim){
 					rank++;
 				}

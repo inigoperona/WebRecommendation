@@ -3,12 +3,35 @@ package ehupatras.webrecommendation;
 import java.util.ArrayList;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.distmatrix.DistanceMatrixNcdBzip2;
-import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
-import ehupatras.webrecommendation.structures.Website;
 
 public class A013MainClassDistanceMatrixNcdBzip2 {
 	
 	private Matrix m_matrix;
+	
+	public static void main(String[] args){
+			
+		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
+		
+		// take the start time of the program
+		long starttimeprogram = System.currentTimeMillis();
+
+		// RUN
+		param.loadDatabase();
+		
+		// DISTANCE MATRIX
+		float[][] rolesW;
+		
+		// No role
+		rolesW = new float[][]{	{ 0f, 0f, 0f},
+								{ 0f, 0f, 0f},
+								{ 0f, 0f, 0f}};
+		param.createDM("NCD_bzip2", rolesW, 
+						"/DM_05_ncd_bzip2", new int[0]);
+		
+		// ending the program
+		long endtimeprogram = System.currentTimeMillis();
+		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
+	}
 	
 	public void createDistanceMatrix(String databaseWD,
 			ArrayList<Long> sampleSessionIDs,
@@ -30,54 +53,5 @@ public class A013MainClassDistanceMatrixNcdBzip2 {
 	public Matrix getMatrix(){
 		return m_matrix;
 	}
-	
-	public static void main(String[] args){
-		// Parameter control
-		String preprocessingWD = "experiments/DATA";
-		String logfile = "/log20000.log";
-		String databaseWD = "experiments/DATA";
-		preprocessingWD = args[0];
-		logfile = args[1];
-		databaseWD = args[2];
 		
-		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
-		Website.setWorkDirectory(preprocessingWD);
-		
-		// take the start time of the program
-		long starttimeprogram = System.currentTimeMillis();
-		
-		
-		
-		// LOAD PREPROCESSED LOGS //
-		//A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
-		//preprocess.preprocessLogs(preprocessingWD, logfile);
-		//preprocess.loadPreprocess();
-		
-		
-		// LOAD DATABASE //
-		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
-		//database.createDatabase(databaseWD);
-		database.loadDatabase(databaseWD);
-		ArrayList<Long> sampleSessionIDs = database.getSessionsIDs();
-		ArrayList<String[]> sequencesUHC = database.getInstantiatedSequences();
-		
-		
-		// DISTANCE MATRIX //
-		A013MainClassDistanceMatrixNcdBzip2 dm;
-		
-		// No role
-		float[][] roleW1 = {{ 0f, 0f, 0f},
-	            			{ 0f, 0f, 0f},
-	            			{ 0f, 0f, 0f}};
-		dm = new A013MainClassDistanceMatrixNcdBzip2();
-		dm.createDistanceMatrix(databaseWD + "/DM_05_ncd_bzip2", 
-				sampleSessionIDs, sequencesUHC, 
-				roleW1);
-		
-		// ending the program
-		long endtimeprogram = System.currentTimeMillis();
-		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
-	}
-	
 }

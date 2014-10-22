@@ -110,7 +110,7 @@ public class RecommenderKnnToSuffixTrees2 implements Recommender {
 		}
 		
 		// else add URLs from step1
-		if(waydone.size()==0){ return listOfURLs; }
+		if(waydone==null || waydone.size()==0){ return listOfURLs; }
 		// add step1 recommendations
 		Object[] objA2 = m_recClustersSuffixTree.getStep1Recommendations(listOfURLs);
 		ArrayList<String> listOfURLsStep1 = (ArrayList<String>)objA2[0];

@@ -13,6 +13,7 @@ public class Sessioning {
 	// expireSessionsInMin: We suppose after this time that a new session starts.
 	// expireSessionsInMin: We split up sequences in two sessions when we see this jump of time between clicks.
 	public void createSessions(int expireSessionsInMin){
+		long expiredTimeInSeconds = expireSessionsInMin*60;
 		Hashtable<Integer,Object[]> oldrequests = new Hashtable<Integer,Object[]>();
 		
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
@@ -30,7 +31,8 @@ public class Sessioning {
 				int oldindex = ((Integer)objA[2]).intValue();
 				float sum = ((Float)objA[3]).floatValue();
 				int nreq = ((Integer)objA[4]).intValue();
-				if( m_maxLenghtOfTheSequence<=nreq && ((actualtime-oldtime)/1000 <= expireSessionsInMin*60) ){
+				long elapsedTimeInSeconds = (actualtime-oldtime)/1000;
+				if( m_maxLenghtOfTheSequence>=nreq && elapsedTimeInSeconds<=expiredTimeInSeconds ){
 					// this request is in the same session
 					float oldelapssedtime = (float)(actualtime-oldtime);
 					sum = sum + oldelapssedtime;
