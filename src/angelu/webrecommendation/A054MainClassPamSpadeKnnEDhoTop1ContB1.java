@@ -12,7 +12,7 @@ public class A054MainClassPamSpadeKnnEDhoTop1ContB1 {
 		// RUN
 		param.loadDatabase();
 		param.loadDM();
-		param.loadHoldOut();
+		param.loadHoldOut_cv();
 		param.loadTopicInf();
 		param.createModelEvaluatorMedoidsContent();
 		param.runModelEvaluatorMC("ContentsB1");

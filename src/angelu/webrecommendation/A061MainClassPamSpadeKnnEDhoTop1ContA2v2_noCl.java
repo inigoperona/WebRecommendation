@@ -12,7 +12,7 @@ public class A061MainClassPamSpadeKnnEDhoTop1ContA2v2_noCl {
 		// RUN
 		param.loadDatabase();
 		param.loadDM();
-		param.loadHoldOut();
+		param.loadHoldOut_cv();
 		param.loadTopicInf();
 		param.createModelEvaluatorMedoidsContent();
 		param.runModelEvaluatorMC("ContentsA2v2_noCl");

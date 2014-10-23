@@ -12,7 +12,9 @@ public class Sessioning {
 	
 	// expireSessionsInMin: We suppose after this time that a new session starts.
 	// expireSessionsInMin: We split up sequences in two sessions when we see this jump of time between clicks.
-	public void createSessions(int expireSessionsInMin){
+	public void createSessions(int expireSessionsInMin, int maxLenghtOfTheSequence){
+		m_maxLenghtOfTheSequence = maxLenghtOfTheSequence;
+		
 		long expiredTimeInSeconds = expireSessionsInMin*60;
 		Hashtable<Integer,Object[]> oldrequests = new Hashtable<Integer,Object[]>();
 		
@@ -219,7 +221,8 @@ public class Sessioning {
 			int sessionID = req.getSessionID();
 			int nvalid = 0;
 			int len = 0;
-			if(	req.getIsSuitableToLinkPrediction() ){
+			boolean isSuitableForLinkPrediction = req.getIsSuitableToLinkPrediction(); 
+			if(	isSuitableForLinkPrediction ){
 				if( WebAccessSequences.m_sequences.containsKey(sessionID) ){
 					ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 					sequence.add(i);

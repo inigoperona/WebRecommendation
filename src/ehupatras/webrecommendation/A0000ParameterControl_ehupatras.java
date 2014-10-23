@@ -21,16 +21,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	protected ModelEvaluatorMarkovChain m_modelevMC = null;
 	protected ModelEvaluatorSuffixTreeGlobal m_modelevSTG = null;
 	protected ModelEvaluatorClustHclust m_modelevH = null;
-	protected ModelEvaluatorClustPAM m_modelevP = null;
 	protected ModelEvaluatorSeqMinMSAWseq m_modelevCMS = null;
 	protected ModelEvaluatorSeqMinSPADE m_modelevCSS = null;
 	protected ModelEvaluatorModularGST m_modelevMGST = null;
 	protected ModelEvaluatorModularSpadeST m_modelevMSpST = null;
 	protected ModelEvaluatorHMM m_modelevHMM = null;
-	
-	// database
-	protected ArrayList<Long> m_sampleSessionIDs_split = null;
-	protected ArrayList<String[]> m_sequencesUHC_split = null;
 	
 	
 	// SYSTEM PARAMETERS //
@@ -38,9 +33,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	public void initializeSystemParameters(){
 		// hold-out
 		m_nFold = 10;
-		m_ptrain = 70;
+		m_ptrain = 7;
 		m_pval = 0;
-		m_ptest = 30;
+		m_ptest = 3;
 		
 		// PAM: k
 		//m_ks = new int[]{150, 200, 250, 300};
@@ -215,25 +210,6 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_sequencesUHC_split = (ArrayList<String[]>)objA[1];		
 	}
 	
-	// hold-out
-	
-	public void createHoldOut(){
-		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
-		honestmodelval.prepareData(m_sampleSessionIDs, m_ptrain, m_pval, m_ptest);
-		honestmodelval.save(m_validationWD);
-		m_trainAL = honestmodelval.getTrain();
-		m_valAL   = honestmodelval.getValidation();
-		m_testAL  = honestmodelval.getTest();
-	}
-	
-	public void loadHoldOut(){
-		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
-		honestmodelval.load(m_validationWD);
-		m_trainAL = honestmodelval.getTrain();
-		m_valAL   = honestmodelval.getValidation();
-		m_testAL  = honestmodelval.getTest();
-	}
-	
 	
 	
 	
@@ -364,37 +340,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 			m_modelevH.writeClusters(m_validationWD + m_clustWD + "/" + esperimentationStr + ".txt");
 		}
 	}
-	
-	
-	
-	// ModelEvaluatorClustPAM: DM+PAM
-	
-	public void createModelEvaluatorClustPAM(){
-		ModelEvaluatorClustPAM modelev = 
-				new ModelEvaluatorClustPAM(
-						m_sequencesUHC, m_sequencesUHC_split, 
-						m_matrix,
-						m_trainAL, m_valAL, m_testAL,
-						m_modePrRe, m_usage2contentFile, m_urlSimilarityMatrix);
-		modelev.setFmeasureBeta(m_beta);
-		modelev.setConfusionPoints(m_confusionPoints);
-		modelev.setTopicParameters(
-				m_urlIDs, m_url2topic, m_difftopics, 
-				m_topicmatch, 
-				m_clusterPartitionFile);
-		m_modelevP = modelev;
-	}
-	
-	public void runModelEvaluatorP(){
-		for(int j=0; j<m_ks.length; j++){ // for each height
-			int k = m_ks[j];
-			String esperimentationStr = "pam" + k;
-			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
-			m_modelevP.buildPAM(k);
-			m_modelevP.saveClusters(m_validationWD + m_clustWD + "/" + esperimentationStr + ".javaData");
-			m_modelevP.writeClusters(m_validationWD + m_clustWD + "/" + esperimentationStr + ".txt");
-		}
-	}
+
 	
 	
 	

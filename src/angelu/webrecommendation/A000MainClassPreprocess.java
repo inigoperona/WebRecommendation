@@ -73,7 +73,7 @@ public class A000MainClassPreprocess {
 		// create sessions
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
-		ses.createSessions(10); // maximum period of inactivity
+		ses.createSessions(10, Integer.MAX_VALUE); // maximum period of inactivity
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");

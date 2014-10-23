@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import angelu.webrecommendation.evaluator.ModelEvaluatorMedoidsContent;
 import angelu.webrecommendation.A000MainClassPreprocess;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustPAM;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
+import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
@@ -37,12 +39,14 @@ public class A0000ParameterControl_angelu {
 	protected ArrayList<Long> m_sampleSessionIDs;
 	protected ArrayList<String[]> m_sequencesUHC;
 	protected Matrix m_matrix;
+	protected ArrayList<Long> m_sampleSessionIDs_split = null;
+	protected ArrayList<String[]> m_sequencesUHC_split = null;
 	
 	// holdout / cross-validation
 	protected int m_nFold = 10;
-	protected int m_ptrain = 70;
-	protected int m_pval = 20;
-	protected int m_ptest = 10;
+	protected int m_ptrain = 7;
+	protected int m_pval = 2;
+	protected int m_ptest = 1;
 	protected ArrayList<ArrayList<Long>> m_trainAL;
 	protected ArrayList<ArrayList<Long>> m_valAL;
 	protected ArrayList<ArrayList<Long>> m_testAL;
@@ -56,6 +60,7 @@ public class A0000ParameterControl_angelu {
 	protected int m_modePrRe;
 	
 	// Model Evaluator
+	protected ModelEvaluatorClustPAM m_modelevP = null;
 	protected ModelEvaluatorMedoids m_modelevM = null;
 	protected ModelEvaluatorMedoidsContent m_modelevMC = null;
 	
@@ -176,6 +181,8 @@ public class A0000ParameterControl_angelu {
 		m_modePrRe = 1;
 	}
 	
+	// preprocess
+	
 	public void preprocessLogs(){
 		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		preprocess.preprocessLogs(m_preprocessingWD, m_logfile);
@@ -185,6 +192,8 @@ public class A0000ParameterControl_angelu {
 		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		preprocess.loadPreprocess();
 	}
+	
+	// database
 	
 	public void createDatabase(){
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
@@ -200,6 +209,8 @@ public class A0000ParameterControl_angelu {
 		m_sequencesUHC = database.getInstantiatedSequences();
 	}
 	
+	// distance matrix
+	
 	public void createDM(){
 		this.loadDatabase();
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
@@ -214,24 +225,64 @@ public class A0000ParameterControl_angelu {
 		m_matrix = dm.getMatrix();
 	}
 
+	
+	// hold-out
+	
+	public void createHoldOut(){
+		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
+		honestmodelval.prepareData(m_sampleSessionIDs, m_ptrain*10, m_pval*10, m_ptest*10);
+		honestmodelval.save(m_validationWD);
+		m_trainAL = honestmodelval.getTrain();
+		m_valAL   = honestmodelval.getValidation();
+		m_testAL  = honestmodelval.getTest();
+	}
+	
 	public void loadHoldOut(){
-		A021MainClassCrossValidation ho = new A021MainClassCrossValidation();
-		ho.loadParts(m_validationWD, m_sampleSessionIDs);
-		ModelValidationCrossValidation mv = ho.getParts();
+		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
+		honestmodelval.load(m_validationWD);
+		m_trainAL = honestmodelval.getTrain();
+		m_valAL   = honestmodelval.getValidation();
+		m_testAL  = honestmodelval.getTest();
+	}
+	
+	// cross-validation
+	
+	public void createCrossValidation(){
+		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
+		honestmodelval.prepareData(m_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
+		honestmodelval.save(m_validationWD);
+		m_trainAL = honestmodelval.getTrain();
+		m_valAL   = honestmodelval.getValidation();
+		m_testAL  = honestmodelval.getTest();
+	}
+	
+	public void loadHoldOut_cv(){
+		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
+		honestmodelval.load(m_validationWD);
 		
-		ArrayList<ArrayList<Long>> trainALaux = mv.getTrain();
+		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
 		m_trainAL = new ArrayList<ArrayList<Long>>();
 		m_trainAL.add(trainALaux.get(0));
 		
-		ArrayList<ArrayList<Long>> valALaux  = mv.getValidation();
+		ArrayList<ArrayList<Long>> valALaux  = honestmodelval.getValidation();
 		m_valAL  = new ArrayList<ArrayList<Long>>();
 		m_valAL.add(valALaux.get(0));
 		
-		ArrayList<ArrayList<Long>> testALaux  = mv.getTest();
+		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
 		m_testAL = new ArrayList<ArrayList<Long>>();
 		m_testAL.add(testALaux.get(0));
 	}
+	
+	public void loadCrossValidation(){
+		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
+		honestmodelval.load(m_validationWD);
+		m_trainAL = honestmodelval.getTrain();
+		m_valAL  = honestmodelval.getValidation();
+		m_testAL  = honestmodelval.getTest();
+	}
 
+	// URL to Topic information
+	
 	public void loadTopicInf(){
 		A100MainClassAddContent cont = new A100MainClassAddContent();
 		Object[] objA = cont.loadUrlsTopic(m_preprocessingWD + m_url2topicFile, " ");
@@ -240,6 +291,37 @@ public class A0000ParameterControl_angelu {
 		m_difftopics = (int)objA[2];		
 	}
 	
+	
+	
+	
+	// ModelEvaluatorClustPAM: DM+PAM
+	
+	public void createModelEvaluatorClustPAM(){
+		ModelEvaluatorClustPAM modelev = 
+				new ModelEvaluatorClustPAM(
+						m_sequencesUHC, m_sequencesUHC_split, 
+						m_matrix,
+						m_trainAL, m_valAL, m_testAL,
+						m_modePrRe, m_usage2contentFile, m_urlSimilarityMatrix);
+		modelev.setFmeasureBeta(m_beta);
+		modelev.setConfusionPoints(m_confusionPoints);
+		modelev.setTopicParameters(
+				m_urlIDs, m_url2topic, m_difftopics, 
+				m_topicmatch, 
+				m_clusterPartitionFile);
+		m_modelevP = modelev;
+	}
+	
+	public void runModelEvaluatorP(){
+		for(int j=0; j<m_ks.length; j++){ // for each height
+			int k = m_ks[j];
+			String esperimentationStr = "pam" + k;
+			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
+			m_modelevP.buildPAM(k);
+			m_modelevP.saveClusters(m_validationWD + m_clustWD + "/" + esperimentationStr + ".javaData");
+			m_modelevP.writeClusters(m_validationWD + m_clustWD + "/" + esperimentationStr + ".txt");
+		}
+	}
 	
 	
 	// ModelEvaluatorMedoids

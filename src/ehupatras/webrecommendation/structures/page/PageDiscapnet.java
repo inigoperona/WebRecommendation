@@ -24,7 +24,8 @@ public class PageDiscapnet
 		if(	!urlname2.contains(".aspx") &&
 			!urlname2.contains(".pdf") && 
 			!urlname2.contains(".htm") &&
-			!urlname2.contains(".html")){
+			!urlname2.contains(".html") &&
+			!urlname2.contains(".doc")){
 			m_isvalid = false;
 		}
 		
