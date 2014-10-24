@@ -27,7 +27,7 @@ public class A011MainClassDistanceMatrixInverse {
 	    						{ 1f, 1f, 1f},
 	    						{ 1f, 1f, 1f}};
 		param.createDM("SimilarityMatrixNormalize", rolesW, 
-				"/DM_00_no_role_dist", new int[0]);
+				"/DM_00_norole_dist", new int[0]);
 		
 		// 2 roles: similar_HC
 		rolesW = new float[][]{	{ 0f,    0f,    0f},

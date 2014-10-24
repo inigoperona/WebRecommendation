@@ -13,7 +13,6 @@ public class A041MainClassPAMholdout {
 		param.loadDatabase();
 		param.loadDM();
 		param.loadHoldOut_cv();
-		param.loadTopicInf();
 		param.createModelEvaluatorMedoids();
 		param.runModelEvaluatorM_pam();
 				

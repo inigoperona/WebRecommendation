@@ -13,8 +13,6 @@ public class A041MainClassPAMcv {
 		param.loadDatabase();
 		param.loadDM();
 		param.loadCrossValidation();
-		param.loadTopicInf();
-		param.setTopicMatchWeight(0.5f);
 		param.createModelEvaluatorClustPAM();
 		param.runModelEvaluatorP();
 		

@@ -92,13 +92,13 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	public A0000ParameterControl_ehupatras(){
 		this.exampleParameters();
 		this.initializeSystemParameters();
-		this.initializeStructures();
+		super.initializeStructures();
 	}
 	public A0000ParameterControl_ehupatras(String[] args){
-		//this.readParameters(args);
-		this.exampleParameters();
+		super.readParameters(args);
+		//this.exampleParameters();
 		this.initializeSystemParameters();
-		this.initializeStructures();
+		super.initializeStructures();
 	}
 	
 	
@@ -132,7 +132,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	public void preprocessLogs(){
 		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
-		preprocess.preprocessLogs(m_base, m_logfile);
+		preprocess.preprocessLogs(m_preprocessingWD, m_logfile);
 	}
 	
 	// distance matrix
