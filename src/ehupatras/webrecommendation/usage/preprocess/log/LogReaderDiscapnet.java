@@ -69,8 +69,8 @@ public class LogReaderDiscapnet extends LogReader {
 				String ip = lineA[8];
 				String useragent = lineA[9];
 				//String field10 = lineA[10];
-				//String field11 = lineA[11];
-				String reference = lineA[12];
+				String reference = lineA[11];
+				//String field12 = lineA[12];
 				
 				String statuscodeStr = lineA[13];
 				int statuscode = Integer.valueOf(statuscodeStr).intValue();

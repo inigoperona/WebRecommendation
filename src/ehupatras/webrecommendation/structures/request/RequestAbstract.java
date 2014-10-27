@@ -161,12 +161,17 @@ public abstract class RequestAbstract
 		if(	reference2.contains("bing") ){ m_referenceLabel = m_referenceLabel + "_se_bing"; }
 		// social networks
 		if(	reference2.contains("facebook") ){ m_referenceLabel = m_referenceLabel + "_sn_facebook"; }
-		if(	reference2.contains("t.co") ){ m_referenceLabel = m_referenceLabel + "_sn_twitter"; }
+		if(	reference2.contains("t.co") || reference2.contains("twitter.com")){ m_referenceLabel = m_referenceLabel + "_sn_twitter"; }
+		if(	reference2.contains("blogspot") ){ m_referenceLabel = m_referenceLabel + "_sn_blogspot"; }
+		if(	reference2.contains("wordpress") ){ m_referenceLabel = m_referenceLabel + "_sn_wordpress"; }
+		if(	reference2.contains("meneame") ){ m_referenceLabel = m_referenceLabel + "_sn_meneame"; }
 		// other
+		if(	reference2.contains("imente") ){ m_referenceLabel = m_referenceLabel + "_oth_imente"; }
+		if(	reference2.contains("bit.ly") ){ m_referenceLabel = m_referenceLabel + "_oth_bit.ly"; }
 		if(	reference2.contains("babylon") ){ m_referenceLabel = m_referenceLabel + "_oth_babylon"; }
 		if(	reference2.contains("portalento") ){ m_referenceLabel = m_referenceLabel + "_oth_portalento"; }
 		if(	reference2.contains("wikipedia") ){ m_referenceLabel = m_referenceLabel + "_oth_wikipedia"; }
-		if(	reference2.contains("173.194") ||  reference2.contains("goo.gl") ){ m_referenceLabel = m_referenceLabel + "_oth_ehu"; }
+		if(	reference2.contains("173.194") ){ m_referenceLabel = m_referenceLabel + "_oth_ehu"; }
 	}
 	
 	public boolean getIsSuitableToLinkPrediction(){
