@@ -131,8 +131,8 @@ public abstract class RequestAbstract
 		// bots
 		if(	useragent2.contains("googlebot") ){ m_useragentLabel = m_useragentLabel + "_googlebot"; }
 		if(	useragent2.contains("bingbot") ){ m_useragentLabel = m_useragentLabel + "_bingbot"; }
+		if(	useragent2.contains("yahoo") ){ m_useragentLabel = m_useragentLabel + "_yahoobot"; }
 		// browsers
-		if(	useragent2.contains("yahoo") ){ m_useragentLabel = m_useragentLabel + "_bro_yahoo"; }
 		if(	useragent2.contains("chrome") ){ m_useragentLabel = m_useragentLabel + "_bro_chrome"; }
 		if(	useragent2.contains("iexplorer") ){ m_useragentLabel = m_useragentLabel + "_bro_iexplorer"; }
 		if(	useragent2.contains("firefox") ){ m_useragentLabel = m_useragentLabel + "_bro_firefox"; }

@@ -266,8 +266,9 @@ public class PageDiscapnet
 						m_ishtml &&
 						m_isStatic &&
 						m_isFrequent &&
-						(	!m_labelByHand.contains("actualidad") && 
-							!m_labelByHand.contains("noticias") &&
+						(
+		//					!m_labelByHand.contains("actualidad") && 
+		//					!m_labelByHand.contains("noticias")
 							!m_labelByHand.contains("enviaramigo") && 
 							!m_labelByHand.contains("pdf") && 
 							!m_labelByHand.contains("layouts") && 
@@ -280,7 +281,8 @@ public class PageDiscapnet
 							!m_labelByHand.contains("forms") && 
 							!m_labelByHand.contains("english") && 
 							!m_labelByHand.contains("salud") && 
-							!m_labelByHand.contains("others")	);
+							!m_labelByHand.contains("others")
+						);
 		return m_isvalidLP;
 	}
 	
