@@ -1,0 +1,94 @@
+#!/usr/bin/Rscript
+
+
+
+# create dendrograms from URLxURL distance matrixes
+for(mod in c("Modua0", "Modua1", "Modua2", "TestuHutsa")){
+  f = paste("../similarityHellingerTopic1", mod, ".txt", sep="")
+  data = read.table(file=f, sep=";")
+  data2 = data[,1:length(data)-1]
+  m = as.matrix(data2)
+  dm = as.dist(m, diag=TRUE, upper=TRUE)
+  hc = hclust(dm)
+  sf = paste("Dendrogram", mod, ".RData", sep="")
+  save(hc, file=sf)
+}
+
+
+
+# find the most suitable height to cut the dendrogram
+
+# Modua0
+load("DendrogramModua0.RData")
+length(unique(cutree(hc, h=0.990))) # 12 clusters
+length(unique(cutree(hc, h=0.992))) # 11 clusters
+length(unique(cutree(hc, h=0.993))) # 10 clusters ##
+length(unique(cutree(hc, h=0.994))) # 7 clusters
+length(unique(cutree(hc, h=0.996))) # 6 clusters
+length(unique(cutree(hc, h=0.998))) # 6 clusters 
+length(unique(cutree(hc, h=0.999))) # 6 clusters
+
+# Modua1
+load("DendrogramModua1.RData")
+length(unique(cutree(hc, h=0.6))) # 30 clusters
+length(unique(cutree(hc, h=0.7))) # 26 clusters
+length(unique(cutree(hc, h=0.8))) # 21 clusters
+length(unique(cutree(hc, h=0.81))) # 19 clusters
+length(unique(cutree(hc, h=0.82))) # 19 clusters ##
+length(unique(cutree(hc, h=0.83))) # 19 clusters
+length(unique(cutree(hc, h=0.84))) # 19 clusters
+length(unique(cutree(hc, h=0.9))) # 19 clusters
+
+# Modua2
+load("DendrogramModua2.RData")
+length(unique(cutree(hc, h=0.6))) # 31 clusters
+length(unique(cutree(hc, h=0.7))) # 26 clusters
+length(unique(cutree(hc, h=0.8))) # 22 clusters
+length(unique(cutree(hc, h=0.81))) # 22 clusters
+length(unique(cutree(hc, h=0.82))) # 22 clusters ##
+length(unique(cutree(hc, h=0.83))) # 22 clusters
+length(unique(cutree(hc, h=0.84))) # 21 clusters
+length(unique(cutree(hc, h=0.9))) # 21 clusters
+length(unique(cutree(hc, h=0.91))) # 21 clusters
+length(unique(cutree(hc, h=0.92))) # 21 clusters
+length(unique(cutree(hc, h=0.93))) # 20 clusters
+length(unique(cutree(hc, h=0.94))) # 16 clusters
+length(unique(cutree(hc, h=0.95))) # 14 clusters
+length(unique(cutree(hc, h=0.96))) # 14 clusters
+length(unique(cutree(hc, h=0.97))) # 14 clusters
+length(unique(cutree(hc, h=0.98))) # 13 clusters
+length(unique(cutree(hc, h=0.99))) # 9 clusters
+
+# TestuHutsa
+load("DendrogramTestuHutsa.RData")
+length(unique(cutree(hc, h=0.6))) # 30 clusters
+length(unique(cutree(hc, h=0.7))) # 28 clusters
+length(unique(cutree(hc, h=0.8))) # 24 clusters
+length(unique(cutree(hc, h=0.81))) # 22 clusters
+length(unique(cutree(hc, h=0.82))) # 22 clusters ##
+length(unique(cutree(hc, h=0.83))) # 22 clusters
+length(unique(cutree(hc, h=0.84))) # 21 clusters
+length(unique(cutree(hc, h=0.9))) # 18 clusters
+
+length(unique(cutree(hc, h=0.91))) #  clusters
+length(unique(cutree(hc, h=0.92))) #  clusters
+length(unique(cutree(hc, h=0.93))) #  clusters
+length(unique(cutree(hc, h=0.94))) #  clusters
+length(unique(cutree(hc, h=0.95))) #  clusters
+length(unique(cutree(hc, h=0.96))) #  clusters
+length(unique(cutree(hc, h=0.97))) #  clusters
+length(unique(cutree(hc, h=0.98))) #  clusters
+length(unique(cutree(hc, h=0.99))) #  clusters
+
+
+# create cluster partitions using h=0.82
+cutH = 0.82
+for(mod in c("Modua0", "Modua1", "Modua2", "TestuHutsa")){
+  denF = paste("Dendrogram", mod, ".RData", sep="")
+  load(denF)
+  partition = cutree(hc, h=cutH)
+  names(partition) = 1:length(partition)
+  partF = paste("ClusterPartition", mod, ".txt", sep="")
+  write.table(partition, file=partF, quote=FALSE, sep=";", row.names=TRUE, col.names=FALSE)
+}
+

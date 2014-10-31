@@ -10,56 +10,25 @@ import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.usage.preprocess.Sessioning;
-import ehupatras.webrecommendation.usage.preprocess.log.LogReader;
-import ehupatras.webrecommendation.usage.preprocess.log.LogReaderDiscapnet;
 
-public class A000MainClassPreprocess {
+public class A000MainClassPreprocess2 {
 
 	public void preprocessLogs(String basedirectory, String logFilesIndex){
 		long starttime;
 		long endtime;
 		
 		// start preprocessing
-		starttime = System.currentTimeMillis();
-		System.out.println("[" + starttime + "] PREPROCESSING.");
-		
+		starttime = System.currentTimeMillis();		
 
-		// FILTER LOGS //
-		LogReader logreader = new LogReaderDiscapnet();
-		
-		// It reads the log file and store the valid requests in [ehupatras.webrecommendation.structures.WebAccessSequences]
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start reading the log files and analyzing the URLs.");
-			String[] logfilesA = this.getLogFiles(basedirectory, logFilesIndex);
-		logreader.readLogFile(logfilesA);
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: " 
-				+ (endtime-starttime)/1000 + " seconds.");
-		Website.save();
-		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog1.log");
+		Website.load();
+		System.out.println("Website. loaded items: " + Website.size());
+		WebAccessSequences.loadStructure("orderedrequests.javaData");
+		System.out.println("WebAccessSequences. loaded items: " + WebAccessSequences.filteredlogsize());
 
-		// ensure a minimum amount of apparitions of URLs.
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start identifying frequent URLs.");
-		logreader.identifyFrequentURLs(10);
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: " 
-				+ (endtime-starttime)/1000 + " seconds.");
-		
-		// ensure that the URLs are static or it keeps interest during the time
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start identifying static URLs.");
-		logreader.identifyStaticURLs(10, 5, (float)0.75);
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: " 
-				+ (endtime-starttime)/1000 + " seconds.");
-		Website.save();
-		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
 
-		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
-	
+/*	
 		// create sessions
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
@@ -77,7 +46,7 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog4.log");
-
+*/
 		
 		// create sequences
 			starttime = System.currentTimeMillis();
@@ -129,7 +98,7 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-	
+/*	
 		// remove those ssequences that have many Unimportant
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start removing Unimportant sequences.");
@@ -137,7 +106,7 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
-
+*/
 		
 		// write preprocessed logs
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
@@ -243,5 +212,6 @@ public class A000MainClassPreprocess {
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
 	}
+
 	
 }

@@ -152,15 +152,15 @@ public class A0000ParameterControl_angelu {
 	}
 	
 	public void exampleParameters(){
-		m_base = "experiments_angelu/experiments";
+		m_base = "experiments_angelu_wr_2";
 		
 		m_preprocessingWD = m_base + "/01_preprocess";
 		m_logfile = "/log20000.log";
 		
-		m_url2topicFile = "/URLs_to_topic.txt";
-		m_urlSimilarityMatrix = "contentEnrichment/OntologySimilarity/ResultadosTestuHutsa/ResSimilarity.txt";
-		m_urlRelationMatrix = "contentEnrichment/OntologySimilarity/ResultadosTestuHutsa/ResRelations.txt";
-		m_clusterPartitionFile = "contentEnrichment/OntologySimilarity/clusterPartitions/ClusterPartitionTestuHutsa.txt";
+		m_url2topicFile = "/Content/Topic/URLs_to_topic_TestuHutsa_th0_usageID.txt";
+		m_urlSimilarityMatrix = "contentEnrichment/Ont3_025_060/ResultadosTestuHutsa/ResSimilarity.txt";
+		m_urlRelationMatrix = "contentEnrichment/Ont3_025_060/ResultadosTestuHutsa/ResRelations.txt";
+		m_clusterPartitionFile = "contentEnrichment/Ont3_025_060/clusterPartitions/ClusterPartitionTestuHutsa.txt";
 		m_usage2contentFile = "convert_UrlIDs_content2usage/usa2cont.csv";
 		
 		m_databaseWD = m_base + "/02_DATABASE_5";

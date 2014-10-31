@@ -4,11 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.swing.text.html.MinimalHTMLWriter;
-
 import angelu.webrecommendation.converter.URLconverterUsaCon;
-
 import ehupatras.markovmodel.MarkovChain;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderMarkovChain;

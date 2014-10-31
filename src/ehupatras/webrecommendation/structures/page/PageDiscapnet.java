@@ -39,6 +39,11 @@ public class PageDiscapnet
 		if(urlname2.contains("/error/")){
 			m_isvalid = false;
 		}
+		
+		// rss pages
+		if(urlname2.contains("/rss/")){
+			m_isvalid = false;
+		}
 	}
 	
 	protected void ishtml(){
