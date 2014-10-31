@@ -157,7 +157,7 @@ public class A0000ParameterControl_angelu {
 		m_preprocessingWD = m_base + "/01_preprocess";
 		m_logfile = "/log20000.log";
 		
-		m_url2topicFile = "/Content/Topic/URLs_to_topic_TestuHutsa_th0_usageID.txt";
+		m_url2topicFile = "/Content/Topic/URLs_to_topic_th0/URLs_to_topic_TestuHutsa_th0_usageID.txt";
 		m_urlSimilarityMatrix = "contentEnrichment/Ont3_025_060/ResultadosTestuHutsa/ResSimilarity.txt";
 		m_urlRelationMatrix = "contentEnrichment/Ont3_025_060/ResultadosTestuHutsa/ResRelations.txt";
 		m_clusterPartitionFile = "contentEnrichment/Ont3_025_060/clusterPartitions/ClusterPartitionTestuHutsa.txt";
