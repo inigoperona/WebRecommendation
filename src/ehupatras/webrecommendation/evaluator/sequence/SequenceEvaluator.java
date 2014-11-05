@@ -568,10 +568,11 @@ public abstract class SequenceEvaluator {
 		if(sequenceURL.size()==0){return -1f;}
 
 		// initialize variables
-		float simsum = 0f;
+		int recLen = recommendatios.size();
+		float[] simsum = new float[recLen];
 
 		// compute 1-NN similarity average 
-		for(int i=0; i<recommendatios.size(); i++){
+		for(int i=0; i<recLen; i++){
 			String recStr = recommendatios.get(i);
 			int recInt = Integer.valueOf(recStr);
 			int recind = m_usageURLs.indexOf(recInt);
@@ -588,9 +589,45 @@ public abstract class SequenceEvaluator {
 					maxsim = sim;
 				}
 			}
-			simsum = simsum + maxsim;
+			simsum[i] = maxsim;
 		}
-		return (float)simsum/(float)recommendatios.size();	
+		
+		// average of similarities
+		float sum = 0f;
+		int k = recLen;
+		if(m_modePrRe==1){
+			int seqLen = sequenceURL.size();
+			k = Math.min(recLen, seqLen);
+		}
+		float[] simsum2 = this.orderArrayR(simsum, k);
+		for(int i=0; i<simsum2.length; i++){
+			sum = sum + simsum2[i];
+		}
+		return sum/(float)simsum2.length;	
+	}
+	
+	private float[] orderArrayR(float[] arr, int k){
+		// order array values
+		int l = arr.length;
+		ArrayList<Float> arr2AL = new ArrayList<Float>();
+		for(int i=0; i<l; i++){
+			float sim = arr[i];
+			int j=0;
+			for(;j<arr2AL.size();j++){
+				float sim2 = arr2AL.get(j);
+				if(sim2<sim){
+					break;
+				}
+			}
+			arr2AL.add(j,sim);
+		}
+		// convert to float
+		float[] arr2 = new float[l];
+		int l2 = Math.min(l, k);
+		for(int i=0; i<l2; i++){
+			arr2[i] = arr2AL.get(i);
+		}
+		return arr2;
 	}
 	
 	private float oneNNmetricNorm1(int stepIndex, 
@@ -600,10 +637,11 @@ public abstract class SequenceEvaluator {
 		if(sequenceURL.size()==0){return -1f;}
 
 		// initialize variables
-		float simsum = 0f;
+		int recLen = recommendatios.size();
+		float[] simsum = new float[recLen];
 
 		// compute 1-NN similarity average 
-		for(int i=0; i<recommendatios.size(); i++){
+		for(int i=0; i<recLen; i++){
 			String recStr = recommendatios.get(i);
 			int recInt = Integer.valueOf(recStr);
 			int recind = m_usageURLs.indexOf(recInt);
@@ -621,9 +659,21 @@ public abstract class SequenceEvaluator {
 				}
 			}
 			float maxsimToNorm = recind==-1 ? 1f : m_UrlSimilarityMatrix_Usage_max[recind];
-			simsum = simsum + (maxsim/maxsimToNorm);
+			simsum[i] = (maxsim/maxsimToNorm);
 		}
-		return (float)simsum/(float)recommendatios.size();	
+		
+		// average of similarities
+		float sum = 0f;
+		int k = recLen;
+		if(m_modePrRe==1){
+			int seqLen = sequenceURL.size();
+			k = Math.min(recLen, seqLen);
+		}
+		float[] simsum2 = this.orderArrayR(simsum, k);
+		for(int i=0; i<simsum2.length; i++){
+			sum = sum + simsum2[i];
+		}
+		return sum/(float)simsum2.length;
 	}
 	
 	private float oneNNmetricNorm2(int stepIndex, 
@@ -633,10 +683,11 @@ public abstract class SequenceEvaluator {
 		if(sequenceURL.size()==0){return -1f;}
 
 		// initialize variables
-		float simsum = 0f;
+		int recLen = recommendatios.size();
+		float[] simsum = new float[recLen];
 
 		// compute 1-NN similarity average 
-		for(int i=0; i<recommendatios.size(); i++){
+		for(int i=0; i<recLen; i++){
 			String recStr = recommendatios.get(i);
 			int recInt = Integer.valueOf(recStr);
 			int recind = m_usageURLs.indexOf(recInt);
@@ -655,9 +706,21 @@ public abstract class SequenceEvaluator {
 			}
 			float maxsimToNorm = recind==-1 ? 1f : m_UrlSimilarityMatrix_Usage_max[recind];
 			float minsimToNorm = recind==-1 ? 1f : m_UrlSimilarityMatrix_Usage_min[recind];
-			simsum = simsum + (maxsim-minsimToNorm)/(maxsimToNorm-minsimToNorm);
+			simsum[i] = (maxsim-minsimToNorm)/(maxsimToNorm-minsimToNorm);
 		}
-		return (float)simsum/(float)recommendatios.size();	
+		
+		// average of similarities
+		float sum = 0f;
+		int k = recLen;
+		if(m_modePrRe==1){
+			int seqLen = sequenceURL.size();
+			k = Math.min(recLen, seqLen);
+		}
+		float[] simsum2 = this.orderArrayR(simsum, k);
+		for(int i=0; i<simsum2.length; i++){
+			sum = sum + simsum2[i];
+		}
+		return sum/(float)simsum2.length;	
 	}
 	
 	private float oneNNmetricRank(int stepIndex, 
@@ -667,10 +730,11 @@ public abstract class SequenceEvaluator {
 		if(sequenceURL.size()==0){return -1f;}
 
 		// initialize variables
-		float ranksum = 0f;
+		int recLen = recommendatios.size();
+		float[] ranksum = new float[recLen];
 
 		// compute 1-NN similarity average 
-		for(int i=0; i<recommendatios.size(); i++){
+		for(int i=0; i<recLen; i++){
 			String recStr = recommendatios.get(i);
 			int recInt = Integer.valueOf(recStr);
 			int recind = m_usageURLs.indexOf(recInt);
@@ -698,9 +762,21 @@ public abstract class SequenceEvaluator {
 			}
 			
 			// sum of ranks
-			ranksum = ranksum + (float)rank;
+			ranksum[i] = (float)rank;
 		}
-		return ranksum/(float)recommendatios.size();	
+		
+		// average of similarities
+		float sum = 0f;
+		int k = recLen;
+		if(m_modePrRe==1){
+			int seqLen = sequenceURL.size();
+			k = Math.min(recLen, seqLen);
+		}
+		float[] simsum2 = this.orderArrayR(ranksum, k);
+		for(int i=0; i<simsum2.length; i++){
+			sum = sum + simsum2[i];
+		}
+		return sum/(float)simsum2.length;
 	}
 	
 	

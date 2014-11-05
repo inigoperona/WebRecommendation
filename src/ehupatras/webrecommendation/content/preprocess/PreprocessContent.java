@@ -152,6 +152,44 @@ public class PreprocessContent {
 		Website.save();
 	}
 	
+	public void readURL2TopicDistribution_contID(String filename){
+		// Read topic information
+		m_url2topicDist = new ArrayList<float[]>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(filename));
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+				String[] line = sCurrentLine.split(",");
+				int urlid = Integer.valueOf(line[0]);
+				float[] topdist = new float[line.length-1];
+				for(int i=1; i<line.length; i++){
+					String numStr1 = line[i];
+					int startNum = 0;
+					for(int l=startNum; l<numStr1.length(); l++){
+						char c = numStr1.charAt(l);
+						if(Character.isDigit(c)){startNum=l; break;}
+					}
+					int endNum = numStr1.length() - 1;
+					for(int l=endNum; l>=0; l--){
+						char c = numStr1.charAt(l);
+						if(Character.isDigit(c)){endNum=l+1; break;}
+					}
+					String numStr2 = numStr1.substring(startNum, endNum);
+					String res = new BigDecimal(numStr2).toPlainString();
+					float ptopic = Float.parseFloat(res);
+					topdist[i-1] = ptopic;
+				}
+				m_url2topicDist.add(urlid, topdist);
+			}
+			br.close();
+		} catch (IOException ex){
+			System.err.println("Exception at loading the URL list. " + 
+					"[ehupatras.webrecommendation.content.preprocess.PreprocessContent.readURL2Topic]");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
 	public void computeUrlTopicSimilarities(){
 		int nUrl = m_formurls.size();
 		
@@ -293,6 +331,25 @@ public class PreprocessContent {
 				int urlID = m_urlID.get(i);
 				bw.write(String.valueOf(urlID) + " ");
 				bw.write(String.valueOf(m_url2topic[i]));
+				bw.write("\n");
+			}
+			bw.close();
+		} catch (IOException ex){
+			System.err.println("Exception at writing the URL list. " + 
+					"[ehupatras.webrecommendation.content.preprocess.PreprocessContent.writeURL2topic]");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	public void writeURL2topic_contID(String filename){
+		File file = new File(filename);
+		try {
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			for(int i=0; i<m_url2topic.length; i++){
+				bw.write(String.valueOf(i+1) + ";");
+				bw.write(String.valueOf(m_url2topic[i]+1));
 				bw.write("\n");
 			}
 			bw.close();
