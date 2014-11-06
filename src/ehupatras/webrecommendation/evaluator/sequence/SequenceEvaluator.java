@@ -415,7 +415,7 @@ public abstract class SequenceEvaluator {
 		m_oneNNmetricNorm1Model[stepIndex] = onennNorm1Model;
 		float onennNorm2Model = this.oneNNmetricNorm2(0, recommendatios);
 		m_oneNNmetricNorm2Model[stepIndex] = onennNorm2Model;
-		float onennRankModel = this.oneNNmetricNorm2(0, recommendatios);
+		float onennRankModel = this.oneNNmetricRank(0, recommendatios);
 		m_oneNNmetricRankModel[stepIndex] = onennRankModel;
 	}
 	

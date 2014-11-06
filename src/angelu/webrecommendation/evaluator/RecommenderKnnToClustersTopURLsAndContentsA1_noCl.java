@@ -5,12 +5,12 @@ import java.util.HashMap;
 import angelu.webrecommendation.converter.URLconverterUsaCon;
 
 
-public class RecommenderKnnToClustersTopURLsAndContentsA1 
+public class RecommenderKnnToClustersTopURLsAndContentsA1_noCl
 				extends RecommenderKnnToClustersTopURLsAndContents {
 	
 	// CREATOR
 	
-	public RecommenderKnnToClustersTopURLsAndContentsA1(
+	public RecommenderKnnToClustersTopURLsAndContentsA1_noCl(
 			ArrayList<String[]> medoids,
 			int[] globalMedoids,
 			ArrayList<Object[]> recosForEachMedoid,
@@ -58,8 +58,8 @@ public class RecommenderKnnToClustersTopURLsAndContentsA1
 				nearestURL= gertueneko_urla(urlDone[1], 2, true);
 				recomendations=gehituUrlEzErrepikatua(urlDone[1], nearestURL, recomendations, true);	
 				//nearest urls SPURL2
-				nearestURL= gertueneko_urla(urlDone[0], 2, false);
-				recomendations=gehituUrlEzErrepikatua(urlDone[0], nearestURL, recomendations, false);}
+				nearestURL= gertueneko_urla(urlDone[0], 2, true);
+				recomendations=gehituUrlEzErrepikatua(urlDone[0], nearestURL, recomendations, true);}
 		
 			return recomendations;}
 	
@@ -79,8 +79,8 @@ public class RecommenderKnnToClustersTopURLsAndContentsA1
 				nearestURL= gertueneko_urla(urlDone[1], 1, true);
 				recomendations=gehituUrlEzErrepikatua(urlDone[1], nearestURL, recomendations, true);
 				//nearest urls SPURL2
-				nearestURL= gertueneko_urla(urlDone[0], 2, false);
-				recomendations=gehituUrlEzErrepikatua(urlDone[0], nearestURL, recomendations, false);
+				nearestURL= gertueneko_urla(urlDone[0], 2, true);
+				recomendations=gehituUrlEzErrepikatua(urlDone[0], nearestURL, recomendations, true);
 			}
 		
 			return recomendations;}
@@ -101,11 +101,11 @@ public class RecommenderKnnToClustersTopURLsAndContentsA1
 				nearestURL= gertueneko_urla(urlDone[2], 1, true);
 				recomendations=gehituUrlEzErrepikatua(urlDone[2], nearestURL, recomendations, true);
 				//nearest urls SPURL2
-				nearestURL= gertueneko_urla(urlDone[1], 1, false);
-				recomendations=gehituUrlEzErrepikatua(urlDone[1], nearestURL, recomendations, false);
+				nearestURL= gertueneko_urla(urlDone[1], 1, true);
+				recomendations=gehituUrlEzErrepikatua(urlDone[1], nearestURL, recomendations, true);
 				//nearest urls SPURL2
-				nearestURL= gertueneko_urla(urlDone[0], 1, false);
-				recomendations=gehituUrlEzErrepikatua(urlDone[0], nearestURL, recomendations, false);}
+				nearestURL= gertueneko_urla(urlDone[0], 1, true);
+				recomendations=gehituUrlEzErrepikatua(urlDone[0], nearestURL, recomendations, true);}
 		
 			return recomendations;}
 		
