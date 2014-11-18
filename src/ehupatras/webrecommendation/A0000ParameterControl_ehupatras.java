@@ -118,7 +118,8 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_usage2contentFile = "convert_UrlIDs_content2usage/usa2cont.csv";
 		
 		m_databaseWD = m_base + "/02_DATABASE_5";
-		m_dmWD = "/DM_04_edit";
+		//m_dmWD = "/DM_04_edit";
+		m_dmWD = "/DM_00_norole_dist";
 		
 		m_validationWD = m_base + "/03_VALIDATION_5";
 		m_clustWD = "/pam_DM_04_edit";

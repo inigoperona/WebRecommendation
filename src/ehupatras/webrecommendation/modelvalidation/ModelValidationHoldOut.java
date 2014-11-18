@@ -43,7 +43,7 @@ public class ModelValidationHoldOut extends ModelValidation {
 		// test
 		until = i + positionTestUntil;
 		m_testList = new ArrayList<Long>();
-		for( ; i<until; i++){
+		for( ;i<until && i<ncases; i++){
 			m_testList.add(sessionsID.get(i));
 		}
 	}

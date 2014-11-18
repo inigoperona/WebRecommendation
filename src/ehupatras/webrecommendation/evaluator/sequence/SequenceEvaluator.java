@@ -608,9 +608,34 @@ public abstract class SequenceEvaluator {
 	
 	private float[] orderArrayR(float[] arr, int k){
 		// order array values
+		ArrayList<Float> arr2AL = this.orderR_AL(arr);
+		// convert to float
+		int l2 = Math.min(arr.length, k);
+		float[] arr2 = new float[l2];
+		for(int i=0; i<l2; i++){
+			arr2[i] = arr2AL.get(i);
+		}
+		return arr2;
+	}
+	
+	private float[] orderArray(float[] arr, int k){
+		// order array values
+		ArrayList<Float> arr2AL = this.orderR_AL(arr);
+		// convert to float
 		int l = arr.length;
+		int l2 = Math.min(l, k);
+		float[] arr2 = new float[l2];
+		int i2 = 0;
+		for(int i=l-1; i>=l-l2; i--){
+			arr2[i2] = arr2AL.get(i);
+			i2++;
+		}
+		return arr2;
+	}
+	
+	private ArrayList<Float> orderR_AL(float[] arr){
 		ArrayList<Float> arr2AL = new ArrayList<Float>();
-		for(int i=0; i<l; i++){
+		for(int i=0; i<arr.length; i++){
 			float sim = arr[i];
 			int j=0;
 			for(;j<arr2AL.size();j++){
@@ -621,13 +646,7 @@ public abstract class SequenceEvaluator {
 			}
 			arr2AL.add(j,sim);
 		}
-		// convert to float
-		float[] arr2 = new float[l];
-		int l2 = Math.min(l, k);
-		for(int i=0; i<l2; i++){
-			arr2[i] = arr2AL.get(i);
-		}
-		return arr2;
+		return arr2AL;
 	}
 	
 	private float oneNNmetricNorm1(int stepIndex, 
@@ -772,7 +791,7 @@ public abstract class SequenceEvaluator {
 			int seqLen = sequenceURL.size();
 			k = Math.min(recLen, seqLen);
 		}
-		float[] simsum2 = this.orderArrayR(ranksum, k);
+		float[] simsum2 = this.orderArray(ranksum, k);
 		for(int i=0; i<simsum2.length; i++){
 			sum = sum + simsum2[i];
 		}
