@@ -1,6 +1,6 @@
 package angelu.webrecommendation;
 
-public class A057MainClassPamSpadeKnnEDhoTop1ContB2_TD {
+public class A063MainClassPamSpadeKnnEDhoTop1ContA2_noCl_TD {
 
 	public static void main(String[] args) {
 		
@@ -15,7 +15,7 @@ public class A057MainClassPamSpadeKnnEDhoTop1ContB2_TD {
 		param.loadHoldOut_cv();
 		param.loadTopicInf();
 		param.createModelEvaluatorMedoidsContent();
-		param.runModelEvaluatorMC("ContentsB2_noCl_TD");
+		param.runModelEvaluatorMC("ContentsA2_noCl_TD");
 				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

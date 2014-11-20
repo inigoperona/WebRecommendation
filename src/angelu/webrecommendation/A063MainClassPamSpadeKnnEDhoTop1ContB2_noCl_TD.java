@@ -1,6 +1,6 @@
 package angelu.webrecommendation;
 
-public class A057MainClassPamSpadeKnnEDhoTop1ContB2_TD {
+public class A063MainClassPamSpadeKnnEDhoTop1ContB2_noCl_TD {
 
 	public static void main(String[] args) {
 		

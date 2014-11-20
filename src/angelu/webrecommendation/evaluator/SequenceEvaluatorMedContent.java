@@ -55,6 +55,8 @@ public class SequenceEvaluatorMedContent
 	public Recommender getRecommender(){
 		Recommender recommender = null;
 		
+		
+		
 		if(m_enrichStrategy.equals("ContentsA1")){
 			recommender = new RecommenderKnnToClustersTopURLsAndContentsA1(
 					m_medoids, m_gmedoids, m_recos,
@@ -115,6 +117,8 @@ public class SequenceEvaluatorMedContent
 					m_UrlClusteringDict,
 					m_conv,
 					m_noProposeURLs);
+			
+			
 			
 		} else if(m_enrichStrategy.equals("ContentsA1_SpOrder")){
 			recommender = new RecommenderKnnToClustersTopURLsAndContentsA1_SpOrder(
@@ -177,16 +181,7 @@ public class SequenceEvaluatorMedContent
 					m_conv,
 					m_noProposeURLs);
 			
-		} else if(m_enrichStrategy.equals("ContentsB2_TD")){
-					recommender = new RecommenderKnnToClustersTopURLsAndContentsB2(
-					m_medoids, m_gmedoids, m_recos,
-					m_isDistance, m_rolesW,
-					m_nURLs,
-					m_UrlSimilarityMatrix_Content,
-					m_UrlRelationMatrix,
-					m_UrlClusteringDict,
-					m_conv,
-					m_noProposeURLs);
+			
 		
 		} else if(m_enrichStrategy.equals("ContentsA2B2_Sp2")){
 			recommender = new RecommenderKnnToClustersTopURLsAndContentsA2B2_Sp2(
@@ -238,6 +233,8 @@ public class SequenceEvaluatorMedContent
 					m_UrlClusteringDict,
 					m_conv,
 					m_noProposeURLs);
+			
+			
 			
 		} else if(m_enrichStrategy.equals("ContentsA1_noCl")){
 			recommender = new RecommenderKnnToClustersTopURLsAndContentsA1_noCl(
@@ -299,6 +296,7 @@ public class SequenceEvaluatorMedContent
 					m_UrlClusteringDict,
 					m_conv,
 					m_noProposeURLs);
+			
 		} else if(m_enrichStrategy.equals("ContentsA2_noCl_En2")){
 			recommender = new RecommenderKnnToClustersTopURLsAndContentsA2_noCl_En2(
 					m_medoids, m_gmedoids, m_recos,
@@ -339,7 +337,113 @@ public class SequenceEvaluatorMedContent
 					m_UrlClusteringDict,
 					m_conv,
 					m_noProposeURLs);
-		}
+			
+			
+			
+		} else if(m_enrichStrategy.equals("ContentsA2_noCl_TD")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsA2_noCl_TD(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix_Content,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv,
+					m_noProposeURLs);
+		} else if(m_enrichStrategy.equals("ContentsB2_noCl_TD")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB2_noCl_TD(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix_Content,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv,
+					m_noProposeURLs);
+		} else if(m_enrichStrategy.equals("ContentsB1_noCl_UserView")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB1_noCl_UserView(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix_Content,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv,
+					m_noProposeURLs);
+		} else if(m_enrichStrategy.equals("ContentsB2_noCl_UserView")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB2_noCl_UserView(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix_Content,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv,
+					m_noProposeURLs);
+			
+			
+		} else if(m_enrichStrategy.equals("ContentsA1_noCl_TopM")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsA1_noCl_TopM(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix_Content,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv,
+					m_noProposeURLs);
+		} else if(m_enrichStrategy.equals("ContentsA2_noCl_TopM")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsA2_noCl_TopM(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix_Content,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv,
+					m_noProposeURLs);
+		} else if(m_enrichStrategy.equals("ContentsB1_noCl_TopM")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB1_noCl_TopM(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix_Content,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv,
+					m_noProposeURLs);
+		} else if(m_enrichStrategy.equals("ContentsB1_noCl_UserView_TopM")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB1_noCl_UserView_TopM(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix_Content,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv,
+					m_noProposeURLs);
+		} else if(m_enrichStrategy.equals("ContentsB2_noCl_TopM")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB2_noCl_TopM(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix_Content,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv,
+					m_noProposeURLs);
+		} else if(m_enrichStrategy.equals("ContentsB2_noCl_UserView_TopM")){
+			recommender = new RecommenderKnnToClustersTopURLsAndContentsB2_noCl_UserView_TopM(
+					m_medoids, m_gmedoids, m_recos,
+					m_isDistance, m_rolesW,
+					m_nURLs,
+					m_UrlSimilarityMatrix_Content,
+					m_UrlRelationMatrix,
+					m_UrlClusteringDict,
+					m_conv,
+					m_noProposeURLs);
+		}		
+				
 		
 		else if(m_enrichStrategy.equals("Top02_1")){
 			recommender = new RecommenderTop02_1(

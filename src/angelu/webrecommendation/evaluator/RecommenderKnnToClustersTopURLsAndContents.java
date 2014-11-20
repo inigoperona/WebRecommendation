@@ -42,6 +42,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		m_UrlSimilarityMatrix = urlSimilarityMatrix;
 		m_UrlRelationMatrix = urlRelationMatrix;
 		m_UrlClusteringDict = urlClusteringDict;
+		m_url2topic = (HashMap<Integer,Integer>)urlClusteringDict.clone();
 		m_conv = conv;
 		
 		// convert usage URL-IDs to Content-ID
