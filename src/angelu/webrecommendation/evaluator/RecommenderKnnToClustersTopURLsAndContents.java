@@ -18,6 +18,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	protected float[][] m_UrlSimilarityMatrix = null;
 	protected String[][] m_UrlRelationMatrix = null;
 	protected HashMap<Integer,Integer> m_UrlClusteringDict = null;
+	protected HashMap<Integer,Integer> m_url2topic = null;
 	protected URLconverterUsaCon m_conv = null;
 	private ArrayList<Integer> m_noProposeURLs_contID = new ArrayList<Integer>();
 	
@@ -252,7 +253,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		return recosOrd;
 	}
 	
-	protected int[] number_of_Relation (int[] urls, boolean SpDa)
+	protected int[] number_of_Relation(int[] urls, boolean SpDa)
 	{ 	int Equal_kop=0;
 	  	int different_kop=0;
 	  	String erlazioa;
@@ -303,6 +304,47 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 			{	return "Disjoint";}}
 		else
 		{	return erlazioa;}
+	}
+	
+	protected int[] number_of_Topics(int[] urls, boolean SpDa)
+	{ 	int Equal_kop=0;
+	  	int different_kop=0;
+	  	int[] kontagailua= new int[2];
+	  
+	  	if (SpDa)
+	  	{	for (int z=0; z<=urls.length-1;z++)
+	  		{	for (int j=0; j<=urls.length-1;j++)
+	  			{ 	if(z!=j){
+	  					int top1 = m_url2topic.get(urls[z]);
+	  					int top2 = m_url2topic.get(urls[j]);
+	  					if (top1==top2)
+	  					{	Equal_kop++;}
+	  					else
+	  					{	different_kop++;}}}}
+	  		kontagailua[0]=Equal_kop;
+	  		kontagailua[1]=different_kop;
+	  		return kontagailua;
+	  	}
+	  	else
+	  	{	//hemen nabigazioaren asuntoakin hasi beharko nintzen number of relation honetan bakarrik 3 erlazio begiratzen dira.
+	  		if(urls.length<=1)
+	  		{	kontagailua[0]=0;
+	  			kontagailua[1]=0;
+	  			return kontagailua;}		
+		
+	  		else
+	  		{	for (int h=0; h<=urls.length-2;h++){	
+	  				int top1 = m_url2topic.get(urls[h]);
+					int top2 = m_url2topic.get(urls[h+1]);
+	  				if (top1==top2)
+	  				{	Equal_kop++;}
+	  				else
+	  				{	different_kop++;}}
+	  		
+	  		kontagailua[0]=Equal_kop;
+	  		kontagailua[1]=different_kop;
+	  		return kontagailua;}
+		}
 	}
 	
 }

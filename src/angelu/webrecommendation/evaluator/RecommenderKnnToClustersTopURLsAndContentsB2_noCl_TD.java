@@ -5,12 +5,12 @@ import java.util.HashMap;
 
 import angelu.webrecommendation.converter.URLconverterUsaCon;
 
-public class RecommenderKnnToClustersTopURLsAndContentsB2_TD
+public class RecommenderKnnToClustersTopURLsAndContentsB2_noCl_TD
 				extends RecommenderKnnToClustersTopURLsAndContents {
 
 	// CREATOR
 	
-	public RecommenderKnnToClustersTopURLsAndContentsB2_TD(
+	public RecommenderKnnToClustersTopURLsAndContentsB2_noCl_TD(
 			ArrayList<String[]> medoids,
 			int[] globalMedoids,
 			ArrayList<Object[]> recosForEachMedoid,
@@ -38,7 +38,6 @@ public class RecommenderKnnToClustersTopURLsAndContentsB2_TD
 	{	ArrayList<Integer> recomendations= new ArrayList<Integer>();
 		int[] nearestURL;
 	
-		int[] n_relation=number_of_Relation(url,true);
 		recomendations.add(url[2]);
 		recomendations.add(url[3]);
 		
