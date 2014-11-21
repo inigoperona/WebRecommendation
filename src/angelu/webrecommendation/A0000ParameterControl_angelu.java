@@ -103,8 +103,8 @@ public class A0000ParameterControl_angelu {
 		this.initializeStructures();
 	}
 	public A0000ParameterControl_angelu(String[] args){
-		this.readParameters(args);
-		//this.exampleParameters();
+		//this.readParameters(args);
+		this.exampleParameters();
 		this.initializeStructures();
 	}
 	protected void initializeStructures(){
@@ -159,13 +159,13 @@ public class A0000ParameterControl_angelu {
 		
 		m_url2topicFile = "/Content/Topic/URLs_to_topic_th0/URLs_to_topic_TestuHutsa_th0_usageID.txt";
 		///
-		/*
-		m_urlSimilarityMatrix = "contentEnrichment/Ont3_025_060/ResultadosTestuHutsa/ResSimilarity.txt";
-		m_urlRelationMatrix = "contentEnrichment/Ont3_025_060/ResultadosTestuHutsa/ResRelations.txt";
-		m_clusterPartitionFile = "contentEnrichment/Ont3_025_060/clusterPartitions/ClusterPartitionTestuHutsa.txt";
-		*/
+		// Ontology
+		//m_urlSimilarityMatrix = "contentEnrichment/Ont3_025_060/ResultadosTestuHutsa/ResSimilarity.txt";
+		//m_urlRelationMatrix = "contentEnrichment/Ont3_025_060/ResultadosTestuHutsa/ResRelations.txt";
+		//m_clusterPartitionFile = "contentEnrichment/Ont3_025_060/clusterPartitions/ClusterPartitionTestuHutsa.txt";
+		// Topic
 		m_urlSimilarityMatrix = "contentEnrichment/Topic/similarityHellingerTopic1TestuHutsa.txt";
-		m_urlRelationMatrix = "contentEnrichment/Ont1_02_08/ResultadosTestuHutsa/ResRelations.txt";
+		m_urlRelationMatrix = "contentEnrichment/Topic/relationMatrixTopic1TestuHutsa.txt";
 		//m_clusterPartitionFile = "contentEnrichment/Topic/clusterPartitions/ClusterPartitionTestuHutsa.txt";
 		m_clusterPartitionFile = "contentEnrichment/Topic/URLs_to_topic_th0/URLs_to_topic_TestuHutsa_th0_contID_cl.txt";
 		///

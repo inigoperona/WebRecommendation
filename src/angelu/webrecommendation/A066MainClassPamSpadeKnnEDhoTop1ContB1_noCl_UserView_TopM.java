@@ -15,7 +15,7 @@ public class A066MainClassPamSpadeKnnEDhoTop1ContB1_noCl_UserView_TopM {
 		param.loadHoldOut_cv();
 		param.loadTopicInf();
 		param.createModelEvaluatorMedoidsContent();
-		param.runModelEvaluatorMC("ContentsB1_noCl_UserView");
+		param.runModelEvaluatorMC("ContentsB1_noCl_UserView_TopM");
 				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
