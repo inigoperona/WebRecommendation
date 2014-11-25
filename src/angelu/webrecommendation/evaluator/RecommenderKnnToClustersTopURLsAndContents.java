@@ -294,17 +294,19 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		}
 	}
 	
-	private String equal_different(int url1, int url2)
-	{	String erlazioa=m_UrlRelationMatrix[url1][url2];
-		if(!erlazioa.equals("Equal") && !erlazioa.equals("Disjoint"))
-		{	int cl1=m_UrlClusteringDict.get(url1);
+	private String equal_different(int url1, int url2){
+		String erlazioa=m_UrlRelationMatrix[url1][url2];
+		if(!erlazioa.equals("Equal") && !erlazioa.equals("Disjoint")){
+			int cl1=m_UrlClusteringDict.get(url1);
 			int cl2=m_UrlClusteringDict.get(url2);
-			if (cl1==cl2)
-			{	return "Equal";}
-			else
-			{	return "Disjoint";}}
-		else
-		{	return erlazioa;}
+			if (cl1==cl2){
+				erlazioa = "Equal";
+			}
+			else{
+				erlazioa = "Disjoint";
+			}
+		}
+		return erlazioa;
 	}
 	
 	protected int[] number_of_Topics(int[] urls, boolean SpDa)
@@ -328,23 +330,24 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	  	}
 	  	else
 	  	{	//hemen nabigazioaren asuntoakin hasi beharko nintzen number of relation honetan bakarrik 3 erlazio begiratzen dira.
-	  		if(urls.length<=1)
-	  		{	kontagailua[0]=0;
+	  		if(urls.length<=1){
+	  			kontagailua[0]=0;
 	  			kontagailua[1]=0;
-	  			return kontagailua;}		
-		
-	  		else
-	  		{	for (int h=0; h<=urls.length-2;h++){	
+	  			return kontagailua;
+	  		} else {
+	  			for (int h=0; h<=urls.length-2;h++){	
 	  				int top1 = m_url2topic.get(urls[h]);
 					int top2 = m_url2topic.get(urls[h+1]);
-	  				if (top1==top2)
-	  				{	Equal_kop++;}
-	  				else
-	  				{	different_kop++;}}
-	  		
-	  		kontagailua[0]=Equal_kop;
-	  		kontagailua[1]=different_kop;
-	  		return kontagailua;}
+	  				if (top1==top2){
+	  					Equal_kop++;
+	  				} else {
+	  					different_kop++;
+	  				}
+	  			}	  		
+	  			kontagailua[0]=Equal_kop;
+	  			kontagailua[1]=different_kop;
+	  			return kontagailua;
+	  		}
 		}
 	}
 	
