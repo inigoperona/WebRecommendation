@@ -7,6 +7,7 @@ import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustPAM;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustHclust;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorHMM;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorMarkovChain;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorSeqMinMSAWseq;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorSeqMinSPADE;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorSuffixTreeGlobal;
@@ -95,8 +96,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		super.initializeStructures();
 	}
 	public A0000ParameterControl_ehupatras(String[] args){
-		super.readParameters(args);
-		//this.exampleParameters();
+		if(args.length==0){
+			this.exampleParameters();
+		} else {
+			super.readParameters(args);
+		}
 		this.initializeSystemParameters();
 		super.initializeStructures();
 	}
@@ -106,15 +110,15 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	// FUNCTIONS
 	
 	public void exampleParameters(){
-		m_base = "experiments_ehupatras";
+		m_base = "experiments_ehupatras_2";
 		
 		m_preprocessingWD = m_base + "/01_preprocess";
 		m_logfile = "/log20000.log";
 		
-		m_url2topicFile = "/URLs_to_topic.txt";
-		m_urlSimilarityMatrix = "contentEnrichment/TopicSimilarity/similarityHellingerTopic1Testuhutsa.txt";
-		m_urlRelationMatrix = "contentEnrichment/OntologySimilarity/clusterPartitions/ResRelations.txt";
-		m_clusterPartitionFile = "contentEnrichment/OntologySimilarity/clusterPartitions/ClusterPartitionTestuHutsa.txt";
+		m_url2topicFile = "/Content/Topic/URLs_to_topic_th0/URLs_to_topic_TestuHutsa_th0_usageID.txt";
+		m_urlSimilarityMatrix = "contentEnrichment/Topic/similarityHellingerTopic1TestuHutsa.txt";
+		m_urlRelationMatrix = "contentEnrichment/Topic/clusterPartitions/relationMatrixTopic1TestuHutsa.txt";
+		m_clusterPartitionFile = "contentEnrichment/Topic/clusterPartitions/ClusterPartitionTestuHutsa.txt";
 		m_usage2contentFile = "convert_UrlIDs_content2usage/usa2cont.csv";
 		
 		m_databaseWD = m_base + "/02_DATABASE_5";
@@ -122,8 +126,10 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_dmWD = "/DM_00_norole_dist";
 		
 		m_validationWD = m_base + "/03_VALIDATION_5";
-		m_clustWD = "/pam_DM_04_edit";
-		m_profiWD = "/pam_DM_04_edit/spade1";
+		//m_clustWD = "/pam_DM_04_edit";
+		//m_profiWD = "/pam_DM_04_edit/spade1";
+		m_clustWD = "/hclust_DM_00_norole_dist";
+		m_profiWD = "/hclust_DM_00_norole_dist/spade1";
 		m_evalFile = "/evaluation.txt";
 		
 		m_modePrRe = 0;
@@ -517,6 +523,23 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// ModelEvaluatorMedoids: DM+hclust+SPADE1(+knnED)
 	
+	public void createModelEvaluatorMedoids(){
+		ModelEvaluatorMedoids modelev = 
+				new ModelEvaluatorMedoids(
+						m_sequencesUHC, null, 
+						m_matrix,
+						m_trainAL, m_valAL, m_testAL,
+						m_modePrRe, m_usage2contentFile, m_urlSimilarityMatrix,
+						m_noProposeUrls);
+		modelev.setFmeasureBeta(m_beta);
+		modelev.setConfusionPoints(m_confusionPoints);
+		modelev.setTopicParameters(
+				m_urlIDs, m_url2topic, m_difftopics, 
+				m_topicmatch, 
+				m_clusterPartitionFile);
+		m_modelevM = modelev;
+	}
+	
 	public void runModelEvaluatorM_hclust(int indLinkage){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -538,6 +561,43 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 				// TEST //
 				String results = "";
 				String resultInfo = "";	
+				for(int ind=0; ind<m_nrecsA.length; ind++ ){
+					int nrec = m_nrecsA[ind];
+					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";					
+					m_modelevM.setLineHeader(resultInfo + ";", evalWriter);
+					m_modelevM.setEsploitationParameters(true, m_rolesW, 100);
+					results = m_modelevM.computeEvaluationTest("weighted", nrec, (long)0);					
+					System.out.print(resultInfo + ",");
+					System.out.print(results);
+				}			
+			}
+		}
+		
+		this.closeFile(evalWriter);
+	}
+	
+	public void runModelEvaluatorM_pam(){
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+
+		// Results' header
+		System.out.print("options," + m_modelevM.getEvaluationHeader());
+		// RUN THE EXPERIMENTS
+		// for each PAM: k
+		for(int j=0; j<m_ks.length; j++){
+			int k = m_ks[j];				
+			String esperimentationStr = "pam" + k;
+			String clustFile = m_validationWD + m_clustWD + "/" + esperimentationStr + ".javaData";
+			m_modelevM.loadClusters(clustFile);
+
+			// for each SPADE: minsup
+			for(int l=0; l<m_seqweights.length; l++){
+				float minsup = m_seqweights[l];
+				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
+				m_modelevM.buildMedoids(minsup, true);
+	
+				// TEST //
+				String results = "";
+				String resultInfo = "";
 				for(int ind=0; ind<m_nrecsA.length; ind++ ){
 					int nrec = m_nrecsA[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";					

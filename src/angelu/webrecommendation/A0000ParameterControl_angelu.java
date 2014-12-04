@@ -103,8 +103,11 @@ public class A0000ParameterControl_angelu {
 		this.initializeStructures();
 	}
 	public A0000ParameterControl_angelu(String[] args){
-		this.readParameters(args);
-		//this.exampleParameters();
+		if(args.length==0){
+			this.exampleParameters();
+		} else {
+			this.readParameters(args);
+		}
 		this.initializeStructures();
 	}
 	protected void initializeStructures(){

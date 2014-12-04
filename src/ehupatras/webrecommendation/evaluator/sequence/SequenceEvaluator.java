@@ -566,6 +566,7 @@ public abstract class SequenceEvaluator {
 		// take the 2nd part of the test sequence & remove prohibited URLs
 		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
 		if(sequenceURL.size()==0){return -1f;}
+		if(recommendatios.size()==0){return -1f;}
 
 		// initialize variables
 		int recLen = recommendatios.size();
@@ -603,7 +604,8 @@ public abstract class SequenceEvaluator {
 		for(int i=0; i<simsum2.length; i++){
 			sum = sum + simsum2[i];
 		}
-		return sum/(float)simsum2.length;	
+		float result = sum/(float)simsum2.length; 
+		return result;
 	}
 	
 	private float[] orderArrayR(float[] arr, int k){
@@ -654,6 +656,7 @@ public abstract class SequenceEvaluator {
 		// take the 2nd part of the test sequence & remove prohibited URLs
 		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
 		if(sequenceURL.size()==0){return -1f;}
+		if(recommendatios.size()==0){return -1f;}
 
 		// initialize variables
 		int recLen = recommendatios.size();
@@ -700,6 +703,7 @@ public abstract class SequenceEvaluator {
 		// take the 2nd part of the test sequence & remove prohibited URLs
 		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
 		if(sequenceURL.size()==0){return -1f;}
+		if(recommendatios.size()==0){return -1f;}
 
 		// initialize variables
 		int recLen = recommendatios.size();
@@ -747,6 +751,7 @@ public abstract class SequenceEvaluator {
 		// take the 2nd part of the test sequence & remove prohibited URLs
 		ArrayList<String> sequenceURL = this.removeProhibitedURLs(stepIndex, m_sequenceURL);
 		if(sequenceURL.size()==0){return -1f;}
+		if(recommendatios.size()==0){return -1f;}
 
 		// initialize variables
 		int recLen = recommendatios.size();
