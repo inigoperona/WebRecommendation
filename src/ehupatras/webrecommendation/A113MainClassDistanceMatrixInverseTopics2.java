@@ -27,14 +27,14 @@ public class A113MainClassDistanceMatrixInverseTopics2 {
 	    						{ 1f, 1f, 1f},
 	    						{ 1f, 1f, 1f}};
 		param.createDM("SimilarityMatrixNormalize_TopicDisc", rolesW, 
-				"/DM_00_no_role_dist_topicsDisc", new int[0]);
+				"/DM_00_norole_dist_topicsDisc", new int[0]);
 		
 		// 2 roles: similar_HC
 		rolesW = new float[][]{	{ 0f,    0f,    0f},
 	    						{ 0f,    1f, 0.75f},
 	    						{ 0f, 0.75f,    1f}};
 		param.createDM("SimilarityMatrixNormalize_TopicDisc", rolesW, 
-				"/DM_03_intelligent2_dist_topicsDisc", new int[0]);
+				"/DM_04_similarHC2_dist_topicsDisc", new int[0]);
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

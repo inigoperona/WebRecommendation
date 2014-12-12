@@ -116,14 +116,17 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_logfile = "/log20000.log";
 		
 		m_url2topicFile = "/Content/Topic/URLs_to_topic_th0/URLs_to_topic_TestuHutsa_th0_usageID.txt";
-		m_urlSimilarityMatrix = "contentEnrichment/Topic/similarityHellingerTopic1TestuHutsa.txt";
-		m_urlRelationMatrix = "contentEnrichment/Topic/clusterPartitions/relationMatrixTopic1TestuHutsa.txt";
-		m_clusterPartitionFile = "contentEnrichment/Topic/clusterPartitions/ClusterPartitionTestuHutsa.txt";
-		m_usage2contentFile = "convert_UrlIDs_content2usage/usa2cont.csv";
+		m_url2url_DM = "/Content/Topic/DM_similarityHellingerTopic1TestuHutsa_usageID.txt";
+		
+		m_urlSimilarityMatrix = "/Content/Topic/similarityHellingerTopic1TestuHutsa.txt";
+		m_urlRelationMatrix = "/Content/Topic/relationMatrixTopic1TestuHutsa.txt";
+		m_clusterPartitionFile = "/Content/Topic/clusterPartitions/ClusterPartitionTestuHutsa.txt";
+		m_usage2contentFile = "/Content/usa2cont.csv";
 		
 		m_databaseWD = m_base + "/02_DATABASE_5";
 		//m_dmWD = "/DM_04_edit";
-		m_dmWD = "/DM_00_norole_dist";
+		//m_dmWD = "/DM_00_norole_dist";
+		m_dmWD = "/DM_00_norole_dist_TopicCont";
 		
 		m_validationWD = m_base + "/03_VALIDATION_5";
 		//m_clustWD = "/pam_DM_04_edit";
@@ -189,25 +192,25 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 			dm.createDistanceMatrix(m_databaseWD + dmWD, 
 					m_sampleSessionIDs, m_sequencesUHC, 
 					rolesW,
-					m_preprocessingWD + m_urlSimilarityMatrix, 0.5f);
+					m_preprocessingWD + m_url2url_DM, 0.6f);
 		} else if(strategyNormalize.equals("EditDistance_TopicCont")){
 			A112MainClassDistanceMatrixEDTopics dm = new A112MainClassDistanceMatrixEDTopics();
 			dm.createDistanceMatrix(m_databaseWD + dmWD, 
 					m_sampleSessionIDs, m_sequencesUHC, 
 					rolesW,
-					m_preprocessingWD + m_urlSimilarityMatrix, 0.6f);
+					m_preprocessingWD + m_url2url_DM, 0.6f);
 		} else if(strategyNormalize.equals("SimilarityMatrixNormalize_TopicDisc")){
 			A113MainClassDistanceMatrixInverseTopics2 dm = new A113MainClassDistanceMatrixInverseTopics2();
 			dm.createDistanceMatrix(m_databaseWD + dmWD, 
 					m_sampleSessionIDs, m_sequencesUHC, 
 					rolesW,
-					m_preprocessingWD + m_url2topicFile, 0.5f);
+					m_preprocessingWD + m_url2topicFile, 0.3f);
 		} else if(strategyNormalize.equals("EditDistance_TopicDisc")){
 			A114MainClassDistanceMatrixEDTopics2 dm = new A114MainClassDistanceMatrixEDTopics2();
 			dm.createDistanceMatrix(m_databaseWD + dmWD, 
 					m_sampleSessionIDs, m_sequencesUHC, 
 					rolesW,
-					m_preprocessingWD + m_url2topicFile, 0.5f);
+					m_preprocessingWD + m_url2topicFile, 0.3f);
 		}
 	}
 	

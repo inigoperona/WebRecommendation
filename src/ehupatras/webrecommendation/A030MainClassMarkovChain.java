@@ -13,7 +13,7 @@ public class A030MainClassMarkovChain {
 		param.loadDatabase();
 		param.loadDM();
 		param.loadHoldOut();
-		param.loadTopicInf();	
+		param.loadTopicInf();
 		param.setTopicMatchWeight(0.5f);
 		
 		param.createModelEvaluatorMarkovChain();

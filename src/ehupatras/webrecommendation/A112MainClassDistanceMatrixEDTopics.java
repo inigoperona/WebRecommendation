@@ -26,7 +26,7 @@ public class A112MainClassDistanceMatrixEDTopics {
     							{ 0f, 0f, 0f},
     							{ 0f, 0f, 0f}};
 		param.createDM("EditDistance_TopicCont", rolesW, 
-				"/DM_04_edit_dist_topics", new int[0]);
+				"/DM_04_edit_TopicCont", new int[0]);
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

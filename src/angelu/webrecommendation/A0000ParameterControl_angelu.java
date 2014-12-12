@@ -24,11 +24,15 @@ public class A0000ParameterControl_angelu {
 	protected String m_logfile;
 	
 	// content
+	// usageID
 	protected String m_url2topicFile;
+	protected String m_url2url_DM;
+	// contentID
 	protected String m_urlSimilarityMatrix;
 	protected String m_urlRelationMatrix;
 	protected String m_clusterPartitionFile;
 	protected String m_usage2contentFile;
+	// structures usageID
 	protected ArrayList<Integer> m_urlIDs;
 	protected int[] m_url2topic;
 	protected int m_difftopics;
@@ -125,20 +129,22 @@ public class A0000ParameterControl_angelu {
 		m_logfile = args[1];
 		
 		m_url2topicFile = args[2];
-		m_urlSimilarityMatrix = args[3];
-		m_urlRelationMatrix = args[4];
-		m_clusterPartitionFile = args[5];
-		m_usage2contentFile = args[6];
+		m_url2url_DM = args[3];
 		
-		m_databaseWD = args[7];
-		m_dmWD = args[8];
+		m_urlSimilarityMatrix = args[4];
+		m_urlRelationMatrix = args[5];
+		m_clusterPartitionFile = args[6];
+		m_usage2contentFile = args[7];
 		
-		m_validationWD = args[9];
-		m_clustWD = args[10];
-		m_profiWD = args[11];
-		m_evalFile = args[12];
-		String noRecURLsStr = args[13];
-		String modePrReStr = args[14];
+		m_databaseWD = args[8];
+		m_dmWD = args[9];
+		
+		m_validationWD = args[10];
+		m_clustWD = args[11];
+		m_profiWD = args[12];
+		m_evalFile = args[13];
+		String noRecURLsStr = args[14];
+		String modePrReStr = args[15];
 
 		// the URLs we do not have to recommend
 		m_noProposeUrls = new ArrayList<Integer>();
