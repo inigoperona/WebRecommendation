@@ -7,6 +7,8 @@ public class ClusteringPAM {
 
 	private int m_k = 10;
 	private float[][] m_dm;
+	private float m_minDM = Float.MAX_VALUE;
+	private float m_maxDM = Float.MAX_VALUE;
 	private int[] m_realInds;
 	private ArrayList<Integer> m_medoids;
 	private double m_cost;
@@ -19,6 +21,17 @@ public class ClusteringPAM {
 		}
 		
 		m_dm = dm;
+		for(int i=0;i<m_dm.length;i++){
+			for(int j=0;j<m_dm[i].length;j++){
+				float value = m_dm[i][j];
+				if(value<m_minDM){
+					m_minDM = value;
+				}
+				if(value>m_minDM){
+					m_maxDM = value;
+				}
+			}
+		}
 		m_realInds = realIndexes;
 		
 		// create the medoids array
@@ -269,12 +282,16 @@ public class ClusteringPAM {
 	}
 	
 	private float getDM(int i, int j){
-		int i2 = m_realInds[i];
-		int j2 = m_realInds[j];
-		if(i2<=j2){
-			return m_dm[i2][j2];
-		} else {
-			return m_dm[j2][i2];
+		if(i<m_realInds.length && j<m_realInds.length){
+			int i2 = m_realInds[i];
+			int j2 = m_realInds[j];
+			if(i2<=j2){
+				return m_dm[i2][j2];
+			} else {
+				return m_dm[j2][i2];
+			}
+		} else{
+			return m_maxDM;
 		}
 	}
 	
