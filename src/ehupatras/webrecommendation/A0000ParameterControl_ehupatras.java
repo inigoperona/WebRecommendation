@@ -2,8 +2,6 @@ package ehupatras.webrecommendation;
 
 import java.io.BufferedWriter;
 import java.util.ArrayList;
-import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
-import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustPAM;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustHclust;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorHMM;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorMarkovChain;
@@ -96,12 +94,12 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		super.initializeStructures();
 	}
 	public A0000ParameterControl_ehupatras(String[] args){
+		this.initializeSystemParameters();
 		if(args.length==0){
 			this.exampleParameters();
 		} else {
 			super.readParameters(args);
 		}
-		this.initializeSystemParameters();
 		super.initializeStructures();
 	}
 	
@@ -118,24 +116,27 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_url2topicFile = "/Content/Topic/URLs_to_topic_th0/URLs_to_topic_TestuHutsa_th0_usageID.txt";
 		m_url2url_DM = "/Content/Topic/DM_similarityHellingerTopic1TestuHutsa_usageID.txt";
 		
-		m_urlSimilarityMatrix = "/Content/Topic/similarityHellingerTopic1TestuHutsa.txt";
-		m_urlRelationMatrix = "/Content/Topic/relationMatrixTopic1TestuHutsa.txt";
-		m_clusterPartitionFile = "/Content/Topic/clusterPartitions/ClusterPartitionTestuHutsa.txt";
-		m_usage2contentFile = "/Content/usa2cont.csv";
+		m_urlSimilarityMatrix = m_preprocessingWD + "/Content/Topic/similarityHellingerTopic1TestuHutsa.txt";
+		m_urlRelationMatrix = m_preprocessingWD + "/Content/Topic/relationMatrixTopic1TestuHutsa.txt";
+		m_clusterPartitionFile = m_preprocessingWD + "/Content/Topic/clusterPartitions/ClusterPartitionTestuHutsa.txt";
+		m_usage2contentFile = m_preprocessingWD + "/Content/usa2cont.csv";
 		
 		m_databaseWD = m_base + "/02_DATABASE_5";
 		//m_dmWD = "/DM_04_edit";
 		//m_dmWD = "/DM_00_norole_dist";
-		m_dmWD = "/DM_00_norole_dist_TopicCont";
+		//m_dmWD = "/DM_00_norole_dist_TopicCont";
+		m_dmWD = "/DM_04_edit_TopicCont";
 		
 		m_validationWD = m_base + "/03_VALIDATION_5";
 		//m_clustWD = "/pam_DM_04_edit";
 		//m_profiWD = "/pam_DM_04_edit/spade1";
-		m_clustWD = "/hclust_DM_00_norole_dist";
-		m_profiWD = "/hclust_DM_00_norole_dist/spade1";
+		m_clustWD = "/pam_DM_04_edit_TopicCont";
+		m_profiWD = m_profiWD + "/spade1";
 		m_evalFile = "/evaluation.txt";
 		
 		m_modePrRe = 0;
+		
+		m_ks = new int[]{200};
 	}
 	
 	// preprocessing

@@ -285,10 +285,15 @@ public class ClusteringPAM {
 		if(i<m_realInds.length && j<m_realInds.length){
 			int i2 = m_realInds[i];
 			int j2 = m_realInds[j];
-			if(i2<=j2){
-				return m_dm[i2][j2];
+			int nrow = m_dm.length;
+			if(i2<nrow && j2<nrow){
+				if(i2<=j2){
+					return m_dm[i2][j2];
+				} else {
+					return m_dm[j2][i2];
+				}
 			} else {
-				return m_dm[j2][i2];
+				return m_maxDM;
 			}
 		} else{
 			return m_maxDM;
