@@ -96,7 +96,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	public A0000ParameterControl_ehupatras(String[] args){
 		this.initializeSystemParameters();
 		if(args.length==0){
-			this.exampleParameters();
+			this.exampleParameters2();
 		} else {
 			super.readParameters(args);
 		}
@@ -106,6 +106,38 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	
 	// FUNCTIONS
+	
+	public void exampleParameters2(){
+		m_base = "experiments_ehupatras";
+		
+		m_preprocessingWD = m_base + "/01_preprocess";
+		m_logfile = "/log500000.txt";
+		
+		m_url2topicFile = "/Content/Topic/URLs_to_topic_th0/URLs_to_topic_TestuHutsa_th0_usageID.txt";
+		m_url2url_DM = "/Content/Topic/DM_similarityHellingerTopic1TestuHutsa_usageID.txt";
+		
+		m_urlSimilarityMatrix = m_preprocessingWD + "/Content/Topic/similarityHellingerTopic1TestuHutsa.txt";
+		m_urlRelationMatrix = m_preprocessingWD + "/Content/Topic/relationMatrixTopic1TestuHutsa.txt";
+		m_clusterPartitionFile = m_preprocessingWD + "/Content/Topic/clusterPartitions/ClusterPartitionTestuHutsa.txt";
+		m_usage2contentFile = m_preprocessingWD + "/Content/usa2cont.csv";
+		
+		m_databaseWD = m_base + "/02_DATABASE_5";
+		//m_dmWD = "/DM_04_edit";
+		//m_dmWD = "/DM_00_norole_dist";
+		//m_dmWD = "/DM_00_norole_dist_TopicCont";
+		m_dmWD = "/DM_04_edit";
+		
+		m_validationWD = m_base + "/03_VALIDATION_5";
+		//m_clustWD = "/pam_DM_04_edit";
+		//m_profiWD = "/pam_DM_04_edit/spade1";
+		m_clustWD = "/pam_DM_04_edit";
+		m_profiWD = m_profiWD + "/spade1";
+		m_evalFile = "/evaluation.txt";
+		
+		m_noProposeUrls = new ArrayList<Integer>();
+		
+		m_modePrRe = 0;
+	}
 	
 	public void exampleParameters(){
 		m_base = "experiments_ehupatras_2";
@@ -133,9 +165,12 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_clustWD = "/pam_DM_04_edit_TopicCont";
 		m_profiWD = m_profiWD + "/spade1";
 		m_evalFile = "/evaluation.txt";
+
+		m_noProposeUrls = new ArrayList<Integer>();
 		
 		m_modePrRe = 0;
-		
+
+		// no from command line
 		m_ks = new int[]{200};
 	}
 	
@@ -153,17 +188,17 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		this.loadDatabase();
 		dmWD = dmWD.equals("-") ? m_dmWD : dmWD;
 		if(strategyNormalize.equals("SimilarityMatrixAsDataMatrix")){
-			A010MainClassDistanceMatrixEuclidean dm = new A010MainClassDistanceMatrixEuclidean();
+			A010MainClassDistanceMatrixLGEuclidean dm = new A010MainClassDistanceMatrixLGEuclidean();
 			dm.createDistanceMatrix(m_databaseWD + dmWD, 
 				m_sampleSessionIDs, m_sequencesUHC, 
 				rolesW);
 		} else if(strategyNormalize.equals("SimilarityMatrixNormalize")) {
-			A011MainClassDistanceMatrixInverse dm = new A011MainClassDistanceMatrixInverse();
+			A011MainClassDistanceMatrixLGInverse dm = new A011MainClassDistanceMatrixLGInverse();
 			dm.createDistanceMatrix(m_databaseWD + dmWD, 
 					m_sampleSessionIDs, m_sequencesUHC, 
 					rolesW);
 		} else if(strategyNormalize.equals("SimilarityMatrixNormalize_Split")){
-			A011MainClassDistanceMatrixInverseSplit dm = new A011MainClassDistanceMatrixInverseSplit();
+			A011MainClassDistanceMatrixLGInverseSplit dm = new A011MainClassDistanceMatrixLGInverseSplit();
 			dm.createDistanceMatrix(m_databaseWD + dmWD, 
 					m_sampleSessionIDs, m_sequencesUHC, 
 					rolesW, sessionBreakers);

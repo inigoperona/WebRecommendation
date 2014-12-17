@@ -3,7 +3,7 @@ package ehupatras.webrecommendation;
 import ehupatras.webrecommendation.distmatrix.*;
 import java.util.*;
 
-public class A010MainClassDistanceMatrixEuclidean {
+public class A010MainClassDistanceMatrixLGEuclidean {
 
 	private Matrix m_matrix;
 	
