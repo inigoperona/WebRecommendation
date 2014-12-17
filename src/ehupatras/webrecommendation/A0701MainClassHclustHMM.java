@@ -1,9 +1,9 @@
 package ehupatras.webrecommendation;
 
-public class A051MainClassPAMMsaSt {
+public class A0701MainClassHclustHMM {
 
 	public static void main(String[] args) {
-
+		
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
 		
 		// take the start time of the program
@@ -15,8 +15,10 @@ public class A051MainClassPAMMsaSt {
 		param.loadHoldOut();
 		param.loadTopicInf();		
 		param.setTopicMatchWeight(0.5f);
-		param.createModelEvaluatorSeqMinMSAWseq();
-		param.runModelEvaluatorPamMS(5, "ST_w_eS1");
+		
+		
+		param.createModelEvaluatorHMM();
+		param.runModelEvaluatorHMM(5,1);
 				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation;
 
-public class A0501MainClassHclustSpadeSt {
+public class A064MainClassModularHclustSTSplit {
 
 	public static void main(String[] args) {
 		
@@ -12,15 +12,16 @@ public class A0501MainClassHclustSpadeSt {
 		// RUN
 		param.loadDatabase();
 		param.loadDM();
+		param.loadDM_split("/sequences_split.txt");
 		param.loadHoldOut();
-		param.loadTopicInf();		
+		param.loadTopicInf();
 		param.setTopicMatchWeight(0.5f);
-		param.createModelEvaluatorSeqMinSPADE();
-		param.runModelEvaluatorCSS(5, "ST_w_eS1");
-				
+		param.createModelEvaluatorSeqMinMSAWseq();
+		param.runModelEvaluatorMGST_fit(5);
+
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
-		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
+		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");		
 	}
 	
 }

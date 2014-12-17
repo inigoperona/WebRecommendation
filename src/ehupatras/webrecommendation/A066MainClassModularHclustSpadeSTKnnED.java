@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation;
 
-public class A056MainClassModularHclustSpadeSTKnnED {
+public class A066MainClassModularHclustSpadeSTKnnED {
 
 	public static void main(String[] args) {
 		

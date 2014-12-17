@@ -96,7 +96,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	public A0000ParameterControl_ehupatras(String[] args){
 		this.initializeSystemParameters();
 		if(args.length==0){
-			this.exampleParameters2();
+			this.exampleParameters();
 		} else {
 			super.readParameters(args);
 		}
@@ -157,7 +157,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		//m_dmWD = "/DM_04_edit";
 		//m_dmWD = "/DM_00_norole_dist";
 		//m_dmWD = "/DM_00_norole_dist_TopicCont";
-		m_dmWD = "/DM_04_edit_TopicCont";
+		//m_dmWD = "/DM_04_edit_TopicCont";
 		
 		m_validationWD = m_base + "/03_VALIDATION_5";
 		//m_clustWD = "/pam_DM_04_edit";
@@ -518,7 +518,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_modelevCSS = modelev;
 	}
 	
-	public void runModelEvaluatorCSS(int indLinkage, String strategyST){
+	public void runModelEvaluatorHclustSpadeST(int indLinkage, String strategyST){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
 		// Results' header
@@ -528,6 +528,45 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 			float cutth = m_cutthA[j];
 			String esperimentationStr = "agglo" + indLinkage + "_cl" + cutth;
 			// load clustering
+			String clustFile = m_validationWD + m_clustWD + "/" + esperimentationStr + ".javaData";
+			m_modelevCSS.loadClusters(clustFile);
+			// SPADE
+			for(int k=0; k<m_seqweights.length; k++){
+				float minsup = m_seqweights[k];
+				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
+				String spadeFileTxt = m_validationWD + m_profiWD + "/" + esperimentationStr2 + ".txt";
+				String spadeFileJav = m_validationWD + m_profiWD + "/" + esperimentationStr2 + ".javaData";
+				m_modelevCSS.spade(minsup, m_validationWD + m_profiWD, spadeFileTxt, spadeFileJav);
+				// build suffix tree
+				m_modelevCSS.buildST();
+		
+				// Evaluation
+				String results;
+				String resultInfo;
+				for(int ind=0; ind<m_nrecsA.length; ind++ ){
+					int nrec = m_nrecsA[ind];
+					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";
+					m_modelevCSS.setLineHeader(resultInfo + ";", evalWriter);
+					m_modelevCSS.setEsploitationParameters(1, 1000, 0);
+					results = m_modelevCSS.computeEvaluationTest(strategyST, nrec, (long)0);
+					System.out.print(resultInfo + ",");
+					System.out.print(results);
+				}
+			}
+		}
+		
+		this.closeFile(evalWriter);
+	}
+	
+	public void runModelEvaluatorPamSpadeST(String strategyST){
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+
+		// Results' header
+		System.out.print("options," + m_modelevCSS.getEvaluationHeader());
+		// Start generating and evaluating the model
+		for(int j=0; j<m_cutthA.length; j++){
+			int kparam = m_ks[j];
+			String esperimentationStr = "pam" + kparam;
 			String clustFile = m_validationWD + m_clustWD + "/" + esperimentationStr + ".javaData";
 			m_modelevCSS.loadClusters(clustFile);
 			// SPADE

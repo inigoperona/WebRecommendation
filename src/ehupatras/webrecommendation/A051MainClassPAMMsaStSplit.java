@@ -3,6 +3,7 @@ package ehupatras.webrecommendation;
 public class A051MainClassPAMMsaStSplit {
 
 	public static void main(String[] args) {
+		
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
 		
 		// take the start time of the program
