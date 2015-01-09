@@ -1,11 +1,11 @@
 package ehupatras.webrecommendation;
 
-import ehupatras.webrecommendation.structures.*;
-import ehupatras.webrecommendation.usage.preprocess.*;
-import ehupatras.webrecommendation.usage.preprocess.log.LogReader;
-import ehupatras.webrecommendation.usage.preprocess.log.LogReaderBidasoaTurismo;
+import ehupatras.webrecommendation.structures.WebAccessSequences;
+import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
+import ehupatras.webrecommendation.structures.Website;
+import ehupatras.webrecommendation.usage.preprocess.Sessioning;
 
-public class A000MainClassPreprocess {
+public class A000MainClassPreprocess30min {
 
 	public static void main(String[] args) {
 		
@@ -34,38 +34,9 @@ public class A000MainClassPreprocess {
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] PREPROCESSING.");
 		
-		
-		
-		// FILTER LOGS //
-		LogReader logreader = new LogReaderBidasoaTurismo();
-		
-		// It reads the log file and store the valid requests in [ehupatras.webrecommendation.structures.WebAccessSequences]
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start reading the log files and analyzing the URLs.");
-			String[] logfilesA = new String[1];
-			logfilesA[0] = basedirectory + logfile;
-		logreader.readLogFile(logfilesA);
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: " 
-				+ (endtime-starttime)/1000 + " seconds.");
-
-		// ensure a minimum amount of apparitions of URLs.
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start identifying frequent URLs.");
-		logreader.identifyFrequentURLs(10);
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: " 
-				+ (endtime-starttime)/1000 + " seconds.");
-		
-		// ensure that the URLs are static or it keeps interest during the time
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start identifying static URLs.");
-		logreader.identifyStaticURLs(10, 5, (float)0.75);
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: " 
-				+ (endtime-starttime)/1000 + " seconds.");
-		
-
+		// load structures
+		Website.load();
+		WebAccessSequences.loadStructure();
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
@@ -73,7 +44,7 @@ public class A000MainClassPreprocess {
 		// create sessions
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
-		ses.createSessions(10, Integer.MAX_VALUE); // maximum period of inactivity
+		ses.createSessions(30, Integer.MAX_VALUE); // maximum period of inactivity
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
@@ -154,18 +125,4 @@ public class A000MainClassPreprocess {
 		Website.save();
 	}
 	
-	public void loadPreprocess(){
-		long starttime;
-		long endtime;
-		
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start loading preprocessed data.");
-		Website.load();
-		WebAccessSequences.loadStructure();
-		WebAccessSequences.loadSequences();
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: "
-				+ (endtime-starttime)/1000 + " seconds.");
-	}
-
 }
