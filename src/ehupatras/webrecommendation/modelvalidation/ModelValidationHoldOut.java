@@ -82,4 +82,16 @@ public class ModelValidationHoldOut extends ModelValidation {
 		m_testList =       (ArrayList<Long>)slo.load(m_workdirectory + "/_holdoutTest.javaData");
 	}
 	
+	public void printHoldOut(){
+		for(int i=0; i<m_trainList.size(); i++){
+			System.out.println("train:" + m_trainList.get(i));
+		}
+		for(int i=0; i<m_validationList.size(); i++){
+			System.out.println("validation:" + m_validationList.get(i));
+		}
+		for(int i=0; i<m_testList.size(); i++){
+			System.out.println("test:" + m_testList.get(i));
+		}
+	}
+	
 }

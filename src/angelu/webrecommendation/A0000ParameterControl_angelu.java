@@ -253,6 +253,7 @@ public class A0000ParameterControl_angelu {
 		m_trainAL = honestmodelval.getTrain();
 		m_valAL   = honestmodelval.getValidation();
 		m_testAL  = honestmodelval.getTest();
+		honestmodelval.printHoldOut();
 	}
 	
 	public void loadHoldOut(){
@@ -261,6 +262,7 @@ public class A0000ParameterControl_angelu {
 		m_trainAL = honestmodelval.getTrain();
 		m_valAL   = honestmodelval.getValidation();
 		m_testAL  = honestmodelval.getTest();
+		honestmodelval.printHoldOut();
 	}
 	
 	// cross-validation
