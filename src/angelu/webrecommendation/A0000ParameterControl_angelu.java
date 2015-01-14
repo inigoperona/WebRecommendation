@@ -308,7 +308,7 @@ public class A0000ParameterControl_angelu {
 		Object[] objA = cont.loadUrlsTopic(m_preprocessingWD + m_url2topicFile, " ");
 		m_urlIDs = (ArrayList<Integer>)objA[0];
 		m_url2topic = (int[])objA[1];
-		m_difftopics = (int)objA[2];		
+		m_difftopics = (int)objA[2];
 	}
 	
 	

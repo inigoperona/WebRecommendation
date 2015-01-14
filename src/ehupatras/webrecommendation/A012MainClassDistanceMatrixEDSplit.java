@@ -28,7 +28,7 @@ public class A012MainClassDistanceMatrixEDSplit {
 	    						{ 1f, 1f, 1f},
 	    						{ 1f, 1f, 1f}};
 		param.createDM("EditDistance_Split", rolesW, 
-				"/DM_04_edit_split", sessionBreakers);
+				param.getDMdirectory(), sessionBreakers);
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

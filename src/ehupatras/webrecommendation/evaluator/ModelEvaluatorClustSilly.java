@@ -1,21 +1,21 @@
 package ehupatras.webrecommendation.evaluator;
 
-import ehupatras.clustering.ClusteringPAM;
+import java.util.ArrayList;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+import ehupatras.clustering.ClusteringPAM;
+import ehupatras.clustering.ClusteringSilly;
 
-import java.util.ArrayList;
-
-public class ModelEvaluatorClustPAM 
+public class ModelEvaluatorClustSilly 
 				extends ModelEvaluatorClust {
-
+	
 	// ATTRIBUTES
 	
-	private int m_k;	
+	private int m_k;
 	
 	// CREATOR
 	
-	public ModelEvaluatorClustPAM(
+	protected ModelEvaluatorClustSilly(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
 			Matrix dm,
@@ -53,10 +53,8 @@ public class ModelEvaluatorClustPAM
 		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
 		float[][] distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
 		
-		ClusteringPAM pam = new ClusteringPAM(m_k, distmatrix, trainDMindexes);
-		pam.getMedoidAssignment();
-		
-		return pam.getMedoidAssignment();
+		ClusteringSilly cs = new ClusteringSilly(m_k, distmatrix, trainDMindexes);
+		return cs.getClustering();
 	}
 	
 }

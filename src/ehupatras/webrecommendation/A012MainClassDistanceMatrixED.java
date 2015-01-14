@@ -27,7 +27,7 @@ public class A012MainClassDistanceMatrixED {
     							{ 0f, 0f, 0f},
     							{ 0f, 0f, 0f}};
 		param.createDM("EditDistance", rolesW, 
-				"/DM_04_edit", new int[0]);
+				param.getDMdirectory(), new int[0]);
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

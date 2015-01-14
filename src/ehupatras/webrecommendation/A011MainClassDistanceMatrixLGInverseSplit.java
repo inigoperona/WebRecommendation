@@ -27,14 +27,14 @@ public class A011MainClassDistanceMatrixLGInverseSplit {
 	    						{ 1f, 1f, 1f},
 	    						{ 1f, 1f, 1f}};
 		param.createDM("SimilarityMatrixNormalize_Split", rolesW, 
-				"/DM_00_no_role_dist_split", sessionBreakers);
+				param.getDMdirectory() + "_norole", sessionBreakers);
 		
 		// 2 roles: similar_HC
 		rolesW = new float[][]{	{ 0f,    0f,    0f},
 	    						{ 0f,    1f, 0.75f},
 	    						{ 0f, 0.75f,    1f}};
 		param.createDM("SimilarityMatrixNormalize_Split", rolesW, 
-				"/DM_04_similarHC2_dist_split", sessionBreakers);
+				param.getDMdirectory() + "_wirole", sessionBreakers);
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

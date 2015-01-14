@@ -897,4 +897,8 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		this.closeFile(evalWriter);
 	}
 	
+	public String getDMdirectory(){
+		return this.m_dmWD;
+	}
+	
 }

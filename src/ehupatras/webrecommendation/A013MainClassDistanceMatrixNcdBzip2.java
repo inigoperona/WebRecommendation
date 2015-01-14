@@ -26,7 +26,7 @@ public class A013MainClassDistanceMatrixNcdBzip2 {
 								{ 0f, 0f, 0f},
 								{ 0f, 0f, 0f}};
 		param.createDM("NCD_bzip2", rolesW, 
-						"/DM_05_ncd_bzip2", new int[0]);
+				param.getDMdirectory(), new int[0]);
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

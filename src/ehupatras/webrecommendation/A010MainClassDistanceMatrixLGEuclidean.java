@@ -25,7 +25,7 @@ public class A010MainClassDistanceMatrixLGEuclidean {
 	    						{ 1f, 1f, 1f},
 	    						{ 1f, 1f, 1f}};
 		param.createDM("SimilarityMatrixAsDataMatrix", rolesW, 
-				"/DM_00_no_role_data", new int[0]);
+				param.getDMdirectory() + "_norole", new int[0]);
 		
 		/*
 		// 3 roles: U & H & C
@@ -59,7 +59,7 @@ public class A010MainClassDistanceMatrixLGEuclidean {
 	    						{ 0f,    1f, 0.75f},
 	    						{ 0f, 0.75f,    1f}};
 		param.createDM("SimilarityMatrixAsDataMatrix", rolesW, 
-				"/DM_04_similarHC2_data", new int[0]);
+				param.getDMdirectory() + "_wirole", new int[0]);
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

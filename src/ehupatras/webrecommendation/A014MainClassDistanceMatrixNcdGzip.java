@@ -27,7 +27,7 @@ public class A014MainClassDistanceMatrixNcdGzip {
 	            				{ 0f, 0f, 0f},
 	            				{ 0f, 0f, 0f}};
 		param.createDM("NCD_gzip", rolesW, 
-				"/DM_05_ncd_gzip", new int[0]);
+				param.getDMdirectory(), new int[0]);
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
