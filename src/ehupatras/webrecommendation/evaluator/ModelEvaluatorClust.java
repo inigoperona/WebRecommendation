@@ -8,15 +8,33 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorClust.
+ */
 public abstract class ModelEvaluatorClust 
 				extends ModelEvaluator {
 
 	// ATTRIBUTES
 	
+	/** The m_clusters al. */
 	protected ArrayList<int[]> m_clustersAL;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator clust.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	protected ModelEvaluatorClust(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -32,6 +50,11 @@ public abstract class ModelEvaluatorClust
 	
 	// Clustering utils
 	
+	/**
+	 * Write clusters.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	public void writeClusters(String outfilename){
 		// Open the given file
 		BufferedWriter writer = null;
@@ -71,6 +94,12 @@ public abstract class ModelEvaluatorClust
 		}
 	}
 
+	/**
+	 * Clustering to string.
+	 *
+	 * @param indexFold the index fold
+	 * @return the string[]
+	 */
 	private String[] clusteringToString(int indexFold){
 		int[] clustersID = m_clustersAL.get(indexFold);
 		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
@@ -85,16 +114,31 @@ public abstract class ModelEvaluatorClust
 		return strA;
 	}
 	
+	/**
+	 * Save clusters.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	public void saveClusters(String outfilename){
 		SaveLoadObjects so = new SaveLoadObjects();
 		so.save(m_clustersAL, outfilename);
 	}
 	
+	/**
+	 * Load clusters.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	public void loadClusters(String outfilename){
 		SaveLoadObjects so = new SaveLoadObjects();
 		m_clustersAL = (ArrayList<int[]>)so.load(outfilename);
 	}
 	
+	/**
+	 * Gets the clusters.
+	 *
+	 * @return the clusters
+	 */
 	public ArrayList<int[]> getClusters(){
 		return m_clustersAL;
 	}

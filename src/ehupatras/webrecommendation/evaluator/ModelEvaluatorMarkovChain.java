@@ -6,16 +6,34 @@ import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorMC;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorMarkovChain.
+ */
 public class ModelEvaluatorMarkovChain 
 				extends ModelEvaluator {
 
 	// ATTRIBUTES
 	
+	/** The m_markov chain al. */
 	private ArrayList<MarkovChain> m_markovChainAL = null;
 	
 
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator markov chain.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	public ModelEvaluatorMarkovChain(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -31,6 +49,9 @@ public class ModelEvaluatorMarkovChain
 	
 	// GET TEST EVALUATOR
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.ModelEvaluator#getTestSetEvaluator(int, java.util.ArrayList)
+	 */
 	public TestSetEvaluator getTestSetEvaluator(
 			int iFold, 
 			ArrayList<String[]> testseqs){
@@ -46,6 +67,9 @@ public class ModelEvaluatorMarkovChain
 	
 	// BUILD MODEL
 	
+	/**
+	 * Builds the mc.
+	 */
 	public void buildMC(){
 		// compute markov chain for each fold
 		m_markovChainAL = new ArrayList<MarkovChain>();
@@ -54,6 +78,12 @@ public class ModelEvaluatorMarkovChain
 		}
 	}
 	
+	/**
+	 * Compute markov chain.
+	 *
+	 * @param iFold the i fold
+	 * @return the markov chain
+	 */
 	private MarkovChain computeMarkovChain(int iFold){
 		// get the train sequences from sessionIDs
 		ArrayList<Long> sessionIDs = m_trainAL.get(iFold); 
@@ -69,6 +99,12 @@ public class ModelEvaluatorMarkovChain
 		return mchain;
 	}
 	
+	/**
+	 * Gets the markov chain.
+	 *
+	 * @param ifold the ifold
+	 * @return the markov chain
+	 */
 	public MarkovChain getMarkovChain(int ifold){
 		return m_markovChainAL.get(ifold);
 	}

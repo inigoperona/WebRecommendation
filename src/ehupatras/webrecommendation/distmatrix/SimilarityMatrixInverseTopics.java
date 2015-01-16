@@ -6,9 +6,20 @@ import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010Topics;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SimilarityMatrixInverseTopics.
+ */
 public class SimilarityMatrixInverseTopics 
 				extends SimilarityMatrixInverse {
 	
+	/**
+	 * Instantiates a new similarity matrix inverse topics.
+	 *
+	 * @param names the names
+	 * @param urlsDMfile the urls d mfile
+	 * @param urlsEqualnessThreshold the urls equalness threshold
+	 */
 	public SimilarityMatrixInverseTopics(ArrayList<Long> names, String urlsDMfile, float urlsEqualnessThreshold){
 		super(names);
 		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
@@ -20,6 +31,9 @@ public class SimilarityMatrixInverseTopics
 		m_UrlsDM = (float[][])objA[1];
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverse#computeMatrix(java.util.ArrayList, float[][], boolean)
+	 */
 	public void computeMatrix(ArrayList<String[]> data,
 			float[][] roleWeights,
 			boolean isplit){
@@ -67,6 +81,11 @@ public class SimilarityMatrixInverseTopics
 		}
 	}
 	
+	/**
+	 * Sets the urls equalness threshold.
+	 *
+	 * @param urlsEqualnessThreshold the new urls equalness threshold
+	 */
 	public void setUrlsEqualnessThreshold(float urlsEqualnessThreshold){
 		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
 	}

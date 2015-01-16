@@ -5,11 +5,27 @@ import ehupatras.suffixtree.stringarray.Edge;
 import java.util.ArrayList;
 import java.util.Collections;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class EdgeBag.
+ */
 public class EdgeBag {
+    
+    /** The words. */
     private ArrayList<String> words = null;
+    
+    /** The values. */
     private ArrayList<Edge> values;
+    
+    /** The Constant BSEARCH_THRESHOLD. */
     private static final int BSEARCH_THRESHOLD = 6;
 
+    /**
+     * Put.
+     *
+     * @param c the c
+     * @param e the e
+     */
     void put(String c, Edge e) {        
         if (words == null) {
             words = new ArrayList<String>();
@@ -29,6 +45,12 @@ public class EdgeBag {
         }
     }
 
+    /**
+     * Gets the.
+     *
+     * @param c the c
+     * @return the edge
+     */
     Edge get(String c) {
         int idx = search(c);
         if (idx < 0) {
@@ -37,6 +59,12 @@ public class EdgeBag {
         return values.get(idx);
     }
 
+    /**
+     * Search.
+     *
+     * @param c the c
+     * @return the int
+     */
     private int search(String c) {
         if (words == null)
             return -1;
@@ -53,6 +81,11 @@ public class EdgeBag {
         return -1;
     }
 
+    /**
+     * Values.
+     *
+     * @return the array list
+     */
     public ArrayList<Edge> values() {
         return values == null ? new ArrayList<Edge>() : values;
     }

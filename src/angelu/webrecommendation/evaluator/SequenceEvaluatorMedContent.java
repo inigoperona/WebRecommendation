@@ -8,18 +8,51 @@ import angelu.webrecommendation.converter.URLconverterUsaCon;
 import ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluatorMed;
 import ehupatras.webrecommendation.recommender.Recommender;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequenceEvaluatorMedContent.
+ */
 public class SequenceEvaluatorMedContent 
 				extends SequenceEvaluatorMed {
 
 	// ATTRIBUTES
 	
+	/** The m_enrich strategy. */
 	private String m_enrichStrategy = "ContentsA1";
+	
+	/** The m_n ur ls. */
 	private int m_nURLs = 0;
+	
+	/** The m_ url relation matrix. */
 	private String[][] m_UrlRelationMatrix = null;
+	
+	/** The m_ url clustering dict. */
 	private HashMap<Integer,Integer> m_UrlClusteringDict = null;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new sequence evaluator med content.
+	 *
+	 * @param sequence the sequence
+	 * @param m_modePrRe the m_mode pr re
+	 * @param conv the conv
+	 * @param nURLs the n ur ls
+	 * @param urlSimilarityMatrix the url similarity matrix
+	 * @param urlSimilarityMatrix_Usage the url similarity matrix_ usage
+	 * @param urlSimilarityMatrix_Usage_max the url similarity matrix_ usage_max
+	 * @param urlSimilarityMatrix_Usage_min the url similarity matrix_ usage_min
+	 * @param medoids the medoids
+	 * @param gmedoids the gmedoids
+	 * @param recos the recos
+	 * @param isDistance the is distance
+	 * @param rolesW the roles w
+	 * @param knn the knn
+	 * @param enrichStrategy the enrich strategy
+	 * @param urlRelationMatrix the url relation matrix
+	 * @param urlClusteringDict the url clustering dict
+	 * @param noProposeURLs the no propose ur ls
+	 */
 	public SequenceEvaluatorMedContent(
 			String[] sequence,
 			int m_modePrRe,
@@ -52,6 +85,9 @@ public class SequenceEvaluatorMedContent
 	
 	// GET RECOMMENDER
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluatorMed#getRecommender()
+	 */
 	public Recommender getRecommender(){
 		Recommender recommender = null;
 		

@@ -2,40 +2,93 @@ package ehupatras.webrecommendation.sequencealignment;
 
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequenceAlignmentBacktrack.
+ */
 public abstract class SequenceAlignmentBacktrack 
 						implements SequenceAlignment {
+    
+    /** The m seq a. */
     protected String[] mSeqA;
+    
+    /** The m seq b. */
     protected String[] mSeqB;
+    
+    /** The m d. */
     protected float[][] mD;
+    
+    /** The m score. */
     protected float mScore;
+    
+    /** The m alignment seq a. */
     protected String mAlignmentSeqA = "";
+    
+    /** The m alignment seq b. */
     protected String mAlignmentSeqB = "";
+    
+    /** The m_align seq a. */
     protected String[] m_alignSeqA;
+    
+    /** The m_align seq b. */
     protected String[] m_alignSeqB;
+    
+    /** The m_gap. */
     protected String m_gap = "-";
     
     // weights of roles
+    /** The m_role w. */
     protected float[][] m_roleW = {{ 1f, 1f, 1f},  // Unimportant
     					 		   { 1f, 1f, 1f},  // Hub
     					 		   { 1f, 1f, 1f}}; // Content
 
     // to work with topic distributions
-	protected ArrayList<Integer> m_UrlIDs = null;
+	/** The m_ url i ds. */
+    protected ArrayList<Integer> m_UrlIDs = null;
 	// URL to URL distance
+	/** The m_ urls dm. */
 	protected float[][] m_UrlsDM = null;
+	
+	/** The m_ ur ls equalness th. */
 	protected float m_URLsEqualnessTh = 0.6f;
     // URL to topic
-	protected int[] m_url2topic = null;
+	/** The m_url2topic. */
+    protected int[] m_url2topic = null;
+	
+	/** The m_topicmatch. */
 	protected float m_topicmatch = 0.5f;
 	
     // Functions to get the standard sequence alignment score
     
+    /**
+     * Inits the.
+     *
+     * @param seqA the seq a
+     * @param seqB the seq b
+     */
     protected abstract void init(String[] seqA, String[] seqB);
+    
+    /**
+     * Process.
+     */
     protected abstract void process();
+    
+    /**
+     * Backtrack.
+     */
     protected abstract void backtrack();
     
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignment#getScore(java.lang.String[], java.lang.String[])
+     */
     public abstract float getScore(String[] seqA, String[] seqB);
     
+    /**
+     * Compute alignment.
+     *
+     * @param seqA the seq a
+     * @param seqB the seq b
+     */
     protected void computeAlignment(String[] seqA, String[] seqB){
     	// initialize all class attributes
     	mAlignmentSeqA = "";
@@ -53,8 +106,22 @@ public abstract class SequenceAlignmentBacktrack
     
     // Functions to get the Dimopoulos2010 string alignment variation
     
+    /**
+     * Gets the trimed aligned sequences.
+     *
+     * @param str1 the str1
+     * @param str2 the str2
+     * @return the trimed aligned sequences
+     */
     protected abstract ArrayList<String[]> getTrimedAlignedSequences(String str1, String str2);
     
+    /**
+     * Gets the alignment operations.
+     *
+     * @param seqA the seq a
+     * @param seqB the seq b
+     * @return the alignment operations
+     */
     public Float[] getAlignmentOperations(String[] seqA, String[] seqB){
     	// compute match / mismatch / gaps / spaces
     	computeAlignment(seqA,seqB);
@@ -130,6 +197,12 @@ public abstract class SequenceAlignmentBacktrack
     	return counts;
     }
     
+    /**
+     * Gets the string array representation.
+     *
+     * @param str the str
+     * @return the string array representation
+     */
     protected String[] getStringArrayRepresentation(String str){
     	int alignLen = str.length()/m_gap.length();
     	String[] seq = new String[alignLen];
@@ -140,6 +213,9 @@ public abstract class SequenceAlignmentBacktrack
     	return seq;
     }
     
+    /**
+     * Prints the matrix.
+     */
     public void printMatrix() {
         System.out.print("D =       ");
         for (int i = 0; i < mSeqB.length; i++) {
@@ -160,6 +236,9 @@ public abstract class SequenceAlignmentBacktrack
         System.out.println();
     }
     
+    /**
+     * Prints the score and alignments.
+     */
     public void printScoreAndAlignments() {
         System.out.println("Score: " + mScore);
         System.out.println("Sequence A: " + mAlignmentSeqA);
@@ -167,10 +246,20 @@ public abstract class SequenceAlignmentBacktrack
         System.out.println();
     }
 
+    /**
+     * Gets the align seq a.
+     *
+     * @return the align seq a
+     */
     public String[] getAlignSeqA(){
     	return m_alignSeqA;
     }
     
+    /**
+     * Gets the align seq b.
+     *
+     * @return the align seq b
+     */
     public String[] getAlignSeqB(){
     	return m_alignSeqB;
     }
@@ -178,6 +267,13 @@ public abstract class SequenceAlignmentBacktrack
     
     // similarity weight of two URLs
     
+    /**
+     * Weight.
+     *
+     * @param i the i
+     * @param j the j
+     * @return the int
+     */
     protected int weight(int i, int j) {
         if (mSeqA[i - 1].equals(mSeqB[j - 1])) {
                 return 1;
@@ -186,10 +282,24 @@ public abstract class SequenceAlignmentBacktrack
         }
     }
     
+    /**
+     * Weight2.
+     *
+     * @param i the i
+     * @param j the j
+     * @return the float
+     */
     protected float weight2(int i, int j) {
     	return this.equalURLs(mSeqA[i-1], mSeqB[j-1]);
     }
     
+    /**
+     * Equal ur ls.
+     *
+     * @param strA the str a
+     * @param strB the str b
+     * @return the float
+     */
     protected float equalURLs(String strA, String strB){
     	// ensure that we do not have any gap
     	if(strA.equals(m_gap) || strB.equals(m_gap)){ return -1; }
@@ -210,6 +320,13 @@ public abstract class SequenceAlignmentBacktrack
         }
     }
     
+    /**
+     * Weight3.
+     *
+     * @param strA the str a
+     * @param strB the str b
+     * @return the float
+     */
     protected float weight3(String strA, String strB) {
     	// ensure that we do not have any gap
     	if(strA.equals(m_gap) || strB.equals(m_gap)){ return -1; }
@@ -243,6 +360,13 @@ public abstract class SequenceAlignmentBacktrack
         return wrole*(1-wurl);
     }
     
+    /**
+     * Weight4.
+     *
+     * @param strA the str a
+     * @param strB the str b
+     * @return the float
+     */
     protected float weight4(String strA, String strB) {
     	// ensure that we do not have any gap
     	if(strA.equals(m_gap) || strB.equals(m_gap)){ return -1; }
@@ -292,6 +416,12 @@ public abstract class SequenceAlignmentBacktrack
         return score;
     }
     
+    /**
+     * Role2int.
+     *
+     * @param role the role
+     * @return the int
+     */
     protected int role2int(String role){
     	int roli = 0;
     	if(role.equals("U")){ roli = 0; }
@@ -300,10 +430,18 @@ public abstract class SequenceAlignmentBacktrack
     	return roli;
     }
     
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignment#setRoleWeights(float[][])
+     */
     public void setRoleWeights(float[][] roleweights){
     	m_roleW = roleweights;
     }
     
+    /**
+     * Sets the UR ls equalness th.
+     *
+     * @param urlsEqualnessThreshold the new UR ls equalness th
+     */
     public void setURLsEqualnessTh(float urlsEqualnessThreshold){
     	m_URLsEqualnessTh = urlsEqualnessThreshold;
     }

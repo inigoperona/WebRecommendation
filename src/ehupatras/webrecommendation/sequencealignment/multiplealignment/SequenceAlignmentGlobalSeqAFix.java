@@ -2,9 +2,16 @@ package ehupatras.webrecommendation.sequencealignment.multiplealignment;
 
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentGlobalNeedlemanWunsch;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequenceAlignmentGlobalSeqAFix.
+ */
 public class SequenceAlignmentGlobalSeqAFix 
 				extends SequenceAlignmentGlobalNeedlemanWunsch {
 	
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentGlobalNeedlemanWunsch#backtrack()
+     */
     protected void backtrack() {
         int i = mSeqA.length;
         int j = mSeqB.length;

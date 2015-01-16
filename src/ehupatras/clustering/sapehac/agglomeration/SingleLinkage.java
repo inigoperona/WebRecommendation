@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac.agglomeration;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The "single linkage", "minimum", "shortest distance", or "nearest neighbor" method is a graph-based approach.
  * 
@@ -20,13 +21,15 @@ package ehupatras.clustering.sapehac.agglomeration;
  * Linear, elongated clusters are formed as opposed to the more usual spherical clusters.
  * This pheonomenon is called chaining.
  * [The data analysis handbook. By Ildiko E. Frank, Roberto Todeschini]
- *
+ * 
  * This method can cause "chaining" of clusters. 
+ *
+ * @author Matthias.Hauswirth@usi.ch
  * @see http://www.stanford.edu/~maureenh/quals/html/ml/node74.html
  * 
  * The general form of the Lance-Williams matrix-update formula:
  * d[(i,j),k] = ai*d[i,k] + aj*d[j,k] + b*d[i,j] + g*|d[i,k]-d[j,k]|
- *
+ * 
  * For the "single linkage" method:
  * ai = 0.5
  * aj = 0.5
@@ -41,14 +44,19 @@ package ehupatras.clustering.sapehac.agglomeration;
  *            = d[i,j]<d[j,k]  ?  d[i,k]  :  d[j,k]
  *            = min( d[i,k] , d[j,k] )
  *            
- * @author Matthias.Hauswirth@usi.ch
  */
 public final class SingleLinkage implements AgglomerationMethod {
 
+	/* (non-Javadoc)
+	 * @see ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod#computeDissimilarity(double, double, double, int, int, int)
+	 */
 	public double computeDissimilarity(final double dik, final double djk, final double dij, final int ci, final int cj, final int ck) {
 		return Math.min(dik, djk);
 	}
 	
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
 		return "Single";
 	}

@@ -12,6 +12,7 @@ package ehupatras.clustering.sapehac.dendrogram;
 
 import java.io.Serializable;
 
+// TODO: Auto-generated Javadoc
 /**
  * A MergeNode represents an interior node in a Dendrogram.
  * It corresponds to a (non-singleton) cluster of observations.
@@ -22,14 +23,29 @@ public final class MergeNode
 					implements DendrogramNode, Serializable {
 	
 	// it requires to be serializable
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
+	/** The left. */
 	private final DendrogramNode left;
+	
+	/** The right. */
 	private final DendrogramNode right;
+	
+	/** The dissimilarity. */
 	private final double dissimilarity;
+	
+	/** The observation count. */
 	private final int observationCount;
 	
 	
+	/**
+	 * Instantiates a new merge node.
+	 *
+	 * @param left the left
+	 * @param right the right
+	 * @param dissimilarity the dissimilarity
+	 */
 	public MergeNode(final DendrogramNode left, final DendrogramNode right, final double dissimilarity) {
 		this.left = left;
 		this.right = right;
@@ -37,18 +53,32 @@ public final class MergeNode
 		observationCount = left.getObservationCount()+right.getObservationCount();
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.clustering.sapehac.dendrogram.DendrogramNode#getObservationCount()
+	 */
 	public int getObservationCount() {
 		return observationCount;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.clustering.sapehac.dendrogram.DendrogramNode#getLeft()
+	 */
 	public final DendrogramNode getLeft() {
 		return left;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.clustering.sapehac.dendrogram.DendrogramNode#getRight()
+	 */
 	public final DendrogramNode getRight() {
 		return right;
 	}
 	
+	/**
+	 * Gets the dissimilarity.
+	 *
+	 * @return the dissimilarity
+	 */
 	public final double getDissimilarity() {
 		return dissimilarity;
 	}

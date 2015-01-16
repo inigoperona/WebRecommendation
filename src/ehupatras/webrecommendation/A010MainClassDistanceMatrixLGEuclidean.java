@@ -3,10 +3,20 @@ package ehupatras.webrecommendation;
 import ehupatras.webrecommendation.distmatrix.*;
 import java.util.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A010MainClassDistanceMatrixLGEuclidean.
+ */
 public class A010MainClassDistanceMatrixLGEuclidean {
 
+	/** The m_matrix. */
 	private Matrix m_matrix;
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
@@ -70,6 +80,14 @@ public class A010MainClassDistanceMatrixLGEuclidean {
 	
 	
 	
+	/**
+	 * Creates the distance matrix.
+	 *
+	 * @param databaseWD the database wd
+	 * @param sampleSessionIDs the sample session i ds
+	 * @param sequencesUHC the sequences uhc
+	 * @param roleWeights the role weights
+	 */
 	public void createDistanceMatrix(String databaseWD,
 			ArrayList<Long> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
@@ -81,11 +99,21 @@ public class A010MainClassDistanceMatrixLGEuclidean {
 					databaseWD + "/distance_matrix.txt");
 	}
 	
+	/**
+	 * Load distance matrix.
+	 *
+	 * @param databaseWD the database wd
+	 */
 	public void loadDistanceMatrix(String databaseWD){
 		m_matrix = new SimilarityMatrixEuclidean(null);
 		m_matrix.load(databaseWD);
 	}
 	
+	/**
+	 * Gets the matrix.
+	 *
+	 * @return the matrix
+	 */
 	public Matrix getMatrix(){
 		return m_matrix;
 	}

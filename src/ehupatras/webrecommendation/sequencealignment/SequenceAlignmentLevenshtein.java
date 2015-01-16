@@ -2,26 +2,41 @@ package ehupatras.webrecommendation.sequencealignment;
 
 import java.util.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequenceAlignmentLevenshtein.
+ */
 public class SequenceAlignmentLevenshtein 
 				implements SequenceAlignment{
 	
     // weights of roles
+    /** The m_role w. */
     protected float[][] m_roleW = {{ 0f, 0f, 0f},  // Unimportant
     					 		   { 0f, 0f, 0f},  // Hub
     					 		   { 0f, 0f, 0f}}; // Content
 	
     // to work with topics
-	protected ArrayList<Integer> m_UrlIDs = null;
+	/** The m_ url i ds. */
+    protected ArrayList<Integer> m_UrlIDs = null;
 	// URL to URL distance
+	/** The m_ urls dm. */
 	protected float[][] m_UrlsDM = null;
+	
+	/** The m_ ur ls equalness th. */
 	protected float m_URLsEqualnessTh = 0.6f;
 	// URL to topic distance
+	/** The m_url2topic. */
 	protected int[] m_url2topic = null;
+	
+	/** The m_topicmatch. */
 	protected float m_topicmatch = 0.5f;
 	
     // body
 	
-	public float getScore(String[] seqA, String[] seqB) {
+	/* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignment#getScore(java.lang.String[], java.lang.String[])
+     */
+    public float getScore(String[] seqA, String[] seqB) {
 	    // i == 0
 	    float[] costs = new float[seqB.length + 1];
 	    for(int j=0; j<costs.length; j++){
@@ -41,6 +56,13 @@ public class SequenceAlignmentLevenshtein
 	    return costs[seqB.length];
 	}
 	
+	/**
+	 * Weight.
+	 *
+	 * @param strA the str a
+	 * @param strB the str b
+	 * @return the float
+	 */
 	private float weight(String strA, String strB){
 		if(strA.equals(strB)){
 			return 0;
@@ -49,6 +71,13 @@ public class SequenceAlignmentLevenshtein
 		}
 	}
 	
+    /**
+     * Weight2.
+     *
+     * @param strA the str a
+     * @param strB the str b
+     * @return the float
+     */
     protected float weight2(String strA, String strB) {
     	int len = strA.length();
     	String urlA = strA.substring(0,len-1);
@@ -65,6 +94,12 @@ public class SequenceAlignmentLevenshtein
         }
     }
     
+    /**
+     * Role2int.
+     *
+     * @param role the role
+     * @return the int
+     */
     protected int role2int(String role){
     	int roli = 0;
     	if(role.equals("U")){ roli = 0; }
@@ -73,6 +108,13 @@ public class SequenceAlignmentLevenshtein
     	return roli;
     }
 	
+    /**
+     * Weight3.
+     *
+     * @param strA the str a
+     * @param strB the str b
+     * @return the float
+     */
     protected float weight3(String strA, String strB) {
     	int len = strA.length();
     	String urlA = strA.substring(0,len-1);
@@ -106,6 +148,13 @@ public class SequenceAlignmentLevenshtein
     	return dist;
     }
     
+    /**
+     * Weight4.
+     *
+     * @param strA the str a
+     * @param strB the str b
+     * @return the float
+     */
     protected float weight4(String strA, String strB) {
     	int len = strA.length();
     	String urlA = strA.substring(0,len-1);
@@ -152,14 +201,27 @@ public class SequenceAlignmentLevenshtein
     	return dist;
     }
     
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignment#setRoleWeights(float[][])
+	 */
 	public void setRoleWeights(float[][] roleweights){
 		m_roleW = roleweights;
 	}
 	
+    /**
+     * Sets the UR ls equalness th.
+     *
+     * @param urlsEqualnessThreshold the new UR ls equalness th
+     */
     public void setURLsEqualnessTh(float urlsEqualnessThreshold){
     	m_URLsEqualnessTh = urlsEqualnessThreshold;
     }
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String [] args) {
 		
 		String[] seq1 = new String[]{"kU","iU","tU","tU","eU","nU"};

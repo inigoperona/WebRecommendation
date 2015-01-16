@@ -1,7 +1,16 @@
 package ehupatras.webrecommendation;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A041MainClassPAMSplit.
+ */
 public class A041MainClassPAMSplit {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);

@@ -16,22 +16,39 @@ import java.net.MalformedURLException;
 import java.io.IOException;
 import java.math.BigDecimal;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PreprocessContent.
+ */
 public class PreprocessContent {
 
 	// url identification
+	/** The m_formurls. */
 	private ArrayList<String> m_formurls = new ArrayList<String>();
+	
+	/** The m_urlnames. */
 	private ArrayList<String> m_urlnames = new ArrayList<String>();
+	
+	/** The m_url id. */
 	private ArrayList<Integer> m_urlID = new ArrayList<Integer>();
 	
 	// URL identification
+	/** The m_url2topic dist. */
 	private ArrayList<float[]> m_url2topicDist;
+	
+	/** The m_ ur ls dm. */
 	private float[][] m_URLsDM;
+	
+	/** The m_url2topic. */
 	private int[] m_url2topic;
 	
 	
 	
 	// SELECTING THE URLS TO DOWNLOAD //
 	
+	/**
+	 * Pickup ur ls to download.
+	 */
 	public void pickupURLsToDownload(){
 		String[] urlnames = Website.getAllFormatedUrlNames();
 		for(int i=0; i<urlnames.length; i++){
@@ -48,6 +65,9 @@ public class PreprocessContent {
 		
 	}
 	
+	/**
+	 * Prints the ur ls.
+	 */
 	public void printURLs(){
 		for(int i=0; i<m_urlnames.size(); i++){
 			String url = m_urlnames.get(i);
@@ -56,6 +76,11 @@ public class PreprocessContent {
 		}
 	}
 	
+	/**
+	 * Write ur ls.
+	 *
+	 * @param filename the filename
+	 */
 	public void writeURLs(String filename){
 		File file = new File(filename);
 		try {
@@ -75,6 +100,11 @@ public class PreprocessContent {
 		}
 	}
 	
+	/**
+	 * Read ur ls.
+	 *
+	 * @param filename the filename
+	 */
 	public void readURLs(String filename){
 		m_urlID = new ArrayList<Integer>();
 		m_formurls = new ArrayList<String>();
@@ -101,6 +131,11 @@ public class PreprocessContent {
 	
 	// READING URL - TOPIC_DISTRIBUTION FILE //
 	
+	/**
+	 * Read ur l2 topic distribution.
+	 *
+	 * @param filename the filename
+	 */
 	public void readURL2TopicDistribution(String filename){
 		// Read topic information
 		m_url2topicDist = new ArrayList<float[]>(m_formurls.size());
@@ -152,6 +187,11 @@ public class PreprocessContent {
 		Website.save();
 	}
 	
+	/**
+	 * Read ur l2 topic distribution_cont id.
+	 *
+	 * @param filename the filename
+	 */
 	public void readURL2TopicDistribution_contID(String filename){
 		// Read topic information
 		m_url2topicDist = new ArrayList<float[]>();
@@ -190,6 +230,9 @@ public class PreprocessContent {
 		}
 	}
 	
+	/**
+	 * Compute url topic similarities.
+	 */
 	public void computeUrlTopicSimilarities(){
 		int nUrl = m_formurls.size();
 		
@@ -229,6 +272,13 @@ public class PreprocessContent {
 		
 	}
 	
+	/**
+	 * Euclidean distance.
+	 *
+	 * @param v1 the v1
+	 * @param v2 the v2
+	 * @return the float
+	 */
 	private float euclideanDistance(float[] v1, float[] v2){
 		if(v1==null || v2==null){
 			// the maximum distance is 1,
@@ -246,6 +296,13 @@ public class PreprocessContent {
 		return (float)result;
 	}
 	
+	/**
+	 * Gets the distance.
+	 *
+	 * @param formalizedURL1 the formalized ur l1
+	 * @param formalizedURL2 the formalized ur l2
+	 * @return the distance
+	 */
 	private float getDistance(String formalizedURL1, String formalizedURL2){
 		int i = m_formurls.indexOf(formalizedURL1);
 		int j = m_formurls.indexOf(formalizedURL2);
@@ -256,6 +313,9 @@ public class PreprocessContent {
 		}
 	}
 	
+	/**
+	 * Prints the url dm.
+	 */
 	public void printUrlDM(){
 		int len = m_formurls.size();
 		for(int i=0; i<len; i++){
@@ -268,6 +328,11 @@ public class PreprocessContent {
 		}
 	}
 	
+	/**
+	 * Write url dm.
+	 *
+	 * @param filename the filename
+	 */
 	public void writeUrlDM(String filename){
 		File file = new File(filename);
 		try {
@@ -291,6 +356,11 @@ public class PreprocessContent {
 		}
 	}
 	
+	/**
+	 * Compute ur l2topic.
+	 *
+	 * @param minsupport the minsupport
+	 */
 	public void computeURL2topic(float minsupport){
 		m_url2topic = new int[m_url2topicDist.size()];
 		for(int i=0; i<m_url2topicDist.size(); i++){
@@ -314,6 +384,9 @@ public class PreprocessContent {
 		}
 	}
 	
+	/**
+	 * Prints the ur l2topic.
+	 */
 	public void printURL2topic(){
 		for(int i=0; i<m_url2topic.length; i++){
 			System.out.println(	m_urlID.get(i) + " " +
@@ -321,6 +394,11 @@ public class PreprocessContent {
 		}
 	}
 	
+	/**
+	 * Write ur l2topic.
+	 *
+	 * @param filename the filename
+	 */
 	public void writeURL2topic(String filename){
 		File file = new File(filename);
 		try {
@@ -342,6 +420,11 @@ public class PreprocessContent {
 		}
 	}
 	
+	/**
+	 * Write ur l2topic_cont id.
+	 *
+	 * @param filename the filename
+	 */
 	public void writeURL2topic_contID(String filename){
 		File file = new File(filename);
 		try {
@@ -363,6 +446,12 @@ public class PreprocessContent {
 	
 	
 	
+	/**
+	 * Download url.
+	 *
+	 * @param readURL the read url
+	 * @param writeURL the write url
+	 */
 	private void downloadURL(String readURL, String writeURL){
 		try {
 			// get URL content

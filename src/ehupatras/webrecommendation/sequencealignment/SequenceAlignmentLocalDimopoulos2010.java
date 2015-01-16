@@ -3,9 +3,16 @@ package ehupatras.webrecommendation.sequencealignment;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequenceAlignmentLocalDimopoulos2010.
+ */
 public class SequenceAlignmentLocalDimopoulos2010 
 				extends SequenceAlignmentLocalSmithWaterman {
 
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLocalSmithWaterman#getScore(java.lang.String[], java.lang.String[])
+     */
     public float getScore(String[] seqA, String[] seqB){
     	// constants
     	float wm  = 1f;
@@ -26,6 +33,9 @@ public class SequenceAlignmentLocalDimopoulos2010
     	return score;
     }
 	
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLocalSmithWaterman#getTrimedAlignedSequences(java.lang.String, java.lang.String)
+     */
     protected ArrayList<String[]> getTrimedAlignedSequences(String str1, String str2){
     	String[] seq1 = getStringArrayRepresentation(str1);
     	String[] seq2 = getStringArrayRepresentation(str2);

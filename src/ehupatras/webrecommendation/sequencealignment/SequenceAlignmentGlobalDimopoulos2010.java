@@ -2,9 +2,16 @@ package ehupatras.webrecommendation.sequencealignment;
 
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequenceAlignmentGlobalDimopoulos2010.
+ */
 public class SequenceAlignmentGlobalDimopoulos2010 
 				extends SequenceAlignmentGlobalNeedlemanWunsch {
 
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentGlobalNeedlemanWunsch#getScore(java.lang.String[], java.lang.String[])
+     */
     public float getScore(String[] seqA, String[] seqB){
     	// constants
     	float wm  = 1f;
@@ -25,6 +32,9 @@ public class SequenceAlignmentGlobalDimopoulos2010
     	return score;
     }
     
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentGlobalNeedlemanWunsch#getTrimedAlignedSequences(java.lang.String, java.lang.String)
+     */
     protected ArrayList<String[]> getTrimedAlignedSequences(String str1, String str2){
     	String[] seq1 = getStringArrayRepresentation(str1);
     	String[] seq2 = getStringArrayRepresentation(str2);

@@ -8,35 +8,69 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequencesStructure.
+ */
 public class SequencesStructure {
 
 	// The data of the class
 	// WRITE
+	/** The m_seqs w. */
 	private ArrayList<String[]> m_seqsW = new ArrayList<String[]>();
+	
+	/** The m_seq sups w. */
 	private ArrayList<Integer> m_seqSupsW = new ArrayList<Integer>();
+	
+	/** The m_inds alw. */
 	private ArrayList<int[]> m_indsALW = new ArrayList<int[]>();
 	// READ
+	/** The m_seqs r. */
 	private ArrayList<String[]> m_seqsR = null;
+	
+	/** The m_seq sups r. */
 	private ArrayList<Integer> m_seqSupsR = null;
+	
+	/** The m_inds alr. */
 	private ArrayList<int[]> m_indsALR = null;
 
 	// information to write in disk
+	/** The m_workdir. */
 	private String m_workdir = "/home/burdinadar";
+	
+	/** The m_basenamejavadata. */
 	private String m_basenamejavadata = "spade.javaData";
 	
 	// indexes
+	/** The m_max loaded sequences. */
 	private int m_maxLoadedSequences = 1000;
 	// indexes related with saving modulus
+	/** The m_written modulus. */
 	private int m_writtenModulus = 0;
+	
+	/** The m_last modulus last index. */
 	private int m_lastModulusLastIndex = 0;
 	// indexes related with reading modulus
+	/** The m_actual modulus in memory. */
 	private int m_actualModulusInMemory = -1;
 	
 	
+	/**
+	 * Instantiates a new sequences structure.
+	 *
+	 * @param workdir the workdir
+	 */
 	public SequencesStructure(String workdir){
 		m_workdir = workdir;
 	}
 	
+	/**
+	 * Adds the.
+	 *
+	 * @param sequence the sequence
+	 * @param support the support
+	 * @param indexes the indexes
+	 */
 	public void add(String[] sequence, int support, int[] indexes){
 		// we are in the last modulus, but it is full
 		if(m_lastModulusLastIndex>=m_maxLoadedSequences){
@@ -57,6 +91,12 @@ public class SequencesStructure {
 		m_lastModulusLastIndex++;		
 	}
 	
+	/**
+	 * Gets the sequence.
+	 *
+	 * @param i the i
+	 * @return the sequence
+	 */
 	public Object[] getSequence(int i) {
 		// compute modulus indexes
 		int imodulus = i / m_maxLoadedSequences;
@@ -83,10 +123,20 @@ public class SequencesStructure {
 		return objA;
 	}
 	
+	/**
+	 * Size.
+	 *
+	 * @return the int
+	 */
 	public int size() {
 		return m_writtenModulus*m_maxLoadedSequences + m_lastModulusLastIndex;
 	}
 	
+	/**
+	 * Gets the sequences.
+	 *
+	 * @return the sequences
+	 */
 	public ArrayList<String[]> getSequences(){
 		ArrayList<String[]> seqs = new ArrayList<String[]>();
 		for(int i=0; i<this.size(); i++){
@@ -97,6 +147,11 @@ public class SequencesStructure {
 		return seqs;
 	}
 	
+	/**
+	 * Gets the sequences supports.
+	 *
+	 * @return the sequences supports
+	 */
 	public ArrayList<Integer> getSequencesSupports(){
 		ArrayList<Integer> sups = new ArrayList<Integer>();
 		for(int i=0; i<this.size(); i++){
@@ -111,6 +166,11 @@ public class SequencesStructure {
 	
 	// SAVE AND LOAD THE SPADE SEQUENCES //
 	
+	/**
+	 * Save modulus.
+	 *
+	 * @param mod the mod
+	 */
 	private void saveModulus(int mod){
 		String outputfilename = "_" + mod + "_" + m_basenamejavadata;
 		// open the file
@@ -151,6 +211,11 @@ public class SequencesStructure {
 		}
 	}
 	
+	/**
+	 * Load modulus.
+	 *
+	 * @param mod the mod
+	 */
 	private void loadModulus(int mod){
 		String outputfilename = "_" + mod + "_" + m_basenamejavadata;
 		FileInputStream fis = null;

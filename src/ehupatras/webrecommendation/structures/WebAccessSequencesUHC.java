@@ -9,9 +9,18 @@ import java.util.Hashtable;
 import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.request.Request;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class WebAccessSequencesUHC.
+ */
 public class WebAccessSequencesUHC 
 				extends WebAccessSequences {
 
+	/**
+	 * Write sequences instanciated.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	public static void writeSequencesInstanciated(String outfilename){
 		// Open the given file
 		BufferedWriter writer = null;
@@ -58,6 +67,12 @@ public class WebAccessSequencesUHC
 		}
 	}
 	
+	/**
+	 * Gets the sequences instanciated.
+	 *
+	 * @param sessionIDs the session i ds
+	 * @return the sequences instanciated
+	 */
 	public static ArrayList<String[]> getSequencesInstanciated(ArrayList<Integer> sessionIDs){
 		// First ordered all requests we need
 		ArrayList<Integer> requestIDs = new ArrayList<Integer>();

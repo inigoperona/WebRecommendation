@@ -4,13 +4,33 @@ import java.util.ArrayList;
 
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelValidationCrossValidation.
+ */
 public class ModelValidationCrossValidation extends ModelValidation {
 
+	/** The m_train list. */
 	private ArrayList<ArrayList<Long>> m_trainList = new ArrayList<ArrayList<Long>>();
+	
+	/** The m_validation list. */
 	private ArrayList<ArrayList<Long>> m_validationList = new ArrayList<ArrayList<Long>>();
+	
+	/** The m_test list. */
 	private ArrayList<ArrayList<Long>> m_testList = new ArrayList<ArrayList<Long>>();
+	
+	/** The m_n fold. */
 	private int m_nFold = 10;
 	
+	/**
+	 * Prepare data.
+	 *
+	 * @param sessionsID the sessions id
+	 * @param nftrain the nftrain
+	 * @param nfvalidation the nfvalidation
+	 * @param nftest the nftest
+	 * @param nFold the n fold
+	 */
 	public void prepareData(ArrayList<Long> sessionsID, int nftrain, int nfvalidation, int nftest, int nFold){
 		m_nFold = nFold;
 		
@@ -77,23 +97,49 @@ public class ModelValidationCrossValidation extends ModelValidation {
 	}
 
 
+	/**
+	 * Gets the next fold.
+	 *
+	 * @param ifold the ifold
+	 * @return the next fold
+	 */
 	private int getNextFold(int ifold){
 		int nextfold = (ifold + 1) % m_nFold;
 		return nextfold;
 	}
 	
+	/**
+	 * Gets the train.
+	 *
+	 * @return the train
+	 */
 	public ArrayList<ArrayList<Long>> getTrain(){
 		return m_trainList;
 	}
 	
+	/**
+	 * Gets the validation.
+	 *
+	 * @return the validation
+	 */
 	public ArrayList<ArrayList<Long>> getValidation(){
 		return m_validationList;
 	} 
 	
+	/**
+	 * Gets the test.
+	 *
+	 * @return the test
+	 */
 	public ArrayList<ArrayList<Long>> getTest(){
 		return m_testList;
 	}
 	
+	/**
+	 * Save.
+	 *
+	 * @param workdirectory the workdirectory
+	 */
 	public void save(String workdirectory){
 		m_workdirectory = workdirectory;
 		SaveLoadObjects slo = new SaveLoadObjects();
@@ -102,6 +148,11 @@ public class ModelValidationCrossValidation extends ModelValidation {
 		slo.save(m_testList,       m_workdirectory + "/_crossvalTest.javaData");
 	}
 	
+	/**
+	 * Load.
+	 *
+	 * @param workdirectory the workdirectory
+	 */
 	public void load(String workdirectory){
 		m_workdirectory = workdirectory;
 		SaveLoadObjects slo = new SaveLoadObjects();
@@ -110,6 +161,11 @@ public class ModelValidationCrossValidation extends ModelValidation {
 		m_testList =       (ArrayList<ArrayList<Long>>)slo.load(m_workdirectory + "/_crossvalTest.javaData");
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		ModelValidationCrossValidation mvcv = new ModelValidationCrossValidation();
 		System.out.println("0: " + mvcv.getNextFold(0));

@@ -5,9 +5,20 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshteinTopics;
 import ehupatras.webrecommendation.A100MainClassAddContent;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DistanceMatrixEditTopics.
+ */
 public class DistanceMatrixEditTopics 
 				extends DistanceMatrixEdit {
 	
+	/**
+	 * Instantiates a new distance matrix edit topics.
+	 *
+	 * @param names the names
+	 * @param urlsDMfile the urls d mfile
+	 * @param urlsEqualnessThreshold the urls equalness threshold
+	 */
 	public DistanceMatrixEditTopics(ArrayList<Long> names, String urlsDMfile, float urlsEqualnessThreshold){
 		super(names);
 		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
@@ -19,6 +30,9 @@ public class DistanceMatrixEditTopics
 		m_UrlsDM = (float[][])objA[1];
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.distmatrix.DistanceMatrixEdit#computeMatrix(java.util.ArrayList, float[][], boolean)
+	 */
 	public void computeMatrix(ArrayList<String[]> data,
 							float[][] roleWeights,
 							boolean isplit){

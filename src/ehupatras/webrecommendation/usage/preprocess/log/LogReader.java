@@ -5,12 +5,26 @@ import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.request.Request;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class LogReader.
+ */
 public abstract class LogReader {
 	
+	/**
+	 * Read log file.
+	 *
+	 * @param logfilenamesA the logfilenames a
+	 */
 	public abstract void readLogFile(String[] logfilenamesA);
 	
 	// Identify the URLs that appears more than some threshold
 	// for example, URLs which appear at least 10 times
+	/**
+	 * Identify frequent ur ls.
+	 *
+	 * @param minimunFrequency the minimun frequency
+	 */
 	public void identifyFrequentURLs(int minimunFrequency){
 		// Identify frequent URLs
 		int nFrequent = 0;
@@ -30,6 +44,13 @@ public abstract class LogReader {
 	// Identify the URLs that appears during all the time
 	// for example, those URLs have to appear 10 times in every 10 days period.
 	// the information provide this URLs are not volatiles
+	/**
+	 * Identify static ur ls.
+	 *
+	 * @param days the days
+	 * @param times the times
+	 * @param minimunPeriodFrequencyProportion the minimun period frequency proportion
+	 */
 	public void identifyStaticURLs(int days, int times, float minimunPeriodFrequencyProportion){
 		// compute the maximum URL-index value
 		int maxurlid = Website.getMaximumUrlID();

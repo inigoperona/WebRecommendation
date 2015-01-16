@@ -5,45 +5,82 @@ import ehupatras.webrecommendation.structures.request.Request;
 import java.io.*;
 import java.util.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class WebAccessSequences.
+ */
 public class WebAccessSequences {
 
 	// The directory where we are working
+	/** The m_workdirectory. */
 	private static String m_workdirectory = ".";
 	
 	// The requests container
 	// 1
+	/** The m_filterlog. */
 	private static ArrayList<Request> m_filterlog = new ArrayList<Request>();
+	
+	/** The m_actualloadedmodulus. */
 	private static int m_actualloadedmodulus = 0;
 	// 2
+	/** The m_filterlog2. */
 	private static ArrayList<Request> m_filterlog2 = new ArrayList<Request>();
+	
+	/** The m_actualloadedmodulus2. */
 	private static int m_actualloadedmodulus2 = 0;
 	
 	// Auxiliar ArrayList<Request> to read faster
+	/** The m_n memory. */
 	private static int m_nMemory = 6;
+	
+	/** The m_filterlog s. */
 	private static ArrayList<ArrayList<Request>> m_filterlogS;
+	
+	/** The m_actualloadedmodulus s. */
 	private static ArrayList<Integer> m_actualloadedmodulusS;
 	
 	// Necessary attributes when we are adding requests
 	//private static int m_maxloadrequests = 10000;
+	/** The m_maxloadrequests. */
 	private static int m_maxloadrequests = 100000;
 	// 1
+	/** The m_actualloadedrequest. */
 	private static int m_actualloadedrequest = 0;
+	
+	/** The m_lastloadedrequest. */
 	private static int m_lastloadedrequest = 0;
+	
+	/** The m_writedmodulus. */
 	private static int m_writedmodulus = 0;
+	
+	/** The m_basenamejavadata. */
 	private static String m_basenamejavadata = "requests.javaData";
 	// 2
+	/** The m_actualloadedrequest2. */
 	private static int m_actualloadedrequest2 = 0;
+	
+	/** The m_lastloadedrequest2. */
 	private static int m_lastloadedrequest2 = 0;
+	
+	/** The m_writedmodulus2. */
 	private static int m_writedmodulus2 = 0;
+	
+	/** The m_basenamejavadata2. */
 	private static String m_basenamejavadata2 = "orderedrequests.javaData";
 	
 	// order of requests; long[0]: requests_index; long[1]: requests timestamp
+	/** The m_ordered requests. */
 	private static ArrayList<long[]> m_orderedRequests = new ArrayList<long[]>(); 
 	
 	// The sequences we are going to use to link prediction
 	// sessionID1: req1, req2, req3
+	/** The m_sequences. */
 	public static Hashtable<Integer,ArrayList<Integer>> m_sequences = new Hashtable<Integer,ArrayList<Integer>>();
+	
+	/** The m_validness of sequences. */
 	public static Hashtable<Integer,Float> m_validnessOfSequences = new Hashtable<Integer,Float>();
+	
+	/** The m_seqfilename. */
 	private static String m_seqfilename = "_sequences.javaData";
 	
 	
@@ -59,10 +96,21 @@ public class WebAccessSequences {
 	
 	
 	// to have more control in modulus change
+	/**
+	 * Gets the actual modulus.
+	 *
+	 * @return the actual modulus
+	 */
 	public static int getActualModulus(){
 		return m_actualloadedmodulus;
 	}
 	
+	/**
+	 * Gets the modulus after get request.
+	 *
+	 * @param i the i
+	 * @return the modulus after get request
+	 */
 	public static int getModulusAfterGetRequest(int i) {
 		int imodulus = i / m_maxloadrequests;
 		return imodulus;
@@ -72,10 +120,21 @@ public class WebAccessSequences {
 	
 	// Requests related functions
 	
+	/**
+	 * Adds the request.
+	 *
+	 * @param req the req
+	 */
 	public static void addRequest(Request req) {
 		WebAccessSequences.addRequest(req, m_basenamejavadata);
 	}
 	
+	/**
+	 * Adds the request.
+	 *
+	 * @param req the req
+	 * @param basenamejavadata the basenamejavadata
+	 */
 	public static void addRequest(Request req, String basenamejavadata) {
 		// load the last modulus to add if we do not have already loaded
 		if(m_writedmodulus>m_actualloadedmodulus){
@@ -109,6 +168,12 @@ public class WebAccessSequences {
 		m_lastloadedrequest = m_actualloadedrequest;
 	}
 	
+	/**
+	 * Adds the request2.
+	 *
+	 * @param req the req
+	 * @param basenamejavadata the basenamejavadata
+	 */
 	public static void addRequest2(Request req, String basenamejavadata) {
 		// load the last modulus to add if we do not have already loaded
 		if(m_writedmodulus2>m_actualloadedmodulus2){
@@ -142,10 +207,23 @@ public class WebAccessSequences {
 		m_lastloadedrequest2 = m_actualloadedrequest2;
 	}
 	
+	/**
+	 * Gets the request.
+	 *
+	 * @param i the i
+	 * @return the request
+	 */
 	public static Request getRequest(int i) {
 		return WebAccessSequences.getRequest(i, m_basenamejavadata);
 	}
 	
+	/**
+	 * Gets the request.
+	 *
+	 * @param i the i
+	 * @param basenamejavadata the basenamejavadata
+	 * @return the request
+	 */
 	public static Request getRequest(int i, String basenamejavadata) {
 		int imodulus = i / m_maxloadrequests;
 		int iindex = i % m_maxloadrequests;
@@ -173,10 +251,23 @@ public class WebAccessSequences {
 		return m_filterlog.get(iindex);
 	}
 	
+	/**
+	 * Replace request.
+	 *
+	 * @param i the i
+	 * @param req the req
+	 */
 	public static void replaceRequest(int i, Request req){
 		WebAccessSequences.replaceRequest(i, req, m_basenamejavadata);
 	}
 	
+	/**
+	 * Replace request.
+	 *
+	 * @param i the i
+	 * @param req the req
+	 * @param basenamejavadata the basenamejavadata
+	 */
 	public static void replaceRequest(int i, Request req, String basenamejavadata){
 		int imodulus = i / m_maxloadrequests;
 		int iindex = i % m_maxloadrequests;
@@ -203,6 +294,14 @@ public class WebAccessSequences {
 		}
 	}
 	
+	/**
+	 * Loadmodulus.
+	 *
+	 * @param mod the mod
+	 * @param basenamejavadata the basenamejavadata
+	 * @param isAddReq the is add req
+	 * @param modeOrd the mode ord
+	 */
 	private static void loadmodulus(int mod, String basenamejavadata, boolean isAddReq, boolean modeOrd){
 		if(!isAddReq){
 		// save the loaded modulus in the memory
@@ -284,6 +383,13 @@ public class WebAccessSequences {
 		}
 	}
 	
+	/**
+	 * Savemodulus.
+	 *
+	 * @param mod the mod
+	 * @param filterlog the filterlog
+	 * @param basenamejavadata the basenamejavadata
+	 */
 	private static void savemodulus(int mod, ArrayList<Request> filterlog, String basenamejavadata){
 		if(mod!=-1){
 		
@@ -322,10 +428,20 @@ public class WebAccessSequences {
 		} // end if
 	}
 	
+	/**
+	 * Filteredlogsize.
+	 *
+	 * @return the int
+	 */
 	public static int filteredlogsize() {
 		return m_writedmodulus*m_maxloadrequests + m_lastloadedrequest;
 	}
 	
+	/**
+	 * Write filtered log.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	public static void writeFilteredLog(String outfilename){
 		// Open the given file
 		BufferedWriter writer = null;
@@ -364,6 +480,11 @@ public class WebAccessSequences {
 		}
 	}
 	
+	/**
+	 * Write sequences index.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	public static void writeSequencesIndex(String outfilename){
 		// order the keys
 		ArrayList<Integer> keysOrd = getSequencesIDs();
@@ -411,6 +532,12 @@ public class WebAccessSequences {
 		
 	}
 	
+	/**
+	 * Order hashtable keys.
+	 *
+	 * @param keys the keys
+	 * @return the array list
+	 */
 	public static ArrayList<Integer> orderHashtableKeys(Enumeration<Integer> keys){
 		// order the keys
 		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
@@ -428,15 +555,28 @@ public class WebAccessSequences {
 		return keysOrd;
 	}
 	
+	/**
+	 * Gets the sequences i ds.
+	 *
+	 * @return the sequences i ds
+	 */
 	public static ArrayList<Integer> getSequencesIDs(){
 		ArrayList<Integer> keysOrd = orderHashtableKeys(m_sequences.keys());
 		return keysOrd;
 	}
 	
+	/**
+	 * Sets the work directory.
+	 *
+	 * @param workdirectory the new work directory
+	 */
 	public static void setWorkDirectory(String workdirectory){
 		m_workdirectory = workdirectory;
 	}
 	
+	/**
+	 * Save sequences.
+	 */
 	public static void saveSequences(){
 		String outfile = m_workdirectory + "/" + m_seqfilename;
 		
@@ -475,6 +615,9 @@ public class WebAccessSequences {
 		}
 	}
 	
+	/**
+	 * Load sequences.
+	 */
 	public static void loadSequences(){
 		String outputfilename = m_workdirectory + "/" + m_seqfilename;
 		
@@ -512,11 +655,19 @@ public class WebAccessSequences {
 		}
 	}
 	
+	/**
+	 * Load structure.
+	 *
+	 * @param basenamejavadata the basenamejavadata
+	 */
 	public static void loadStructure(String basenamejavadata){
 		m_basenamejavadata = basenamejavadata;
 		WebAccessSequences.loadStructure();
 	}
 	
+	/**
+	 * Load structure.
+	 */
 	public static void loadStructure(){
 		int i=0;
 		m_writedmodulus = 0;
@@ -537,6 +688,9 @@ public class WebAccessSequences {
 		}
 	}
 	
+	/**
+	 * Save structure.
+	 */
 	public static void saveStructure(){
 		// save all modulus in memory
 		for(int i=0; i<m_nMemory; i++){
@@ -563,6 +717,9 @@ public class WebAccessSequences {
 		}
 	}
 	
+	/**
+	 * Save structure2.
+	 */
 	public static void saveStructure2(){
 		// save all modulus
 		for(int i=0; i<=m_writedmodulus2; i++){
@@ -578,6 +735,9 @@ public class WebAccessSequences {
 		}
 	}
 	
+	/**
+	 * Reset modulus.
+	 */
 	private static void resetModulus(){
 		// reset all modulus
 		for(int i=0; i<m_nMemory; i++){
@@ -595,6 +755,11 @@ public class WebAccessSequences {
 	}
 	
 	
+	/**
+	 * Write validness.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	public static void writeValidness(String outfilename){
 		// order the keys
 		ArrayList<Integer> keysOrd = getSequencesIDs();
@@ -639,6 +804,9 @@ public class WebAccessSequences {
 	}
 	
 	
+	/**
+	 * Order requests.
+	 */
 	public static void orderRequests(){
 		WebAccessSequences.saveStructure();
 		WebAccessSequences.orderRequestsInd();
@@ -654,6 +822,9 @@ public class WebAccessSequences {
 		WebAccessSequences.resetModulus();
 	}
 	
+	/**
+	 * Order requests ind.
+	 */
 	private static void orderRequestsInd(){
 		m_orderedRequests = new ArrayList<long[]>();
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){

@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac.agglomeration;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The "average", "group average", "unweighted average", or 
  * "Unweighted Pair Group Method using Arithmetic averages (UPGMA)",
@@ -39,10 +40,16 @@ package ehupatras.clustering.sapehac.agglomeration;
  */
 public final class AverageLinkage implements AgglomerationMethod {
 
+    /* (non-Javadoc)
+     * @see ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod#computeDissimilarity(double, double, double, int, int, int)
+     */
     public double computeDissimilarity(final double dik, final double djk, final double dij, final int ci, final int cj, final int ck) {
         return (ci*dik+cj*djk)/(ci+cj);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return "Average";
     }

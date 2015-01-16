@@ -6,15 +6,33 @@ import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
 
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorClustPAM.
+ */
 public class ModelEvaluatorClustPAM 
 				extends ModelEvaluatorClust {
 
 	// ATTRIBUTES
 	
+	/** The m_k. */
 	private int m_k;	
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator clust pam.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	public ModelEvaluatorClustPAM(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -30,6 +48,9 @@ public class ModelEvaluatorClustPAM
 
 	// FUNCTIONS
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.ModelEvaluator#getTestSetEvaluator(int, java.util.ArrayList)
+	 */
 	public TestSetEvaluator getTestSetEvaluator(
 			int iFold, 
 			ArrayList<String[]> testseqs){
@@ -38,6 +59,11 @@ public class ModelEvaluatorClustPAM
 	
 	// BUILD MODEL
 	
+	/**
+	 * Builds the pam.
+	 *
+	 * @param k the k
+	 */
 	public void buildPAM(int k){
 		m_k = k;
 		
@@ -48,6 +74,12 @@ public class ModelEvaluatorClustPAM
 		}
 	}
 	
+	/**
+	 * Clustering pam.
+	 *
+	 * @param indexFold the index fold
+	 * @return the int[]
+	 */
 	private int[] clusteringPAM(int indexFold){
 		ArrayList<Long> trainnames = m_trainAL.get(indexFold);
 		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);

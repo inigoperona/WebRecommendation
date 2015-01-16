@@ -8,8 +8,18 @@ import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.content.preprocess.PreprocessContent;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A100MainClassAddContent.
+ */
 public class A100MainClassAddContent {
 	
+    /**
+     * Load urls dm.
+     *
+     * @param urlsDMfile the urls d mfile
+     * @return the object[]
+     */
     public Object[] loadUrlsDM(String urlsDMfile){
     	// load the distance matrix of URL's similarity
     	ArrayList<Integer> urlIDs = new ArrayList<Integer>();
@@ -49,6 +59,13 @@ public class A100MainClassAddContent {
 		return objA;
     }
 	
+    /**
+     * Load urls topic.
+     *
+     * @param urlsTopicfile the urls topicfile
+     * @param sep the sep
+     * @return the object[]
+     */
     public Object[] loadUrlsTopic(String urlsTopicfile, String sep){
     	// count different topics there are
     	ArrayList<Integer> topicIDs = new ArrayList<Integer>();
@@ -92,6 +109,9 @@ public class A100MainClassAddContent {
     }
 	
     
+    /**
+     * Url to topic.
+     */
     private void urlToTopic(){
 		// Parameter control
 		String base = "convert_UrlIDs_content2usage/angelu";
@@ -134,6 +154,9 @@ public class A100MainClassAddContent {
 		pc.writeURL2topic_contID(base + outfileUrl2topic);
     }
     
+    /**
+     * Old program.
+     */
     private void oldProgram(){
 		// Parameter control
 		String base = "convert_UrlIDs_content2usage/angelu";
@@ -192,6 +215,11 @@ public class A100MainClassAddContent {
 		pc.writeURL2topic(contentWD + outfileUrl2topic);
     }
     
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String args[]){
 		
 		// take the start time of the program

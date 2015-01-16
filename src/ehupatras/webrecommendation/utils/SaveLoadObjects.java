@@ -7,8 +7,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SaveLoadObjects.
+ */
 public class SaveLoadObjects {
 
+	/**
+	 * Save.
+	 *
+	 * @param obj the obj
+	 * @param output the output
+	 */
 	public void save(Object obj, String output){
 		// Write to disk with FileOutputStream
 		FileOutputStream f_out = null;
@@ -45,6 +55,12 @@ public class SaveLoadObjects {
 		}
 	}
 	
+	/**
+	 * Load.
+	 *
+	 * @param outputfilename the outputfilename
+	 * @return the object
+	 */
 	public Object load(String outputfilename){
 		Object obj = null;
 		

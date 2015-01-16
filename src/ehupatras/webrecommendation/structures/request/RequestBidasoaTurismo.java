@@ -4,14 +4,33 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import ehupatras.webrecommendation.structures.page.Page;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RequestBidasoaTurismo.
+ */
 public class RequestBidasoaTurismo 
 				extends RequestAbstract {
 
 	// The Serializable classes needs it 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
 	
 	// CREATOR
+	/**
+	 * Instantiates a new request bidasoa turismo.
+	 *
+	 * @param ip the ip
+	 * @param ipID the ip id
+	 * @param time the time
+	 * @param method the method
+	 * @param page the page
+	 * @param protocol the protocol
+	 * @param status the status
+	 * @param reqsize the reqsize
+	 * @param reference the reference
+	 * @param useragent the useragent
+	 */
 	public RequestBidasoaTurismo(String ip, int ipID, String time, 
 			String method, Page page, String protocol,
 			int status, String reqsize, String reference, String useragent){
@@ -20,6 +39,9 @@ public class RequestBidasoaTurismo
 	
 	
 
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.structures.request.RequestAbstract#getTime(java.lang.String)
+	 */
 	protected Calendar getTime(String time){
 		String time2 = time.substring(2, time.length()-1);
 		String[] time2A = time2.split(" ");

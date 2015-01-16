@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * HierarchicalAgglomerativeClusterer.cluster() takes a ClusteringBuilder as its argument,
  * calling its merge() method whenever it merges two clusters.

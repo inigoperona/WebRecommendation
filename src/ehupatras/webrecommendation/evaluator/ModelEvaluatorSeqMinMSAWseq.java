@@ -10,15 +10,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorSeqMinMSAWseq.
+ */
 public class ModelEvaluatorSeqMinMSAWseq
 				extends ModelEvaluatorSeqMin {
 
 	// ATTRIBUTES
 
+	/** The m_msa al. */
 	private ArrayList<ArrayList<String[][]>> m_msaAL;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator seq min msa wseq.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	public ModelEvaluatorSeqMinMSAWseq(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -34,12 +52,25 @@ public class ModelEvaluatorSeqMinMSAWseq
 	
 	// BUILD MODEL
 	
+	/**
+	 * Msa.
+	 *
+	 * @param msaFileTxt the msa file txt
+	 * @param msaFileJavaData the msa file java data
+	 */
 	public void msa(String msaFileTxt, String msaFileJavaData){
 		this.clustersSequenceAlignment();
 		this.writeAlignments(msaFileTxt);
 		this.saveAlignments(msaFileJavaData);
 	}
 	
+	/**
+	 * Wseq.
+	 *
+	 * @param minsupport the minsupport
+	 * @param minSeqsFileTxt the min seqs file txt
+	 * @param minSeqsFileJavaData the min seqs file java data
+	 */
 	public void wseq(float minsupport, String minSeqsFileTxt, String minSeqsFileJavaData){
 		m_minsupport = minsupport;
 		this.extractWeightedSequences();
@@ -50,6 +81,9 @@ public class ModelEvaluatorSeqMinMSAWseq
 	
 	// MULTIPLE SEQUENCE ALIGNMENT //
 	
+	/**
+	 * Clusters sequence alignment.
+	 */
 	private void clustersSequenceAlignment(){
 		// Multiple Sequence Alignment for each fold
 		m_msaAL = new ArrayList<ArrayList<String[][]>>();
@@ -58,6 +92,12 @@ public class ModelEvaluatorSeqMinMSAWseq
 		}
 	}
 	
+	/**
+	 * Msa.
+	 *
+	 * @param indexFold the index fold
+	 * @return the array list
+	 */
 	private ArrayList<String[][]> msa(int indexFold){
 		// Web Access Sequences (WAS)
 		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
@@ -90,6 +130,11 @@ public class ModelEvaluatorSeqMinMSAWseq
 		return multAlignsList;
 	}
 	
+	/**
+	 * Write alignments.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	private void writeAlignments(String outfilename){
 		// Open the given file
 		BufferedWriter writer = null;
@@ -129,6 +174,12 @@ public class ModelEvaluatorSeqMinMSAWseq
 		}
 	}
 	
+	/**
+	 * Alignment to string.
+	 *
+	 * @param indexFold the index fold
+	 * @return the string[]
+	 */
 	private String[] alignmentToString(int indexFold){
 		ArrayList<String[][]> mAligns = m_msaAL.get(indexFold);
 		int[] clustersID = m_clustersAL.get(indexFold);
@@ -157,11 +208,21 @@ public class ModelEvaluatorSeqMinMSAWseq
 		return strA;
 	}
 	
+	/**
+	 * Save alignments.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	private void saveAlignments(String outfilename){
 		SaveLoadObjects so = new SaveLoadObjects();
 		so.save(m_msaAL, outfilename);
 	}
 	
+	/**
+	 * Load alignments.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	private void loadAlignments(String outfilename){
 		SaveLoadObjects so = new SaveLoadObjects();
 		m_msaAL = (ArrayList<ArrayList<String[][]>>)so.load(outfilename);
@@ -172,6 +233,9 @@ public class ModelEvaluatorSeqMinMSAWseq
 	
 	// WEIGHTED SEQUENCES //
 	
+	/**
+	 * Extract weighted sequences.
+	 */
 	private void extractWeightedSequences(){
 		// Extract Weighted Sequences for each fold
 		m_minedSeqs = new ArrayList<ArrayList<String[]>>();
@@ -180,6 +244,12 @@ public class ModelEvaluatorSeqMinMSAWseq
 		}
 	}
 	
+	/**
+	 * Extract weighted sequences fold.
+	 *
+	 * @param indexFold the index fold
+	 * @return the array list
+	 */
 	private ArrayList<String[]> extractWeightedSequencesFold(int indexFold){
 		ArrayList<String[]> seqList = new ArrayList<String[]>();
 		ArrayList<String[][]> alignseqs = m_msaAL.get(indexFold);

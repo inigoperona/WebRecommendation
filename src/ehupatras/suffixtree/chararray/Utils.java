@@ -3,11 +3,15 @@
 import java.util.HashSet;
 import java.util.Set;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Utils.
+ */
 public class Utils {
     
     /**
-     * Normalize an input string
-     * 
+     * Normalize an input string.
+     *
      * @param in the input string to normalize
      * @return <tt>in</tt> all lower-case, without any non alphanumeric character
      */
@@ -26,7 +30,8 @@ public class Utils {
     /**
      * Computes the set of all the substrings contained within the <tt>str</tt>
      * 
-     * It is fairly inefficient, but it is used just in tests ;)
+     * It is fairly inefficient, but it is used just in tests ;).
+     *
      * @param str the string to compute substrings of
      * @return the set of all possible substrings of str
      */
@@ -43,6 +48,12 @@ public class Utils {
         return ret;
     }
     
+    /**
+     * Gets the ident.
+     *
+     * @param cnt the cnt
+     * @return the ident
+     */
     public static String getIdent(int cnt){
     	String r="";
     	for (int i=0;i<cnt;i++){
@@ -51,6 +62,12 @@ public class Utils {
     	return r;
     }
     
+    /**
+     * Shorten name.
+     *
+     * @param node the node
+     * @return the string
+     */
     public static String shortenName(String node){
     	return node.replace("ehupatras.suffixtree.Node", "");
     }

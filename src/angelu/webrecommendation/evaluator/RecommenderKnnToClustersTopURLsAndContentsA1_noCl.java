@@ -5,11 +5,30 @@ import java.util.HashMap;
 import angelu.webrecommendation.converter.URLconverterUsaCon;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RecommenderKnnToClustersTopURLsAndContentsA1_noCl.
+ */
 public class RecommenderKnnToClustersTopURLsAndContentsA1_noCl
 				extends RecommenderKnnToClustersTopURLsAndContents {
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new recommender knn to clusters top ur ls and contents a1_no cl.
+	 *
+	 * @param medoids the medoids
+	 * @param globalMedoids the global medoids
+	 * @param recosForEachMedoid the recos for each medoid
+	 * @param isDistance the is distance
+	 * @param rolesW the roles w
+	 * @param nURLs the n ur ls
+	 * @param urlSimilarityMatrix the url similarity matrix
+	 * @param urlRelationMatrix the url relation matrix
+	 * @param urlClusteringDict the url clustering dict
+	 * @param conv the conv
+	 * @param noProposeURLs the no propose ur ls
+	 */
 	public RecommenderKnnToClustersTopURLsAndContentsA1_noCl(
 			ArrayList<String[]> medoids,
 			int[] globalMedoids,
@@ -31,10 +50,20 @@ public class RecommenderKnnToClustersTopURLsAndContentsA1_noCl
 	
 	// FUNCTIONS
 	
+	/* (non-Javadoc)
+	 * @see angelu.webrecommendation.evaluator.RecommenderKnnToClustersTopURLsAndContents#applyEnrichment(int[], int[])
+	 */
 	public ArrayList<Integer> applyEnrichment(int[] url, int[] urlDone){
 		return this.a1_Proposamena(url, urlDone);
 	}
 	
+	/**
+	 * A1_ proposamena.
+	 *
+	 * @param url the url
+	 * @param urlDone the url done
+	 * @return the array list
+	 */
 	private ArrayList<Integer> a1_Proposamena(int[] url, int[] urlDone){ 
 		ArrayList<Integer> recomendations= new ArrayList<Integer>();
 		int[] nearestURL;

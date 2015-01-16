@@ -2,15 +2,25 @@ package ehupatras.webrecommendation.sequencealignment;
 
 import java.util.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequenceAlignmentLocalSmithWaterman.
+ */
 public class SequenceAlignmentLocalSmithWaterman
 				extends SequenceAlignmentBacktrack
 				implements SequenceAlignment{
     
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentBacktrack#getScore(java.lang.String[], java.lang.String[])
+     */
     public float getScore(String[] seqA, String[] seqB){
     	computeAlignment(seqA,seqB);
         return (float)mScore;
     }
 	
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentBacktrack#init(java.lang.String[], java.lang.String[])
+     */
     protected void init(String[] seqA, String[] seqB) {
             mSeqA = seqA;
             mSeqB = seqB;
@@ -23,6 +33,9 @@ public class SequenceAlignmentLocalSmithWaterman
             }
     }
    
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentBacktrack#process()
+     */
     protected void process() {
             for (int i = 1; i <= mSeqA.length; i++) {
                     for (int j = 1; j <= mSeqB.length; j++) {
@@ -34,6 +47,9 @@ public class SequenceAlignmentLocalSmithWaterman
             }
     }
    
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentBacktrack#backtrack()
+     */
     protected void backtrack() {
             int i = 1;
             int j = 1;
@@ -100,6 +116,9 @@ public class SequenceAlignmentLocalSmithWaterman
             mAlignmentSeqB = new StringBuffer(mAlignmentSeqB).reverse().toString();
     }
     
+    /* (non-Javadoc)
+     * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentBacktrack#getTrimedAlignedSequences(java.lang.String, java.lang.String)
+     */
     protected ArrayList<String[]> getTrimedAlignedSequences(String str1, String str2){
     	String[] seq1 = getStringArrayRepresentation(str1);
     	String[] seq2 = getStringArrayRepresentation(str2);
@@ -109,6 +128,11 @@ public class SequenceAlignmentLocalSmithWaterman
     	return trimmedseqs;
     }
     
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String [] args) {              
             //String[] seqB = { "A", "C", "G", "A" };
             //String[] seqA = { "T", "C", "C", "G" };

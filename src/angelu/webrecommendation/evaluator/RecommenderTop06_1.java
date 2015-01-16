@@ -3,13 +3,27 @@ package angelu.webrecommendation.evaluator;
 import java.util.ArrayList;
 import ehupatras.webrecommendation.recommender.RecommenderKnnToClustersTopURLs;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RecommenderTop06_1.
+ */
 public class RecommenderTop06_1 
 				extends RecommenderKnnToClustersTopURLs {
 
+	/** The m_left zeros len. */
 	protected int m_leftZerosLen = 6;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new recommender top06_1.
+	 *
+	 * @param medoids the medoids
+	 * @param globalMedoids the global medoids
+	 * @param recosForEachMedoid the recos for each medoid
+	 * @param isDistance the is distance
+	 * @param rolesW the roles w
+	 */
 	public RecommenderTop06_1(
 			ArrayList<String[]> medoids,
 			int[] globalMedoids,
@@ -22,6 +36,9 @@ public class RecommenderTop06_1
 	
 	// FUNCTIONS
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.RecommenderKnnToClustersTopURLs#getNextpossibleSteps(int)
+	 */
 	protected ArrayList<String> getNextpossibleSteps(int nRecos){
 		ArrayList<String> recosFinal = new ArrayList<String>();
 		String urlStr;

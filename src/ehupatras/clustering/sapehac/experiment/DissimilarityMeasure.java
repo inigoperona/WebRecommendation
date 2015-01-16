@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac.experiment;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * Computes the dissimilarity between two observations in an experiment.
  * 
@@ -18,6 +19,14 @@ package ehupatras.clustering.sapehac.experiment;
  */
 public interface DissimilarityMeasure {
 
+    /**
+     * Compute dissimilarity.
+     *
+     * @param experiment the experiment
+     * @param observation1 the observation1
+     * @param observation2 the observation2
+     * @return the double
+     */
     public double computeDissimilarity(Experiment experiment, int observation1, int observation2);
 
 }

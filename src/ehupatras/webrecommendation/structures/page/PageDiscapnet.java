@@ -2,18 +2,31 @@ package ehupatras.webrecommendation.structures.page;
 
 import java.text.Normalizer;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PageDiscapnet.
+ */
 public class PageDiscapnet 
 				extends PageAbstract {
 	
 	// To implement serializable needs this
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	
 	// CREATOR
+	/**
+	 * Instantiates a new page discapnet.
+	 *
+	 * @param urlname the urlname
+	 */
 	public PageDiscapnet(String urlname){
 		super(urlname);
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.structures.page.PageAbstract#isValid()
+	 */
 	protected void isValid(){
 		// default is true
 		m_isvalid = true;
@@ -46,6 +59,9 @@ public class PageDiscapnet
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.structures.page.PageAbstract#ishtml()
+	 */
 	protected void ishtml(){
 		// default
 		m_ishtml = false;
@@ -59,6 +75,9 @@ public class PageDiscapnet
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.structures.page.PageAbstract#cleanURL()
+	 */
 	protected void cleanURL(){
 		String urlname2 = m_urlname.toLowerCase();
 		m_language = "es"; // default
@@ -257,6 +276,12 @@ public class PageDiscapnet
 		
 	}
 	
+	/**
+	 * Removes the tildes.
+	 *
+	 * @param input the input
+	 * @return the string
+	 */
 	private String removeTildes(String input) {
 	    String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
 	    //String noTildes1 = normalized.replaceAll("[^\\p{ASCII}]", "");
@@ -264,6 +289,9 @@ public class PageDiscapnet
 	    return noTildes2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.structures.page.PageAbstract#getIsSuitableToLinkPrediction()
+	 */
 	public boolean getIsSuitableToLinkPrediction(){
 		// !m_labelByHand.equals("index") we want index URLs in the sequences
 		// because its alignment give us information.

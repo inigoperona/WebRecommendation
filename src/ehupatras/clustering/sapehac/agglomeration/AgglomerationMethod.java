@@ -11,13 +11,14 @@
 package ehupatras.clustering.sapehac.agglomeration;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * An AgglomerationMethod represents the Lance-Williams dissimilarity update formula
  * used for hierarchical agglomerative clustering.
  * 
  * The general form of the Lance-Williams matrix-update formula:
  * d[(i,j),k] = ai*d[i,k] + aj*d[j,k] + b*d[i,j] + g*|d[i,k]-d[j,k]|
- *
+ * 
  * Parameters ai, aj, b, and g are defined differently for different methods:
  * 
  * Method          ai                   aj                   b                          g
@@ -34,11 +35,10 @@ package ehupatras.clustering.sapehac.agglomeration;
  * 
  * (ci, cj, ck are cluster cardinalities)
  *
+ * @author Matthias.Hauswirth@usi.ch
  * @see http://www.mathworks.com/help/toolbox/stats/linkage.html
  * @see http://www.stanford.edu/~maureenh/quals/html/ml/node73.html
  * @see [The data analysis handbook. By Ildiko E. Frank, Roberto Todeschini. Pages 152-155]
- * 
- * @author Matthias.Hauswirth@usi.ch
  */
 public interface AgglomerationMethod {
 	

@@ -4,10 +4,20 @@ import java.util.ArrayList;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverse;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A011MainClassDistanceMatrixLGInverseSplit.
+ */
 public class A011MainClassDistanceMatrixLGInverseSplit {
 	
+	/** The m_matrix. */
 	private Matrix m_matrix;
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
@@ -46,6 +56,15 @@ public class A011MainClassDistanceMatrixLGInverseSplit {
 	
 	
 	
+	/**
+	 * Creates the distance matrix.
+	 *
+	 * @param databaseWD the database wd
+	 * @param sampleSessionIDs the sample session i ds
+	 * @param sequencesUHC the sequences uhc
+	 * @param roleWeights the role weights
+	 * @param starters the starters
+	 */
 	public void createDistanceMatrix(String databaseWD,
 			ArrayList<Long> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
@@ -69,11 +88,21 @@ public class A011MainClassDistanceMatrixLGInverseSplit {
 		m_matrix.save(databaseWD);
 	}
 	
+	/**
+	 * Load distance matrix.
+	 *
+	 * @param databaseWD the database wd
+	 */
 	public void loadDistanceMatrix(String databaseWD){
 		m_matrix = new SimilarityMatrixInverse(null);
 		m_matrix.load(databaseWD);
 	}
 	
+	/**
+	 * Gets the matrix.
+	 *
+	 * @return the matrix
+	 */
 	public Matrix getMatrix(){
 		return m_matrix;
 	}

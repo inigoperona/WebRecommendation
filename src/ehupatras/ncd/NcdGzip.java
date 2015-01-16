@@ -4,12 +4,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class NcdGzip.
+ */
 public class NcdGzip extends NCD {
 
+	/**
+	 * Instantiates a new ncd gzip.
+	 *
+	 * @param nbytes the nbytes
+	 */
 	public NcdGzip(int nbytes){
 		super(nbytes);
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.ncd.NCD#compress(int[])
+	 */
 	protected int[] compress(int[] intA){
 		// save the original size in bytes of intA
 		int origLen = 0;

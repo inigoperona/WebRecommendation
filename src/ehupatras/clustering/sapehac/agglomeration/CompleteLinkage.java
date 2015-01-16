@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac.agglomeration;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The "complete", "maximum", "clique", 
  * "furthest neighbor", or "furthest distance" method is a graph-based approach.
@@ -23,11 +24,13 @@ package ehupatras.clustering.sapehac.agglomeration;
  * 
  * This method tends to produce compact clusters. Outliers are given more weight with this method.
  * It is generally a good choice if the clusters are far apart in feature space, but not good if the data are noisy.
+ *
+ * @author Matthias.Hauswirth@usi.ch
  * @see http://www.stanford.edu/~maureenh/quals/html/ml/node75.html
  *  
  * The general form of the Lance-Williams matrix-update formula:
  * d[(i,j),k] = ai*d[i,k] + aj*d[j,k] + b*d[i,j] + g*|d[i,k]-d[j,k]|
- *
+ * 
  * For the "single linkage" method:
  * ai = 0.5
  * aj = 0.5
@@ -42,14 +45,19 @@ package ehupatras.clustering.sapehac.agglomeration;
  *            = d[i,j]<d[j,k]  ?  d[j,k]  :  d[i,k]
  *            = max( d[i,k] , d[j,k] )
  *            
- * @author Matthias.Hauswirth@usi.ch
  */
 public final class CompleteLinkage implements AgglomerationMethod {
 
+    /* (non-Javadoc)
+     * @see ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod#computeDissimilarity(double, double, double, int, int, int)
+     */
     public double computeDissimilarity(final double dik, final double djk, final double dij, final int ci, final int cj, final int ck) {
         return Math.max(dik, djk);
     }
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return "Complete";
     }

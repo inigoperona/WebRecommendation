@@ -15,57 +15,122 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A0000ParameterControl_angelu.
+ */
 public class A0000ParameterControl_angelu {
 
+	/** The m_base. */
 	protected String m_base;
 	
 	// preprocess
+	/** The m_preprocessing wd. */
 	protected String m_preprocessingWD;
+	
+	/** The m_logfile. */
 	protected String m_logfile;
 	
 	// content
 	// usageID
+	/** The m_url2topic file. */
 	protected String m_url2topicFile;
+	
+	/** The m_url2url_ dm. */
 	protected String m_url2url_DM;
 	// contentID
+	/** The m_url similarity matrix. */
 	protected String m_urlSimilarityMatrix;
+	
+	/** The m_url relation matrix. */
 	protected String m_urlRelationMatrix;
+	
+	/** The m_cluster partition file. */
 	protected String m_clusterPartitionFile;
+	
+	/** The m_usage2content file. */
 	protected String m_usage2contentFile;
 	// structures usageID
+	/** The m_url i ds. */
 	protected ArrayList<Integer> m_urlIDs;
+	
+	/** The m_url2topic. */
 	protected int[] m_url2topic;
+	
+	/** The m_difftopics. */
 	protected int m_difftopics;
 	
 	// database
+	/** The m_database wd. */
 	protected String m_databaseWD;
+	
+	/** The m_dm wd. */
 	protected String m_dmWD;
+	
+	/** The m_sample session i ds. */
 	protected ArrayList<Long> m_sampleSessionIDs;
+	
+	/** The m_sequences uhc. */
 	protected ArrayList<String[]> m_sequencesUHC;
+	
+	/** The m_matrix. */
 	protected Matrix m_matrix;
+	
+	/** The m_sample session i ds_split. */
 	protected ArrayList<Long> m_sampleSessionIDs_split = null;
+	
+	/** The m_sequences uh c_split. */
 	protected ArrayList<String[]> m_sequencesUHC_split = null;
 	
 	// holdout / cross-validation
+	/** The m_n fold. */
 	protected int m_nFold = 10;
+	
+	/** The m_ptrain. */
 	protected int m_ptrain = 7;
+	
+	/** The m_pval. */
 	protected int m_pval = 2;
+	
+	/** The m_ptest. */
 	protected int m_ptest = 1;
+	
+	/** The m_train al. */
 	protected ArrayList<ArrayList<Long>> m_trainAL;
+	
+	/** The m_val al. */
 	protected ArrayList<ArrayList<Long>> m_valAL;
+	
+	/** The m_test al. */
 	protected ArrayList<ArrayList<Long>> m_testAL;
 	
 	// validation
+	/** The m_validation wd. */
 	protected String m_validationWD;
+	
+	/** The m_clust wd. */
 	protected String m_clustWD;
+	
+	/** The m_profi wd. */
 	protected String m_profiWD;
+	
+	/** The m_eval file. */
 	protected String m_evalFile;
+	
+	/** The m_no propose urls. */
 	protected ArrayList<Integer> m_noProposeUrls = new ArrayList<Integer>();
+	
+	/** The m_mode pr re. */
 	protected int m_modePrRe;
 	
 	// Model Evaluator
+	/** The m_modelev p. */
 	protected ModelEvaluatorClustPAM m_modelevP = null;
+	
+	/** The m_modelev m. */
 	protected ModelEvaluatorMedoids m_modelevM = null;
+	
+	/** The m_modelev mc. */
 	protected ModelEvaluatorMedoidsContent m_modelevMC = null;
 	
 	
@@ -73,39 +138,55 @@ public class A0000ParameterControl_angelu {
 	
 	// PAM: k
 	//int[] m_ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
+	/** The m_ks. */
 	protected int[] m_ks = {150};
 	
 	// SPADE: minimum support
 	//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
 	//float[] seqweights = {0.01f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.40f, 0.50f};
 	//float[] seqweights = {0.15f, 0.20f, 0.25f, 0.30f};
+	/** The m_seqweights. */
 	protected float[] m_seqweights = {0.20f};
 	
 	// Weights among roles
+	/** The m_roles w. */
 	protected float[][] m_rolesW = {{ 0f, 0f, 0f},
   									{ 0f, 0f, 0f},
   									{ 0f, 0f, 0f}};
 	
 	// F-measure: beta
+	/** The m_beta. */
 	protected float m_beta = 1f;
 	
 	// Navigation stages to analyze
+	/** The m_confusion points. */
 	protected float[] m_confusionPoints = {0.25f,0.50f,0.75f};
 	
 	// topic match
+	/** The m_topicmatch. */
 	protected float m_topicmatch = 1f;
 	
 	// number of recommendations
+	/** The m_nrecs a. */
 	protected int[] m_nrecsA = new int[]{4};
 	
 	//////////////////////////////////
 	
 	
 	// CREATOR
+	/**
+	 * Instantiates a new a0000 parameter control_angelu.
+	 */
 	public A0000ParameterControl_angelu(){
 		this.exampleParameters();
 		this.initializeStructures();
 	}
+	
+	/**
+	 * Instantiates a new a0000 parameter control_angelu.
+	 *
+	 * @param args the args
+	 */
 	public A0000ParameterControl_angelu(String[] args){
 		if(args.length==0){
 			this.exampleParameters();
@@ -114,6 +195,10 @@ public class A0000ParameterControl_angelu {
 		}
 		this.initializeStructures();
 	}
+	
+	/**
+	 * Initialize structures.
+	 */
 	protected void initializeStructures(){
 		WebAccessSequencesUHC.setWorkDirectory(m_preprocessingWD);
 		Website.setWorkDirectory(m_preprocessingWD);
@@ -123,6 +208,11 @@ public class A0000ParameterControl_angelu {
 	
 	// functions
 
+	/**
+	 * Read parameters.
+	 *
+	 * @param args the args
+	 */
 	protected void readParameters(String[] args){
 		
 		m_preprocessingWD = args[0];
@@ -160,6 +250,9 @@ public class A0000ParameterControl_angelu {
 		m_modePrRe = Integer.valueOf(modePrReStr);
 	}
 	
+	/**
+	 * Example parameters.
+	 */
 	public void exampleParameters(){
 		m_base = "experiments_angelu_wr_2";
 		
@@ -201,11 +294,17 @@ public class A0000ParameterControl_angelu {
 	
 	// preprocess
 	
+	/**
+	 * Preprocess logs.
+	 */
 	public void preprocessLogs(){
 		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		preprocess.preprocessLogs(m_preprocessingWD, m_logfile);
 	}
 	
+	/**
+	 * Load logs.
+	 */
 	public void loadLogs(){
 		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		preprocess.loadPreprocess();
@@ -213,6 +312,9 @@ public class A0000ParameterControl_angelu {
 	
 	// database
 	
+	/**
+	 * Creates the database.
+	 */
 	public void createDatabase(){
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		database.createDatabase(m_databaseWD);
@@ -220,6 +322,9 @@ public class A0000ParameterControl_angelu {
 		m_sequencesUHC = database.getInstantiatedSequences();
 	}
 	
+	/**
+	 * Load database.
+	 */
 	public void loadDatabase(){
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		database.loadDatabase(m_databaseWD);
@@ -229,6 +334,9 @@ public class A0000ParameterControl_angelu {
 	
 	// distance matrix
 	
+	/**
+	 * Creates the dm.
+	 */
 	public void createDM(){
 		this.loadDatabase();
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
@@ -237,6 +345,9 @@ public class A0000ParameterControl_angelu {
 				m_rolesW);
 	}
 	
+	/**
+	 * Load dm.
+	 */
 	public void loadDM(){
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
 		dm.loadDistanceMatrix(m_databaseWD + m_dmWD);
@@ -246,6 +357,9 @@ public class A0000ParameterControl_angelu {
 	
 	// hold-out
 	
+	/**
+	 * Creates the hold out.
+	 */
 	public void createHoldOut(){
 		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
 		honestmodelval.prepareData(m_sampleSessionIDs, m_ptrain*10, m_pval*10, m_ptest*10);
@@ -256,6 +370,9 @@ public class A0000ParameterControl_angelu {
 		honestmodelval.printHoldOut();
 	}
 	
+	/**
+	 * Load hold out.
+	 */
 	public void loadHoldOut(){
 		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
 		honestmodelval.load(m_validationWD);
@@ -267,6 +384,9 @@ public class A0000ParameterControl_angelu {
 	
 	// cross-validation
 	
+	/**
+	 * Creates the cross validation.
+	 */
 	public void createCrossValidation(){
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		honestmodelval.prepareData(m_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
@@ -276,6 +396,9 @@ public class A0000ParameterControl_angelu {
 		m_testAL  = honestmodelval.getTest();
 	}
 	
+	/**
+	 * Load hold out_cv.
+	 */
 	public void loadHoldOut_cv(){
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		honestmodelval.load(m_validationWD);
@@ -293,6 +416,9 @@ public class A0000ParameterControl_angelu {
 		m_testAL.add(testALaux.get(0));
 	}
 	
+	/**
+	 * Load cross validation.
+	 */
 	public void loadCrossValidation(){
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		honestmodelval.load(m_validationWD);
@@ -303,6 +429,9 @@ public class A0000ParameterControl_angelu {
 
 	// URL to Topic information
 	
+	/**
+	 * Load topic inf.
+	 */
 	public void loadTopicInf(){
 		A100MainClassAddContent cont = new A100MainClassAddContent();
 		Object[] objA = cont.loadUrlsTopic(m_preprocessingWD + m_url2topicFile, " ");
@@ -316,6 +445,9 @@ public class A0000ParameterControl_angelu {
 	
 	// ModelEvaluatorClustPAM: DM+PAM
 	
+	/**
+	 * Creates the model evaluator clust pam.
+	 */
 	public void createModelEvaluatorClustPAM(){
 		ModelEvaluatorClustPAM modelev = 
 				new ModelEvaluatorClustPAM(
@@ -332,6 +464,9 @@ public class A0000ParameterControl_angelu {
 		m_modelevP = modelev;
 	}
 	
+	/**
+	 * Run model evaluator p.
+	 */
 	public void runModelEvaluatorP(){
 		for(int j=0; j<m_ks.length; j++){ // for each height
 			int k = m_ks[j];
@@ -346,6 +481,9 @@ public class A0000ParameterControl_angelu {
 	
 	// ModelEvaluatorMedoids
 	
+	/**
+	 * Creates the model evaluator medoids.
+	 */
 	public void createModelEvaluatorMedoids(){
 		ModelEvaluatorMedoids modelev = 
 				new ModelEvaluatorMedoids(
@@ -363,6 +501,9 @@ public class A0000ParameterControl_angelu {
 		m_modelevM = modelev;
 	}	
 
+	/**
+	 * Run model evaluator m_pam.
+	 */
 	public void runModelEvaluatorM_pam(){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -414,6 +555,9 @@ public class A0000ParameterControl_angelu {
 	
 	// ModelEvaluatorMedoidsContent
 	
+	/**
+	 * Creates the model evaluator medoids content.
+	 */
 	public void createModelEvaluatorMedoidsContent(){
 		ModelEvaluatorMedoidsContent modelev = 
 				new ModelEvaluatorMedoidsContent(
@@ -431,6 +575,11 @@ public class A0000ParameterControl_angelu {
 		m_modelevMC = modelev;
 	}
 
+	/**
+	 * Run model evaluator mc.
+	 *
+	 * @param recommender the recommender
+	 */
 	public void runModelEvaluatorMC(String recommender){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 		
@@ -487,6 +636,12 @@ public class A0000ParameterControl_angelu {
 	
 	// utilities
 	
+	/**
+	 * Open file.
+	 *
+	 * @param filename the filename
+	 * @return the buffered writer
+	 */
 	protected BufferedWriter openFile(String filename){
 		// open the file in which we save the evaluation process
 		BufferedWriter evalWriter = null;
@@ -501,6 +656,11 @@ public class A0000ParameterControl_angelu {
 		return evalWriter;
 	}
 	
+	/**
+	 * Close file.
+	 *
+	 * @param writer the writer
+	 */
 	protected void closeFile(BufferedWriter writer){
 		// close the file in which we save the evaluation process
 		try{
@@ -517,6 +677,11 @@ public class A0000ParameterControl_angelu {
 	
 	// change parameters
 	
+	/**
+	 * Sets the topic match weight.
+	 *
+	 * @param topicMatchWeight the new topic match weight
+	 */
 	public void setTopicMatchWeight(float topicMatchWeight){
 		m_topicmatch = topicMatchWeight;
 	}

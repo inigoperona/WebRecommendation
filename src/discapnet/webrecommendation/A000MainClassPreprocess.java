@@ -13,8 +13,18 @@ import ehupatras.webrecommendation.usage.preprocess.Sessioning;
 import ehupatras.webrecommendation.usage.preprocess.log.LogReader;
 import ehupatras.webrecommendation.usage.preprocess.log.LogReaderDiscapnet;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A000MainClassPreprocess.
+ */
 public class A000MainClassPreprocess {
 
+	/**
+	 * Preprocess logs.
+	 *
+	 * @param basedirectory the basedirectory
+	 * @param logFilesIndex the log files index
+	 */
 	public void preprocessLogs(String basedirectory, String logFilesIndex){
 		long starttime;
 		long endtime;
@@ -150,6 +160,9 @@ public class A000MainClassPreprocess {
 		Website.save();
 	}
 	
+	/**
+	 * Load preprocess.
+	 */
 	public void loadPreprocess(){
 		long starttime;
 		long endtime;
@@ -165,6 +178,13 @@ public class A000MainClassPreprocess {
 	}
 	
 	
+	/**
+	 * Gets the log files.
+	 *
+	 * @param basedirectory the basedirectory
+	 * @param logFilesIndex the log files index
+	 * @return the log files
+	 */
 	public String[] getLogFiles(String basedirectory, String logFilesIndex){
 		ArrayList<String> logFilesAL = new ArrayList<String>();
 		
@@ -219,6 +239,11 @@ public class A000MainClassPreprocess {
 	}
 	
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		// Parameter control
 		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";

@@ -14,21 +14,43 @@ import ehupatras.webrecommendation.evaluator.ModelEvaluatorModularSpadeST;
 import angelu.webrecommendation.A0000ParameterControl_angelu;
 import angelu.webrecommendation.A012MainClassDistanceMatrixED;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A0000ParameterControl_ehupatras.
+ */
 public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angelu {
 
 	// Model Evaluator
+	/** The m_modelev mc. */
 	protected ModelEvaluatorMarkovChain m_modelevMC = null;
+	
+	/** The m_modelev stg. */
 	protected ModelEvaluatorSuffixTreeGlobal m_modelevSTG = null;
+	
+	/** The m_modelev h. */
 	protected ModelEvaluatorClustHclust m_modelevH = null;
+	
+	/** The m_modelev cms. */
 	protected ModelEvaluatorSeqMinMSAWseq m_modelevCMS = null;
+	
+	/** The m_modelev css. */
 	protected ModelEvaluatorSeqMinSPADE m_modelevCSS = null;
+	
+	/** The m_modelev mgst. */
 	protected ModelEvaluatorModularGST m_modelevMGST = null;
+	
+	/** The m_modelev m sp st. */
 	protected ModelEvaluatorModularSpadeST m_modelevMSpST = null;
+	
+	/** The m_modelev hmm. */
 	protected ModelEvaluatorHMM m_modelevHMM = null;
 	
 	
 	// SYSTEM PARAMETERS //
 	
+	/**
+	 * Initialize system parameters.
+	 */
 	public void initializeSystemParameters(){
 		// hold-out
 		m_nFold = 10;
@@ -64,12 +86,16 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	}
 	
 	// DB with topics
+	/** The m_urls equalness threshold. */
 	protected float m_urlsEqualnessThreshold = 0.5f;
 	
 	// Hclust: cutthA
 	//float[] cutthA = {0.1f, 0.2f, 0.4f, 0.6f, 0.8f};
 	//float[] cutthA = {4f, 10f, 15f, 20f, 25f};
+	/** The m_cutth a. */
 	protected float[] m_cutthA = {4f, 10f, 15f};
+	
+	/** The m_linkages. */
 	protected String[] m_linkages = 
 		{"ehupatras.clustering.sapehac.agglomeration.AverageLinkage",
 		 "ehupatras.clustering.sapehac.agglomeration.CentroidLinkage",
@@ -80,6 +106,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	
 	// Modular
+	/** The m_knn a. */
 	protected int[] m_knnA = {1,2,5,10};
 	
 	//////////////////////////////////
@@ -88,11 +115,20 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new a0000 parameter control_ehupatras.
+	 */
 	public A0000ParameterControl_ehupatras(){
 		this.exampleParameters();
 		this.initializeSystemParameters();
 		super.initializeStructures();
 	}
+	
+	/**
+	 * Instantiates a new a0000 parameter control_ehupatras.
+	 *
+	 * @param args the args
+	 */
 	public A0000ParameterControl_ehupatras(String[] args){
 		this.initializeSystemParameters();
 		if(args.length==0){
@@ -107,6 +143,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// FUNCTIONS
 	
+	/**
+	 * Example parameters2.
+	 */
 	public void exampleParameters2(){
 		m_base = "experiments_ehupatras";
 		
@@ -139,6 +178,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_modePrRe = 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see angelu.webrecommendation.A0000ParameterControl_angelu#exampleParameters()
+	 */
 	public void exampleParameters(){
 		m_base = "experiments_ehupatras_2";
 		
@@ -176,6 +218,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// preprocessing
 	
+	/* (non-Javadoc)
+	 * @see angelu.webrecommendation.A0000ParameterControl_angelu#preprocessLogs()
+	 */
 	public void preprocessLogs(){
 		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		preprocess.preprocessLogs(m_preprocessingWD, m_logfile);
@@ -183,6 +228,14 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// distance matrix
 	
+	/**
+	 * Creates the dm.
+	 *
+	 * @param strategyNormalize the strategy normalize
+	 * @param rolesW the roles w
+	 * @param dmWD the dm wd
+	 * @param sessionBreakers the session breakers
+	 */
 	public void createDM(String strategyNormalize, float[][] rolesW, 
 			String dmWD, int[] sessionBreakers){
 		this.loadDatabase();
@@ -250,6 +303,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		}
 	}
 	
+	/**
+	 * Load d m_split.
+	 *
+	 * @param splitedFile the splited file
+	 */
 	public void loadDM_split(String splitedFile){
 		Object[] objA = m_matrix.readSeqs(m_databaseWD + m_dmWD + splitedFile);
 		m_sampleSessionIDs_split = (ArrayList<Long>)objA[0];
@@ -263,6 +321,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// ModelEvaluatorMarkovChain: MC
 	
+	/**
+	 * Creates the model evaluator markov chain.
+	 */
 	public void createModelEvaluatorMarkovChain(){
 		ModelEvaluatorMarkovChain modelev = new ModelEvaluatorMarkovChain(
 				m_sequencesUHC, m_sequencesUHC_split, 
@@ -278,6 +339,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_modelevMC = modelev;
 	}
 	
+	/**
+	 * Run model evaluator mc.
+	 */
 	public void runModelEvaluatorMC(){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 		
@@ -305,6 +369,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// ModelEvaluatorSuffixTreeGlobal: GST
 	
+	/**
+	 * Creates the model evaluator suffix tree global.
+	 */
 	public void createModelEvaluatorSuffixTreeGlobal(){
 		ModelEvaluatorSuffixTreeGlobal modelev = 
 				new ModelEvaluatorSuffixTreeGlobal(
@@ -321,6 +388,13 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_modelevSTG = modelev;
 	}
 	
+	/**
+	 * Run model evaluator stg.
+	 *
+	 * @param fmode the fmode
+	 * @param gtmem the gtmem
+	 * @param strategyST the strategy st
+	 */
 	public void runModelEvaluatorSTG(int fmode, int gtmem, String strategyST){
 		long seed = 0l;
 		// mode = 0: GoToRoot
@@ -358,6 +432,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// ModelEvaluatorClustHclust: DM+Hclust
 	
+	/**
+	 * Creates the model evaluator clust hclust.
+	 */
 	public void createModelEvaluatorClustHclust(){
 		ModelEvaluatorClustHclust modelev = 
 				new ModelEvaluatorClustHclust(
@@ -374,6 +451,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_modelevH = modelev;
 	}
 	
+	/**
+	 * Run model evaluator h.
+	 *
+	 * @param intLinkage the int linkage
+	 */
 	public void runModelEvaluatorH(int intLinkage){
 		String linkageClassName = m_linkages[intLinkage];
 		for(int j=0; j<m_cutthA.length; j++){ // for each height
@@ -392,6 +474,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// ModelEvaluatorSeqMinMSAWseq: DM+Clust+MSA+Wseq+ST
 	
+	/**
+	 * Creates the model evaluator seq min msa wseq.
+	 */
 	public void createModelEvaluatorSeqMinMSAWseq(){
 		ModelEvaluatorSeqMinMSAWseq modelev = 
 				new ModelEvaluatorSeqMinMSAWseq(
@@ -409,6 +494,12 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	}
 
 	// DM+hclust+MSA+Wseq+ST
+	/**
+	 * Run model evaluator hclust ms.
+	 *
+	 * @param indLinkage the ind linkage
+	 * @param strategyST the strategy st
+	 */
 	public void runModelEvaluatorHclustMS(int indLinkage, String strategyST){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -454,6 +545,12 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	}
 	
 	// DM+PAM+MSA+Wseq+ST
+	/**
+	 * Run model evaluator pam ms.
+	 *
+	 * @param indLinkage the ind linkage
+	 * @param strategyST the strategy st
+	 */
 	public void runModelEvaluatorPamMS(int indLinkage, String strategyST){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -502,6 +599,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// ModelEvaluatorSeqMinSPADE: DM+Clust+SPADE+ST
 	
+	/**
+	 * Creates the model evaluator seq min spade.
+	 */
 	public void createModelEvaluatorSeqMinSPADE(){
 		ModelEvaluatorSeqMinSPADE modelev = 
 				new ModelEvaluatorSeqMinSPADE(
@@ -518,6 +618,12 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_modelevCSS = modelev;
 	}
 	
+	/**
+	 * Run model evaluator hclust spade st.
+	 *
+	 * @param indLinkage the ind linkage
+	 * @param strategyST the strategy st
+	 */
 	public void runModelEvaluatorHclustSpadeST(int indLinkage, String strategyST){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -558,6 +664,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		this.closeFile(evalWriter);
 	}
 	
+	/**
+	 * Run model evaluator pam spade st.
+	 *
+	 * @param strategyST the strategy st
+	 */
 	public void runModelEvaluatorPamSpadeST(String strategyST){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -601,6 +712,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// ModelEvaluatorMedoids: DM+hclust+SPADE1(+knnED)
 	
+	/* (non-Javadoc)
+	 * @see angelu.webrecommendation.A0000ParameterControl_angelu#createModelEvaluatorMedoids()
+	 */
 	public void createModelEvaluatorMedoids(){
 		ModelEvaluatorMedoids modelev = 
 				new ModelEvaluatorMedoids(
@@ -618,6 +732,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_modelevM = modelev;
 	}
 	
+	/**
+	 * Run model evaluator m_hclust.
+	 *
+	 * @param indLinkage the ind linkage
+	 */
 	public void runModelEvaluatorM_hclust(int indLinkage){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -654,6 +773,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		this.closeFile(evalWriter);
 	}
 	
+	/* (non-Javadoc)
+	 * @see angelu.webrecommendation.A0000ParameterControl_angelu#runModelEvaluatorM_pam()
+	 */
 	public void runModelEvaluatorM_pam(){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -695,6 +817,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// ModelEvaluatorModularGST
 	
+	/**
+	 * Creates the model evaluator modular gst.
+	 */
 	public void createModelEvaluatorModularGST(){
 		ModelEvaluatorModularGST modelev = 
 				new ModelEvaluatorModularGST(
@@ -712,6 +837,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	}
 	
 	// DM+Modular(hclust+ST)+(nearest:fit)
+	/**
+	 * Run model evaluator mgs t_fit.
+	 *
+	 * @param indLinkage the ind linkage
+	 */
 	public void runModelEvaluatorMGST_fit(int indLinkage){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -746,6 +876,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	}
 	
 	// DM+Modular(hclust+ST)+(nearest:knnED)
+	/**
+	 * Run model evaluator mgs t_knn.
+	 *
+	 * @param indLinkage the ind linkage
+	 */
 	public void runModelEvaluatorMGST_knn(int indLinkage){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -788,6 +923,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// ModelEvaluatorModularSpadeST
 	
+	/**
+	 * Creates the model evaluator modular spade st.
+	 */
 	public void createModelEvaluatorModularSpadeST(){
 		ModelEvaluatorModularSpadeST modelev = 
 				new ModelEvaluatorModularSpadeST(
@@ -805,6 +943,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	}
 	
 	// DM+Modular(hclust+SPADE+ST)+(nearest:knnED)
+	/**
+	 * Run model evaluator m sp s t_knn.
+	 *
+	 * @param indLinkage the ind linkage
+	 */
 	public void runModelEvaluatorMSpST_knn(int indLinkage){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -847,6 +990,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	
 	// ModelEvaluatorHMM
 	
+	/**
+	 * Creates the model evaluator hmm.
+	 */
 	public void createModelEvaluatorHMM(){
 		ModelEvaluatorHMM modelev = 
 				new ModelEvaluatorHMM(
@@ -864,6 +1010,12 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	}
 	
 	// DM+Modular(hclust+SPADE+ST)+(nearest:knnED)
+	/**
+	 * Run model evaluator hmm.
+	 *
+	 * @param indLinkage the ind linkage
+	 * @param hmmMode the hmm mode
+	 */
 	public void runModelEvaluatorHMM(int indLinkage, int hmmMode){
 		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
 
@@ -897,6 +1049,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		this.closeFile(evalWriter);
 	}
 	
+	/**
+	 * Gets the d mdirectory.
+	 *
+	 * @return the d mdirectory
+	 */
 	public String getDMdirectory(){
 		return this.m_dmWD;
 	}

@@ -6,14 +6,27 @@ import java.util.Hashtable;
 import ehupatras.ncd.NCD;
 import ehupatras.ncd.NcdGzip;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DistanceMatrixNcdGzip.
+ */
 public class DistanceMatrixNcdGzip extends Matrix {
 
+	/** The m_dict. */
 	private Hashtable<Integer,Integer> m_dict;
 	
+	/**
+	 * Instantiates a new distance matrix ncd gzip.
+	 *
+	 * @param names the names
+	 */
 	public DistanceMatrixNcdGzip(ArrayList<Long> names){
 		m_names = names;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.distmatrix.Matrix#computeMatrix(java.util.ArrayList, float[][], boolean)
+	 */
 	public void computeMatrix(ArrayList<String[]> data,
 			float[][] roleWeights,
 			boolean isplit){
@@ -70,6 +83,12 @@ public class DistanceMatrixNcdGzip extends Matrix {
 		
 	}
 	
+	/**
+	 * Removes the uh ctag seq.
+	 *
+	 * @param seq the seq
+	 * @return the int[]
+	 */
 	private int[] removeUHCtagSeq(String[] seq){
 		int[] intA = new int[seq.length];
 		for(int i=0; i<seq.length; i++){
@@ -80,6 +99,12 @@ public class DistanceMatrixNcdGzip extends Matrix {
 		return intA;
 	}
 	
+	/**
+	 * Convert dict.
+	 *
+	 * @param intA the int a
+	 * @return the int[]
+	 */
 	private int[] convertDict(int[] intA){
 		int[] intAre = new int[intA.length];
 		for(int i=0; i<intA.length; i++){

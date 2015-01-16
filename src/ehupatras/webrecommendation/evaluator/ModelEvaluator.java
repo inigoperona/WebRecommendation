@@ -19,58 +19,108 @@ import java.util.HashMap;
 
 import angelu.webrecommendation.converter.URLconverterUsaCon;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluator.
+ */
 public abstract class ModelEvaluator {
 
 	// ATTRIBUTES
 	
 	// Number of folds
+	/** The m_n folds. */
 	protected int m_nFolds;
 	
 	// database
+	/** The m_dataset. */
 	protected ArrayList<String[]> m_dataset = null; // without role tag
+	
+	/** The m_dataset uhc. */
 	protected ArrayList<String[]> m_datasetUHC = null; // with role tags
+	
+	/** The m_dataset split. */
 	protected ArrayList<String[]> m_datasetSplit = null;
+	
+	/** The m_dataset split uhc. */
 	protected ArrayList<String[]> m_datasetSplitUHC = null;
+	
+	/** The m_distancematrix. */
 	protected Matrix m_distancematrix;
 	// To do the evaluation based on the database
+	/** The m_train al. */
 	protected ArrayList<ArrayList<Long>> m_trainAL;
+	
+	/** The m_val al. */
 	protected ArrayList<ArrayList<Long>> m_valAL;
+	
+	/** The m_test al. */
 	protected ArrayList<ArrayList<Long>> m_testAL;
 	
 	
 	// metrics' parameters
+	/** The m_confusion points. */
 	private float[] m_confusionPoints = 
 		{0.10f,0.25f,0.50f,0.75f,0.90f};
+	
+	/** The m_fmeasurebeta. */
 	private float m_fmeasurebeta = (float)0.5;
 	// topic related parameters
+	/** The m_url ids. */
 	private ArrayList<Integer> m_urlIds = null;
 		// topic1: based on url to topic distribution matrix
-	private int[] m_url2topic = null;
+	/** The m_url2topic. */
+		private int[] m_url2topic = null;
+	
+	/** The m_n diff topics. */
 	private int m_nDiffTopics = 10;
+	
+	/** The m_topicmatch. */
 	private float m_topicmatch = 0.5f;
 		// topic2: based on url clustering
-	protected HashMap<Integer,Integer> m_UrlClusteringDict = null;
+	/** The m_ url clustering dict. */
+		protected HashMap<Integer,Integer> m_UrlClusteringDict = null;
+	
+	/** The m_n diff clusters. */
 	private int m_nDiffClusters = 10;
 	// index pages
+	/** The m_homepages. */
 	private int[] m_homepages = null;
 	
 	// not take prohibited URLs into account mode
+	/** The m_mode pr re. */
 	protected int m_modePrRe = 0;
 	
 	// to convert from usage-url-id to content-url-id and vice versa 
+	/** The m_usage2content file. */
 	private String m_usage2contentFile = "";
+	
+	/** The m_conv. */
 	protected URLconverterUsaCon m_conv = null;
 	
 	// URL similarity matrix
+	/** The m_res similarity file. */
 	private String m_resSimilarityFile = "";
+	
+	/** The m_ url similarity matrix_ content. */
 	protected float[][] m_UrlSimilarityMatrix_Content = null;
+	
+	/** The m_n ur ls. */
 	protected int m_nURLs = 0;
+	
+	/** The m_ url similarity matrix_ usage. */
 	protected float[][] m_UrlSimilarityMatrix_Usage = null;
+	
+	/** The m_ url similarity matrix_ usage_max. */
 	protected float[] m_UrlSimilarityMatrix_Usage_max = null;
+	
+	/** The m_ url similarity matrix_ usage_min. */
 	protected float[] m_UrlSimilarityMatrix_Usage_min = null;
 		
 	// Write the recommendations
+	/** The m_line header. */
 	private String m_lineHeader = null;
+	
+	/** The m_eval writer. */
 	private BufferedWriter m_evalWriter = null;
 	
 
@@ -78,6 +128,19 @@ public abstract class ModelEvaluator {
 	
 	// CONSTRUCTOR
 	
+	/**
+	 * Instantiates a new model evaluator.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	public ModelEvaluator(
 					ArrayList<String[]> dataset,
 					ArrayList<String[]> datasetSplit,
@@ -125,6 +188,12 @@ public abstract class ModelEvaluator {
 		this.convertMatrixContent2Url();
 	}	
 	
+	/**
+	 * Removes the uhc tag db.
+	 *
+	 * @param dataset the dataset
+	 * @return the array list
+	 */
 	private ArrayList<String[]> removeUHCTagDB(ArrayList<String[]> dataset){
 		ArrayList<String[]> dataset2 = new ArrayList<String[]>();
 		for(int i=0; i<dataset.size(); i++){
@@ -135,6 +204,12 @@ public abstract class ModelEvaluator {
 		return dataset2; 
 	}
 	
+	/**
+	 * Removes the uh ctag seq.
+	 *
+	 * @param seq the seq
+	 * @return the string[]
+	 */
 	private String[] removeUHCtagSeq(String[] seq){
 		String[] seq2 = new String[seq.length];
 		for(int i=0; i<seq.length; i++){
@@ -145,14 +220,30 @@ public abstract class ModelEvaluator {
 		return seq2;
 	}	
 	
+	/**
+	 * Sets the data set.
+	 *
+	 * @param dataset the new data set
+	 */
 	protected void setDataSet(ArrayList<String[]> dataset){
 		m_dataset = dataset;
 	}
 	
+	/**
+	 * Sets the data set split.
+	 *
+	 * @param dataset the new data set split
+	 */
 	protected void setDataSetSplit(ArrayList<String[]> dataset){
 		m_datasetSplit = dataset;
 	}
 	
+	/**
+	 * Gets the data set.
+	 *
+	 * @param isSplit the is split
+	 * @return the data set
+	 */
 	protected ArrayList<String[]> getDataSet(boolean isSplit){
 		if(!isSplit){
 			return m_dataset;
@@ -161,6 +252,12 @@ public abstract class ModelEvaluator {
 		}
 	}
 	
+	/**
+	 * Gets the data set uhc.
+	 *
+	 * @param isSplit the is split
+	 * @return the data set uhc
+	 */
 	protected ArrayList<String[]> getDataSetUHC(boolean isSplit){
 		if(!isSplit){
 			return m_datasetUHC;
@@ -174,13 +271,33 @@ public abstract class ModelEvaluator {
 	
 	// ABSTRACT FUNCTIONS
 	
+	/**
+	 * Gets the test set evaluator.
+	 *
+	 * @param iFold the i fold
+	 * @param testseqs the testseqs
+	 * @return the test set evaluator
+	 */
 	public abstract TestSetEvaluator getTestSetEvaluator(
 			int iFold, 
 			ArrayList<String[]> testseqs);	
 	
+	/**
+	 * Gets the number of nodes.
+	 *
+	 * @param iFold the i fold
+	 * @return the number of nodes
+	 */
 	public int getNumberOfNodes(int iFold){
 		return 0;
 	}
+	
+	/**
+	 * Gets the number of edges.
+	 *
+	 * @param iFold the i fold
+	 * @return the number of edges
+	 */
 	public float getNumberOfEdges(int iFold){
 		return 0f;
 	}
@@ -190,6 +307,14 @@ public abstract class ModelEvaluator {
 	
 	// MODEL EVALUATION //
 	
+	/**
+	 * Compute evaluation test.
+	 *
+	 * @param mode the mode
+	 * @param nrecos the nrecos
+	 * @param seed the seed
+	 * @return the string
+	 */
 	public String computeEvaluationTest(
 			String mode, 
 			int nrecos,
@@ -197,6 +322,14 @@ public abstract class ModelEvaluator {
 		return this.computeEvaluation(m_testAL, mode, nrecos, seed);
 	}
 	
+	/**
+	 * Compute evaluation val.
+	 *
+	 * @param mode the mode
+	 * @param nrecos the nrecos
+	 * @param seed the seed
+	 * @return the string
+	 */
 	public String computeEvaluationVal(
 			String mode, 
 			int nrecos,
@@ -207,6 +340,15 @@ public abstract class ModelEvaluator {
 	
 	// CARRY OUT THE EVALUATION
 	
+	/**
+	 * Compute evaluation.
+	 *
+	 * @param evalAL the eval al
+	 * @param mode the mode
+	 * @param nrecos the nrecos
+	 * @param seed the seed
+	 * @return the string
+	 */
 	private String computeEvaluation(
 					ArrayList<ArrayList<Long>> evalAL,
 					String mode, 
@@ -696,6 +838,12 @@ public abstract class ModelEvaluator {
 	}
 	
 	// set line header, to write done recommendations
+	/**
+	 * Sets the line header.
+	 *
+	 * @param lineHeader the line header
+	 * @param evalWriter the eval writer
+	 */
 	public void setLineHeader(String lineHeader, BufferedWriter evalWriter){
 		m_lineHeader = lineHeader;
 		m_evalWriter = evalWriter;
@@ -704,6 +852,11 @@ public abstract class ModelEvaluator {
 	
 	// HEADER of results 
 	
+	/**
+	 * Gets the evaluation header.
+	 *
+	 * @return the evaluation header
+	 */
 	public String getEvaluationHeader(){
 		
 		// General statistics 
@@ -796,12 +949,33 @@ public abstract class ModelEvaluator {
 	
 	// Utilities
 	
+	/**
+	 * Sets the confusion points.
+	 *
+	 * @param confusionPoints the new confusion points
+	 */
 	public void setConfusionPoints(float[] confusionPoints){
 		m_confusionPoints = confusionPoints;
 	}
+	
+	/**
+	 * Sets the fmeasure beta.
+	 *
+	 * @param fmeasurebeta the new fmeasure beta
+	 */
 	public void setFmeasureBeta(float fmeasurebeta){
 		m_fmeasurebeta = fmeasurebeta;
 	}
+	
+	/**
+	 * Sets the topic parameters.
+	 *
+	 * @param urlIds the url ids
+	 * @param url2topic the url2topic
+	 * @param nDiffTopics the n diff topics
+	 * @param topicmatch the topicmatch
+	 * @param urlClusteringDictFile the url clustering dict file
+	 */
 	public void setTopicParameters(
 			ArrayList<Integer> urlIds, 
 			int[] url2topic, int nDiffTopics, float topicmatch,
@@ -816,6 +990,11 @@ public abstract class ModelEvaluator {
 	
 	// read URL to cluster file
 	
+	/**
+	 * Read url clustering.
+	 *
+	 * @param clusterPartitionFile the cluster partition file
+	 */
 	private void readUrlClustering(String clusterPartitionFile){
 		// count different clusters there are
 		ArrayList<Integer> clusterIDs = new ArrayList<Integer>();
@@ -841,6 +1020,12 @@ public abstract class ModelEvaluator {
 		m_nDiffClusters = clusterIDs.size();
 	}
 	
+	/**
+	 * Read line by line.
+	 *
+	 * @param filename the filename
+	 * @return the array list
+	 */
 	protected ArrayList<String> readLineByLine(String filename){
 		ArrayList<String> linebyline = new ArrayList<String>();
 		FileInputStream fstream = null;
@@ -874,6 +1059,11 @@ public abstract class ModelEvaluator {
 	}
 	
 	// Read similarity matrix	
+	/**
+	 * Read similarity matrix.
+	 *
+	 * @param similarityMatrix the similarity matrix
+	 */
 	private void readSimilarityMatrix(String similarityMatrix){
 		ArrayList<String> linebyline = this.readLineByLine(similarityMatrix);
 		// parse the lines
@@ -888,6 +1078,13 @@ public abstract class ModelEvaluator {
 		} 
 	}
 	
+	/**
+	 * Parses the to float.
+	 *
+	 * @param floatStr the float str
+	 * @param sep the sep
+	 * @return the float
+	 */
 	private float parseToFloat(String floatStr, char sep){
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 		symbols.setDecimalSeparator(sep);
@@ -908,6 +1105,9 @@ public abstract class ModelEvaluator {
 	}
 
 	// convert to URL similarity matrix (usage)
+	/**
+	 * Convert matrix content2 url.
+	 */
 	private void convertMatrixContent2Url(){
 		ArrayList<Integer> usageURLs = m_conv.getUsageUrls();
 		int len = usageURLs.size();

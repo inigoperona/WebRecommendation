@@ -4,12 +4,26 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MarkovChain.
+ */
 public class MarkovChain {
 
+	/** The m_symbols. */
 	private Hashtable<String,Integer> m_symbols;
+	
+	/** The m_transition matrix. */
 	private float[][] m_transitionMatrix;
+	
+	/** The m_initial probs. */
 	private float[] m_initialProbs;
 	
+	/**
+	 * Instantiates a new markov chain.
+	 *
+	 * @param sequences the sequences
+	 */
 	public MarkovChain(ArrayList<String[]> sequences){
 		
 		// Define the alphabet
@@ -76,11 +90,22 @@ public class MarkovChain {
 		}
 	}
 	
+	/**
+	 * Number of symbols.
+	 *
+	 * @return the int
+	 */
 	public int numberOfSymbols(){
 		return m_symbols.size();
 	}
 	
 	
+	/**
+	 * Gets the elem name.
+	 *
+	 * @param index the index
+	 * @return the elem name
+	 */
 	public String getElemName(int index){
 		Enumeration<String> keys = m_symbols.keys();
 		String[] keysA = new String[m_symbols.size()];
@@ -92,6 +117,12 @@ public class MarkovChain {
 		return keysA[index];
 	}
 	
+	/**
+	 * Gets the elem index.
+	 *
+	 * @param elemName the elem name
+	 * @return the elem index
+	 */
 	public int getElemIndex(String elemName){
 		if(m_symbols.containsKey(elemName)){
 			return m_symbols.get(elemName);
@@ -100,14 +131,30 @@ public class MarkovChain {
 		}
 	}
 	
+	/**
+	 * Gets the initial prob.
+	 *
+	 * @param i the i
+	 * @return the initial prob
+	 */
 	public float getInitialProb(int i){
 		return m_initialProbs[i];
 	}
 	
+	/**
+	 * Gets the transition matrix.
+	 *
+	 * @param i the i
+	 * @param j the j
+	 * @return the transition matrix
+	 */
 	public float getTransitionMatrix(int i, int j){
 		return m_transitionMatrix[i][j];
 	}
 	
+	/**
+	 * Prints the markov chain.
+	 */
 	private void printMarkovChain(){
 		// print initial probabilities
 		System.out.println("Initial Probabilities: ");
@@ -126,7 +173,9 @@ public class MarkovChain {
 	}
 	
 	/**
-	 * @param args
+	 * The main method.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

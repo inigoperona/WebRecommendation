@@ -5,8 +5,17 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;;
  
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GooglePageRank.
+ */
 public class GooglePageRank {
  
+  /**
+   * The main method.
+   *
+   * @param args the arguments
+   */
   public static void main(String[] args) {
  
 	GooglePageRank obj = new GooglePageRank();
@@ -17,6 +26,13 @@ public class GooglePageRank {
  
   }
  
+  /**
+   * Gets the pr.
+   *
+   * @param domain the domain
+   * @param urlname the urlname
+   * @return the pr
+   */
   public int getPR(String domain, String urlname) {
  
 	  System.out.println(domain);

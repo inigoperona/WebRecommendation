@@ -5,17 +5,38 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorMedoidsContent.
+ */
 public class ModelEvaluatorMedoidsContent 
 				extends ModelEvaluatorMedoids {
 
 	// ATTRIBUTES
 	
+	/** The m_enrichement strategy. */
 	private String m_enrichementStrategy = "ContentsA1";
+	
+	/** The m_ url relation matrix. */
 	private String[][] m_UrlRelationMatrix = null;
 	
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator medoids content.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 * @param noProposeURLs the no propose ur ls
+	 */
 	public ModelEvaluatorMedoidsContent(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -32,6 +53,9 @@ public class ModelEvaluatorMedoidsContent
 	
 	// GET TEST EVALUATOR
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids#getTestSetEvaluator(int, java.util.ArrayList)
+	 */
 	public TestSetEvaluator getTestSetEvaluator(
 			int iFold, 
 			ArrayList<String[]> testseqs){
@@ -52,6 +76,12 @@ public class ModelEvaluatorMedoidsContent
 		return eval;
 	}
 	
+	/**
+	 * Sets the esploitation parameters.
+	 *
+	 * @param selectedEnrichementStrategy the selected enrichement strategy
+	 * @param resRelationsFile the res relations file
+	 */
 	public void setEsploitationParameters(
 			String selectedEnrichementStrategy,
 			String resRelationsFile){
@@ -60,6 +90,11 @@ public class ModelEvaluatorMedoidsContent
 		
 	}
 	
+	/**
+	 * Read relations matrix.
+	 *
+	 * @param resRelationsFile the res relations file
+	 */
 	private void readRelationsMatrix(String resRelationsFile){
 		ArrayList<String> linebyline = this.readLineByLine(resRelationsFile);
 		// parse the lines

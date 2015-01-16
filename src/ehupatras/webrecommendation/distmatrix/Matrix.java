@@ -9,34 +9,72 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Matrix.
+ */
 public abstract class Matrix {
 	
 	// distance matrix data
+	/** The m_matrix. */
 	protected float[][] m_matrix = null;
+	
+	/** The m_names. */
 	protected ArrayList<Long> m_names = null;
+	
+	/** The m_savefilename. */
 	private String m_savefilename = "/_matrix.javaData";
 	
 	// split distance matrix data
+	/** The m_starters. */
 	private int[] m_starters = new int[]{11};
+	
+	/** The m_minimum activity. */
 	private int m_minimumActivity = 3;
+	
+	/** The m_names split. */
 	protected ArrayList<Long> m_namesSplit = null;
+	
+	/** The m_matrix split. */
 	protected float[][] m_matrixSplit = null;
 	
 	// attributes to work with topics
+	/** The m_ url i ds. */
 	protected ArrayList<Integer> m_UrlIDs = null;
+	
+	/** The m_topic distribution. */
 	protected ArrayList<float[]> m_topicDistribution = null;
 		// URL 2 URL distance
-	protected float[][] m_UrlsDM = null;
+	/** The m_ urls dm. */
+		protected float[][] m_UrlsDM = null;
+	
+	/** The m_urls equalness threshold. */
 	protected float m_urlsEqualnessThreshold = 0.6f;
 		// URL 2 TOPIC
-	protected int[] m_url2topic; // -1 no topic assigned
+	/** The m_url2topic. */
+		protected int[] m_url2topic; // -1 no topic assigned
+	
+	/** The m_topicmatch. */
 	protected float m_topicmatch = 0.5f;
 	
 	
+	/**
+	 * Compute matrix.
+	 *
+	 * @param data the data
+	 * @param roleWeights the role weights
+	 * @param isSplit the is split
+	 */
 	public abstract void computeMatrix(ArrayList<String[]> data,
 							float[][] roleWeights,
 							boolean isSplit);
 	
+	/**
+	 * Gets the matrix.
+	 *
+	 * @param isSplit the is split
+	 * @return the matrix
+	 */
 	public float[][] getMatrix(boolean isSplit){
 		if(!isSplit){
 			return m_matrix;
@@ -59,6 +97,13 @@ public abstract class Matrix {
 	}
 	*/
 		
+	/**
+	 * Gets the session i ds indexes.
+	 *
+	 * @param sessionIDs the session i ds
+	 * @param isSplit the is split
+	 * @return the session i ds indexes
+	 */
 	public int[] getSessionIDsIndexes(ArrayList<Long> sessionIDs, boolean isSplit){
 		int[] indexes = null;
 		if(!isSplit){
@@ -97,6 +142,13 @@ public abstract class Matrix {
 		return indexes;
 	}
 	
+	/**
+	 * Gets the session i ds indexes2.
+	 *
+	 * @param sessionIDs the session i ds
+	 * @param isSplit the is split
+	 * @return the session i ds indexes2
+	 */
 	public int[] getSessionIDsIndexes2(ArrayList<Long> sessionIDs, boolean isSplit){
 		ArrayList<Long> names;
 		if(!isSplit){
@@ -115,6 +167,13 @@ public abstract class Matrix {
 	}
 	
 	
+	/**
+	 * Gets the session i ds.
+	 *
+	 * @param sessionIDs the session i ds
+	 * @param isSplit the is split
+	 * @return the session i ds
+	 */
 	public ArrayList<Long> getSessionIDs(ArrayList<Long> sessionIDs, boolean isSplit){
 		if(!isSplit){
 			return sessionIDs;
@@ -138,6 +197,12 @@ public abstract class Matrix {
 	
 	// SAVE & LOAD MATRIX
 	
+	/**
+	 * Write matrix.
+	 *
+	 * @param matrix the matrix
+	 * @param outfilename the outfilename
+	 */
 	public void writeMatrix(float[][] matrix, String outfilename){
 		// Open the given file
 		BufferedWriter writer = null;
@@ -177,6 +242,11 @@ public abstract class Matrix {
 		}
 	}
 	
+	/**
+	 * Save.
+	 *
+	 * @param wordirectory the wordirectory
+	 */
 	public void save(String wordirectory){
 		SaveLoadObjects slo = new SaveLoadObjects();
 		Object[] objA = new Object[4];
@@ -187,6 +257,11 @@ public abstract class Matrix {
 		slo.save(objA, wordirectory + m_savefilename);
 	}
 	
+	/**
+	 * Load.
+	 *
+	 * @param wordirectory the wordirectory
+	 */
 	public void load(String wordirectory){
 		SaveLoadObjects slo = new SaveLoadObjects();
 		Object[] objA = (Object[])slo.load(wordirectory + m_savefilename);
@@ -202,6 +277,12 @@ public abstract class Matrix {
     
     // SPLIT THE SEQUENCES
     
+    /**
+     * Split sequences.
+     *
+     * @param data the data
+     * @return the object[]
+     */
     public Object[] splitSequences(ArrayList<String[]> data){
     	ArrayList<Long> namesSplit = new ArrayList<Long>();
     	ArrayList<String[]> dataSplit = new ArrayList<String[]>();
@@ -261,6 +342,13 @@ public abstract class Matrix {
     	return objA;
     }
     
+    /**
+     * Write seqs.
+     *
+     * @param outputFilename the output filename
+     * @param names the names
+     * @param seqs the seqs
+     */
     public void writeSeqs(String outputFilename, 
     		ArrayList<Long> names, 
     		ArrayList<String[]> seqs){
@@ -306,6 +394,12 @@ public abstract class Matrix {
 		
     }
     
+    /**
+     * Read seqs.
+     *
+     * @param inputFilename the input filename
+     * @return the object[]
+     */
     public Object[] readSeqs(String inputFilename){
     	ArrayList<Long> names = new ArrayList<Long>();
     	ArrayList<String[]> seqs = new ArrayList<String[]>();
@@ -338,6 +432,12 @@ public abstract class Matrix {
     }
     
     
+    /**
+     * Checks if is starter.
+     *
+     * @param urlID the url id
+     * @return true, if is starter
+     */
     private boolean isStarter(int urlID){
     	for(int i=0; i<m_starters.length; i++){
     		if(m_starters[i]==urlID){
@@ -347,6 +447,12 @@ public abstract class Matrix {
     	return false;
     }
     
+    /**
+     * Sets the split parameters.
+     *
+     * @param starters the starters
+     * @param minimumActivity the minimum activity
+     */
     public void setSplitParameters(int[] starters, int minimumActivity){
     	m_starters = starters;
     	m_minimumActivity = minimumActivity;

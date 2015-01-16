@@ -5,19 +5,45 @@ import ehupatras.suffixtree.stringarray.myst.MySuffixTree;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderSuffixTree2;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequenceEvaluatorST.
+ */
 public class SequenceEvaluatorST 
 				extends SequenceEvaluator {
 
 	// ATTRIBUTES
 	
+	/** The m_suffixtree. */
 	private MySuffixTree m_suffixtree;
 	
+	/** The m_failuremode. */
 	private int m_failuremode = 0;
+	
+	/** The m_max memory. */
 	private int m_maxMemory = 100;
+	
+	/** The m_norm mode. */
 	private int m_normMode = 0;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new sequence evaluator st.
+	 *
+	 * @param sequence the sequence
+	 * @param modePrRe the mode pr re
+	 * @param conv the conv
+	 * @param nURLs the n ur ls
+	 * @param urlSimilarityMatrix the url similarity matrix
+	 * @param urlSimilarityMatrix_Usage the url similarity matrix_ usage
+	 * @param urlSimilarityMatrix_Usage_max the url similarity matrix_ usage_max
+	 * @param urlSimilarityMatrix_Usage_min the url similarity matrix_ usage_min
+	 * @param suffixtree the suffixtree
+	 * @param failuremode the failuremode
+	 * @param maxMemory the max memory
+	 * @param normMode the norm mode
+	 */
 	public SequenceEvaluatorST(
 			String[] sequence,
 			int modePrRe,
@@ -39,6 +65,9 @@ public class SequenceEvaluatorST
 	
 	// GET RECOMMENDER
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluator#getRecommender()
+	 */
 	public Recommender getRecommender(){
 		Recommender recommender = 
 				new RecommenderSuffixTree2(

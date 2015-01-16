@@ -8,17 +8,36 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorHMM;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorHMM.
+ */
 public class ModelEvaluatorHMM 
 				extends ModelEvaluatorClust {
 
 	// ATTRIBUTES
 	
+	/** The m_hmm al. */
 	protected ArrayList<HiddenMarkovModel> m_hmmAL = null;
 	
+	/** The m_n next steps. */
 	protected int m_nNextSteps = 3;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator hmm.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	public ModelEvaluatorHMM(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -34,6 +53,9 @@ public class ModelEvaluatorHMM
 	
 	// GET TEST EVALUATOR
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.ModelEvaluator#getTestSetEvaluator(int, java.util.ArrayList)
+	 */
 	public TestSetEvaluator getTestSetEvaluator(
 			int iFold, 
 			ArrayList<String[]> testseqs){
@@ -48,6 +70,11 @@ public class ModelEvaluatorHMM
 		return eval;
 	}
 	
+	/**
+	 * Sets the esploitation parameters.
+	 *
+	 * @param nNextSteps the new esploitation parameters
+	 */
 	public void setEsploitationParameters(
 			int nNextSteps){
 		m_nNextSteps = nNextSteps;
@@ -55,6 +82,12 @@ public class ModelEvaluatorHMM
 	
 	// BUILD MODEL
 	
+	/**
+	 * Builds the hidden markov models.
+	 *
+	 * @param outfilename the outfilename
+	 * @param hmmMode the hmm mode
+	 */
 	public void buildHiddenMarkovModels(String outfilename, int hmmMode){
 		// compute markov chain for each fold
 		m_hmmAL = new ArrayList<HiddenMarkovModel>();
@@ -63,6 +96,14 @@ public class ModelEvaluatorHMM
 		}
 	}
 	
+	/**
+	 * Gets the hmm.
+	 *
+	 * @param indexFold the index fold
+	 * @param outfilename the outfilename
+	 * @param hmmMode the hmm mode
+	 * @return the hmm
+	 */
 	protected HiddenMarkovModel getHMM(int indexFold, String outfilename, int hmmMode){
 		// train sequences indexes
 		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
@@ -85,12 +126,24 @@ public class ModelEvaluatorHMM
 		return initHmm;
 	}
 	
+	/**
+	 * Write hm ms txt.
+	 *
+	 * @param hmm the hmm
+	 * @param outfile the outfile
+	 */
 	protected void writeHMMsTXT(HiddenMarkovModel hmm, String outfile){
 		for(int i=0; i<m_nFolds; i++){
 			hmm.writeHMMtxt(outfile);
 		}
 	}
 	
+	/**
+	 * Write hm ms dot.
+	 *
+	 * @param hmm the hmm
+	 * @param outfile the outfile
+	 */
 	protected void writeHMMsDOT(HiddenMarkovModel hmm, String outfile){
 		for(int i=0; i<m_nFolds; i++){
 			hmm.writeHMMdot(outfile);

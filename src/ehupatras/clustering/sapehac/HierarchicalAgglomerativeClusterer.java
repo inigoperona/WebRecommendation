@@ -15,6 +15,7 @@ import ehupatras.clustering.sapehac.experiment.DissimilarityMeasure;
 import ehupatras.clustering.sapehac.experiment.Experiment;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The HierarchicalAgglomerativeClusterer creates a hierarchical agglomerative clustering.
  * 
@@ -32,41 +33,88 @@ import ehupatras.clustering.sapehac.experiment.Experiment;
  */
 public final class HierarchicalAgglomerativeClusterer {
 
+    /** The experiment. */
     private Experiment experiment;
+    
+    /** The dissimilarity measure. */
     private DissimilarityMeasure dissimilarityMeasure;
+    
+    /** The agglomeration method. */
     private AgglomerationMethod agglomerationMethod;
     
     
+    /**
+     * Instantiates a new hierarchical agglomerative clusterer.
+     *
+     * @param experiment the experiment
+     * @param dissimilarityMeasure the dissimilarity measure
+     * @param agglomerationMethod the agglomeration method
+     */
     public HierarchicalAgglomerativeClusterer(final Experiment experiment, final DissimilarityMeasure dissimilarityMeasure, final AgglomerationMethod agglomerationMethod) {
         this.experiment = experiment;
         this.dissimilarityMeasure = dissimilarityMeasure;
         this.agglomerationMethod = agglomerationMethod;
     }
     
+    /**
+     * Sets the experiment.
+     *
+     * @param experiment the new experiment
+     */
     public void setExperiment(final Experiment experiment) {
         this.experiment = experiment;
     }
     
+    /**
+     * Gets the experiment.
+     *
+     * @return the experiment
+     */
     public Experiment getExperiment() {
         return experiment;
     }
     
+    /**
+     * Sets the dissimilarity measure.
+     *
+     * @param dissimilarityMeasure the new dissimilarity measure
+     */
     public void setDissimilarityMeasure(final DissimilarityMeasure dissimilarityMeasure) {
         this.dissimilarityMeasure = dissimilarityMeasure;
     }
 
+    /**
+     * Gets the dissimilarity measure.
+     *
+     * @return the dissimilarity measure
+     */
     public DissimilarityMeasure getDissimilarityMeasure() {
         return dissimilarityMeasure;
     }
     
+    /**
+     * Sets the agglomeration method.
+     *
+     * @param agglomerationMethod the new agglomeration method
+     */
     public void setAgglomerationMethod(final AgglomerationMethod agglomerationMethod) {
         this.agglomerationMethod = agglomerationMethod;
     }
     
+    /**
+     * Gets the agglomeration method.
+     *
+     * @return the agglomeration method
+     */
     public AgglomerationMethod getAgglomerationMethod() {
         return agglomerationMethod;
     }    
     
+    /**
+     * Cluster.
+     *
+     * @param clusteringBuilder the clustering builder
+     */
     public void cluster(final ClusteringBuilder clusteringBuilder) {
         final double[][] dissimilarityMatrix = computeDissimilarityMatrix();
         final int nObservations = dissimilarityMatrix.length;
@@ -118,6 +166,11 @@ public final class HierarchicalAgglomerativeClusterer {
         }
     }
     
+    /**
+     * Compute dissimilarity matrix.
+     *
+     * @return the double[][]
+     */
     private double[][] computeDissimilarityMatrix() {
         final double[][] dissimilarityMatrix = new double[experiment.getNumberOfObservations()][experiment.getNumberOfObservations()];
         // fill diagonal
@@ -136,6 +189,13 @@ public final class HierarchicalAgglomerativeClusterer {
         return dissimilarityMatrix;
     }
 
+    /**
+     * Find most similar clusters.
+     *
+     * @param dissimilarityMatrix the dissimilarity matrix
+     * @param indexUsed the index used
+     * @return the pair
+     */
     private static Pair findMostSimilarClusters(final double[][] dissimilarityMatrix, final boolean[] indexUsed) {
         final Pair mostSimilarPair = new Pair();
         double smallestDissimilarity = Double.POSITIVE_INFINITY;
@@ -153,21 +213,43 @@ public final class HierarchicalAgglomerativeClusterer {
     }
 
 
+    /**
+     * The Class Pair.
+     */
     private static final class Pair {
 
+        /** The cluster1. */
         private int cluster1;
+        
+        /** The cluster2. */
         private int cluster2;
 
 
+        /**
+         * Sets the.
+         *
+         * @param cluster1 the cluster1
+         * @param cluster2 the cluster2
+         */
         public final void set(final int cluster1, final int cluster2) {
             this.cluster1 = cluster1;
             this.cluster2 = cluster2;
         }
 
+        /**
+         * Gets the larger.
+         *
+         * @return the larger
+         */
         public final int getLarger() {
             return Math.max(cluster1, cluster2);
         }
 
+        /**
+         * Gets the smaller.
+         *
+         * @return the smaller
+         */
         public final int getSmaller() {
             return Math.min(cluster1, cluster2);
         }

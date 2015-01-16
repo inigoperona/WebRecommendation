@@ -2,12 +2,28 @@ package ehupatras.clustering;
 
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ClusteringSilly.
+ */
 public class ClusteringSilly {
 
+	/** The m_k. */
 	private int m_k = 10;
+	
+	/** The m_medoids. */
 	private ArrayList<Integer> m_medoids;
+	
+	/** The m_clusterassignment. */
 	private int[] m_clusterassignment;
 		
+	/**
+	 * Instantiates a new clustering silly.
+	 *
+	 * @param k the k
+	 * @param dm the dm
+	 * @param realIndexes the real indexes
+	 */
 	public ClusteringSilly(int k, float[][] dm, int[] realIndexes){
 		// number of clusters (k) must be smaller than size of the training set 
 		if(k>realIndexes.length){
@@ -29,10 +45,20 @@ public class ClusteringSilly {
 		}
 	}
 	
+	/**
+	 * Gets the clustering.
+	 *
+	 * @return the clustering
+	 */
 	public int[] getClustering(){
 		return m_clusterassignment;
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		int[] casesIndexes = new int[100];
 		ClusteringSilly cs = new ClusteringSilly(10, null, casesIndexes);

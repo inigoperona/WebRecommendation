@@ -5,11 +5,28 @@ import java.util.ArrayList;
 import ehupatras.sequentialpatternmining.MySPADE;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorSeqMinSPADE.
+ */
 public class ModelEvaluatorSeqMinSPADE
 				extends ModelEvaluatorSeqMin {
 
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator seq min spade.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	public ModelEvaluatorSeqMinSPADE(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -25,6 +42,14 @@ public class ModelEvaluatorSeqMinSPADE
 	
 	// BUILD MODEL
 	
+	/**
+	 * Spade.
+	 *
+	 * @param minsupport the minsupport
+	 * @param workdir the workdir
+	 * @param minSeqsFileTxt the min seqs file txt
+	 * @param minSeqsFileJavaData the min seqs file java data
+	 */
 	public void spade(float minsupport, String workdir,
 					String minSeqsFileTxt, String minSeqsFileJavaData){
 		m_minsupport = minsupport;
@@ -40,6 +65,13 @@ public class ModelEvaluatorSeqMinSPADE
 		super.saveMinedSeqs(minSeqsFileJavaData);
 	}
 	
+	/**
+	 * Compute spade seqs.
+	 *
+	 * @param indexFold the index fold
+	 * @param workdir the workdir
+	 * @return the array list
+	 */
 	private ArrayList<String[]> computeSpadeSeqs(int indexFold, String workdir){
 		// train sessions names
 		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
@@ -75,6 +107,12 @@ public class ModelEvaluatorSeqMinSPADE
 		return seqs;
 	}
 	
+	/**
+	 * Gets the max index.
+	 *
+	 * @param intArray the int array
+	 * @return the max index
+	 */
 	protected int getMaxIndex(int[] intArray){
 		int climax = Integer.MIN_VALUE;
 		for(int i=0; i<intArray.length; i++){
@@ -86,6 +124,13 @@ public class ModelEvaluatorSeqMinSPADE
 		return climax;
 	}
 	
+	/**
+	 * Gets the spade sequences.
+	 *
+	 * @param sesIDs the ses i ds
+	 * @param workdir the workdir
+	 * @return the spade sequences
+	 */
 	protected ArrayList<String[]> getSpadeSequences(ArrayList<Long> sesIDs, String workdir){
 		// take the sequences
 		int[] clusterDMind = m_distancematrix.getSessionIDsIndexes2(sesIDs, m_datasetSplit!=null);

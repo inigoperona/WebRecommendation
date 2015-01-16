@@ -1,19 +1,43 @@
 package ehupatras.ncd;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class NCD.
+ */
 public abstract class NCD {
 	
 	// number of bytes we are going to use to represent an integer
+	/** The m_nbytes. */
 	protected int m_nbytes = 1;
 	
 	// in 1000 bytes we can save, for example 250 integers of 4 bytes
+	/** The m_buffersize. */
 	protected int m_buffersize = 10000;
 	
+	/**
+	 * Instantiates a new ncd.
+	 *
+	 * @param nbytes the nbytes
+	 */
 	public NCD(int nbytes){
 		m_nbytes = nbytes;
 	}
 	
+	/**
+	 * Compress.
+	 *
+	 * @param intA the int a
+	 * @return the int[]
+	 */
 	protected abstract int[] compress(int[] intA);
 	
+	/**
+	 * Gets the ncd.
+	 *
+	 * @param intA1 the int a1
+	 * @param intA2 the int a2
+	 * @return the ncd
+	 */
 	public float getNCD(int[] intA1, int[] intA2){
 		int[] re1 = this.compress(intA1);
 		int l1Orig = re1[0];
@@ -42,11 +66,24 @@ public abstract class NCD {
 	}
 	
 	
+	/**
+	 * Int2byte a.
+	 *
+	 * @param integer the integer
+	 * @return the byte[]
+	 */
 	protected byte[] int2byteA(int integer){
 		//int nbytes = this.intLog(integer, 256);
 		return this.int2byteA(integer, m_nbytes);
 	}
 	
+	/**
+	 * Int log.
+	 *
+	 * @param value the value
+	 * @param base the base
+	 * @return the int
+	 */
 	private int intLog(int value, int base){
 		int pow = 1;
 		while(true){
@@ -58,6 +95,13 @@ public abstract class NCD {
 		}
 	}
 	
+	/**
+	 * Int2byte a.
+	 *
+	 * @param integer the integer
+	 * @param allocate the allocate
+	 * @return the byte[]
+	 */
 	private byte[] int2byteA(int integer, int allocate){
 		byte[] rbytes = new byte[allocate];
 		for(int i=0; i<allocate; i++){
@@ -67,6 +111,11 @@ public abstract class NCD {
 		return rbytes;
 	}
 	
+	/**
+	 * Prints the byte array.
+	 *
+	 * @param bytes the bytes
+	 */
 	private void printByteArray(byte[] bytes){
 		for(byte b : bytes) {
 			System.out.format("0x%x ", b);
@@ -74,6 +123,11 @@ public abstract class NCD {
 		System.out.println();
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		
 		// NCD

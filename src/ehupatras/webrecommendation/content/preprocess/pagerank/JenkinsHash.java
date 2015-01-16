@@ -1,5 +1,6 @@
 package ehupatras.webrecommendation.content.preprocess.pagerank;
 
+// TODO: Auto-generated Javadoc
 /**
  * Hash algorithm by Bob Jenkins, 1996.
  * 
@@ -10,15 +11,24 @@ package ehupatras.webrecommendation.content.preprocess.pagerank;
 public class JenkinsHash {
  
 	// max value to limit it to 4 bytes
+	/** The Constant MAX_VALUE. */
 	private static final long MAX_VALUE = 0xFFFFFFFFL;
  
 	// internal variables used in the various calculations
+	/** The a. */
 	long a;
+	
+	/** The b. */
 	long b;
+	
+	/** The c. */
 	long c;
  
 	/**
 	 * Convert a byte into a long value without making it negative.
+	 *
+	 * @param b the b
+	 * @return the long
 	 */
 	private long byteToLong(byte b) {
 		long val = b & 0x7F;
@@ -30,6 +40,10 @@ public class JenkinsHash {
  
 	/**
 	 * Do addition and turn into 4 bytes.
+	 *
+	 * @param val the val
+	 * @param add the add
+	 * @return the long
 	 */
 	private long add(long val, long add) {
 		return (val + add) & MAX_VALUE;
@@ -37,6 +51,10 @@ public class JenkinsHash {
  
 	/**
 	 * Do subtraction and turn into 4 bytes.
+	 *
+	 * @param val the val
+	 * @param subtract the subtract
+	 * @return the long
 	 */
 	private long subtract(long val, long subtract) {
 		return (val - subtract) & MAX_VALUE;
@@ -44,6 +62,10 @@ public class JenkinsHash {
  
 	/**
 	 * Left shift val by shift bits and turn in 4 bytes.
+	 *
+	 * @param val the val
+	 * @param xor the xor
+	 * @return the long
 	 */
 	private long xor(long val, long xor) {
 		return (val ^ xor) & MAX_VALUE;
@@ -51,6 +73,10 @@ public class JenkinsHash {
  
 	/**
 	 * Left shift val by shift bits. Cut down to 4 bytes.
+	 *
+	 * @param val the val
+	 * @param shift the shift
+	 * @return the long
 	 */
 	private long leftShift(long val, int shift) {
 		return (val << shift) & MAX_VALUE;
@@ -58,6 +84,10 @@ public class JenkinsHash {
  
 	/**
 	 * Convert 4 bytes from the buffer at offset into a long value.
+	 *
+	 * @param bytes the bytes
+	 * @param offset the offset
+	 * @return the long
 	 */
 	private long fourByteToLong(byte[] bytes, int offset) {
 	    return (byteToLong(bytes[offset + 0])
@@ -168,10 +198,9 @@ public class JenkinsHash {
 	}
  
 	/**
-	 * See hash(byte[] buffer, long initialValue)
-	 * 
-	 * @param buffer
-	 *            Byte array that we are hashing on.
+	 * See hash(byte[] buffer, long initialValue).
+	 *
+	 * @param buffer            Byte array that we are hashing on.
 	 * @return Hash value for the buffer.
 	 */
 	public long hash(byte[] buffer) {

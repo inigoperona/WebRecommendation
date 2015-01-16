@@ -5,8 +5,17 @@ import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.usage.preprocess.Sessioning;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A000MainClassPreprocess30min.
+ */
 public class A000MainClassPreprocess30min {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
@@ -26,6 +35,12 @@ public class A000MainClassPreprocess30min {
 	
 	
 		
+	/**
+	 * Preprocess logs.
+	 *
+	 * @param basedirectory the basedirectory
+	 * @param logfile the logfile
+	 */
 	public void preprocessLogs(String basedirectory, String logfile){
 		long starttime;
 		long endtime;

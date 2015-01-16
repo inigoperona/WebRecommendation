@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac.agglomeration;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The "median", "weighted centroid", "weighted center of mass distance", "Gower",
  * or "Weighted Pair-Group Method using Centroids (WPGMC)" method is a geometric approach.
@@ -45,10 +46,16 @@ package ehupatras.clustering.sapehac.agglomeration;
  */
 public final class MedianLinkage implements AgglomerationMethod {
 
+    /* (non-Javadoc)
+     * @see ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod#computeDissimilarity(double, double, double, int, int, int)
+     */
     public double computeDissimilarity(final double dik, final double djk, final double dij, final int ci, final int cj, final int ck) {
         return 0.5*dik+0.5*djk-0.25*dij;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return "Median";
     }

@@ -4,11 +4,28 @@ import java.util.ArrayList;
 import ehupatras.markovmodel.hmm.HiddenMarkovModel;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorHMMTrainned.
+ */
 public class ModelEvaluatorHMMTrainned 
 				extends ModelEvaluatorHMM {
 
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator hmm trainned.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	public ModelEvaluatorHMMTrainned(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -25,6 +42,9 @@ public class ModelEvaluatorHMMTrainned
 	// BUILD
 	
 	// trained HMM
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.ModelEvaluatorHMM#getHMM(int, java.lang.String, int)
+	 */
 	protected HiddenMarkovModel getHMM(int indexFold, String outfilename, int hmmMode){		
 		// create the HMM
 		HiddenMarkovModel initHmm = super.getHMM(indexFold, outfilename, hmmMode); 

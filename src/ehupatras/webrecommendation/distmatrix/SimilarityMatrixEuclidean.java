@@ -3,13 +3,25 @@ package ehupatras.webrecommendation.distmatrix;
 import ehupatras.webrecommendation.sequencealignment.*;
 import java.util.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SimilarityMatrixEuclidean.
+ */
 public class SimilarityMatrixEuclidean 
 				extends Matrix {
 	
+	/**
+	 * Instantiates a new similarity matrix euclidean.
+	 *
+	 * @param names the names
+	 */
 	public SimilarityMatrixEuclidean(ArrayList<Long> names){
 		m_names = names;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.distmatrix.Matrix#computeMatrix(java.util.ArrayList, float[][], boolean)
+	 */
 	public void computeMatrix(ArrayList<String[]> data,
 							float[][] roleWeights,
 							boolean isplit){
@@ -53,6 +65,13 @@ public class SimilarityMatrixEuclidean
 		}
 	}
 	
+	/**
+	 * Gets the euclidean distance.
+	 *
+	 * @param v1 the v1
+	 * @param v2 the v2
+	 * @return the euclidean distance
+	 */
 	private double getEuclideanDistance(float[] v1, float[] v2){
 		int len = Math.min(v1.length, v2.length);
 		double sum = 0d;

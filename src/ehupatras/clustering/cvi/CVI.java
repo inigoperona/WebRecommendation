@@ -3,18 +3,40 @@ package ehupatras.clustering.cvi;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CVI.
+ */
 public class CVI {
 	
+	/** The m_data inds. */
 	private int[] m_dataInds;
+	
+	/** The m_clusters. */
 	private int[] m_clusters;
+	
+	/** The m_medoids. */
 	private int[] m_medoids;
+	
+	/** The m_global medoids. */
 	private int[] m_globalMedoids;
 	
+	/**
+	 * Instantiates a new cvi.
+	 *
+	 * @param dataInds the data inds
+	 * @param clusters the clusters
+	 */
 	public CVI(int[] dataInds, int[] clusters){
 		m_dataInds = dataInds;
 		m_clusters = clusters;
 	}
 	
+	/**
+	 * Compute medoids.
+	 *
+	 * @param distancematrix the distancematrix
+	 */
 	public void computeMedoids(float[][] distancematrix){
 		// compute the index of the biggest cluster
 		int maxcli = -1;
@@ -103,14 +125,29 @@ public class CVI {
 		
 	}
 	
+	/**
+	 * Gets the medoids.
+	 *
+	 * @return the medoids
+	 */
 	public int[] getMedoids(){
 		return m_medoids;
 	}
 	
+	/**
+	 * Gets the global medoids.
+	 *
+	 * @return the global medoids
+	 */
 	public int[] getGlobalMedoids(){
 		return m_globalMedoids;
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		// data points indexes and their respective cluster indexes
 		int[] dataInds = new int[]{1,2,3,4};

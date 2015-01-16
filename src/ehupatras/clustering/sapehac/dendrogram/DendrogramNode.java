@@ -10,6 +10,7 @@
  */
 package ehupatras.clustering.sapehac.dendrogram;
 
+// TODO: Auto-generated Javadoc
 /**
  * A DendrogramNode is a node in a Dendrogram.
  * It represents a subtree of the dendrogram tree.
@@ -20,8 +21,25 @@ package ehupatras.clustering.sapehac.dendrogram;
  */
 public interface DendrogramNode {
 	
+	/**
+	 * Gets the left.
+	 *
+	 * @return the left
+	 */
 	public DendrogramNode getLeft();
+	
+	/**
+	 * Gets the right.
+	 *
+	 * @return the right
+	 */
 	public DendrogramNode getRight();
+	
+	/**
+	 * Gets the observation count.
+	 *
+	 * @return the observation count
+	 */
 	public int getObservationCount();
 
 }

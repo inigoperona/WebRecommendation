@@ -8,17 +8,48 @@ import angelu.webrecommendation.converter.URLconverterUsaCon;
 import ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluator;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorMed;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TestSetEvaluatorMedContent.
+ */
 public class TestSetEvaluatorMedContent 
 				extends TestSetEvaluatorMed {
 
 	// ATTRIBUTES
 	
+	/** The m_enrich strategy. */
 	private String m_enrichStrategy = "ContentsA1";
+	
+	/** The m_ url relation matrix. */
 	private String[][] m_UrlRelationMatrix = null;
+	
+	/** The m_no propose ur ls. */
 	private ArrayList<Integer> m_noProposeURLs = new ArrayList<Integer>();
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new test set evaluator med content.
+	 *
+	 * @param sequences the sequences
+	 * @param modePrRe the mode pr re
+	 * @param conv the conv
+	 * @param nURLs the n ur ls
+	 * @param urlSimilarityMatrix the url similarity matrix
+	 * @param urlSimilarityMatrix_Usage the url similarity matrix_ usage
+	 * @param urlSimilarityMatrix_Usage_max the url similarity matrix_ usage_max
+	 * @param urlSimilarityMatrix_Usage_min the url similarity matrix_ usage_min
+	 * @param medoids the medoids
+	 * @param gmedoids the gmedoids
+	 * @param recos the recos
+	 * @param isDistance the is distance
+	 * @param rolesW the roles w
+	 * @param knn the knn
+	 * @param enrichStrategy the enrich strategy
+	 * @param m_urlRelationMatrix the m_url relation matrix
+	 * @param urlClusteringDict the url clustering dict
+	 * @param noProposeURLs the no propose ur ls
+	 */
 	public TestSetEvaluatorMedContent(
 			ArrayList<String[]> sequences,
 			int modePrRe,
@@ -48,6 +79,9 @@ public class TestSetEvaluatorMedContent
 	
 	// GET SEQUENCE EVALUATOR
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorMed#getSequenceEvaluator(java.lang.String[])
+	 */
 	public SequenceEvaluator getSequenceEvaluator(String[] sequence){
 		SequenceEvaluator seqEva = 
 				new SequenceEvaluatorMedContent(

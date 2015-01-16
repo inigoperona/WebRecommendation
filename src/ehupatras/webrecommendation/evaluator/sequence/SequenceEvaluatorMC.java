@@ -5,15 +5,33 @@ import ehupatras.markovmodel.MarkovChain;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderMarkovChain;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequenceEvaluatorMC.
+ */
 public class SequenceEvaluatorMC 
 				extends SequenceEvaluator {
 
 	// ATTRIBUTES
 	
+	/** The m_markovchain. */
 	private MarkovChain m_markovchain = null;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new sequence evaluator mc.
+	 *
+	 * @param sequence the sequence
+	 * @param modePrRe the mode pr re
+	 * @param conv the conv
+	 * @param nURLs the n ur ls
+	 * @param urlSimilarityMatrix the url similarity matrix
+	 * @param urlSimilarityMatrix_Usage the url similarity matrix_ usage
+	 * @param urlSimilarityMatrix_Usage_max the url similarity matrix_ usage_max
+	 * @param urlSimilarityMatrix_Usage_min the url similarity matrix_ usage_min
+	 * @param markovchain the markovchain
+	 */
 	public SequenceEvaluatorMC(
 			String[] sequence,
 			int modePrRe,
@@ -29,6 +47,9 @@ public class SequenceEvaluatorMC
 	
 	// GET RECOMMENDER
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.sequence.SequenceEvaluator#getRecommender()
+	 */
 	public Recommender getRecommender(){
 		Recommender recommender = 
 				new RecommenderMarkovChain(m_markovchain);

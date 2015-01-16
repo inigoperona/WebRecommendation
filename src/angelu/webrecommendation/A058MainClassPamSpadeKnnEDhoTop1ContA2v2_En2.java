@@ -1,7 +1,16 @@
 package angelu.webrecommendation;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A058MainClassPamSpadeKnnEDhoTop1ContA2v2_En2.
+ */
 public class A058MainClassPamSpadeKnnEDhoTop1ContA2v2_En2 {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);

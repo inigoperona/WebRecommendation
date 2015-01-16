@@ -3,16 +3,40 @@ package ehupatras.clustering;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ClusteringPAM.
+ */
 public class ClusteringPAM {
 
+	/** The m_k. */
 	private int m_k = 10;
+	
+	/** The m_dm. */
 	private float[][] m_dm;
+	
+	/** The m_min dm. */
 	private float m_minDM = Float.MAX_VALUE;
+	
+	/** The m_max dm. */
 	private float m_maxDM = Float.MAX_VALUE;
+	
+	/** The m_real inds. */
 	private int[] m_realInds;
+	
+	/** The m_medoids. */
 	private ArrayList<Integer> m_medoids;
+	
+	/** The m_cost. */
 	private double m_cost;
 	
+	/**
+	 * Instantiates a new clustering pam.
+	 *
+	 * @param k the k
+	 * @param dm the dm
+	 * @param realIndexes the real indexes
+	 */
 	public ClusteringPAM(int k, float[][] dm, int[] realIndexes){
 		if(k>realIndexes.length){
 			m_k = realIndexes.length;
@@ -38,11 +62,19 @@ public class ClusteringPAM {
 		m_medoids = new ArrayList<Integer>();
 	}
 	
+	/**
+	 * Run pam.
+	 */
 	public void runPAM(){
 		this.build();
 		this.swap();
 	}
 	
+	/**
+	 * Database medoid.
+	 *
+	 * @return the int
+	 */
 	private int databaseMedoid(){
 		int nSeq = numberOfCases();
 		
@@ -64,6 +96,9 @@ public class ClusteringPAM {
 	}
 	
 	
+	/**
+	 * Builds the.
+	 */
 	private void build(){
 		int nSeq = numberOfCases();
 		System.out.println("BUILD phase");
@@ -114,6 +149,11 @@ public class ClusteringPAM {
 	}
 	
 	
+	/**
+	 * Find nearests1.
+	 *
+	 * @return the float[]
+	 */
 	private float[] findNearests1(){
 		int nSeq = numberOfCases();
 		
@@ -135,6 +175,9 @@ public class ClusteringPAM {
 	}
 	
 	
+	/**
+	 * Swap.
+	 */
 	private void swap(){
 		int nSeq = numberOfCases();
 		System.out.println("SWAP phase");
@@ -229,6 +272,11 @@ public class ClusteringPAM {
 		this.printMedoidAssignment();
 	}
 	
+	/**
+	 * Objectivefunc.
+	 *
+	 * @return the double
+	 */
 	private double objectivefunc(){
 		int nSeq = numberOfCases();
 		
@@ -250,6 +298,11 @@ public class ClusteringPAM {
 	}
 	
 	
+	/**
+	 * Findnearests2.
+	 *
+	 * @return the object[]
+	 */
 	private Object[] findnearests2(){
 		int nSeq = numberOfCases();
 		
@@ -281,6 +334,13 @@ public class ClusteringPAM {
 		return objA;
 	}
 	
+	/**
+	 * Gets the dm.
+	 *
+	 * @param i the i
+	 * @param j the j
+	 * @return the dm
+	 */
 	private float getDM(int i, int j){
 		if(i<m_realInds.length && j<m_realInds.length){
 			int i2 = m_realInds[i];
@@ -300,6 +360,9 @@ public class ClusteringPAM {
 		}
 	}
 	
+	/**
+	 * Prints the medoids.
+	 */
 	public void printMedoids(){
 		System.out.print(" " + m_medoids.get(0));
 		for(int i=1; i<m_medoids.size(); i++){
@@ -308,6 +371,9 @@ public class ClusteringPAM {
 		System.out.println();
 	}
 	
+	/**
+	 * Prints the medoid assignment.
+	 */
 	public void printMedoidAssignment(){
 		int[] medAssign = this.findNearestsMedoid();
 		System.out.print(" " + medAssign[0]);
@@ -317,6 +383,11 @@ public class ClusteringPAM {
 		System.out.println();
 	}
 	
+	/**
+	 * Gets the medoid assignment.
+	 *
+	 * @return the medoid assignment
+	 */
 	public int[] getMedoidAssignment(){
 		int[] medAssign = this.findNearestsMedoid();
 		int[] clusters = new int[medAssign.length];
@@ -337,6 +408,11 @@ public class ClusteringPAM {
 		return clusters;
 	}
 	
+	/**
+	 * Find nearests medoid.
+	 *
+	 * @return the int[]
+	 */
 	private int[] findNearestsMedoid(){
 		int nSeq = numberOfCases();
 		
@@ -359,14 +435,29 @@ public class ClusteringPAM {
 		return nearest1;
 	}
 	
+	/**
+	 * Sets the initial medoids.
+	 *
+	 * @param medoids the new initial medoids
+	 */
 	private void setInitialMedoids(ArrayList<Integer> medoids){
 		m_medoids = medoids;
 	}
 	
+	/**
+	 * Number of cases.
+	 *
+	 * @return the int
+	 */
 	private int numberOfCases(){
 		return m_realInds.length;
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		// create the distance matrix
 		float[][] dm0 = new float[][]{

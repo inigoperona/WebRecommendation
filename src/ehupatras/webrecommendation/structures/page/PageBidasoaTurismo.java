@@ -1,16 +1,29 @@
 package ehupatras.webrecommendation.structures.page;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PageBidasoaTurismo.
+ */
 public class PageBidasoaTurismo
 				extends PageAbstract {
 	
 	// To implement serializable needs this
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
 	
+	/**
+	 * Instantiates a new page bidasoa turismo.
+	 *
+	 * @param urlname the urlname
+	 */
 	public PageBidasoaTurismo(String urlname){
 		super(urlname);
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.structures.page.PageAbstract#isValid()
+	 */
 	protected void isValid(){
 		// default is true
 		m_isvalid = true;
@@ -38,6 +51,9 @@ public class PageBidasoaTurismo
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.structures.page.PageAbstract#ishtml()
+	 */
 	protected void ishtml(){
 		// default
 		m_ishtml = false;
@@ -50,6 +66,9 @@ public class PageBidasoaTurismo
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.structures.page.PageAbstract#cleanURL()
+	 */
 	protected void cleanURL(){
 		String urlname2 = m_urlname.toLowerCase();
 		
@@ -121,6 +140,9 @@ public class PageBidasoaTurismo
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.structures.page.PageAbstract#getIsSuitableToLinkPrediction()
+	 */
 	public boolean getIsSuitableToLinkPrediction(){
 		// !m_labelByHand.equals("index") we want index URLs in the sequences
 		// because its alignment give us information.
@@ -135,6 +157,9 @@ public class PageBidasoaTurismo
 	}
 
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.structures.page.PageAbstract#getUrlName()
+	 */
 	public String getUrlName(){
 		String urlname2 = m_urlname.replace("lang=es", "lang=en");
 		String urlname3 = urlname2.replace("lang=eu", "lang=en");

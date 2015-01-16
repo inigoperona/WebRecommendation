@@ -7,16 +7,36 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorSeqMin.
+ */
 public class ModelEvaluatorSeqMin 
 				extends ModelEvaluatorSuffixTree {
 
 	// ATTRIBUTES
 	
+	/** The m_minsupport. */
 	protected float m_minsupport = (float)0.25;
+	
+	/** The m_mined seqs. */
 	protected ArrayList<ArrayList<String[]>> m_minedSeqs;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator seq min.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	protected ModelEvaluatorSeqMin(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -32,12 +52,20 @@ public class ModelEvaluatorSeqMin
 	
 	// FUNCTIONS
 	
+	/**
+	 * Builds the st.
+	 */
 	public void buildST(){
 		super.buidSuffixTrees(m_minedSeqs);
 	}
 	
 	// Mined Sequences utilities
 	
+	/**
+	 * Write weighted sequences.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	protected void writeWeightedSequences(String outfilename){
 		// Open the given file
 		BufferedWriter writer = null;
@@ -83,11 +111,21 @@ public class ModelEvaluatorSeqMin
 		}
 	}
 	
+	/**
+	 * Save mined seqs.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	protected void saveMinedSeqs(String outfilename){
 		SaveLoadObjects so = new SaveLoadObjects();
 		so.save(m_minedSeqs, outfilename);
 	}
 	
+	/**
+	 * Load mined seqs.
+	 *
+	 * @param outfilename the outfilename
+	 */
 	protected void loadMinedSeqs(String outfilename){
 		SaveLoadObjects so = new SaveLoadObjects();
 		m_minedSeqs = (ArrayList<ArrayList<String[]>>)so.load(outfilename);

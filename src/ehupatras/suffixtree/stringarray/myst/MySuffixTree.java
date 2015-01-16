@@ -7,25 +7,53 @@ import ehupatras.suffixtree.stringarray.EdgeBag;
 import ehupatras.suffixtree.stringarray.Edge;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MySuffixTree.
+ */
 public class MySuffixTree {
 
 	// the suffix tree creator
+	/** The m_suffixtree sa. */
 	private SuffixTreeStringArray m_suffixtreeSA;
 	
 	// my suffix tree
+	/** The m_labels al. */
 	private ArrayList<ArrayList<String>> m_labelsAL;
+	
+	/** The m_children al. */
 	private ArrayList<ArrayList<Integer>> m_childrenAL;
+	
+	/** The m_depths. */
 	private int[] m_depths;
+	
+	/** The m_paths. */
 	private ArrayList<ArrayList<String>> m_paths;
+	
+	/** The m_frequencies. */
 	private float[] m_frequencies;
+	
+	/** The m_norm1. */
 	private float[] m_norm1;
+	
+	/** The m_norm2. */
 	private float[] m_norm2;
+	
+	/** The m_children a l2. */
 	private ArrayList<ArrayList<Integer>> m_childrenAL2;
 	
 	// database info
+	/** The m_n sequences. */
 	private int m_nSequences = 0;
+	
+	/** The m_n requests. */
 	private int m_nRequests = 0;
 	
+	/**
+	 * Instantiates a new my suffix tree.
+	 *
+	 * @param sequences the sequences
+	 */
 	public MySuffixTree(ArrayList<String[]> sequences){
 		// create the suffix tree
 		m_suffixtreeSA = new SuffixTreeStringArray();
@@ -41,6 +69,9 @@ public class MySuffixTree {
 		m_suffixtreeSA = null;
 	}
 	
+	/**
+	 * Inits the.
+	 */
 	private void init(){
         this.generateMyST();
         this.updateDepth();
@@ -49,6 +80,9 @@ public class MySuffixTree {
         this.normalize1();
 	}
 	
+	/**
+	 * Generate my st.
+	 */
 	private void generateMyST(){
 		// convert the ST to the vector format
 		m_labelsAL = new ArrayList<ArrayList<String>>();
@@ -82,6 +116,9 @@ public class MySuffixTree {
 		}
 	}
 	
+	/**
+	 * Update depth.
+	 */
 	private void updateDepth(){
 		// initialize depth array
 		m_depths = new int[m_childrenAL.size()];
@@ -98,6 +135,9 @@ public class MySuffixTree {
 		}
 	}
 	
+	/**
+	 * Compute frequencies.
+	 */
 	private void computeFrequencies(){
 		// initialize frequencies array
 		m_frequencies = new float[m_labelsAL.size()];
@@ -143,6 +183,9 @@ public class MySuffixTree {
 		}
 	}
 	
+	/**
+	 * Compute paths.
+	 */
 	private void computePaths(){
 		// initialize the path array
 		m_paths = new ArrayList<ArrayList<String>>();
@@ -186,6 +229,12 @@ public class MySuffixTree {
 		}
 	}
 	
+	/**
+	 * Gets the path.
+	 *
+	 * @param nodePath the node path
+	 * @return the path
+	 */
 	private ArrayList<String> getPath(ArrayList<Integer> nodePath){
 		ArrayList<String> path = new ArrayList<String>();
 		for(int i=0; i<nodePath.size(); i++){
@@ -198,6 +247,9 @@ public class MySuffixTree {
 		return path;
 	}
 	
+	/**
+	 * Normalize1.
+	 */
 	private void normalize1(){
 		// initialize normalized array
 		m_norm1 = new float[m_labelsAL.size()];
@@ -223,6 +275,12 @@ public class MySuffixTree {
 	}
 	
 	
+	/**
+	 * Find all suffixes.
+	 *
+	 * @param path the path
+	 * @return the array list
+	 */
 	private ArrayList<Integer> findAllSuffixes(ArrayList<String> path){
 		ArrayList<Integer> findInds = new ArrayList<Integer>();
 		
@@ -259,6 +317,9 @@ public class MySuffixTree {
 		return findInds;
 	}
 	
+	/**
+	 * Prints the suffix tree.
+	 */
 	public void printSuffixTree(){
 		ArrayList<Integer> printInds = new ArrayList<Integer>();
 		printInds.add(0);
@@ -305,6 +366,12 @@ public class MySuffixTree {
 		}
 	}
 	
+	/**
+	 * Checks if is runnable.
+	 *
+	 * @param waydone the waydone
+	 * @return true, if is runnable
+	 */
 	public boolean isRunnable(ArrayList<String> waydone){
 		int[] pointers = this.performWay(waydone);
 		int pointerNode = pointers[0];
@@ -316,6 +383,12 @@ public class MySuffixTree {
 		}
 	}
 	
+	/**
+	 * Perform way.
+	 *
+	 * @param waydone the waydone
+	 * @return the int[]
+	 */
 	public int[] performWay(ArrayList<String> waydone){
 		int[] pointers = new int[2];
 		pointers[0] = -1;
@@ -336,6 +409,14 @@ public class MySuffixTree {
 		return pointers;
 	}
 	
+	/**
+	 * Do step.
+	 *
+	 * @param actualNodeInd the actual node ind
+	 * @param actualLabelInd the actual label ind
+	 * @param nextStep the next step
+	 * @return the int[]
+	 */
 	public int[] doStep(int actualNodeInd, int actualLabelInd, String nextStep){
 		int[] pointers = new int[2];
 		pointers[0] = -1; // node pointer
@@ -366,18 +447,47 @@ public class MySuffixTree {
 		return pointers;
 	}
 	
+	/**
+	 * Gets the nextpossible steps frequencies.
+	 *
+	 * @param actualNodeInd the actual node ind
+	 * @param actualLabelInd the actual label ind
+	 * @return the nextpossible steps frequencies
+	 */
 	public Object[] getNextpossibleStepsFrequencies(int actualNodeInd, int actualLabelInd){
 		return this.getNextpossibleSteps(actualNodeInd, actualLabelInd, m_frequencies);
 	}
 	
+	/**
+	 * Gets the nextpossible steps norm1.
+	 *
+	 * @param actualNodeInd the actual node ind
+	 * @param actualLabelInd the actual label ind
+	 * @return the nextpossible steps norm1
+	 */
 	public Object[] getNextpossibleStepsNorm1(int actualNodeInd, int actualLabelInd){
 		return this.getNextpossibleSteps(actualNodeInd, actualLabelInd, m_norm1);
 	}
 	
+	/**
+	 * Gets the nextpossible steps norm2.
+	 *
+	 * @param actualNodeInd the actual node ind
+	 * @param actualLabelInd the actual label ind
+	 * @return the nextpossible steps norm2
+	 */
 	public Object[] getNextpossibleStepsNorm2(int actualNodeInd, int actualLabelInd){
 		return this.getNextpossibleSteps(actualNodeInd, actualLabelInd, m_norm1);
 	}
 	
+	/**
+	 * Gets the nextpossible steps.
+	 *
+	 * @param actualNodeInd the actual node ind
+	 * @param actualLabelInd the actual label ind
+	 * @param weights the weights
+	 * @return the nextpossible steps
+	 */
 	private Object[] getNextpossibleSteps(int actualNodeInd, int actualLabelInd, float[] weights){
 		// the data to return
 		ArrayList<String> urlsAL = new ArrayList<String>();
@@ -409,10 +519,20 @@ public class MySuffixTree {
 		return objA;
 	}
 	
+	/**
+	 * Gets the number of nodes.
+	 *
+	 * @return the number of nodes
+	 */
 	public int getNumberOfNodes(){
 		return m_labelsAL.size();
 	}
 	
+	/**
+	 * Gets the number of edges.
+	 *
+	 * @return the number of edges
+	 */
 	public float getNumberOfEdges(){
 		int sum = 0;
 		int cont = 0;
@@ -427,6 +547,11 @@ public class MySuffixTree {
 		return avg;
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		// create the database
         String[] word1 = {"c", "a", "c", "a", "o"};

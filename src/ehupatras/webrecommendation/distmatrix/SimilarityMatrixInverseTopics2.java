@@ -6,9 +6,20 @@ import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010Topics2;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SimilarityMatrixInverseTopics2.
+ */
 public class SimilarityMatrixInverseTopics2 
 				extends SimilarityMatrixInverse {
 
+	/**
+	 * Instantiates a new similarity matrix inverse topics2.
+	 *
+	 * @param names the names
+	 * @param urls2topicfile the urls2topicfile
+	 * @param topicmatch the topicmatch
+	 */
 	public SimilarityMatrixInverseTopics2(ArrayList<Long> names, String urls2topicfile, float topicmatch){
 		super(names);
 		m_topicmatch = topicmatch;
@@ -20,6 +31,9 @@ public class SimilarityMatrixInverseTopics2
 		m_url2topic = (int[])objA[1];
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.distmatrix.SimilarityMatrixInverse#computeMatrix(java.util.ArrayList, float[][], boolean)
+	 */
 	public void computeMatrix( ArrayList<String[]> data,
 			float[][] roleWeights,
 			boolean isplit){

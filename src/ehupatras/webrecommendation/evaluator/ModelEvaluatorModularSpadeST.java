@@ -6,15 +6,33 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorModSTknn;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorModularSpadeST.
+ */
 public class ModelEvaluatorModularSpadeST 
 				extends ModelEvaluatorMedoids {
 
 	// ATTRIBUTES
 	
+	/** The m_clust suffix tree al. */
 	private ArrayList<ArrayList<MySuffixTree>> m_clustSuffixTreeAL = null;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator modular spade st.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	public ModelEvaluatorModularSpadeST(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -31,6 +49,9 @@ public class ModelEvaluatorModularSpadeST
 	
 	// GET TEST EVALUATOR
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids#getTestSetEvaluator(int, java.util.ArrayList)
+	 */
 	public TestSetEvaluator getTestSetEvaluator(
 			int iFold, 
 			ArrayList<String[]> testseqs){
@@ -49,6 +70,12 @@ public class ModelEvaluatorModularSpadeST
 	
 	// BUILD MODEL
 	
+	/**
+	 * Builds the clusters spade suffix trees.
+	 *
+	 * @param minsup the minsup
+	 * @param workdir the workdir
+	 */
 	public void buildClustersSpadeSuffixTrees(float minsup, String workdir){
 		m_minsupport = minsup;
 		
@@ -59,6 +86,13 @@ public class ModelEvaluatorModularSpadeST
 		}
 	}
 	
+	/**
+	 * Creates the clusters spade suffix trees.
+	 *
+	 * @param indexFold the index fold
+	 * @param workdir the workdir
+	 * @return the array list
+	 */
 	private ArrayList<MySuffixTree> createClustersSPADESuffixTrees(int indexFold, String workdir){
 		// train sessions names
 		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);

@@ -9,105 +9,241 @@ import ehupatras.markovmodel.MarkovChain;
 import ehupatras.webrecommendation.recommender.Recommender;
 import ehupatras.webrecommendation.recommender.RecommenderMarkovChain;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SequenceEvaluator.
+ */
 public abstract class SequenceEvaluator {
 
 	// ATTRIBUTES
 	
 	// mode to compute precision and recall
+	/** The m_mode pr re. */
 	protected int m_modePrRe = 0;
 	// URLs to not proposed neither take into account in the evaluation phase
+	/** The m_no propose ur ls. */
 	protected ArrayList<Integer> m_noProposeURLs = new ArrayList<Integer>();
 	
 	// Classes that simulates the navigation of the user
+	/** The m_recommender. */
 	protected Recommender m_recommender = null;
+	
+	/** The m_sequence. */
 	protected ArrayList<String> m_sequence = null;
+	
+	/** The m_sequence url. */
 	protected ArrayList<String> m_sequenceURL = null;
 	
 	// Metrics
+	/** The m_number of recommendations. */
 	protected int m_numberOfRecommendations = 0;
+	
+	/** The m_n failures. */
 	private int m_nFailures = 0;
+	
+	/** The m_homepages. */
 	private int[] m_homepages = null;
 	// Topic's parameter
+	/** The m_url ids. */
 	private ArrayList<Integer> m_urlIds = null;
 		// topic1: based on url to topic distribution
-	private int[] m_url2topic = null;
+	/** The m_url2topic. */
+		private int[] m_url2topic = null;
+	
+	/** The m_n diff topics. */
 	private int m_nDiffTopics = 10;
+	
+	/** The m_topicmatch. */
 	private float m_topicmatch = 0.5f;
 		// topic2: based on url clustering
-	private HashMap<Integer,Integer> m_UrlClusteringDict = null;
+	/** The m_ url clustering dict. */
+		private HashMap<Integer,Integer> m_UrlClusteringDict = null;
+	
+	/** The m_n diff clusters. */
 	private int m_nDiffClusters = 10;
 	
 	// Similarity matrixes
+	/** The m_usage ur ls. */
 	protected ArrayList<Integer> m_usageURLs = null;
+	
+	/** The m_conv. */
 	protected URLconverterUsaCon m_conv = null;
+	
+	/** The m_ url similarity matrix_ content. */
 	protected float[][] m_UrlSimilarityMatrix_Content = null;
+	
+	/** The m_n ur ls. */
 	protected int m_nURLs = 0;
+	
+	/** The m_ url similarity matrix_ usage. */
 	protected float[][] m_UrlSimilarityMatrix_Usage = null;
+	
+	/** The m_ url similarity matrix_ usage_max. */
 	protected float[] m_UrlSimilarityMatrix_Usage_max = null;
+	
+	/** The m_ url similarity matrix_ usage_min. */
 	protected float[] m_UrlSimilarityMatrix_Usage_min = null;	
 	
 	// HONEST MODE
 	// URL level metrics
+	/** The m_hitscore. */
 	private int m_hitscore = 0;
+	
+	/** The m_clicksoonscore. */
 	private int m_clicksoonscore = 0;
+	
+	/** The m_precision. */
 	private float[] m_precision;
+	
+	/** The m_recall. */
 	private float[] m_recall;
+	
+	/** The m_cosine sim. */
 	private float[] m_cosineSim;
+	
+	/** The m_one n nmetric. */
 	private float[] m_oneNNmetric;
+	
+	/** The m_one n nmetric norm1. */
 	private float[] m_oneNNmetricNorm1;
+	
+	/** The m_one n nmetric norm2. */
 	private float[] m_oneNNmetricNorm2;
+	
+	/** The m_one n nmetric rank. */
 	private float[] m_oneNNmetricRank;
+	
+	/** The m_precision model. */
 	private float[] m_precisionModel;
+	
+	/** The m_recall model. */
 	private float[] m_recallModel;
+	
+	/** The m_cosine sim model. */
 	private float[] m_cosineSimModel;
+	
+	/** The m_one n nmetric model. */
 	private float[] m_oneNNmetricModel;
+	
+	/** The m_one n nmetric norm1 model. */
 	private float[] m_oneNNmetricNorm1Model;
+	
+	/** The m_one n nmetric norm2 model. */
 	private float[] m_oneNNmetricNorm2Model;
+	
+	/** The m_one n nmetric rank model. */
 	private float[] m_oneNNmetricRankModel;
 	// TOPIC1 level metrics
+	/** The m_hitscore top1. */
 	private float m_hitscoreTop1 = 0;
+	
+	/** The m_clicksoonscore top1. */
 	private float m_clicksoonscoreTop1 = 0;
+	
+	/** The m_precision top1. */
 	private float[] m_precisionTop1;
+	
+	/** The m_recall top1. */
 	private float[] m_recallTop1;
+	
+	/** The m_cosine sim top1. */
 	private float[] m_cosineSimTop1;
+	
+	/** The m_precision model top1. */
 	private float[] m_precisionModelTop1;
+	
+	/** The m_recall model top1. */
 	private float[] m_recallModelTop1;
+	
+	/** The m_cosine sim model top1. */
 	private float[] m_cosineSimModelTop1;
 	// TOPIC1 level metrics
+	/** The m_hitscore top2. */
 	private float m_hitscoreTop2 = 0;
+	
+	/** The m_clicksoonscore top2. */
 	private float m_clicksoonscoreTop2 = 0;
+	
+	/** The m_precision top2. */
 	private float[] m_precisionTop2;
+	
+	/** The m_recall top2. */
 	private float[] m_recallTop2;
+	
+	/** The m_cosine sim top2. */
 	private float[] m_cosineSimTop2;
+	
+	/** The m_precision model top2. */
 	private float[] m_precisionModelTop2;
+	
+	/** The m_recall model top2. */
 	private float[] m_recallModelTop2;
+	
+	/** The m_cosine sim model top2. */
 	private float[] m_cosineSimModelTop2;
 	
 	// Index always correct
 	// URL level metrics
+	/** The m_hitscore_ ok home. */
 	private int m_hitscore_OkHome = 0;
+	
+	/** The m_clicksoonscore_ ok home. */
 	private int m_clicksoonscore_OkHome = 0;
+	
+	/** The m_precision_ ok home. */
 	private float[] m_precision_OkHome;
+	
+	/** The m_recall_ ok home. */
 	private float[] m_recall_OkHome;
+	
+	/** The m_precision model_ ok home. */
 	private float[] m_precisionModel_OkHome;
+	
+	/** The m_recall model_ ok home. */
 	private float[] m_recallModel_OkHome;
 	// TOPIC level metrics
+	/** The m_hitscore top_ ok home. */
 	private float m_hitscoreTop_OkHome = 0;
+	
+	/** The m_clicksoonscore top_ ok home. */
 	private float m_clicksoonscoreTop_OkHome = 0;
+	
+	/** The m_precision top_ ok home. */
 	private float[] m_precisionTop_OkHome;
+	
+	/** The m_recall top_ ok home. */
 	private float[] m_recallTop_OkHome;
+	
+	/** The m_precision model top_ ok home. */
 	private float[] m_precisionModelTop_OkHome;
+	
+	/** The m_recall model top_ ok home. */
 	private float[] m_recallModelTop_OkHome;
 	
 	
 	// write the recommendations done in each step
+	/** The m_line header. */
 	private String m_lineHeader = null;
+	
+	/** The m_eval writer. */
 	private BufferedWriter m_evalWriter = null;
 	
 	
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new sequence evaluator.
+	 *
+	 * @param sequence the sequence
+	 * @param modePrRe the mode pr re
+	 * @param conv the conv
+	 * @param nURLs the n ur ls
+	 * @param urlSimilarityMatrix the url similarity matrix
+	 * @param urlSimilarityMatrix_Usage the url similarity matrix_ usage
+	 * @param urlSimilarityMatrix_Usage_max the url similarity matrix_ usage_max
+	 * @param urlSimilarityMatrix_Usage_min the url similarity matrix_ usage_min
+	 */
 	public SequenceEvaluator(ArrayList<String> sequence, 
 			int modePrRe, URLconverterUsaCon conv,
 			int nURLs, float[][] urlSimilarityMatrix,
@@ -122,6 +258,18 @@ public abstract class SequenceEvaluator {
 		this.constructor2(sequence);
 	}
 	
+	/**
+	 * Instantiates a new sequence evaluator.
+	 *
+	 * @param sequence the sequence
+	 * @param modePrRe the mode pr re
+	 * @param conv the conv
+	 * @param nURLs the n ur ls
+	 * @param urlSimilarityMatrix the url similarity matrix
+	 * @param urlSimilarityMatrix_Usage the url similarity matrix_ usage
+	 * @param urlSimilarityMatrix_Usage_max the url similarity matrix_ usage_max
+	 * @param urlSimilarityMatrix_Usage_min the url similarity matrix_ usage_min
+	 */
 	public SequenceEvaluator(String[] sequence, 
 			int modePrRe, URLconverterUsaCon conv,
 			int nURLs, float[][] urlSimilarityMatrix,
@@ -137,6 +285,11 @@ public abstract class SequenceEvaluator {
 		this.constructor2(sequenceAL);
 	}
 	
+	/**
+	 * Constructor2.
+	 *
+	 * @param sequence the sequence
+	 */
 	private void constructor2(ArrayList<String> sequence){
 		m_usageURLs = m_conv.getUsageUrls();
 		
@@ -183,6 +336,12 @@ public abstract class SequenceEvaluator {
 		m_oneNNmetric = new float[sequence.size()];
 	}
 	
+	/**
+	 * Convert to array list.
+	 *
+	 * @param strA the str a
+	 * @return the array list
+	 */
 	private ArrayList<String> convertToArrayList(String[] strA){
 		ArrayList<String> sequenceAL = new ArrayList<String>();
 		for(int i=0; i<strA.length; i++){
@@ -194,6 +353,11 @@ public abstract class SequenceEvaluator {
 	
 	// ABSTARCT FUNCTIONS
 	
+	/**
+	 * Gets the recommender.
+	 *
+	 * @return the recommender
+	 */
 	public abstract Recommender getRecommender();
 	
 	
@@ -207,6 +371,15 @@ public abstract class SequenceEvaluator {
 	// mode =  4 : Merge Markov Chain model and Suffix Tree models recommendations
 	// mode =  5 : Weight the Suffix tree with original train sequences and in exploitation with original test sequences
 	// mode =  6 : Weight the ST with Train sequences and enrich it with step1 URLs 
+	/**
+	 * Compute sequence metrics.
+	 *
+	 * @param mode the mode
+	 * @param nrecos the nrecos
+	 * @param seed the seed
+	 * @param homepages the homepages
+	 * @param markovchain the markovchain
+	 */
 	public void computeSequenceMetrics(
 			String mode, 
 			int nrecos, long seed,
@@ -293,6 +466,12 @@ public abstract class SequenceEvaluator {
 	
 	// To write the experimentation 
 	
+	/**
+	 * Sets the line header.
+	 *
+	 * @param lineHeader the line header
+	 * @param evalWriter the eval writer
+	 */
 	public void setLineHeader(String lineHeader, BufferedWriter evalWriter){
 		m_lineHeader = lineHeader;
 		m_evalWriter = evalWriter;
@@ -304,6 +483,12 @@ public abstract class SequenceEvaluator {
 	
 	// MAIN function //
 	
+	/**
+	 * Compute step metrics.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 */
 	protected void computeStepMetrics(int stepIndex, ArrayList<String> recommendatios){		
 		String step = m_sequenceURL.get(stepIndex);
 		m_numberOfRecommendations = m_numberOfRecommendations + recommendatios.size();
@@ -339,6 +524,13 @@ public abstract class SequenceEvaluator {
 	
 	// remove prohibited URLs
 	
+	/**
+	 * Removes the prohibited ur ls.
+	 *
+	 * @param from the from
+	 * @param sequenceURL the sequence url
+	 * @return the array list
+	 */
 	private ArrayList<String> removeProhibitedURLs(int from, ArrayList<String> sequenceURL){
 		ArrayList<String> sequenceURL2 = new ArrayList<String>(); 
 		for(int i=from; i<sequenceURL.size(); i++){
@@ -355,6 +547,12 @@ public abstract class SequenceEvaluator {
 	
 	// URL level functions - HONEST
 	
+	/**
+	 * Compute hit score.
+	 *
+	 * @param step the step
+	 * @param recommendatios the recommendatios
+	 */
 	protected void computeHitScore(
 			String step,
 			ArrayList<String> recommendatios){
@@ -367,6 +565,12 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
+	/**
+	 * Compute click soon score.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 */
 	protected void computeClickSoonScore(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -385,6 +589,12 @@ public abstract class SequenceEvaluator {
 		}
 	}	
 	
+	/**
+	 * Compute confusion matrix.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 */
 	protected void computeConfusionMatrix(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -419,6 +629,13 @@ public abstract class SequenceEvaluator {
 		m_oneNNmetricRankModel[stepIndex] = onennRankModel;
 	}
 	
+	/**
+	 * Compute precision.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float computePrecision(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -462,6 +679,13 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
+	/**
+	 * Compute recall.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float computeRecall(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -498,6 +722,13 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
+	/**
+	 * Cosine evaluation.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float cosineEvaluation(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -524,6 +755,13 @@ public abstract class SequenceEvaluator {
 		return this.cosineSimilarity(wayA, recosA);
 	}
 	
+	/**
+	 * Cosine similarity.
+	 *
+	 * @param vec1 the vec1
+	 * @param vec2 the vec2
+	 * @return the float
+	 */
 	private float cosineSimilarity(int[] vec1, int[] vec2){
 		int n = Math.min(vec1.length, vec2.length);
 		
@@ -561,6 +799,13 @@ public abstract class SequenceEvaluator {
 	
 	// the average of each proposed URL' similarity to the navigated URLs
 	// between proposed and 
+	/**
+	 * One n nmetric.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float oneNNmetric(int stepIndex, 
 					ArrayList<String> recommendatios){
 		// take the 2nd part of the test sequence & remove prohibited URLs
@@ -608,6 +853,13 @@ public abstract class SequenceEvaluator {
 		return result;
 	}
 	
+	/**
+	 * Order array r.
+	 *
+	 * @param arr the arr
+	 * @param k the k
+	 * @return the float[]
+	 */
 	private float[] orderArrayR(float[] arr, int k){
 		// order array values
 		ArrayList<Float> arr2AL = this.orderR_AL(arr);
@@ -620,6 +872,13 @@ public abstract class SequenceEvaluator {
 		return arr2;
 	}
 	
+	/**
+	 * Order array.
+	 *
+	 * @param arr the arr
+	 * @param k the k
+	 * @return the float[]
+	 */
 	private float[] orderArray(float[] arr, int k){
 		// order array values
 		ArrayList<Float> arr2AL = this.orderR_AL(arr);
@@ -635,6 +894,12 @@ public abstract class SequenceEvaluator {
 		return arr2;
 	}
 	
+	/**
+	 * Order r_ al.
+	 *
+	 * @param arr the arr
+	 * @return the array list
+	 */
 	private ArrayList<Float> orderR_AL(float[] arr){
 		ArrayList<Float> arr2AL = new ArrayList<Float>();
 		for(int i=0; i<arr.length; i++){
@@ -651,6 +916,13 @@ public abstract class SequenceEvaluator {
 		return arr2AL;
 	}
 	
+	/**
+	 * One n nmetric norm1.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float oneNNmetricNorm1(int stepIndex, 
 			ArrayList<String> recommendatios){
 		// take the 2nd part of the test sequence & remove prohibited URLs
@@ -698,6 +970,13 @@ public abstract class SequenceEvaluator {
 		return sum/(float)simsum2.length;
 	}
 	
+	/**
+	 * One n nmetric norm2.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float oneNNmetricNorm2(int stepIndex, 
 			ArrayList<String> recommendatios){
 		// take the 2nd part of the test sequence & remove prohibited URLs
@@ -746,6 +1025,13 @@ public abstract class SequenceEvaluator {
 		return sum/(float)simsum2.length;	
 	}
 	
+	/**
+	 * One n nmetric rank.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float oneNNmetricRank(int stepIndex, 
 			ArrayList<String> recommendatios){
 		// take the 2nd part of the test sequence & remove prohibited URLs
@@ -807,6 +1093,13 @@ public abstract class SequenceEvaluator {
 		
 	// TOPIC GLOBAL functions.
 	
+	/**
+	 * Gets the topic id.
+	 *
+	 * @param urlID the url id
+	 * @param isTopic the is topic
+	 * @return the topic id
+	 */
 	private int getTopicID(int urlID, boolean isTopic){
 		if(isTopic){
 			return this.getTopicID_1(urlID);
@@ -815,6 +1108,12 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
+	/**
+	 * Gets the topic i d_1.
+	 *
+	 * @param urlID the url id
+	 * @return the topic i d_1
+	 */
 	private int getTopicID_1(int urlID){
 		int topicID = 0;
 		if(urlID==-1){
@@ -825,6 +1124,12 @@ public abstract class SequenceEvaluator {
 		return topicID;
 	}
 	
+	/**
+	 * Gets the topic i d_2.
+	 *
+	 * @param urlID the url id
+	 * @return the topic i d_2
+	 */
 	private int getTopicID_2(int urlID){
 		int topicID = 0;
 		if(urlID==-1){
@@ -835,6 +1140,13 @@ public abstract class SequenceEvaluator {
 		return topicID;
 	}
 	
+	/**
+	 * Compute hit score top.
+	 *
+	 * @param step the step
+	 * @param recommendatios the recommendatios
+	 * @param isTopic the is topic
+	 */
 	private void computeHitScoreTop(
 			String step, 
 			ArrayList<String> recommendatios,
@@ -878,6 +1190,13 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
+	/**
+	 * Compute click soon score top.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @param isTopic the is topic
+	 */
 	private void computeClickSoonScoreTop(
 			int stepIndex,
 			ArrayList<String> recommendatios,
@@ -925,6 +1244,13 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
+	/**
+	 * Compute confusion matrix top.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @param isTopic the is topic
+	 */
 	private void computeConfusionMatrixTop(
 			int stepIndex, 
 			ArrayList<String> recommendatios,
@@ -955,6 +1281,14 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
+	/**
+	 * Compute precision top.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @param isTopic the is topic
+	 * @return the float
+	 */
 	private float computePrecisionTop(
 			int stepIndex, 
 			ArrayList<String> recommendatios,
@@ -1020,6 +1354,14 @@ public abstract class SequenceEvaluator {
 		}
 	}	
 	
+	/**
+	 * Compute recall top.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @param isTopic the is topic
+	 * @return the float
+	 */
 	private float computeRecallTop(
 			int stepIndex, 
 			ArrayList<String> recommendatios,
@@ -1076,6 +1418,14 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
+	/**
+	 * Cosine evaluation top.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @param isTopic the is topic
+	 * @return the float
+	 */
 	private float cosineEvaluationTop(
 			int stepIndex, 
 			ArrayList<String> recommendatios,
@@ -1120,6 +1470,12 @@ public abstract class SequenceEvaluator {
 	
 	// URL level functions - homepage always correct
 	
+	/**
+	 * Compute hit score_ ok home.
+	 *
+	 * @param step the step
+	 * @param recommendatios the recommendatios
+	 */
 	protected void computeHitScore_OkHome(
 			String step,
 			ArrayList<String> recommendatios){
@@ -1136,6 +1492,12 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
+	/**
+	 * Compute click soon score_ ok home.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 */
 	protected void computeClickSoonScore_OkHome(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -1158,6 +1520,12 @@ public abstract class SequenceEvaluator {
 		}
 	}	
 	
+	/**
+	 * Compute confusion matrix_ ok home.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 */
 	protected void computeConfusionMatrix_OkHome(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -1171,6 +1539,13 @@ public abstract class SequenceEvaluator {
 		m_recallModel_OkHome[stepIndex] = reModel;
 	}
 	
+	/**
+	 * Compute precision_ ok home.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float computePrecision_OkHome(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -1207,6 +1582,13 @@ public abstract class SequenceEvaluator {
 		}
 	}
 	
+	/**
+	 * Compute recall_ ok home.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float computeRecall_OkHome(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -1246,6 +1628,12 @@ public abstract class SequenceEvaluator {
 	
 	// TOPIC level functions - homepage always correct
 	
+	/**
+	 * Compute hit score top_ ok home.
+	 *
+	 * @param step the step
+	 * @param recommendatios the recommendatios
+	 */
 	protected void computeHitScoreTop_OkHome(
 			String step, 
 			ArrayList<String> recommendatios){
@@ -1287,6 +1675,12 @@ public abstract class SequenceEvaluator {
 		}
 	}	
 	
+	/**
+	 * Compute click soon score top_ ok home.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 */
 	protected void computeClickSoonScoreTop_OkHome(
 			int stepIndex,
 			ArrayList<String> recommendatios){
@@ -1332,6 +1726,12 @@ public abstract class SequenceEvaluator {
 		}
 	}	
 	
+	/**
+	 * Compute confusion matrix top_ ok home.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 */
 	protected void computeConfusionMatrixTop_OkHome(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -1345,6 +1745,13 @@ public abstract class SequenceEvaluator {
 		m_recallModelTop_OkHome[stepIndex] = reModel;
 	}
 	
+	/**
+	 * Compute precision top_ ok home.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float computePrecisionTop_OkHome(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -1400,6 +1807,13 @@ public abstract class SequenceEvaluator {
 		}
 	}	
 	
+	/**
+	 * Compute recall top_ ok home.
+	 *
+	 * @param stepIndex the step index
+	 * @param recommendatios the recommendatios
+	 * @return the float
+	 */
 	private float computeRecallTop_OkHome(
 			int stepIndex, 
 			ArrayList<String> recommendatios){
@@ -1460,68 +1874,192 @@ public abstract class SequenceEvaluator {
 	
 	
 	// GET parameters/metrics of this class	
+	/**
+	 * Gets the number of recommendations ratio.
+	 *
+	 * @return the number of recommendations ratio
+	 */
 	public float getNumberOfRecommendationsRatio(){
 		return (float)m_numberOfRecommendations / (float)m_sequence.size();
 	}	
+	
+	/**
+	 * Gets the number of failures.
+	 *
+	 * @return the number of failures
+	 */
 	public int getNumberOfFailures(){
 		return m_nFailures;
 	}
 	
 	// URL level metrics - HONEST	
+	/**
+	 * Gets the hit ratio.
+	 *
+	 * @return the hit ratio
+	 */
 	public float getHitRatio(){
 		return (float)m_hitscore/(float)m_sequence.size();
 	}	
+	
+	/**
+	 * Gets the click soon ratio.
+	 *
+	 * @return the click soon ratio
+	 */
 	public float getClickSoonRatio(){
 		return (float)m_clicksoonscore/(float)m_sequence.size();
 	}	
+	
+	/**
+	 * Gets the precissions.
+	 *
+	 * @return the precissions
+	 */
 	public float[] getPrecissions(){
 		return m_precision;
 	}	
+	
+	/**
+	 * Gets the recalls.
+	 *
+	 * @return the recalls
+	 */
 	public float[] getRecalls(){
 		return m_recall;
 	}
+	
+	/**
+	 * Gets the fmeasures.
+	 *
+	 * @param beta the beta
+	 * @return the fmeasures
+	 */
 	public float[] getFmeasures(float beta){
 		return this.getFmeasures(beta, m_precision, m_recall);
 	}
+	
+	/**
+	 * Gets the cosine similarities.
+	 *
+	 * @return the cosine similarities
+	 */
 	public float[] getCosineSimilarities(){
 		return m_cosineSim;
 	}
+	
+	/**
+	 * Gets the one n nmetric.
+	 *
+	 * @return the one n nmetric
+	 */
 	public float[] getOneNNmetric(){
 		return m_oneNNmetric;
 	}
+	
+	/**
+	 * Gets the one n nmetric norm1.
+	 *
+	 * @return the one n nmetric norm1
+	 */
 	public float[] getOneNNmetricNorm1(){
 		return m_oneNNmetricNorm1;
 	}
+	
+	/**
+	 * Gets the one n nmetric norm2.
+	 *
+	 * @return the one n nmetric norm2
+	 */
 	public float[] getOneNNmetricNorm2(){
 		return m_oneNNmetricNorm2;
 	}
+	
+	/**
+	 * Gets the one n nmetric rank.
+	 *
+	 * @return the one n nmetric rank
+	 */
 	public float[] getOneNNmetricRank(){
 		return m_oneNNmetricRank;
 	}
+	
+	/**
+	 * Gets the precissions model.
+	 *
+	 * @return the precissions model
+	 */
 	public float[] getPrecissionsModel(){
 		return m_precisionModel;
 	}	
+	
+	/**
+	 * Gets the recalls model.
+	 *
+	 * @return the recalls model
+	 */
 	public float[] getRecallsModel(){
 		return m_recallModel;
 	}
+	
+	/**
+	 * Gets the fmeasures model.
+	 *
+	 * @param beta the beta
+	 * @return the fmeasures model
+	 */
 	public float[] getFmeasuresModel(float beta){
 		return this.getFmeasures(beta, m_precisionModel, m_recallModel);		
 	}
+	
+	/**
+	 * Gets the cosine similarities model.
+	 *
+	 * @return the cosine similarities model
+	 */
 	public float[] getCosineSimilaritiesModel(){
 		return m_cosineSimModel;
 	}
+	
+	/**
+	 * Gets the one n nmetric model.
+	 *
+	 * @return the one n nmetric model
+	 */
 	public float[] getOneNNmetricModel(){
 		return m_oneNNmetricModel;
 	}
+	
+	/**
+	 * Gets the one n nmetric norm1 model.
+	 *
+	 * @return the one n nmetric norm1 model
+	 */
 	public float[] getOneNNmetricNorm1Model(){
 		return m_oneNNmetricNorm1Model;
 	}
+	
+	/**
+	 * Gets the one n nmetric norm2 model.
+	 *
+	 * @return the one n nmetric norm2 model
+	 */
 	public float[] getOneNNmetricNorm2Model(){
 		return m_oneNNmetricNorm2Model;
 	}
+	
+	/**
+	 * Gets the one n nmetric rank model.
+	 *
+	 * @return the one n nmetric rank model
+	 */
 	public float[] getOneNNmetricRankModel(){
 		return m_oneNNmetricRankModel;
 	}
+	
+	/**
+	 * Prints the precision.
+	 */
 	protected void printPrecision(){
 		System.out.print("Precision: ");
 		for(int i=0; i<m_precision.length; i++){
@@ -1529,6 +2067,10 @@ public abstract class SequenceEvaluator {
 		}
 		System.out.println();
 	}	
+	
+	/**
+	 * Prints the recall.
+	 */
 	protected void printRecall(){
 		System.out.print("Recall: ");
 		for(int i=0; i<m_recall.length; i++){
@@ -1536,6 +2078,12 @@ public abstract class SequenceEvaluator {
 		}
 		System.out.println();
 	}	
+	
+	/**
+	 * Prints the fmeasure.
+	 *
+	 * @param beta the beta
+	 */
 	protected void printFmeasure(float beta){
 		float fmeasure[] = this.getFmeasures(beta);
 		System.out.print("F" + beta + "-measure: ");
@@ -1544,68 +2092,182 @@ public abstract class SequenceEvaluator {
 		}
 		System.out.println();
 	}	
+	
+	/**
+	 * Gets the precision at point.
+	 *
+	 * @param point the point
+	 * @return the precision at point
+	 */
 	public float getPrecisionAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_precision[index];
 	}	
+	
+	/**
+	 * Gets the recall at point.
+	 *
+	 * @param point the point
+	 * @return the recall at point
+	 */
 	public float getRecallAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_recall[index];
 	}	
+	
+	/**
+	 * Gets the fmeasure at point.
+	 *
+	 * @param beta the beta
+	 * @param point the point
+	 * @return the fmeasure at point
+	 */
 	public float getFmeasureAtPoint(float beta, float point){
 		float[] fmeasure = this.getFmeasures(beta);
 		int index = this.getPosition(point);
 		return fmeasure[index];
 	}
+	
+	/**
+	 * Gets the cosine similarity at point.
+	 *
+	 * @param point the point
+	 * @return the cosine similarity at point
+	 */
 	public float getCosineSimilarityAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_cosineSim[index];
 	}
+	
+	/**
+	 * Gets the one n nmetric at point.
+	 *
+	 * @param point the point
+	 * @return the one n nmetric at point
+	 */
 	public float getOneNNmetricAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_oneNNmetric[index];
 	}
+	
+	/**
+	 * Gets the one n nmetric norm1 at point.
+	 *
+	 * @param point the point
+	 * @return the one n nmetric norm1 at point
+	 */
 	public float getOneNNmetricNorm1AtPoint(float point){
 		int index = this.getPosition(point);
 		return m_oneNNmetricNorm1[index];
 	}
+	
+	/**
+	 * Gets the one n nmetric norm2 at point.
+	 *
+	 * @param point the point
+	 * @return the one n nmetric norm2 at point
+	 */
 	public float getOneNNmetricNorm2AtPoint(float point){
 		int index = this.getPosition(point);
 		return m_oneNNmetricNorm2[index];
 	}
+	
+	/**
+	 * Gets the one n nmetric rank at point.
+	 *
+	 * @param point the point
+	 * @return the one n nmetric rank at point
+	 */
 	public float getOneNNmetricRankAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_oneNNmetricRank[index];
 	}
+	
+	/**
+	 * Gets the precision model at point.
+	 *
+	 * @param point the point
+	 * @return the precision model at point
+	 */
 	public float getPrecisionModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_precisionModel[index];
 	}	
+	
+	/**
+	 * Gets the recall model at point.
+	 *
+	 * @param point the point
+	 * @return the recall model at point
+	 */
 	public float getRecallModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_recallModel[index];
 	}	
+	
+	/**
+	 * Gets the fmeasure model at point.
+	 *
+	 * @param beta the beta
+	 * @param point the point
+	 * @return the fmeasure model at point
+	 */
 	public float getFmeasureModelAtPoint(float beta, float point){
 		float[] fmeasure = this.getFmeasuresModel(beta);
 		int index = this.getPosition(point);
 		return fmeasure[index];
 	}
+	
+	/**
+	 * Gets the cosine similarity model at point.
+	 *
+	 * @param point the point
+	 * @return the cosine similarity model at point
+	 */
 	public float getCosineSimilarityModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_cosineSimModel[index];
 	}
+	
+	/**
+	 * Gets the one n nmetric model at point.
+	 *
+	 * @param point the point
+	 * @return the one n nmetric model at point
+	 */
 	public float getOneNNmetricModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_oneNNmetricModel[index];
 	}
+	
+	/**
+	 * Gets the one n nmetric norm1 model at point.
+	 *
+	 * @param point the point
+	 * @return the one n nmetric norm1 model at point
+	 */
 	public float getOneNNmetricNorm1ModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_oneNNmetricNorm1Model[index];
 	}
+	
+	/**
+	 * Gets the one n nmetric norm2 model at point.
+	 *
+	 * @param point the point
+	 * @return the one n nmetric norm2 model at point
+	 */
 	public float getOneNNmetricNorm2ModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_oneNNmetricNorm2Model[index];
 	}
+	
+	/**
+	 * Gets the one n nmetric rank model at point.
+	 *
+	 * @param point the point
+	 * @return the one n nmetric rank model at point
+	 */
 	public float getOneNNmetricRankModelAtPoint(float point){
 		int index = this.getPosition(point);
 		return m_oneNNmetricRankModel[index];
@@ -1614,6 +2276,16 @@ public abstract class SequenceEvaluator {
 	
 	
 	// TOPIC level metrics	
+	/**
+	 * Sets the topic parameters.
+	 *
+	 * @param urlIds the url ids
+	 * @param url2topic the url2topic
+	 * @param nDiffTopics the n diff topics
+	 * @param topicmatch the topicmatch
+	 * @param urlClusteringDict the url clustering dict
+	 * @param nDiffClusters the n diff clusters
+	 */
 	public void setTopicParameters(
 			ArrayList<Integer> urlIds, 
 			int[] url2topic, int nDiffTopics, float topicmatch,
@@ -1627,65 +2299,184 @@ public abstract class SequenceEvaluator {
 	}
 	
 	// topic1: based on URL to topic distribution matrix
+	/**
+	 * Gets the hit ratio top1.
+	 *
+	 * @return the hit ratio top1
+	 */
 	public float getHitRatioTop1(){
 		return (float)m_hitscoreTop1/(float)m_sequence.size();
 	}	
+	
+	/**
+	 * Gets the click soon ratio top1.
+	 *
+	 * @return the click soon ratio top1
+	 */
 	public float getClickSoonRatioTop1(){
 		return (float)m_clicksoonscoreTop1/(float)m_sequence.size();
 	}	
+	
+	/**
+	 * Gets the precissions top1.
+	 *
+	 * @return the precissions top1
+	 */
 	public float[] getPrecissionsTop1(){
 		return m_precisionTop1;
 	}	
+	
+	/**
+	 * Gets the recalls top1.
+	 *
+	 * @return the recalls top1
+	 */
 	public float[] getRecallsTop1(){
 		return m_recallTop1;
 	}
+	
+	/**
+	 * Gets the cosine sims top1.
+	 *
+	 * @return the cosine sims top1
+	 */
 	public float[] getcosineSimsTop1(){
 		return m_cosineSimTop1;
 	}	
+	
+	/**
+	 * Gets the precissions model top1.
+	 *
+	 * @return the precissions model top1
+	 */
 	public float[] getPrecissionsModelTop1(){
 		return m_precisionModelTop1;
 	}	
+	
+	/**
+	 * Gets the recalls model top1.
+	 *
+	 * @return the recalls model top1
+	 */
 	public float[] getRecallsModelTop1(){
 		return m_recallModelTop1;
 	}
+	
+	/**
+	 * Gets the cosine sims model top1.
+	 *
+	 * @return the cosine sims model top1
+	 */
 	public float[] getCosineSimsModelTop1(){
 		return m_cosineSimModelTop1;
 	}
+	
+	/**
+	 * Gets the fmeasures top1.
+	 *
+	 * @param beta the beta
+	 * @return the fmeasures top1
+	 */
 	public float[] getFmeasuresTop1(float beta){
 		return this.getFmeasures(beta, m_precisionTop1, m_recallTop1);		
 	}	
+	
+	/**
+	 * Gets the fmeasures model top1.
+	 *
+	 * @param beta the beta
+	 * @return the fmeasures model top1
+	 */
 	public float[] getFmeasuresModelTop1(float beta){		
 		return this.getFmeasures(beta, m_precisionModelTop1, m_recallModelTop1);		
 	}	
+	
+	/**
+	 * Gets the precision top at point1.
+	 *
+	 * @param point the point
+	 * @return the precision top at point1
+	 */
 	public float getPrecisionTopAtPoint1(float point){
 		int index = this.getPosition(point);
 		return m_precisionTop1[index];
 	}	
+	
+	/**
+	 * Gets the recall top at point1.
+	 *
+	 * @param point the point
+	 * @return the recall top at point1
+	 */
 	public float getRecallTopAtPoint1(float point){
 		int index = this.getPosition(point);
 		return m_recallTop1[index];
 	}
+	
+	/**
+	 * Gets the cosine sim top at point1.
+	 *
+	 * @param point the point
+	 * @return the cosine sim top at point1
+	 */
 	public float getCosineSimTopAtPoint1(float point){
 		int index = this.getPosition(point);
 		return m_cosineSimTop1[index];
 	}
+	
+	/**
+	 * Gets the fmeasure top at point1.
+	 *
+	 * @param beta the beta
+	 * @param point the point
+	 * @return the fmeasure top at point1
+	 */
 	public float getFmeasureTopAtPoint1(float beta, float point){
 		float[] fmeasure = this.getFmeasuresTop1(beta);
 		int index = this.getPosition(point);
 		return fmeasure[index];
 	}	
+	
+	/**
+	 * Gets the precision model top at point1.
+	 *
+	 * @param point the point
+	 * @return the precision model top at point1
+	 */
 	public float getPrecisionModelTopAtPoint1(float point){
 		int index = this.getPosition(point);
 		return m_precisionModelTop1[index];
 	}	
+	
+	/**
+	 * Gets the recall model top at point1.
+	 *
+	 * @param point the point
+	 * @return the recall model top at point1
+	 */
 	public float getRecallModelTopAtPoint1(float point){
 		int index = this.getPosition(point);
 		return m_recallModelTop1[index];
 	}
+	
+	/**
+	 * Gets the cosine sim model top at point1.
+	 *
+	 * @param point the point
+	 * @return the cosine sim model top at point1
+	 */
 	public float getCosineSimModelTopAtPoint1(float point){
 		int index = this.getPosition(point);
 		return m_cosineSimModelTop1[index];
 	}	
+	
+	/**
+	 * Gets the fmeasure model top at point1.
+	 *
+	 * @param beta the beta
+	 * @param point the point
+	 * @return the fmeasure model top at point1
+	 */
 	public float getFmeasureModelTopAtPoint1(float beta, float point){
 		float[] fmeasure = this.getFmeasuresModelTop1(beta);
 		int index = this.getPosition(point);
@@ -1693,65 +2484,184 @@ public abstract class SequenceEvaluator {
 	}
 	
 	// topic2: based on URL clustering
+	/**
+	 * Gets the hit ratio top2.
+	 *
+	 * @return the hit ratio top2
+	 */
 	public float getHitRatioTop2(){
 		return (float)m_hitscoreTop2/(float)m_sequence.size();
 	}
+	
+	/**
+	 * Gets the click soon ratio top2.
+	 *
+	 * @return the click soon ratio top2
+	 */
 	public float getClickSoonRatioTop2(){
 		return (float)m_clicksoonscoreTop2/(float)m_sequence.size();
 	}
+	
+	/**
+	 * Gets the precissions top2.
+	 *
+	 * @return the precissions top2
+	 */
 	public float[] getPrecissionsTop2(){
 		return m_precisionTop2;
 	}	
+	
+	/**
+	 * Gets the recalls top2.
+	 *
+	 * @return the recalls top2
+	 */
 	public float[] getRecallsTop2(){
 		return m_recallTop2;
 	}
+	
+	/**
+	 * Gets the cosine sims top2.
+	 *
+	 * @return the cosine sims top2
+	 */
 	public float[] getCosineSimsTop2(){
 		return m_cosineSimTop2;
 	}
+	
+	/**
+	 * Gets the precissions model top2.
+	 *
+	 * @return the precissions model top2
+	 */
 	public float[] getPrecissionsModelTop2(){
 		return m_precisionModelTop2;
 	}
+	
+	/**
+	 * Gets the recalls model top2.
+	 *
+	 * @return the recalls model top2
+	 */
 	public float[] getRecallsModelTop2(){
 		return m_recallModelTop2;
 	}
+	
+	/**
+	 * Gets the cosine sims model top2.
+	 *
+	 * @return the cosine sims model top2
+	 */
 	public float[] getCosineSimsModelTop2(){
 		return m_cosineSimModelTop2;
 	}
+	
+	/**
+	 * Gets the fmeasures top2.
+	 *
+	 * @param beta the beta
+	 * @return the fmeasures top2
+	 */
 	public float[] getFmeasuresTop2(float beta){
 		return this.getFmeasures(beta, m_precisionTop2, m_recallTop2);		
 	}	
+	
+	/**
+	 * Gets the fmeasures model top2.
+	 *
+	 * @param beta the beta
+	 * @return the fmeasures model top2
+	 */
 	public float[] getFmeasuresModelTop2(float beta){		
 		return this.getFmeasures(beta, m_precisionModelTop2, m_recallModelTop2);		
 	}	
+	
+	/**
+	 * Gets the precision top at point2.
+	 *
+	 * @param point the point
+	 * @return the precision top at point2
+	 */
 	public float getPrecisionTopAtPoint2(float point){
 		int index = this.getPosition(point);
 		return m_precisionTop2[index];
 	}	
+	
+	/**
+	 * Gets the recall top at point2.
+	 *
+	 * @param point the point
+	 * @return the recall top at point2
+	 */
 	public float getRecallTopAtPoint2(float point){
 		int index = this.getPosition(point);
 		return m_recallTop2[index];
 	}
+	
+	/**
+	 * Gets the cosine sim top at point2.
+	 *
+	 * @param point the point
+	 * @return the cosine sim top at point2
+	 */
 	public float getCosineSimTopAtPoint2(float point){
 		int index = this.getPosition(point);
 		return m_cosineSimTop2[index];
 	}
+	
+	/**
+	 * Gets the fmeasure top at point2.
+	 *
+	 * @param beta the beta
+	 * @param point the point
+	 * @return the fmeasure top at point2
+	 */
 	public float getFmeasureTopAtPoint2(float beta, float point){
 		float[] fmeasure = this.getFmeasuresTop2(beta);
 		int index = this.getPosition(point);
 		return fmeasure[index];
 	}	
+	
+	/**
+	 * Gets the precision model top at point2.
+	 *
+	 * @param point the point
+	 * @return the precision model top at point2
+	 */
 	public float getPrecisionModelTopAtPoint2(float point){
 		int index = this.getPosition(point);
 		return m_precisionModelTop2[index];
 	}	
+	
+	/**
+	 * Gets the recall model top at point2.
+	 *
+	 * @param point the point
+	 * @return the recall model top at point2
+	 */
 	public float getRecallModelTopAtPoint2(float point){
 		int index = this.getPosition(point);
 		return m_recallModelTop2[index];
 	}
+	
+	/**
+	 * Gets the cosine sim model top at point2.
+	 *
+	 * @param point the point
+	 * @return the cosine sim model top at point2
+	 */
 	public float getCosineSimModelTopAtPoint2(float point){
 		int index = this.getPosition(point);
 		return m_cosineSimModelTop2[index];
 	}	
+	
+	/**
+	 * Gets the fmeasure model top at point2.
+	 *
+	 * @param beta the beta
+	 * @param point the point
+	 * @return the fmeasure model top at point2
+	 */
 	public float getFmeasureModelTopAtPoint2(float beta, float point){
 		float[] fmeasure = this.getFmeasuresModelTop2(beta);
 		int index = this.getPosition(point);
@@ -1762,51 +2672,144 @@ public abstract class SequenceEvaluator {
 	
 	
 	// URL level metrics - homepage always true
+	/**
+	 * Gets the hit ratio_ ok home.
+	 *
+	 * @return the hit ratio_ ok home
+	 */
 	public float getHitRatio_OkHome(){
 		return (float)m_hitscore_OkHome/(float)m_sequence.size();
 	}	
+	
+	/**
+	 * Gets the click soon ratio_ ok home.
+	 *
+	 * @return the click soon ratio_ ok home
+	 */
 	public float getClickSoonRatio_OkHome(){
 		return (float)m_clicksoonscore_OkHome/(float)m_sequence.size();
 	}	
+	
+	/**
+	 * Gets the precissions_ ok home.
+	 *
+	 * @return the precissions_ ok home
+	 */
 	public float[] getPrecissions_OkHome(){
 		return m_precision_OkHome;
 	}	
+	
+	/**
+	 * Gets the recalls_ ok home.
+	 *
+	 * @return the recalls_ ok home
+	 */
 	public float[] getRecalls_OkHome(){
 		return m_recall_OkHome;
 	}	
+	
+	/**
+	 * Gets the precissions model_ ok home.
+	 *
+	 * @return the precissions model_ ok home
+	 */
 	public float[] getPrecissionsModel_OkHome(){
 		return m_precisionModel_OkHome;
 	}	
+	
+	/**
+	 * Gets the recalls model_ ok home.
+	 *
+	 * @return the recalls model_ ok home
+	 */
 	public float[] getRecallsModel_OkHome(){
 		return m_recallModel_OkHome;
 	}	
+	
+	/**
+	 * Gets the fmeasures_ ok home.
+	 *
+	 * @param beta the beta
+	 * @return the fmeasures_ ok home
+	 */
 	public float[] getFmeasures_OkHome(float beta){
 		return this.getFmeasures(beta, m_precision_OkHome, m_recall_OkHome);
 	}	
+	
+	/**
+	 * Gets the fmeasures model_ ok home.
+	 *
+	 * @param beta the beta
+	 * @return the fmeasures model_ ok home
+	 */
 	public float[] getFmeasuresModel_OkHome(float beta){
 		return this.getFmeasures(beta, m_precisionModel_OkHome, m_recallModel_OkHome);
 	}	
+	
+	/**
+	 * Gets the precision at point_ ok home.
+	 *
+	 * @param point the point
+	 * @return the precision at point_ ok home
+	 */
 	public float getPrecisionAtPoint_OkHome(float point){
 		int index = this.getPosition(point);
 		return m_precision_OkHome[index];
 	}	
+	
+	/**
+	 * Gets the recall at point_ ok home.
+	 *
+	 * @param point the point
+	 * @return the recall at point_ ok home
+	 */
 	public float getRecallAtPoint_OkHome(float point){
 		int index = this.getPosition(point);
 		return m_recall_OkHome[index];
 	}	
+	
+	/**
+	 * Gets the fmeasure at point_ ok home.
+	 *
+	 * @param beta the beta
+	 * @param point the point
+	 * @return the fmeasure at point_ ok home
+	 */
 	public float getFmeasureAtPoint_OkHome(float beta, float point){
 		float[] fmeasure = this.getFmeasures_OkHome(beta);
 		int index = this.getPosition(point);
 		return fmeasure[index];
 	}	
+	
+	/**
+	 * Gets the precision model at point_ ok home.
+	 *
+	 * @param point the point
+	 * @return the precision model at point_ ok home
+	 */
 	public float getPrecisionModelAtPoint_OkHome(float point){
 		int index = this.getPosition(point);
 		return m_precisionModel_OkHome[index];
 	}	
+	
+	/**
+	 * Gets the recall model at point_ ok home.
+	 *
+	 * @param point the point
+	 * @return the recall model at point_ ok home
+	 */
 	public float getRecallModelAtPoint_OkHome(float point){
 		int index = this.getPosition(point);
 		return m_recallModel_OkHome[index];
 	}	
+	
+	/**
+	 * Gets the fmeasure model at point_ ok home.
+	 *
+	 * @param beta the beta
+	 * @param point the point
+	 * @return the fmeasure model at point_ ok home
+	 */
 	public float getFmeasureModelAtPoint_OkHome(float beta, float point){
 		float[] fmeasure = this.getFmeasuresModel_OkHome(beta);
 		int index = this.getPosition(point);
@@ -1816,51 +2819,144 @@ public abstract class SequenceEvaluator {
 	
 	
 	// TOPIC level metrics - - homepage always true
+	/**
+	 * Gets the hit ratio top_ ok home.
+	 *
+	 * @return the hit ratio top_ ok home
+	 */
 	public float getHitRatioTop_OkHome(){
 		return (float)m_hitscoreTop_OkHome/(float)m_sequence.size();
 	}	
+	
+	/**
+	 * Gets the click soon ratio top_ ok home.
+	 *
+	 * @return the click soon ratio top_ ok home
+	 */
 	public float getClickSoonRatioTop_OkHome(){
 		return (float)m_clicksoonscoreTop_OkHome/(float)m_sequence.size();
 	}	
+	
+	/**
+	 * Gets the precissions top_ ok home.
+	 *
+	 * @return the precissions top_ ok home
+	 */
 	public float[] getPrecissionsTop_OkHome(){
 		return m_precisionTop_OkHome;
 	}	
+	
+	/**
+	 * Gets the recalls top_ ok home.
+	 *
+	 * @return the recalls top_ ok home
+	 */
 	public float[] getRecallsTop_OkHome(){
 		return m_recallTop_OkHome;
 	}	
+	
+	/**
+	 * Gets the precissions model top_ ok home.
+	 *
+	 * @return the precissions model top_ ok home
+	 */
 	public float[] getPrecissionsModelTop_OkHome(){
 		return m_precisionModelTop_OkHome;
 	}	
+	
+	/**
+	 * Gets the recalls model top_ ok home.
+	 *
+	 * @return the recalls model top_ ok home
+	 */
 	public float[] getRecallsModelTop_OkHome(){
 		return m_recallModelTop_OkHome;
 	}	
+	
+	/**
+	 * Gets the fmeasures top_ ok home.
+	 *
+	 * @param beta the beta
+	 * @return the fmeasures top_ ok home
+	 */
 	public float[] getFmeasuresTop_OkHome(float beta){
 		return this.getFmeasures(beta, m_precisionTop_OkHome, m_recallTop_OkHome);
 	}	
+	
+	/**
+	 * Gets the fmeasures model top_ ok home.
+	 *
+	 * @param beta the beta
+	 * @return the fmeasures model top_ ok home
+	 */
 	public float[] getFmeasuresModelTop_OkHome(float beta){		
 		return this.getFmeasures(beta, m_precisionModelTop_OkHome, m_recallModelTop_OkHome);	
 	}	
+	
+	/**
+	 * Gets the precision top at point_ ok home.
+	 *
+	 * @param point the point
+	 * @return the precision top at point_ ok home
+	 */
 	public float getPrecisionTopAtPoint_OkHome(float point){
 		int index = this.getPosition(point);
 		return m_precisionTop_OkHome[index];
 	}	
+	
+	/**
+	 * Gets the recall top at point_ ok home.
+	 *
+	 * @param point the point
+	 * @return the recall top at point_ ok home
+	 */
 	public float getRecallTopAtPoint_OkHome(float point){
 		int index = this.getPosition(point);
 		return m_recallTop_OkHome[index];
 	}	
+	
+	/**
+	 * Gets the fmeasure top at point_ ok home.
+	 *
+	 * @param beta the beta
+	 * @param point the point
+	 * @return the fmeasure top at point_ ok home
+	 */
 	public float getFmeasureTopAtPoint_OkHome(float beta, float point){
 		float[] fmeasure = this.getFmeasuresTop_OkHome(beta);
 		int index = this.getPosition(point);
 		return fmeasure[index];
 	}	
+	
+	/**
+	 * Gets the precision model top at point_ ok home.
+	 *
+	 * @param point the point
+	 * @return the precision model top at point_ ok home
+	 */
 	public float getPrecisionModelTopAtPoint_OkHome(float point){
 		int index = this.getPosition(point);
 		return m_precisionModelTop_OkHome[index];
 	}	
+	
+	/**
+	 * Gets the recall model top at point_ ok home.
+	 *
+	 * @param point the point
+	 * @return the recall model top at point_ ok home
+	 */
 	public float getRecallModelTopAtPoint_OkHome(float point){
 		int index = this.getPosition(point);
 		return m_recallModelTop_OkHome[index];
 	}	
+	
+	/**
+	 * Gets the fmeasure model top at point_ ok home.
+	 *
+	 * @param beta the beta
+	 * @param point the point
+	 * @return the fmeasure model top at point_ ok home
+	 */
 	public float getFmeasureModelTopAtPoint_OkHome(float beta, float point){
 		float[] fmeasure = this.getFmeasuresModelTop_OkHome(beta);
 		int index = this.getPosition(point);
@@ -1873,6 +2969,12 @@ public abstract class SequenceEvaluator {
 	
 	// Utilities
 	
+	/**
+	 * Gets the position.
+	 *
+	 * @param point the point
+	 * @return the position
+	 */
 	private int getPosition(float point){
 		float len = (float)m_precision.length;
 		float index = len * point;
@@ -1881,6 +2983,14 @@ public abstract class SequenceEvaluator {
 		return (int)Math.round(index2);
 	}
 	
+	/**
+	 * Gets the fmeasures.
+	 *
+	 * @param beta the beta
+	 * @param prA the pr a
+	 * @param reA the re a
+	 * @return the fmeasures
+	 */
 	private float[] getFmeasures(float beta, float[] prA, float[] reA){
 		float[] fmeasure = new float[prA.length];
 		for(int i=0; i<prA.length; i++){
@@ -1898,6 +3008,12 @@ public abstract class SequenceEvaluator {
 		return fmeasure;
 	}
 	
+	/**
+	 * Checks if is homepage.
+	 *
+	 * @param urlStr the url str
+	 * @return true, if is homepage
+	 */
 	private boolean isHomepage(String urlStr){
 		int urlInt = Integer.valueOf(urlStr); 
 		for(int i=0; i<m_homepages.length; i++){

@@ -6,15 +6,33 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorModST;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorModularGST.
+ */
 public class ModelEvaluatorModularGST 
 				extends ModelEvaluatorMedoids {
 
 	// ATTRIBUTES
 	
+	/** The m_clust suffix tree al. */
 	protected ArrayList<ArrayList<MySuffixTree>> m_clustSuffixTreeAL = null;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator modular gst.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 */
 	public ModelEvaluatorModularGST(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -31,6 +49,9 @@ public class ModelEvaluatorModularGST
 	
 	// GET TEST EVALUATOR
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids#getTestSetEvaluator(int, java.util.ArrayList)
+	 */
 	public TestSetEvaluator getTestSetEvaluator(
 			int iFold, 
 			ArrayList<String[]> testseqs){
@@ -46,6 +67,9 @@ public class ModelEvaluatorModularGST
 	
 	// BUILD MODEL
 	
+	/**
+	 * Builds the clusters suffix trees.
+	 */
 	public void buildClustersSuffixTrees(){
 		// Build Cluster-SuffixTrees for each fold
 		m_clustSuffixTreeAL = new ArrayList<ArrayList<MySuffixTree>>();
@@ -54,6 +78,12 @@ public class ModelEvaluatorModularGST
 		}
 	}
 	
+	/**
+	 * Creates the clusters suffix trees.
+	 *
+	 * @param indexFold the index fold
+	 * @return the array list
+	 */
 	private ArrayList<MySuffixTree> createClustersSuffixTrees(int indexFold){
 		// train sessions names
 		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);

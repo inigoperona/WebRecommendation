@@ -9,8 +9,17 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A060MainClassContURL2Topic.
+ */
 public class A060MainClassContURL2Topic {
     
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String args[]){
     	
 		// Parameter control
@@ -32,6 +41,12 @@ public class A060MainClassContURL2Topic {
 		me.writeURL2topic(contentWD + outfileUrl2topic, urlIDs, url2topic);
     }
     
+	/**
+	 * Read ur l2 topic distribution.
+	 *
+	 * @param filename the filename
+	 * @return the object[]
+	 */
 	public Object[] readURL2TopicDistribution(String filename){
 		// Read topic information
 		ArrayList<Integer> urlIDs = new ArrayList<Integer>();
@@ -78,6 +93,13 @@ public class A060MainClassContURL2Topic {
 		return objA;
 	}
 	
+	/**
+	 * Compute ur l2topic.
+	 *
+	 * @param minsupport the minsupport
+	 * @param url2topicDist the url2topic dist
+	 * @return the int[]
+	 */
 	public int[] computeURL2topic(float minsupport, ArrayList<float[]> url2topicDist){
 		int[] url2topic = new int[url2topicDist.size()];
 		for(int i=0; i<url2topicDist.size(); i++){
@@ -102,6 +124,13 @@ public class A060MainClassContURL2Topic {
 		return url2topic;
 	}
 	
+	/**
+	 * Write ur l2topic.
+	 *
+	 * @param filename the filename
+	 * @param urlIDs the url i ds
+	 * @param url2topic the url2topic
+	 */
 	public void writeURL2topic(
 			String filename,
 			ArrayList<Integer> urlIDs,

@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * A ClusteringBuilderMultiplexer is a ClusteringBuilder that forwards calls to two other ClusteringBuilders.
  * 
@@ -18,15 +19,27 @@ package ehupatras.clustering.sapehac;
  */
 public final class ClusteringBuilderMultiplexer implements ClusteringBuilder {
 
+    /** The a. */
     private final ClusteringBuilder a;
+    
+    /** The b. */
     private final ClusteringBuilder b;
 
 
+    /**
+     * Instantiates a new clustering builder multiplexer.
+     *
+     * @param a the a
+     * @param b the b
+     */
     public ClusteringBuilderMultiplexer(final ClusteringBuilder a, final ClusteringBuilder b) {
         this.a = a;
         this.b = b;
     }
 
+    /* (non-Javadoc)
+     * @see ehupatras.clustering.sapehac.ClusteringBuilder#merge(int, int, double)
+     */
     public void merge(final int i, final int j, final double dissimilarity) {
         a.merge(i, j, dissimilarity);
         b.merge(i, j, dissimilarity);

@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac.agglomeration;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The "centroid" or "Unweighted Pair-Group Method using Centroids (UPGMC)" 
  * method is a geometric approach that links the centroids of clusters.
@@ -44,10 +45,16 @@ package ehupatras.clustering.sapehac.agglomeration;
  */
 public final class CentroidLinkage implements AgglomerationMethod {
 
+    /* (non-Javadoc)
+     * @see ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod#computeDissimilarity(double, double, double, int, int, int)
+     */
     public double computeDissimilarity(final double dik, final double djk, final double dij, final int ci, final int cj, final int ck) {
         return (ci*dik+cj*djk-ci*cj*dij/(ci+cj))/(ci+cj);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return "Centroid";
     }

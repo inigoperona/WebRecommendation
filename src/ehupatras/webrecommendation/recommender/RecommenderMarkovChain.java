@@ -5,24 +5,45 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RecommenderMarkovChain.
+ */
 public class RecommenderMarkovChain 
 				implements Recommender {
 
+	/** The m_markov chain. */
 	private MarkovChain m_markovChain = null;
+	
+	/** The m_last step. */
 	private String m_lastStep = null;
 	
+	/**
+	 * Instantiates a new recommender markov chain.
+	 *
+	 * @param markovchain the markovchain
+	 */
 	public RecommenderMarkovChain(MarkovChain markovchain){
 		m_markovChain = markovchain;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#reset()
+	 */
 	public void reset(){
 		m_lastStep = null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNumberOfFailures()
+	 */
 	public int getNumberOfFailures(){
 		return 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#update(java.util.ArrayList, java.lang.String, boolean, boolean)
+	 */
 	public ArrayList<String> update(ArrayList<String> waydone, String laststep, 
 							boolean incrWeigh, boolean performFailureFunction){
 		m_lastStep = laststep;
@@ -41,6 +62,9 @@ public class RecommenderMarkovChain
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsUnbounded()
+	 */
 	public ArrayList<String> getNextpossibleStepsUnbounded(){
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> recos = (ArrayList<String>)objA[0];
@@ -48,6 +72,9 @@ public class RecommenderMarkovChain
 		return recos;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsRandom(int, long)
+	 */
 	public ArrayList<String> getNextpossibleStepsRandom(int nRecos, long seed){
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> recos = (ArrayList<String>)objA[0];
@@ -62,6 +89,9 @@ public class RecommenderMarkovChain
 		return recos2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedTrain(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone){
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> recos = (ArrayList<String>)objA[0];
@@ -93,26 +123,46 @@ public class RecommenderMarkovChain
 		return recos2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedTest(int)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedTest(int nrecos){
 		return this.getNextpossibleStepsWeightedTrain(nrecos, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeighted(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeighted(int nrecos, ArrayList<String> waydone){
 		return this.getNextpossibleStepsWeightedTrain(nrecos, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsMarkov(int, java.util.ArrayList, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsMarkov(int nrecos, ArrayList<String> waydone, ArrayList<String> listMarkov){
 		return this.getNextpossibleStepsWeightedTrain(nrecos, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedByOriginalSequences(int)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedByOriginalSequences(int nrecos){
 		return this.getNextpossibleStepsWeightedTrain(nrecos, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedEnrichWithStep1(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedEnrichWithStep1(int nRecos, ArrayList<String> waydone){
 		return this.getNextpossibleStepsWeightedTrain(nRecos, null);
 	}
 	
+	/**
+	 * Gets the nextpossible steps.
+	 *
+	 * @return the nextpossible steps
+	 */
 	private Object[] getNextpossibleSteps(){
 		ArrayList<String> recos = new ArrayList<String>(); 
 		ArrayList<Float> probs = new ArrayList<Float>(); 

@@ -6,27 +6,61 @@ import ehupatras.suffixtree.stringarray.Node;
 import ehupatras.suffixtree.stringarray.test.SuffixTreeStringArray;
 import java.util.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RecommenderSuffixTree.
+ */
 public class RecommenderSuffixTree 
 				implements Recommender {
 	
+	/** The m_g st. */
 	private SuffixTreeStringArray m_gST;
+	
+	/** The m_pointer node. */
 	private Node m_pointerNode = null;
+	
+	/** The m_pointer edge. */
 	private Edge m_pointerEdge = null;
+	
+	/** The m_pointer position in the edge. */
 	private int m_pointerPositionInTheEdge = 0;
 	
 	// failure function
+	/** The m_failure mode. */
 	private int m_failureMode = 0;
+	
+	/** The m_max memory. */
 	private int m_maxMemory = 100;
+	
+	/** The m_n failures. */
 	private int m_nFailures = 0;
 	
+	/**
+	 * Instantiates a new recommender suffix tree.
+	 *
+	 * @param gST the g st
+	 */
 	public RecommenderSuffixTree(SuffixTreeStringArray gST){
 		this(gST, 0);
 	}
 	
+	/**
+	 * Instantiates a new recommender suffix tree.
+	 *
+	 * @param gST the g st
+	 * @param failuremode the failuremode
+	 */
 	public RecommenderSuffixTree(SuffixTreeStringArray gST, int failuremode){
 		this(gST, failuremode, 100);
 	}
 	
+	/**
+	 * Instantiates a new recommender suffix tree.
+	 *
+	 * @param gST the g st
+	 * @param failuremode the failuremode
+	 * @param maxMemory the max memory
+	 */
 	public RecommenderSuffixTree(SuffixTreeStringArray gST, int failuremode, int maxMemory){
 		m_gST = gST;
 		m_pointerNode = m_gST.getRoot();
@@ -38,6 +72,15 @@ public class RecommenderSuffixTree
 	
 	// UPDATE POINTER //
 	
+	/**
+	 * Update pointer.
+	 *
+	 * @param waydone the waydone
+	 * @param newstep the newstep
+	 * @param incrWeigh the incr weigh
+	 * @param performFailureFunction the perform failure function
+	 * @return the array list
+	 */
 	private ArrayList<String> updatePointer(ArrayList<String> waydone, 
 						String newstep, 
 						boolean incrWeigh, 
@@ -106,6 +149,9 @@ public class RecommenderSuffixTree
 	
 	// UPDATE & FAILURE FUNCTIONS //
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#update(java.util.ArrayList, java.lang.String, boolean, boolean)
+	 */
 	public ArrayList<String> update(
 			ArrayList<String> waydone,
 			String newstep, 
@@ -114,6 +160,14 @@ public class RecommenderSuffixTree
 		return this.updatePointer(waydone, newstep, incrWeigh, performFailureFunction);
 	}
 	
+	/**
+	 * Updatefailure.
+	 *
+	 * @param waydone the waydone
+	 * @param nextstep the nextstep
+	 * @param failuremode the failuremode
+	 * @return the array list
+	 */
 	private ArrayList<String> updatefailure(ArrayList<String> waydone, String nextstep, int failuremode){
 		ArrayList<String> wayInST = new ArrayList<String>();
 		if(failuremode==0){
@@ -126,10 +180,22 @@ public class RecommenderSuffixTree
 		return wayInST;
 	}
 	
+	/**
+	 * Updatefailure.
+	 *
+	 * @param waydone the waydone
+	 * @param nextstep the nextstep
+	 * @return the array list
+	 */
 	private ArrayList<String> updatefailure(ArrayList<String> waydone, String nextstep){
 		return this.updatefailure(waydone, nextstep, m_failureMode);
 	}
 	
+	/**
+	 * Gotoroot.
+	 *
+	 * @return the array list
+	 */
 	private ArrayList<String> gotoroot(){
 		m_pointerNode = m_gST.getRoot();
 		m_pointerEdge = null;
@@ -137,6 +203,13 @@ public class RecommenderSuffixTree
 		return (new ArrayList<String>());
 	}
 	
+	/**
+	 * Goto longest suffixes.
+	 *
+	 * @param waydone the waydone
+	 * @param newstep the newstep
+	 * @return the array list
+	 */
 	private ArrayList<String> gotoLongestSuffixes(ArrayList<String> waydone, String newstep){
 		// the way we want to perform in the suffix tree
 		ArrayList<String> waydone2 = (ArrayList<String>)waydone.clone();
@@ -168,6 +241,13 @@ public class RecommenderSuffixTree
 		}
 	}
 	
+	/**
+	 * Goto longest prefixes.
+	 *
+	 * @param waydone the waydone
+	 * @param newstep the newstep
+	 * @return the array list
+	 */
 	private ArrayList<String> gotoLongestPrefixes(ArrayList<String> waydone, String newstep){
 		// the way we want to perform in the suffix tree
 		ArrayList<String> waydone2 = (ArrayList<String>)waydone.clone();
@@ -195,10 +275,16 @@ public class RecommenderSuffixTree
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNumberOfFailures()
+	 */
 	public int getNumberOfFailures(){
 		return m_nFailures;
 	}
 		
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#reset()
+	 */
 	public void reset(){
 		this.gotoroot();
 		m_nFailures = 0;
@@ -208,6 +294,11 @@ public class RecommenderSuffixTree
 	
 	// GET RECOMMENDATIONS //
 	
+	/**
+	 * Gets the nextpossible steps.
+	 *
+	 * @return the nextpossible steps
+	 */
 	protected Object[] getNextpossibleSteps(){
 		ArrayList<String> listOfURLs = new ArrayList<String>();
 		ArrayList<Integer> listOfWeights = new ArrayList<Integer>();
@@ -246,12 +337,18 @@ public class RecommenderSuffixTree
 		return objA;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsUnbounded()
+	 */
 	public ArrayList<String> getNextpossibleStepsUnbounded(){
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> listOfUrls = (ArrayList<String>)objA[0];
 		return listOfUrls;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsRandom(int, long)
+	 */
 	public ArrayList<String> getNextpossibleStepsRandom(int nReco, long seed){
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> list = (ArrayList<String>)objA[0];
@@ -265,6 +362,9 @@ public class RecommenderSuffixTree
 		return list2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedTrain(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone){
 		// compute the weight of the waydone + next step sequences
 		Object[] objA = this.getNextpossibleSteps();
@@ -289,6 +389,9 @@ public class RecommenderSuffixTree
 		return recos;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedTest(int)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedTest(int nRecos){
 		// take the weights
 		Object[] objA = this.getNextpossibleSteps();
@@ -307,10 +410,16 @@ public class RecommenderSuffixTree
 		return recos;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeighted(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone){
 		return this.getNextpossibleStepsWeightedTrain(nRecos, waydone);
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsMarkov(int, java.util.ArrayList, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsMarkov(int nRecos, ArrayList<String> waydone, ArrayList<String> listMarkov){
 		// get Suffix Tree recommendation
 		ArrayList<String> listST = this.getNextpossibleStepsWeightedTrain(nRecos, waydone);
@@ -344,6 +453,9 @@ public class RecommenderSuffixTree
 		return recos;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedByOriginalSequences(int)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedByOriginalSequences(int nRecos){
 		// Compute testset related node weights
 		Object[] objA2 = this.getNextpossibleSteps();
@@ -362,6 +474,9 @@ public class RecommenderSuffixTree
 		return recos;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedEnrichWithStep1(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedEnrichWithStep1(int nRecos, ArrayList<String> waydone){
 		// RECOMMENDATIONS DEPTH IN THE SUFFIX TREE //
 		
@@ -418,6 +533,12 @@ public class RecommenderSuffixTree
 		return recos;
 	}
 	
+	/**
+	 * Gets the step1 recommendations.
+	 *
+	 * @param step the step
+	 * @return the step1 recommendations
+	 */
 	protected Object[] getStep1Recommendations(String step){
 		// create path of one step
 		ArrayList<String> waydone1step = new ArrayList<String>();  
@@ -450,6 +571,14 @@ public class RecommenderSuffixTree
 		return objA4;
 	}
 	
+	/**
+	 * Gets the url weights.
+	 *
+	 * @param waydone the waydone
+	 * @param nextsteps the nextsteps
+	 * @param frequencies the frequencies
+	 * @return the url weights
+	 */
 	protected Object[] getUrlWeights(
 					ArrayList<String> waydone,
 					ArrayList<String> nextsteps,
@@ -478,6 +607,12 @@ public class RecommenderSuffixTree
 	
 	// UTILS //
 	
+	/**
+	 * Perform the way in suffix tree.
+	 *
+	 * @param waydone the waydone
+	 * @return true, if successful
+	 */
 	private boolean performTheWayInSuffixTree(ArrayList<String> waydone){		
 		// run the way done  (clickstream done until now) in the suffix tree
 		// and create the sequence that it is runnable in the suffix tree
@@ -502,6 +637,14 @@ public class RecommenderSuffixTree
 		return runnableway;
 	}
 	
+	/**
+	 * Gets the the most weighted ur ls.
+	 *
+	 * @param nrec the nrec
+	 * @param list the list
+	 * @param frequencies the frequencies
+	 * @return the the most weighted ur ls
+	 */
 	private ArrayList<String> getTheMostWeightedURLs(int nrec, ArrayList<String> list, int[] frequencies){
 		ArrayList<String> recos = new ArrayList<String>();
 		
@@ -531,6 +674,12 @@ public class RecommenderSuffixTree
 		return recos;
 	}
 	
+	/**
+	 * Gets the the way in suffix tree.
+	 *
+	 * @param waydone the waydone
+	 * @return the the way in suffix tree
+	 */
 	private ArrayList<String> getTheWayInSuffixTree(ArrayList<String> waydone){
 		// save the pointers values
 		Node pointerNode = m_pointerNode;
@@ -562,6 +711,11 @@ public class RecommenderSuffixTree
 		return waydone2;
 	}
 	
+	/**
+	 * Gets the suffix tree.
+	 *
+	 * @return the suffix tree
+	 */
 	public SuffixTreeStringArray getSuffixTree(){
 		return m_gST;
 	}
@@ -570,6 +724,11 @@ public class RecommenderSuffixTree
 	
 	// MAIN TO TEST THE CLASS //
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		// create the suffix tree
 		SuffixTreeStringArray st = new SuffixTreeStringArray();

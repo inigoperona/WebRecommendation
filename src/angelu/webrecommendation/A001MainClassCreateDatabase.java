@@ -5,11 +5,23 @@ import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.modelvalidation.*;
 import java.util.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A001MainClassCreateDatabase.
+ */
 public class A001MainClassCreateDatabase {
 
+	/** The m_sessions i ds. */
 	private ArrayList<Integer> m_sessionsIDs;
+	
+	/** The m_sequences. */
 	private ArrayList<String[]> m_sequences;
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
@@ -31,6 +43,11 @@ public class A001MainClassCreateDatabase {
 	
 	
 	
+	/**
+	 * Creates the database.
+	 *
+	 * @param databaseWD the database wd
+	 */
 	public void createDatabase(String databaseWD){
 		// CREATE THE DATABASE
 		System.out.println("CREATE THE DATABASE");
@@ -50,6 +67,11 @@ public class A001MainClassCreateDatabase {
 		soseqs.save(m_sequences, databaseWD + "/_sequencesUHC.javaData");
 	}
 	
+	/**
+	 * Load database.
+	 *
+	 * @param databaseWD the database wd
+	 */
 	public void loadDatabase(String databaseWD){
 		// Sampling
 		SaveLoadObjects sosess = new SaveLoadObjects();
@@ -60,6 +82,11 @@ public class A001MainClassCreateDatabase {
 		m_sequences = (ArrayList<String[]>)soseqs.load(databaseWD + "/_sequencesUHC.javaData");
 	}
 	
+	/**
+	 * Gets the sessions i ds.
+	 *
+	 * @return the sessions i ds
+	 */
 	public ArrayList<Long> getSessionsIDs(){
 		ArrayList<Long> ses = new ArrayList<Long>();
 		for(int i=0; i<m_sessionsIDs.size(); i++){
@@ -68,6 +95,11 @@ public class A001MainClassCreateDatabase {
 		return ses;
 	}
 	
+	/**
+	 * Gets the instantiated sequences.
+	 *
+	 * @return the instantiated sequences
+	 */
 	public ArrayList<String[]> getInstantiatedSequences(){
 		return m_sequences;
 	}

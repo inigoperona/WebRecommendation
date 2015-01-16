@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac.agglomeration;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The "Ward", "inner squared distance", "sum of squares", "error sum of squares", 
  * or "minimum variance" method.
@@ -42,10 +43,16 @@ package ehupatras.clustering.sapehac.agglomeration;
  */
 public final class WardLinkage implements AgglomerationMethod {
 	
+    /* (non-Javadoc)
+     * @see ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod#computeDissimilarity(double, double, double, int, int, int)
+     */
     public double computeDissimilarity(final double dik, final double djk, final double dij, final int ci, final int cj, final int ck) {
         return ((ci+ck)*dik+(cj+ck)*djk-ck*dij)/(ci+cj+ck);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return "Ward";
     }

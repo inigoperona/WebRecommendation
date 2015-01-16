@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac.experiment;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * An experiment consists of a number of observations.
  * 
@@ -18,6 +19,11 @@ package ehupatras.clustering.sapehac.experiment;
  */
 public interface Experiment {
 
+    /**
+     * Gets the number of observations.
+     *
+     * @return the number of observations
+     */
     public int getNumberOfObservations();
 
 }

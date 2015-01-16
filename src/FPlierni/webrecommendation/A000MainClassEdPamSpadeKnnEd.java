@@ -15,8 +15,17 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustPAM;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A000MainClassEdPamSpadeKnnEd.
+ */
 public class A000MainClassEdPamSpadeKnnEd {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		
 		// folders
@@ -161,6 +170,12 @@ public class A000MainClassEdPamSpadeKnnEd {
 	
 	// Utilities
 	
+	/**
+	 * Open file.
+	 *
+	 * @param filename the filename
+	 * @return the buffered writer
+	 */
 	private static BufferedWriter openFile(String filename){
 		// open the file in which we save the evaluation process
 		BufferedWriter evalWriter = null;
@@ -175,6 +190,11 @@ public class A000MainClassEdPamSpadeKnnEd {
 		return evalWriter;
 	}
 	
+	/**
+	 * Close file.
+	 *
+	 * @param writer the writer
+	 */
 	private static void closeFile(BufferedWriter writer){
 		// close the file in which we save the evaluation process
 		try{

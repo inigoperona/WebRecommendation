@@ -6,17 +6,30 @@ import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class URLconverterUsaCon.
+ */
 public class URLconverterUsaCon {
 
 	// ATTRIBUTES
 	
+	/** The m_usage ur ls. */
 	private ArrayList<Integer> m_usageURLs = null;
+	
+	/** The m_content ur ls. */
 	private ArrayList<Integer> m_contentURLs = null;
 	
+	/** The m_usage2content file. */
 	private String m_usage2contentFile = "convert_UrlIDs_content2usage/usa2cont.csv";
 	
 	// CONSTRUCTOR
 	
+	/**
+	 * Instantiates a new UR lconverter usa con.
+	 *
+	 * @param usage2contentFile the usage2content file
+	 */
 	public URLconverterUsaCon(String usage2contentFile){
 		m_usage2contentFile = usage2contentFile;
 		m_usageURLs = new ArrayList<Integer>();
@@ -68,6 +81,12 @@ public class URLconverterUsaCon {
 	
 	// FUNCTIONS
 	
+	/**
+	 * Gets the content url.
+	 *
+	 * @param usageURL the usage url
+	 * @return the content url
+	 */
 	public int getContentURL(int usageURL){
 		int contentURL = -1;
 		int ind = m_usageURLs.indexOf(usageURL);
@@ -77,6 +96,12 @@ public class URLconverterUsaCon {
 		return contentURL;
 	}
 	
+	/**
+	 * Gets the usage url.
+	 *
+	 * @param contentURL the content url
+	 * @return the usage url
+	 */
 	public int getUsageURL(int contentURL){
 		int usageURL = -1;
 		int ind = m_contentURLs.indexOf(contentURL);
@@ -86,12 +111,22 @@ public class URLconverterUsaCon {
 		return usageURL;
 	}
 	
+	/**
+	 * Gets the usage urls.
+	 *
+	 * @return the usage urls
+	 */
 	public ArrayList<Integer> getUsageUrls(){
 		return m_usageURLs;
 	}
 	
 	// MAIN
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String args[]){
 		URLconverterUsaCon urlconv = 
 				new URLconverterUsaCon("convert_UrlIDs_content2usage/usa2cont.csv");

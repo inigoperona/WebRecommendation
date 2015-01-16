@@ -16,24 +16,41 @@ import be.ac.ulg.montefiore.run.jahmm.Opdf;
 import be.ac.ulg.montefiore.run.jahmm.toolbox.MarkovGenerator;
 import be.ac.ulg.montefiore.run.jahmm.draw.GenericHmmDrawerDot;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class HiddenMarkovModel.
+ */
 public abstract class HiddenMarkovModel {
 
 	// Web Access Sequences database
+	/** The m_dataset. */
 	protected ArrayList<String[]> m_dataset = null; // without role tag
+	
+	/** The m_url len. */
 	private int m_urlLen = 1;
 	
 	// Clustering information
+	/** The m_train indexes. */
 	protected int[] m_trainIndexes;
+	
+	/** The m_clusters. */
 	protected int[] m_clusters;
+	
+	/** The m_max cluster index. */
 	protected int m_maxClusterIndex = -1;
 	
 	// dictionary from URLs to HMM indexes
+	/** The m_dict obs. */
 	protected ArrayList<Integer> m_dictObs; // possible observations
 	// dictionary from Cluster-postion to global-position
+	/** The m_dict sta. */
 	protected ArrayList<Integer> m_dictSta;
+	
+	/** The m_buffer positions. */
 	protected int m_bufferPositions = 1000;
 	
 	// HMM parameters
+	/** The m_hmm. */
 	Hmm<ObservationInteger> m_hmm;
 	//private int m_nStates;
 	//private int m_nObservations;
@@ -45,6 +62,13 @@ public abstract class HiddenMarkovModel {
 	
 	// CREATOR //
 	
+	/**
+	 * Instantiates a new hidden markov model.
+	 *
+	 * @param dataset the dataset
+	 * @param trainIndexes the train indexes
+	 * @param clusterAL the cluster al
+	 */
 	public HiddenMarkovModel(ArrayList<String[]> dataset, 
 			int[] trainIndexes,
 			int[] clusterAL){
@@ -57,6 +81,9 @@ public abstract class HiddenMarkovModel {
 		this.updateClusterInfo();
 	}
 	
+	/**
+	 * Creates the the dictionary.
+	 */
 	private void createTheDictionary(){
 		m_dictObs = new ArrayList<Integer>();
 		for(int i=0; i<m_dataset.size(); i++){
@@ -70,6 +97,9 @@ public abstract class HiddenMarkovModel {
 		}
 	}
 	
+	/**
+	 * Update cluster info.
+	 */
 	private void updateClusterInfo(){
 		// compute the maximum value
 		int maxClIndex = -1;
@@ -86,8 +116,18 @@ public abstract class HiddenMarkovModel {
 	
 	// INITIALIZATION //
 	
+	/**
+	 * Creates the hmm.
+	 *
+	 * @param nStates the n states
+	 * @param initProbs the init probs
+	 * @param emissions the emissions
+	 */
 	protected abstract void createHMM(int nStates, double[] initProbs, ArrayList<double[]> emissions);
 	
+	/**
+	 * Initialize hmm parameters.
+	 */
 	public void initializeHmmParameters(){
 		// State & emissions information
 		int globalpos = 0;
@@ -165,6 +205,13 @@ public abstract class HiddenMarkovModel {
 	}
 	
 	
+	/**
+	 * Gets the next state by state ind.
+	 *
+	 * @param stateInd the state ind
+	 * @param n the n
+	 * @return the next state by state ind
+	 */
 	protected int getNextStateByStateInd(int stateInd, int n){
 		// actual cluster identification
 		int actual = m_dictSta.get(stateInd);
@@ -187,6 +234,13 @@ public abstract class HiddenMarkovModel {
 		return nextPos;
 	}
 	
+	/**
+	 * Gets the next position cluster.
+	 *
+	 * @param stateInd the state ind
+	 * @param position the position
+	 * @return the next position cluster
+	 */
 	protected int getNextPositionCluster(int stateInd, int position){
 		// the next position exists?
 		int nextCl = -1;
@@ -197,6 +251,12 @@ public abstract class HiddenMarkovModel {
 		return nextCl;
 	}
 	
+	/**
+	 * Gets the first state ind.
+	 *
+	 * @param clusterId the cluster id
+	 * @return the first state ind
+	 */
 	protected int getFirstStateInd(int clusterId){
 		int firstPos = -1;
 		for(int i=0; i<m_dictSta.size(); i++){
@@ -210,6 +270,12 @@ public abstract class HiddenMarkovModel {
 		return firstPos;
 	}
 	
+	/**
+	 * Convert urls dict.
+	 *
+	 * @param strA the str a
+	 * @return the int[]
+	 */
 	protected int[] convertUrlsDict(String[] strA){
 		int[] intA = new int[strA.length];
 		for(int i=0; i<intA.length; i++){
@@ -223,6 +289,11 @@ public abstract class HiddenMarkovModel {
 	
 	// TRAIN THE INIT HMM //
 	
+	/**
+	 * Baum welch.
+	 *
+	 * @return the hidden markov model
+	 */
 	public HiddenMarkovModel baumWelch(){
 		List<List<ObservationInteger>> sequences = new ArrayList<List<ObservationInteger>>();
 		for(int i=0; i<m_trainIndexes.length; i++){
@@ -248,6 +319,13 @@ public abstract class HiddenMarkovModel {
 	
 	// PREDICTING THE NEXT STEP //
 	
+	/**
+	 * Gets the next urls.
+	 *
+	 * @param waydone the waydone
+	 * @param nSteps the n steps
+	 * @return the next urls
+	 */
 	public Object[] getNextUrls(ArrayList<String> waydone, int nSteps){
 		String[] waydoneA = new String[waydone.size()];
 		for(int i=0; i<waydone.size(); i++){
@@ -256,6 +334,13 @@ public abstract class HiddenMarkovModel {
 		return this.getNextUrls(waydoneA, nSteps);
 	}
 	
+	/**
+	 * Gets the next urls.
+	 *
+	 * @param waydone the waydone
+	 * @param nSteps the n steps
+	 * @return the next urls
+	 */
 	public Object[] getNextUrls(String[] waydone, int nSteps){
 		int actualState;
 		
@@ -324,6 +409,13 @@ public abstract class HiddenMarkovModel {
 		return objA;
 	}
 	
+	/**
+	 * Gets the next states.
+	 *
+	 * @param actualState the actual state
+	 * @param nStates the n states
+	 * @return the next states
+	 */
 	private int[] getNextStates(int actualState, int nStates){
 		int[] states = new int[nStates];
 		int actSt = actualState;
@@ -343,6 +435,12 @@ public abstract class HiddenMarkovModel {
 		return states;
 	}
 	
+	/**
+	 * Gets the the most probable state.
+	 *
+	 * @param waydone the waydone
+	 * @return the the most probable state
+	 */
 	private int getTheMostProbableState(String[] waydone){
 		// the way done in proper format to HMM
 		List<ObservationInteger> waydoneObs = new ArrayList<ObservationInteger>();
@@ -381,10 +479,18 @@ public abstract class HiddenMarkovModel {
 	
 	// PRINT, WRITE the HMM
 	
+	/**
+	 * Prints the hmm.
+	 */
 	public void printHMM(){
 		System.out.print(this.toStringHMM());
 	}
 	
+	/**
+	 * To string hmm.
+	 *
+	 * @return the string
+	 */
 	private String toStringHMM(){
 		String out = "";
 		
@@ -406,6 +512,11 @@ public abstract class HiddenMarkovModel {
 		return out;
 	}
 	
+	/**
+	 * Write hm mtxt.
+	 *
+	 * @param outfile the outfile
+	 */
 	public void writeHMMtxt(String outfile){
 		BufferedWriter writer = null;
 		try{
@@ -420,6 +531,11 @@ public abstract class HiddenMarkovModel {
 		}
 	}
 	
+	/**
+	 * Write hm mdot.
+	 *
+	 * @param outfile the outfile
+	 */
 	public void writeHMMdot(String outfile){
 		// drawing
 		GenericHmmDrawerDot hmmDrawer1 = new GenericHmmDrawerDot();
@@ -435,6 +551,11 @@ public abstract class HiddenMarkovModel {
 	
 	
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		// number of states and observations
 		Hmm<ObservationInteger> hmm = new Hmm<ObservationInteger>(2, new OpdfIntegerFactory(2));

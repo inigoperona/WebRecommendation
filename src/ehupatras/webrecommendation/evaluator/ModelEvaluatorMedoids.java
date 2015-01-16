@@ -8,26 +8,55 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluatorMed;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ModelEvaluatorMedoids.
+ */
 public class ModelEvaluatorMedoids 
 				extends ModelEvaluatorSeqMinSPADE {
 
 	// ATTRIBUTES
 	
+	/** The m_medoids al. */
 	protected ArrayList<ArrayList<String[]>> m_medoidsAL = null;
+	
+	/** The m_gmedoids al. */
 	protected ArrayList<int[]> m_gmedoidsAL = null;	
+	
+	/** The m_recos al. */
 	protected ArrayList<ArrayList<Object[]>> m_recosAL = null;
 	
+	/** The m_is distance. */
 	protected boolean m_isDistance = true;
+	
+	/** The m_roles w. */
 	protected float[][] m_rolesW = {{ 0f, 0f, 0f},
 									{ 0f, 0f, 0f},
 									{ 0f, 0f, 0f}};
+	
+	/** The m_knn. */
 	protected int m_knn = 100;
 	
+	/** The m_no propose ur ls. */
 	protected ArrayList<Integer> m_noProposeURLs = new ArrayList<Integer>();
 	
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new model evaluator medoids.
+	 *
+	 * @param dataset the dataset
+	 * @param datasetSplit the dataset split
+	 * @param dm the dm
+	 * @param trainAL the train al
+	 * @param valAL the val al
+	 * @param testAL the test al
+	 * @param modePrRe the mode pr re
+	 * @param usage2contentFile the usage2content file
+	 * @param resSimilarityFile the res similarity file
+	 * @param noProposeURLs the no propose ur ls
+	 */
 	public ModelEvaluatorMedoids(
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
@@ -45,6 +74,9 @@ public class ModelEvaluatorMedoids
 	
 	// GET TEST EVALUATOR
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.ModelEvaluatorSuffixTree#getTestSetEvaluator(int, java.util.ArrayList)
+	 */
 	public TestSetEvaluator getTestSetEvaluator(
 			int iFold, 
 			ArrayList<String[]> testseqs){
@@ -61,6 +93,13 @@ public class ModelEvaluatorMedoids
 		return eval;
 	}
 	
+	/**
+	 * Sets the esploitation parameters.
+	 *
+	 * @param isDistance the is distance
+	 * @param rolesW the roles w
+	 * @param knn the knn
+	 */
 	public void setEsploitationParameters(
 			boolean isDistance,
 			float[][] rolesW,
@@ -72,6 +111,12 @@ public class ModelEvaluatorMedoids
 	
 	// BUILD MODEL
 	
+	/**
+	 * Builds the medoids.
+	 *
+	 * @param minsup the minsup
+	 * @param computeRecos the compute recos
+	 */
 	public void buildMedoids(float minsup, boolean computeRecos){
 		// compute medoids for each fold
 		m_medoidsAL = new ArrayList<ArrayList<String[]>>();
@@ -87,6 +132,12 @@ public class ModelEvaluatorMedoids
 		}
 	}
 	
+	/**
+	 * Gets the medoids.
+	 *
+	 * @param indexFold the index fold
+	 * @return the medoids
+	 */
 	private Object[] getMedoids(int indexFold){
 		// train cases indexes
 		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
@@ -115,6 +166,14 @@ public class ModelEvaluatorMedoids
 		return objA;
 	}
 	
+	/**
+	 * Gets the recommendations.
+	 *
+	 * @param indexFold the index fold
+	 * @param minsup the minsup
+	 * @param noExtractA the no extract a
+	 * @return the recommendations
+	 */
 	private ArrayList<Object[]> getRecommendations(int indexFold, float minsup, ArrayList<Integer> noExtractA){
 		// train cases indexes
 		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
@@ -169,10 +228,16 @@ public class ModelEvaluatorMedoids
 	
 	// utilities
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.ModelEvaluatorSuffixTree#getNumberOfNodes(int)
+	 */
 	public int getNumberOfNodes(int iFold){
 		return 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.evaluator.ModelEvaluatorSuffixTree#getNumberOfEdges(int)
+	 */
 	public float getNumberOfEdges(int iFold){
 		return 0f;
 	}

@@ -5,26 +5,59 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MySPADE.
+ */
 public class MySPADE {
 	// sequences
+	/** The m_sequences. */
 	private ArrayList<String[]> m_sequences;
+	
+	/** The m_n seqs. */
 	private int m_nSeqs;
 	
 	// frequency of URLs. supports.
+	/** The m_minsupport. */
 	private float m_minsupport = 0.5f;
+	
+	/** The m_urls. */
 	private String[] m_urls;
+	
+	/** The m_freqs. */
 	private int[] m_freqs;
+	
+	/** The m_minfreq. */
 	private int m_minfreq;
+	
+	/** The m_minminfreq. */
 	private int m_minminfreq = 3;
 	
 	// to cut the spade sequence generating if it is getting too many
+	/** The m_max sequences. */
 	private int m_maxSequences = 1000;
+	
+	/** The m_maxstep. */
 	private int m_maxstep = 5;
 	
+	/**
+	 * Instantiates a new my spade.
+	 *
+	 * @param sequences the sequences
+	 * @param minsup the minsup
+	 */
 	public MySPADE(ArrayList<String[]> sequences, float minsup){
 		this(sequences, minsup, 1000, 5);
 	}
 	
+	/**
+	 * Instantiates a new my spade.
+	 *
+	 * @param sequences the sequences
+	 * @param minsup the minsup
+	 * @param maxseq the maxseq
+	 * @param maxstep the maxstep
+	 */
 	public MySPADE(ArrayList<String[]> sequences, 
 					float minsup, 
 					int maxseq, 
@@ -98,6 +131,11 @@ public class MySPADE {
 	}
 	
 	
+	/**
+	 * Gets the frequent sequences length1.
+	 *
+	 * @return the frequent sequences length1
+	 */
 	public Object[] getFrequentSequencesLength1(){
     	ArrayList<String> urls = new ArrayList<String>();
     	ArrayList<Integer> sups = new ArrayList<Integer>();
@@ -120,6 +158,12 @@ public class MySPADE {
 	}
 	
 	
+	/**
+	 * Gets the frequent sequences.
+	 *
+	 * @param wordir the wordir
+	 * @return the frequent sequences
+	 */
 	public Object[] getFrequentSequences(String wordir){
 		// get frequent URLs
 		Object[] objA = this.getFrequentSequencesLength1();
@@ -246,6 +290,14 @@ public class MySPADE {
     	return objRe;
 	}
 	
+	/**
+	 * Index of.
+	 *
+	 * @param url the url
+	 * @param from the from
+	 * @param seq the seq
+	 * @return the int
+	 */
 	private int indexOf(String url, int from, ArrayList<String> seq){
 		// find the requested url
 		int ind = -1;
@@ -259,6 +311,12 @@ public class MySPADE {
 		return ind;
 	}
 	
+	/**
+	 * Sequence to string.
+	 *
+	 * @param sequence the sequence
+	 * @return the string
+	 */
 	private String sequenceToString(String[] sequence){
 		String str;
 		if(sequence.length>0){
@@ -272,6 +330,11 @@ public class MySPADE {
 		return str;
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		String[] seq1 = new String[]{"1","2","3","4","5"};
 		String[] seq2 = new String[]{"1","2","3","9","8"};

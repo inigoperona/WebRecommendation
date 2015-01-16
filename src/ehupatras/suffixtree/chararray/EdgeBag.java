@@ -1,11 +1,27 @@
   
 package ehupatras.suffixtree.chararray;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class EdgeBag.
+ */
 class EdgeBag {
+    
+    /** The chars. */
     private byte[] chars;
+    
+    /** The values. */
     private Edge[] values;
+    
+    /** The Constant BSEARCH_THRESHOLD. */
     private static final int BSEARCH_THRESHOLD = 6;
 
+    /**
+     * Put.
+     *
+     * @param c the c
+     * @param e the e
+     */
     void put(char c, Edge e) {
         if (c != (char) (byte) c) {
             throw new IllegalArgumentException("Illegal input character " + c + ".");
@@ -36,6 +52,12 @@ class EdgeBag {
         }
     }
 
+    /**
+     * Gets the.
+     *
+     * @param c the c
+     * @return the edge
+     */
     Edge get(char c) {
         if (c != (char) (byte) c) {
             throw new IllegalArgumentException("Illegal input character " + c + ".");
@@ -48,6 +70,12 @@ class EdgeBag {
         return values[idx];
     }
 
+    /**
+     * Search.
+     *
+     * @param c the c
+     * @return the int
+     */
     private int search(char c) {
         if (chars == null)
             return -1;
@@ -64,6 +92,11 @@ class EdgeBag {
         return -1;
     }
 
+    /**
+     * Values.
+     *
+     * @return the edge[]
+     */
     Edge[] values() {
         return values == null ? new Edge[0] : values;
     }

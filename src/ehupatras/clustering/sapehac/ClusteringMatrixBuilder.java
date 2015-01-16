@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * A ClusteringMatrixBuilder builds a matrix in which 
  * each row represents a step in the clustering
@@ -24,12 +25,21 @@ package ehupatras.clustering.sapehac;
  */
 public final class ClusteringMatrixBuilder implements ClusteringBuilder {
 
+    /** The Constant INVALID. */
     private static final int INVALID = -1;
     
+    /** The clustering. */
     private final int[][] clustering;
+    
+    /** The current step. */
     private int currentStep;
 
 
+    /**
+     * Instantiates a new clustering matrix builder.
+     *
+     * @param nObservations the n observations
+     */
     public ClusteringMatrixBuilder(final int nObservations) {
         final int nSteps = nObservations;
         clustering = new int[nSteps][nObservations];
@@ -44,6 +54,9 @@ public final class ClusteringMatrixBuilder implements ClusteringBuilder {
         currentStep = 0;
     }
 
+    /* (non-Javadoc)
+     * @see ehupatras.clustering.sapehac.ClusteringBuilder#merge(int, int, double)
+     */
     public void merge(final int i, final int j, final double dissimilarity) {
         final int previousStep = currentStep;
         currentStep++;
@@ -57,6 +70,11 @@ public final class ClusteringMatrixBuilder implements ClusteringBuilder {
         }
     }
 
+    /**
+     * Gets the clustering.
+     *
+     * @return the clustering
+     */
     public int[][] getClustering() {
         return clustering;
     }

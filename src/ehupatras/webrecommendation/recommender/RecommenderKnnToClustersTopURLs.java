@@ -6,6 +6,10 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtein;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RecommenderKnnToClustersTopURLs.
+ */
 public class RecommenderKnnToClustersTopURLs
 				implements Recommender {
 	
@@ -13,17 +17,27 @@ public class RecommenderKnnToClustersTopURLs
 	// ATTRIBUTES
 	
 	// the path done
+	/** The m_waydone. */
 	protected ArrayList<String> m_waydone = new ArrayList<String>();
 	
 	// the model
+	/** The m_medoids. */
 	private ArrayList<String[]> m_medoids;
+	
+	/** The m_gmedoids. */
 	private int[] m_gmedoids; 
+	
+	/** The m_recos in each cluster. */
 	private ArrayList<Object[]> m_recosInEachCluster;
 	
 	// number of selected empty clusters
+	/** The m_0recos clusters. */
 	private int m_0recosClusters = 0;
 	// distance/similarity related attributes
+	/** The m_is distance. */
 	private boolean m_isDistance = true;
+	
+	/** The m_roles w. */
 	private float[][] m_rolesW = {{ 0f, 0f, 0f},
 								  { 0f, 0f, 0f},
 								  { 0f, 0f, 0f}};
@@ -31,6 +45,15 @@ public class RecommenderKnnToClustersTopURLs
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new recommender knn to clusters top ur ls.
+	 *
+	 * @param medoids the medoids
+	 * @param globalMedoids the global medoids
+	 * @param recosForEachMedoid the recos for each medoid
+	 * @param isDistance the is distance
+	 * @param rolesW the roles w
+	 */
 	public RecommenderKnnToClustersTopURLs(ArrayList<String[]> medoids,
 			int[] globalMedoids,
 			ArrayList<Object[]> recosForEachMedoid,
@@ -46,21 +69,36 @@ public class RecommenderKnnToClustersTopURLs
 	
 	// FUNCTIONS
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#reset()
+	 */
 	public void reset(){
 		m_waydone = new ArrayList<String>();
 	}
 	
 	// No recommendations in clusters
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNumberOfFailures()
+	 */
 	public int getNumberOfFailures(){
 		return m_0recosClusters;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#update(java.util.ArrayList, java.lang.String, boolean, boolean)
+	 */
 	public ArrayList<String> update(ArrayList<String> waydone, String laststep, 
 			boolean incrWeigh, boolean performFailureFunction){
 		m_waydone.add(laststep);
 		return m_waydone;
 	}
 	
+	/**
+	 * Gets the nextpossible steps.
+	 *
+	 * @param nRecos the n recos
+	 * @return the nextpossible steps
+	 */
 	protected ArrayList<String> getNextpossibleSteps(int nRecos){
 		Object[] objA = this.getNextpossibleSteps_Info(nRecos);
 		ArrayList<String> recosL = (ArrayList<String>)objA[0];
@@ -70,6 +108,12 @@ public class RecommenderKnnToClustersTopURLs
 		return recosL;
 	}
 	
+	/**
+	 * Gets the nextpossible steps_ info.
+	 *
+	 * @param nRecos the n recos
+	 * @return the nextpossible steps_ info
+	 */
 	protected Object[] getNextpossibleSteps_Info(int nRecos){
 		
 		// the elements we are interested in
@@ -126,6 +170,12 @@ public class RecommenderKnnToClustersTopURLs
 		return objA;
 	}
 	
+	/**
+	 * Gets the nextpossible steps w.
+	 *
+	 * @param nRecos the n recos
+	 * @return the nextpossible steps w
+	 */
 	private ArrayList<String> getNextpossibleStepsW(int nRecos){
 		int minsupfreq = 5;
 		
@@ -357,6 +407,11 @@ public class RecommenderKnnToClustersTopURLs
 	}
 	*/
 	
+	/**
+	 * Knn sim.
+	 *
+	 * @return the object[]
+	 */
 	protected Object[] knnSim(){
 		// if we do not know nothing about the navigation
 		// return the most centered medoid in the database
@@ -398,6 +453,12 @@ public class RecommenderKnnToClustersTopURLs
 		return objA;
 	}
 	
+	/**
+	 * Order sim.
+	 *
+	 * @param sims the sims
+	 * @return the float[]
+	 */
 	private float[] orderSim(float[] sims){
 		// order the similarities
 		float[] simAord = sims.clone();
@@ -416,6 +477,13 @@ public class RecommenderKnnToClustersTopURLs
 		return simAord;
 	}
 	
+	/**
+	 * Order similarities.
+	 *
+	 * @param sims the sims
+	 * @param orderSims the order sims
+	 * @return the object[]
+	 */
 	private Object[] orderSimilarities(float[] sims, float[] orderSims){
 		// order from biggest similarity value to the minimum
 		// initialize the result array
@@ -449,31 +517,67 @@ public class RecommenderKnnToClustersTopURLs
 
 	
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsUnbounded()
+	 */
 	public ArrayList<String> getNextpossibleStepsUnbounded(){
 		return this.getNextpossibleSteps(100);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsRandom(int, long)
+	 */
 	public ArrayList<String> getNextpossibleStepsRandom(int nReco, long seed){
 		return this.getNextpossibleSteps(nReco);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedTrain(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone){
 		return this.getNextpossibleSteps(nRecos);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedTest(int)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedTest(int nrecos){
 		return this.getNextpossibleSteps(nrecos);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeighted(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone){
 		return this.getNextpossibleSteps(nRecos);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsMarkov(int, java.util.ArrayList, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsMarkov(int nRecos, ArrayList<String> waydone, ArrayList<String> listMarkov){
 		return this.getNextpossibleSteps(nRecos);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedByOriginalSequences(int)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedByOriginalSequences(int nRecos){
 		return this.getNextpossibleSteps(nRecos);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedEnrichWithStep1(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedEnrichWithStep1(int nRecos, ArrayList<String> waydone){
 		return this.getNextpossibleSteps(nRecos);
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		
 		// create medoids list

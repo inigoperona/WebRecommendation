@@ -13,15 +13,24 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class LogReaderBidasoaTurismo.
+ */
 public class LogReaderBidasoaTurismo extends LogReader {
 
 	// HashTable to compute userID from the IP address
+	/** The m_ip2id ht. */
 	private Hashtable<String,Integer> m_ip2idHT = new Hashtable<String,Integer>();
 	
 	// log file to analyze
+	/** The m_logfilenames a. */
 	private String[] m_logfilenamesA;
 	
 	// read the log file and save the attributes we need
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.usage.preprocess.log.LogReader#readLogFile(java.lang.String[])
+	 */
 	public void readLogFile(String[] logfilenamesA){
 		m_logfilenamesA = logfilenamesA;
 		for(int h=0; h<m_logfilenamesA.length; h++){

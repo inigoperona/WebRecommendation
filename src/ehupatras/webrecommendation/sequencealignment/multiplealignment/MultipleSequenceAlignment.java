@@ -4,11 +4,25 @@ import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentGlobalNeed
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentBacktrack;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MultipleSequenceAlignment.
+ */
 public class MultipleSequenceAlignment {
 
+	/** The m_gap. */
 	private String m_gap = "-";
+	
+	/** The m_msa. */
 	private ArrayList<String[]> m_msa; 
 	
+	/**
+	 * Msa.
+	 *
+	 * @param seqclust the seqclust
+	 * @param d the d
+	 * @param was the was
+	 */
 	public void msa(int[] seqclust, float[][] d, ArrayList<String[]> was){
 		ArrayList<Integer> seqclustList = new ArrayList<Integer>();
 		for(int i=0; i<seqclust.length; i++){
@@ -17,6 +31,13 @@ public class MultipleSequenceAlignment {
 		this.msa(seqclustList, d, was);
 	}
 	
+	/**
+	 * Msa.
+	 *
+	 * @param seqclust the seqclust
+	 * @param d the d
+	 * @param was the was
+	 */
 	public void msa(ArrayList<Integer> seqclust, float[][] d, ArrayList<String[]> was){
 		// define the gap length
 		int gaplen = was.get(0)[0].length();
@@ -127,6 +148,13 @@ public class MultipleSequenceAlignment {
 		}
 	}
 	
+	/**
+	 * Next symbol.
+	 *
+	 * @param symbols the symbols
+	 * @param actualpos the actualpos
+	 * @return the object[]
+	 */
 	private Object[] nextSymbol(String[] symbols, int actualpos){
 		int gaps = 0;
 		String symb = symbols[actualpos];
@@ -147,6 +175,11 @@ public class MultipleSequenceAlignment {
 		return objA;
 	}
 	
+	/**
+	 * Gets the multiple sequence alignment.
+	 *
+	 * @return the multiple sequence alignment
+	 */
 	public String[][] getMultipleSequenceAlignment(){
 		int seqlen = m_msa.get(0).length;
 		String[][] msaMatrix = new String[m_msa.size()][seqlen];
@@ -159,6 +192,9 @@ public class MultipleSequenceAlignment {
 		return msaMatrix;
 	}
 	
+	/**
+	 * Write aligned sequences.
+	 */
 	private void writeAlignedSequences(){
 		for(int i=0; i<m_msa.size(); i++){
 			String[] alseq = m_msa.get(i);
@@ -171,7 +207,9 @@ public class MultipleSequenceAlignment {
 	}
 	
 	/**
-	 * @param args
+	 * The main method.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

@@ -11,6 +11,7 @@
 package ehupatras.clustering.sapehac.agglomeration;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The "weighted average", "McQuitty", or 
  * "Weighted Pair-Group Method using Arithmetic averages, or WPGMA)" method.
@@ -35,10 +36,16 @@ package ehupatras.clustering.sapehac.agglomeration;
  */
 public final class WeightedAverageLinkage implements AgglomerationMethod {
 
+    /* (non-Javadoc)
+     * @see ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod#computeDissimilarity(double, double, double, int, int, int)
+     */
     public double computeDissimilarity(final double dik, final double djk, final double dij, final int ci, final int cj, final int ck) {
         return 0.5*dik+0.5*djk;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return "Weighted average";
     }

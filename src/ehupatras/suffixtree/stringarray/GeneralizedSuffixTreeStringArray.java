@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import ehupatras.suffixtree.stringarray.Edge;
 import ehupatras.suffixtree.stringarray.EdgeBag;
 
+// TODO: Auto-generated Javadoc
 /**
  * A Generalized Suffix Tree, based on the Ukkonen's paper "On-line construction of suffix trees"
  * http://www.cs.helsinki.fi/u/ukkonen/SuffixT1withFigs.pdf
@@ -43,26 +44,22 @@ import ehupatras.suffixtree.stringarray.EdgeBag;
  */
 public class GeneralizedSuffixTreeStringArray {
 
-    /**
-     * The index of the last item that was added to the GST
-     */
+    /** The index of the last item that was added to the GST. */
     private int last = 0;
-    /**
-     * The root of the suffix tree
-     */
+    
+    /** The root of the suffix tree. */
     private final Node root = new Node();
-    /**
-     * The last leaf that was added during the update operation
-     */
+    
+    /** The last leaf that was added during the update operation. */
     private Node activeLeaf = root;
 
     /**
      * Searches for the given word within the GST.
-     *
+     * 
      * Returns all the indexes for which the key contains the <tt>word</tt> that was
      * supplied as input.
      *
-     * @param word the key to search for
+     * @param words the words
      * @return the collection of indexes associated with the input <tt>word</tt>
      */
     public Collection<Integer> search(ArrayList<String> words) {
@@ -72,7 +69,7 @@ public class GeneralizedSuffixTreeStringArray {
     /**
      * Searches for the given word within the GST and returns at most the given number of matches.
      *
-     * @param word the key to search for
+     * @param words the words
      * @param results the max number of results to return
      * @return at most <tt>results</tt> values for the given word
      */
@@ -87,7 +84,7 @@ public class GeneralizedSuffixTreeStringArray {
     /**
      * Searches for the given word within the GST and returns at most the given number of matches.
      *
-     * @param word the key to search for
+     * @param words the words
      * @param to the max number of results to return
      * @return at most <tt>results</tt> values for the given word
      * @see GeneralizedSuffixTreeStringArray#ResultInfo
@@ -103,6 +100,9 @@ public class GeneralizedSuffixTreeStringArray {
 
     /**
      * Returns the tree node (if present) that corresponds to the given string.
+     *
+     * @param words the words
+     * @return the node
      */
     private Node searchNode(ArrayList<String> words) {
         /*
@@ -319,6 +319,10 @@ public class GeneralizedSuffixTreeStringArray {
      * s (the input node) that can be reached by following a path of edges denoting
      * a prefix of inputstr and remainder will be string that must be
      * appended to the concatenation of labels from s to n to get inpustr.
+     *
+     * @param s the s
+     * @param inputstr the inputstr
+     * @return the pair
      */
     private Pair<Node, ArrayList<String>> canonize(final Node s, final ArrayList<String> inputstr) {
 
@@ -369,11 +373,12 @@ public class GeneralizedSuffixTreeStringArray {
      *   that is a substring of the string added so far to the tree.
      * - the String will be the remainder that must be added to S1 to get the string
      *   added so far.
-     * 
+     *
      * @param inputNode the node to start from
      * @param stringPart the string to add to the tree
      * @param rest the rest of the string
      * @param value the value to add to the index
+     * @return the pair
      */
     private Pair<Node, ArrayList<String>> update(final Node inputNode, final ArrayList<String> stringPart, final ArrayList<String> rest, final int value) {
         Node s = inputNode;
@@ -459,10 +464,21 @@ public class GeneralizedSuffixTreeStringArray {
         return new Pair<Node, ArrayList<String>>(s, tempstr);
     }
 
+    /**
+     * Gets the root.
+     *
+     * @return the root
+     */
     public Node getRoot() {
         return root;
     }
 
+    /**
+     * Safe cut last char.
+     *
+     * @param seq the seq
+     * @return the array list
+     */
     private ArrayList<String> safeCutLastChar(ArrayList<String> seq) {
         if (seq.size() == 0) {
             return (new ArrayList<String>());
@@ -473,6 +489,11 @@ public class GeneralizedSuffixTreeStringArray {
         return seqaux;
     }
 
+    /**
+     * Compute count.
+     *
+     * @return the int
+     */
     public int computeCount() {
         return root.computeAndCacheCount();
     }
@@ -484,15 +505,18 @@ public class GeneralizedSuffixTreeStringArray {
      */
     public static class ResultInfo {
 
-        /**
-         * The total number of results present in the database
-         */
+        /** The total number of results present in the database. */
         public int totalResults;
-        /**
-         * The collection of (some) results present in the GST
-         */
+        
+        /** The collection of (some) results present in the GST. */
         public Collection<Integer> results;
 
+        /**
+         * Instantiates a new result info.
+         *
+         * @param results the results
+         * @param totalResults the total results
+         */
         public ResultInfo(Collection<Integer> results, int totalResults) {
             this.totalResults = totalResults;
             this.results = results;
@@ -500,27 +524,52 @@ public class GeneralizedSuffixTreeStringArray {
     }
 
     /**
-     * A private class used to return a tuples of two elements
+     * A private class used to return a tuples of two elements.
+     *
+     * @param <A> the generic type
+     * @param <B> the generic type
      */
     private class Pair<A, B> {
 
+        /** The first. */
         private final A first;
+        
+        /** The second. */
         private final B second;
 
+        /**
+         * Instantiates a new pair.
+         *
+         * @param first the first
+         * @param second the second
+         */
         public Pair(A first, B second) {
             this.first = first;
             this.second = second;
         }
 
+        /**
+         * Gets the first.
+         *
+         * @return the first
+         */
         public A getFirst() {
             return first;
         }
 
+        /**
+         * Gets the second.
+         *
+         * @return the second
+         */
         public B getSecond() {
             return second;
         }
     }
     
+    /**
+     * Prints the.
+     */
     public void print(){
     	this.root.printNode(0);
     }

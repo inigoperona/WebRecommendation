@@ -1,7 +1,16 @@
 package ehupatras.webrecommendation;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A052MainClassHclustSpadeKnnED.
+ */
 public class A052MainClassHclustSpadeKnnED {
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);

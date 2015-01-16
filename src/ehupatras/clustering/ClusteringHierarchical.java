@@ -13,12 +13,28 @@ import java.util.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ClusteringHierarchical.
+ */
 public class ClusteringHierarchical {
 
+	/** The m_dendrogram. */
 	private Dendrogram m_dendrogram;
+	
+	/** The m_ncases. */
 	private int m_ncases;
+	
+	/** The m_savefilename. */
 	private String m_savefilename = "/_dendrogram.javaData";
 	
+	/**
+	 * Compute hierarchical clustering.
+	 *
+	 * @param matrix the matrix
+	 * @param selectedcases the selectedcases
+	 * @param agglomerationMethodClassName the agglomeration method class name
+	 */
 	public void computeHierarchicalClustering(float[][] matrix, int[] selectedcases,
 			String agglomerationMethodClassName) {
 		m_ncases = selectedcases.length;
@@ -86,6 +102,11 @@ public class ClusteringHierarchical {
 		m_dendrogram = dendrogramBuilder.getDendrogram();
 	}
 	
+	/**
+	 * Save.
+	 *
+	 * @param workdirectory the workdirectory
+	 */
 	public void save(String workdirectory){
 		Object[] obj = new Object[2];
 		obj[0] = m_dendrogram;
@@ -94,6 +115,11 @@ public class ClusteringHierarchical {
 		slo.save(obj, workdirectory + m_savefilename);
 	}
 
+	/**
+	 * Load.
+	 *
+	 * @param workdirectory the workdirectory
+	 */
 	public void load(String workdirectory){
 		SaveLoadObjects slo = new SaveLoadObjects();
 		slo.load(workdirectory + m_savefilename);
@@ -102,6 +128,9 @@ public class ClusteringHierarchical {
 		m_ncases = (int)obj[1]; 
 	}
 	
+	/**
+	 * Write dendrogram.
+	 */
 	public void writeDendrogram(){
 		ArrayList<DendrogramNode> nodesList = new ArrayList<DendrogramNode>();
 		ArrayList<Integer> depthList = new ArrayList<Integer>();
@@ -135,6 +164,11 @@ public class ClusteringHierarchical {
 		}
 	}
 	
+	/**
+	 * Gets the dendrogram depth.
+	 *
+	 * @return the dendrogram depth
+	 */
 	private int getDendrogramDepth(){
 		ArrayList<DendrogramNode> nodesList = new ArrayList<DendrogramNode>();
 		ArrayList<Integer> depthList = new ArrayList<Integer>();
@@ -159,12 +193,24 @@ public class ClusteringHierarchical {
 		return depthList.get(depthList.size()-1);
 	}
 	
+	/**
+	 * Gets the cut depth.
+	 *
+	 * @param pheight the pheight
+	 * @return the cut depth
+	 */
 	private int getCutDepth(float pheight){
 		int maxdepth = getDendrogramDepth();
 		int cutdepth = Math.round((float)maxdepth*(pheight/(float)100));
 		return cutdepth;
 	}
 	
+	/**
+	 * Cut dendrogram by height.
+	 *
+	 * @param pheight the pheight
+	 * @return the int[]
+	 */
 	public int[] cutDendrogramByHeight(float pheight){
 		// convert from percentage to depth to cut the dendrogram
 		int cutdepth = getCutDepth(pheight);
@@ -205,6 +251,12 @@ public class ClusteringHierarchical {
 		return clustersA;
 	}
 	
+	/**
+	 * Gets the clusters from nodes.
+	 *
+	 * @param clusterList the cluster list
+	 * @return the clusters from nodes
+	 */
 	private int[] getClustersFromNodes(ArrayList<DendrogramNode> clusterList){
 		// See which cases are in the sub tree and assign the cluster
 		int[] clustersA = new int[m_ncases];
@@ -230,6 +282,12 @@ public class ClusteringHierarchical {
 		return clustersA;
 	}
 	
+	/**
+	 * Gets the cut dissimilarity.
+	 *
+	 * @param pDissimilarity the dissimilarity
+	 * @return the cut dissimilarity
+	 */
 	private double getCutDissimilarity(float pDissimilarity){
 		// take all dissimilarities of the dendrogram
 		ArrayList<DendrogramNode> nodesList = new ArrayList<DendrogramNode>();
@@ -257,6 +315,12 @@ public class ClusteringHierarchical {
 		return dissimilarityList.get(position);
 	}
 	
+	/**
+	 * Cut dendrogram by dissimilarity.
+	 *
+	 * @param pDissimilarity the dissimilarity
+	 * @return the int[]
+	 */
 	public int[] cutDendrogramByDissimilarity(float pDissimilarity){
 		// get the dissimilarity threshold to cut the dendrogram
 		double dissimilarityThreshold = getCutDissimilarity(pDissimilarity);

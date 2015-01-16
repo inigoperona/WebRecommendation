@@ -3,8 +3,20 @@ package ehupatras.webrecommendation.modelvalidation;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import java.util.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Sampling.
+ */
 public class Sampling {
 	
+	/**
+	 * Gets the sample.
+	 *
+	 * @param ncases the ncases
+	 * @param randomseed the randomseed
+	 * @param allowrepetitions the allowrepetitions
+	 * @return the sample
+	 */
 	public ArrayList<Integer> getSample(int ncases, long randomseed, boolean allowrepetitions){
 		// ordered sessionsIDs
 		ArrayList<Integer> keysOrd = WebAccessSequences.getSequencesIDs();

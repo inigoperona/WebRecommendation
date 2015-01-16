@@ -8,23 +8,57 @@ import java.util.HashMap;
 import angelu.webrecommendation.converter.URLconverterUsaCon;
 import ehupatras.webrecommendation.recommender.RecommenderKnnToClustersTopURLs;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RecommenderKnnToClustersTopURLsAndContents.
+ */
 public abstract class RecommenderKnnToClustersTopURLsAndContents 
 				extends RecommenderKnnToClustersTopURLs {
 
 	// ATTRIBUTES
 	
+	/** The m_left zeros len. */
 	protected int m_leftZerosLen = 6;
+	
+	/** The m_n ur ls. */
 	protected int m_nURLs = 0;
+	
+	/** The m_ url similarity matrix. */
 	protected float[][] m_UrlSimilarityMatrix = null;
+	
+	/** The m_ url relation matrix. */
 	protected String[][] m_UrlRelationMatrix = null;
+	
+	/** The m_ url clustering dict. */
 	protected HashMap<Integer,Integer> m_UrlClusteringDict = null;
+	
+	/** The m_url2topic. */
 	protected HashMap<Integer,Integer> m_url2topic = null;
+	
+	/** The m_conv. */
 	protected URLconverterUsaCon m_conv = null;
+	
+	/** The m_no propose ur ls_cont id. */
 	private ArrayList<Integer> m_noProposeURLs_contID = new ArrayList<Integer>();
 	
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new recommender knn to clusters top ur ls and contents.
+	 *
+	 * @param medoids the medoids
+	 * @param globalMedoids the global medoids
+	 * @param recosForEachMedoid the recos for each medoid
+	 * @param isDistance the is distance
+	 * @param rolesW the roles w
+	 * @param nURLs the n ur ls
+	 * @param urlSimilarityMatrix the url similarity matrix
+	 * @param urlRelationMatrix the url relation matrix
+	 * @param urlClusteringDict the url clustering dict
+	 * @param conv the conv
+	 * @param noProposeURLs the no propose ur ls
+	 */
 	public RecommenderKnnToClustersTopURLsAndContents(
 			ArrayList<String[]> medoids,
 			int[] globalMedoids,
@@ -58,6 +92,9 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	
 	// FUNCTIONS
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.RecommenderKnnToClustersTopURLs#getNextpossibleSteps(int)
+	 */
 	protected ArrayList<String> getNextpossibleSteps(int nRecos){
 		
 		// All information about the recommendations		
@@ -119,8 +156,22 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		return recosFinal;
 	}
 	
+	/**
+	 * Apply enrichment.
+	 *
+	 * @param url the url
+	 * @param urlDone the url done
+	 * @return the array list
+	 */
 	public abstract ArrayList<Integer> applyEnrichment(int[] url, int[] urlDone);
 	
+	/**
+	 * Order recommendations.
+	 *
+	 * @param supports the supports
+	 * @param recos the recos
+	 * @return the array list
+	 */
 	public ArrayList<Integer> orderRecommendations(final float[] supports, ArrayList<String> recos){
 		ArrayList<Integer> recosAL = new ArrayList<Integer>();
 		for(int i=0; i<recos.size(); i++){
@@ -130,6 +181,13 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		return recosAL;
 	}
 	
+	/**
+	 * Order recommendations_ sp order.
+	 *
+	 * @param supports the supports
+	 * @param recos the recos
+	 * @return the array list
+	 */
 	public ArrayList<Integer> orderRecommendations_SpOrder(final float[] supports, ArrayList<String> recos){
 		final Integer[] idx = new Integer[recos.size()];
 		for(int i=0; i<recos.size(); i++){
@@ -150,6 +208,15 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	
 	// AUXILIAR FUNCTIONS
 	
+	/**
+	 * Gehitu url ez errepikatua.
+	 *
+	 * @param url1 the url1
+	 * @param nearestURL the nearest url
+	 * @param recomendations the recomendations
+	 * @param clusterrakEzDuAxola the clusterrak ez du axola
+	 * @return the array list
+	 */
 	protected ArrayList<Integer> gehituUrlEzErrepikatua(
 			int url1,
 			int[] nearestURL,
@@ -195,6 +262,14 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		return recomendations;
 	}
 	
+	/**
+	 * Gertueneko_urla.
+	 *
+	 * @param url1 the url1
+	 * @param zenbat the zenbat
+	 * @param clusterrakEzDuAxola the clusterrak ez du axola
+	 * @return the int[]
+	 */
 	protected int[] gertueneko_urla(int url1, int zenbat, boolean clusterrakEzDuAxola)
 	{	final float[] similarityak= new float[m_nURLs];
 		final Integer[] indizeak= new Integer[m_nURLs];
@@ -231,6 +306,13 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		return  gertuenekoURLak2;
 	}
 	
+	/**
+	 * Ordenatumin_max.
+	 *
+	 * @param data the data
+	 * @param idx the idx
+	 * @return the integer[]
+	 */
 	private Integer[] ordenatumin_max(final float[] data,final Integer[] idx )	
 	{	Arrays.sort(idx, new Comparator<Integer>() {
 	    
@@ -241,6 +323,13 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		return idx;
 	}
 	
+	/**
+	 * Ordenatumin_max2.
+	 *
+	 * @param sups the sups
+	 * @param recos the recos
+	 * @return the integer[]
+	 */
 	private Integer[] ordenatumin_max2(float[] sups, Integer[] recos)	{
 		Integer[] idx = new Integer[recos.length];
 		for(int i=0; i<idx.length; i++){ idx[i] = i; }
@@ -254,6 +343,13 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		return recosOrd;
 	}
 	
+	/**
+	 * Number_of_ relation.
+	 *
+	 * @param urls the urls
+	 * @param SpDa the sp da
+	 * @return the int[]
+	 */
 	protected int[] number_of_Relation(int[] urls, boolean SpDa)
 	{ 	int Equal_kop=0;
 	  	int different_kop=0;
@@ -294,6 +390,13 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		}
 	}
 	
+	/**
+	 * Equal_different.
+	 *
+	 * @param url1 the url1
+	 * @param url2 the url2
+	 * @return the string
+	 */
 	private String equal_different(int url1, int url2){
 		String erlazioa=m_UrlRelationMatrix[url1][url2];
 		if(!erlazioa.equals("Equal") && !erlazioa.equals("Disjoint")){
@@ -309,6 +412,13 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 		return erlazioa;
 	}
 	
+	/**
+	 * Number_of_ topics.
+	 *
+	 * @param urls the urls
+	 * @param SpDa the sp da
+	 * @return the int[]
+	 */
 	protected int[] number_of_Topics(int[] urls, boolean SpDa)
 	{ 	int Equal_kop=0;
 	  	int different_kop=0;

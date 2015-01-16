@@ -5,8 +5,17 @@ import ehupatras.webrecommendation.usage.preprocess.*;
 import ehupatras.webrecommendation.usage.preprocess.log.LogReader;
 import ehupatras.webrecommendation.usage.preprocess.log.LogReaderBidasoaTurismo;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class A000MainClassPreprocess.
+ */
 public class A000MainClassPreprocess {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
@@ -27,6 +36,12 @@ public class A000MainClassPreprocess {
 	
 	
 	
+	/**
+	 * Preprocess logs.
+	 *
+	 * @param basedirectory the basedirectory
+	 * @param logfile the logfile
+	 */
 	public void preprocessLogs(String basedirectory, String logfile){
 		long starttime;
 		long endtime;
@@ -156,6 +171,9 @@ public class A000MainClassPreprocess {
 		Website.save();
 	}
 	
+	/**
+	 * Load preprocess.
+	 */
 	public void loadPreprocess(){
 		long starttime;
 		long endtime;

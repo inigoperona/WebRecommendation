@@ -3,6 +3,7 @@
 import java.util.Collection;
 import java.util.Collections;
 
+// TODO: Auto-generated Javadoc
 /**
  * A Generalized Suffix Tree, based on the Ukkonen's paper "On-line construction of suffix trees"
  * http://www.cs.helsinki.fi/u/ukkonen/SuffixT1withFigs.pdf
@@ -39,17 +40,13 @@ import java.util.Collections;
  */
 public class GeneralizedSuffixTree {
 
-    /**
-     * The index of the last item that was added to the GST
-     */
+    /** The index of the last item that was added to the GST. */
     private int last = 0;
-    /**
-     * The root of the suffix tree
-     */
+    
+    /** The root of the suffix tree. */
     private final Node root = new Node();
-    /**
-     * The last leaf that was added during the update operation
-     */
+    
+    /** The last leaf that was added during the update operation. */
     private Node activeLeaf = root;
 
     /**
@@ -99,6 +96,9 @@ public class GeneralizedSuffixTree {
 
     /**
      * Returns the tree node (if present) that corresponds to the given string.
+     *
+     * @param word the word
+     * @return the node
      */
     private Node searchNode(String word) {
         /*
@@ -279,6 +279,10 @@ public class GeneralizedSuffixTree {
      * s (the input node) that can be reached by following a path of edges denoting
      * a prefix of inputstr and remainder will be string that must be
      * appended to the concatenation of labels from s to n to get inpustr.
+     *
+     * @param s the s
+     * @param inputstr the inputstr
+     * @return the pair
      */
     private Pair<Node, String> canonize(final Node s, final String inputstr) {
 
@@ -312,11 +316,12 @@ public class GeneralizedSuffixTree {
      *   that is a substring of the string added so far to the tree.
      * - the String will be the remainder that must be added to S1 to get the string
      *   added so far.
-     * 
+     *
      * @param inputNode the node to start from
      * @param stringPart the string to add to the tree
      * @param rest the rest of the string
      * @param value the value to add to the index
+     * @return the pair
      */
     private Pair<Node, String> update(final Node inputNode, final String stringPart, final String rest, final int value) {
         Node s = inputNode;
@@ -392,10 +397,21 @@ public class GeneralizedSuffixTree {
         return new Pair<Node, String>(s, tempstr);
     }
 
+    /**
+     * Gets the root.
+     *
+     * @return the root
+     */
     Node getRoot() {
         return root;
     }
 
+    /**
+     * Safe cut last char.
+     *
+     * @param seq the seq
+     * @return the string
+     */
     private String safeCutLastChar(String seq) {
         if (seq.length() == 0) {
             return "";
@@ -403,6 +419,11 @@ public class GeneralizedSuffixTree {
         return seq.substring(0, seq.length() - 1);
     }
 
+    /**
+     * Compute count.
+     *
+     * @return the int
+     */
     public int computeCount() {
         return root.computeAndCacheCount();
     }
@@ -414,15 +435,18 @@ public class GeneralizedSuffixTree {
      */
     public static class ResultInfo {
 
-        /**
-         * The total number of results present in the database
-         */
+        /** The total number of results present in the database. */
         public int totalResults;
-        /**
-         * The collection of (some) results present in the GST
-         */
+        
+        /** The collection of (some) results present in the GST. */
         public Collection<Integer> results;
 
+        /**
+         * Instantiates a new result info.
+         *
+         * @param results the results
+         * @param totalResults the total results
+         */
         public ResultInfo(Collection<Integer> results, int totalResults) {
             this.totalResults = totalResults;
             this.results = results;
@@ -430,27 +454,52 @@ public class GeneralizedSuffixTree {
     }
 
     /**
-     * A private class used to return a tuples of two elements
+     * A private class used to return a tuples of two elements.
+     *
+     * @param <A> the generic type
+     * @param <B> the generic type
      */
     private class Pair<A, B> {
 
+        /** The first. */
         private final A first;
+        
+        /** The second. */
         private final B second;
 
+        /**
+         * Instantiates a new pair.
+         *
+         * @param first the first
+         * @param second the second
+         */
         public Pair(A first, B second) {
             this.first = first;
             this.second = second;
         }
 
+        /**
+         * Gets the first.
+         *
+         * @return the first
+         */
         public A getFirst() {
             return first;
         }
 
+        /**
+         * Gets the second.
+         *
+         * @return the second
+         */
         public B getSecond() {
             return second;
         }
     }
     
+    /**
+     * Prints the.
+     */
     public void print(){
     	this.root.printNode(0);
     }

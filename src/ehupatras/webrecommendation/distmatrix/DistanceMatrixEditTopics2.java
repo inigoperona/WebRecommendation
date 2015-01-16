@@ -6,9 +6,20 @@ import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshteinTopics2;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DistanceMatrixEditTopics2.
+ */
 public class DistanceMatrixEditTopics2 
 				extends DistanceMatrixEdit {
 
+	/**
+	 * Instantiates a new distance matrix edit topics2.
+	 *
+	 * @param names the names
+	 * @param urls2topicfile the urls2topicfile
+	 * @param topicmatch the topicmatch
+	 */
 	public DistanceMatrixEditTopics2(ArrayList<Long> names, String urls2topicfile, float topicmatch){
 		super(names);
 		m_topicmatch = topicmatch;
@@ -20,6 +31,9 @@ public class DistanceMatrixEditTopics2
 		m_url2topic = (int[])objA[1];
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.distmatrix.DistanceMatrixEdit#computeMatrix(java.util.ArrayList, float[][], boolean)
+	 */
 	public void computeMatrix(ArrayList<String[]> data,
 					float[][] roleWeights,
 					boolean isplit){

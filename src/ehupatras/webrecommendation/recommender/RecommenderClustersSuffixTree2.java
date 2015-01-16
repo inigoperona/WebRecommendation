@@ -5,14 +5,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RecommenderClustersSuffixTree2.
+ */
 public class RecommenderClustersSuffixTree2 implements Recommender {
 
+	/** The m_rec suffix tree al. */
 	private ArrayList<RecommenderSuffixTree2> m_recSuffixTreeAL;
+	
+	/** The m_valid s ts. */
 	private boolean[] m_validSTs;
+	
+	/** The m_waydone. */
 	private ArrayList<String> m_waydone;
 	
 	// CREATOR
 	
+	/**
+	 * Instantiates a new recommender clusters suffix tree2.
+	 *
+	 * @param stAL the st al
+	 */
 	public RecommenderClustersSuffixTree2(ArrayList<MySuffixTree> stAL){
 		// Create RecommenderSuffixTree for each tree
 		m_recSuffixTreeAL = new ArrayList<RecommenderSuffixTree2>();
@@ -34,6 +48,9 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 	// UPDATE FUNCTION
 	
 	// Select STs with longest suffix runnable path
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#update(java.util.ArrayList, java.lang.String, boolean, boolean)
+	 */
 	public ArrayList<String> update(
 				ArrayList<String> waydone,
 				String newstep, 
@@ -79,6 +96,9 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 	
 	// UTILS
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNumberOfFailures()
+	 */
 	public int getNumberOfFailures(){
 		int nFailures = 0;
 		for(int i=0; i<m_recSuffixTreeAL.size(); i++){
@@ -88,6 +108,9 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 		return nFailures;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#reset()
+	 */
 	public void reset(){
 		for(int i=0; i<m_recSuffixTreeAL.size(); i++){
 			RecommenderSuffixTree2 rst = m_recSuffixTreeAL.get(i);
@@ -101,6 +124,11 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 	// GET RECOMMENDATIONS //
 	
 	// Mix evenly all valid STs' recommendations
+	/**
+	 * Gets the nextpossible steps.
+	 *
+	 * @return the nextpossible steps
+	 */
 	protected Object[] getNextpossibleSteps(){
 		// take the biggest supports
 		ArrayList<ArrayList<String>> alllistOfURLs = new ArrayList<ArrayList<String>>();
@@ -155,12 +183,18 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 		return objA;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsUnbounded()
+	 */
 	public ArrayList<String> getNextpossibleStepsUnbounded(){
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> listOfUrls = (ArrayList<String>)objA[0];
 		return listOfUrls;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsRandom(int, long)
+	 */
 	public ArrayList<String> getNextpossibleStepsRandom(int nReco, long seed){
 		Object[] objA = this.getNextpossibleSteps();
 		ArrayList<String> list = (ArrayList<String>)objA[0];
@@ -174,6 +208,9 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 		return list2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeighted(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeighted(int nRecos, ArrayList<String> waydone){
 		// get the possible URLs in the actual position
 		Object[] objA = this.getNextpossibleSteps();
@@ -199,23 +236,49 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 		// return
 		return listOfURLs;
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedTrain(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedTrain(int nRecos, ArrayList<String> waydone){
 		return this.getNextpossibleStepsWeighted(nRecos, null);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedTest(int)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedTest(int nrecos){
 		return this.getNextpossibleStepsWeighted(nrecos, null);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsMarkov(int, java.util.ArrayList, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsMarkov(int nRecos, ArrayList<String> waydone, ArrayList<String> listMarkov){
 		return this.getNextpossibleStepsWeighted(nRecos, null);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedByOriginalSequences(int)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedByOriginalSequences(int nRecos){
 		return this.getNextpossibleStepsWeighted(nRecos, null);
 	}
+	
+	/* (non-Javadoc)
+	 * @see ehupatras.webrecommendation.recommender.Recommender#getNextpossibleStepsWeightedEnrichWithStep1(int, java.util.ArrayList)
+	 */
 	public ArrayList<String> getNextpossibleStepsWeightedEnrichWithStep1(int nRecos, ArrayList<String> waydone){
 		return this.getNextpossibleStepsWeighted(nRecos, null);
 	}
 	
 	
+	/**
+	 * Gets the step1 recommendations.
+	 *
+	 * @param listOfURLs the list of ur ls
+	 * @return the step1 recommendations
+	 */
 	protected Object[] getStep1Recommendations(ArrayList<String> listOfURLs){
 		ArrayList<String> listOfURLsStep1 = new ArrayList<String>();
 		ArrayList<Float> listOfWeightsStep1 = new ArrayList<Float>();
@@ -271,6 +334,11 @@ public class RecommenderClustersSuffixTree2 implements Recommender {
 		return objA;
 	}
 	
+	/**
+	 * Sets the valid s ts.
+	 *
+	 * @param validSTs the new valid s ts
+	 */
 	public void setValidSTs(boolean[] validSTs){
 		m_validSTs =  validSTs;
 	}

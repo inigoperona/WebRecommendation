@@ -5,8 +5,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
 /**
- * Represents a node of the generalized suffix tree graph
+ * Represents a node of the generalized suffix tree graph.
+ *
  * @see GeneralizedSuffixTreeStringArray
  */
 public class Node {
@@ -30,17 +32,14 @@ public class Node {
      * It should always be less than data.length
      */
     private int lastIdx = 0;
-    /**
-     * The starting size of the int[] array containing the payload
-     */
+    
+    /** The starting size of the int[] array containing the payload. */
     private static final int START_SIZE = 0;
-    /**
-     * The increment in size used when the payload array is full
-     */
+    
+    /** The increment in size used when the payload array is full. */
     private static final int INCREMENT = 1;
-    /**
-     * The set of edges starting from this node
-     */
+    
+    /** The set of edges starting from this node. */
     private final EdgeBag edges;
     /**
      * The suffix link as described in Ukkonen's paper.
@@ -59,7 +58,7 @@ public class Node {
     private int resultCount = -1;
     
     /**
-     * Creates a new Node
+     * Creates a new Node.
      */
     Node() {
         edges = new EdgeBag();
@@ -107,7 +106,9 @@ public class Node {
     }
 
     /**
-     * Adds the given <tt>index</tt> to the set of indexes associated with <tt>this</tt>
+     * Adds the given <tt>index</tt> to the set of indexes associated with <tt>this</tt>.
+     *
+     * @param index the index
      */
     void addRef(int index) {
         if (contains(index)) {
@@ -168,6 +169,11 @@ public class Node {
         return resultCount;
     }
 
+    /**
+     * Compute and cache count recursive.
+     *
+     * @return the sets the
+     */
     private Set<Integer> computeAndCacheCountRecursive() {
         Set<Integer> ret = new HashSet<Integer>();
         for (int num : data) {
@@ -187,10 +193,11 @@ public class Node {
      * Returns the number of results that are stored on this node and on its
      * children.
      * Should be called after having called computeAndCacheCount.
-     * 
+     *
+     * @return the result count
      * @throws IllegalStateException when this method is called without having called
      * computeAndCacheCount first
-     * @see Node#computeAndCacheCount() 
+     * @see Node#computeAndCacheCount()
      * @todo this should raise an exception when the subtree is changed but count
      * wasn't updated
      */
@@ -202,26 +209,58 @@ public class Node {
         return resultCount;
     }
 
+    /**
+     * Adds the edge.
+     *
+     * @param word the word
+     * @param e the e
+     */
     void addEdge(String word, Edge e) {
         edges.put(word, e);
     }
 
+    /**
+     * Gets the edge.
+     *
+     * @param word the word
+     * @return the edge
+     */
     Edge getEdge(String word) {
         return edges.get(word);
     }
 
+    /**
+     * Gets the edges.
+     *
+     * @return the edges
+     */
     public EdgeBag getEdges() {
         return edges;
     }
 
+    /**
+     * Gets the suffix.
+     *
+     * @return the suffix
+     */
     Node getSuffix() {
         return suffix;
     }
 
+    /**
+     * Sets the suffix.
+     *
+     * @param suffix the new suffix
+     */
     void setSuffix(Node suffix) {
         this.suffix = suffix;
     }
 
+    /**
+     * Adds the index.
+     *
+     * @param index the index
+     */
     private void addIndex(int index) {
         if (lastIdx == data.length) {
             int[] copy = new int[data.length + INCREMENT];
@@ -232,6 +271,11 @@ public class Node {
     }
     
     
+    /**
+     * Prints the node.
+     *
+     * @param level the level
+     */
     public void printNode(int level){
     	String ident=Utils.getIdent(level);
     	 

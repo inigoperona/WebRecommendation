@@ -7,14 +7,28 @@ import be.ac.ulg.montefiore.run.jahmm.ObservationInteger;
 import be.ac.ulg.montefiore.run.jahmm.OpdfInteger;
 import be.ac.ulg.montefiore.run.jahmm.OpdfIntegerFactory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class HiddenMarkovModel000.
+ */
 public class HiddenMarkovModel000 extends HiddenMarkovModel {
 
+	/**
+	 * Instantiates a new hidden markov model000.
+	 *
+	 * @param dataset the dataset
+	 * @param trainIndexes the train indexes
+	 * @param clusterAL the cluster al
+	 */
 	public HiddenMarkovModel000(ArrayList<String[]> dataset, 
 			int[] trainIndexes,
 			int[] clusterAL){
 		super(dataset, trainIndexes, clusterAL);
 	}
 		
+	/* (non-Javadoc)
+	 * @see ehupatras.markovmodel.hmm.HiddenMarkovModel#createHMM(int, double[], java.util.ArrayList)
+	 */
 	protected void createHMM(int nStates, double[] initProbs, ArrayList<double[]> emissions){
 		// init
 		int nEmissions = m_dictObs.size();
@@ -51,6 +65,11 @@ public class HiddenMarkovModel000 extends HiddenMarkovModel {
 	}
 	
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){	
 		// create data we nedd
 		String[] seq1 = new String[]{"1","2","3","4","5","6"};
