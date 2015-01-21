@@ -31,6 +31,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 		// folders
 		String var_base = "experiments_FPlierni_wr";
 		String var_preprocessingWD = var_base + "/01_preprocess";
+		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
 		String var_dmWD = "/DM_ED";
 		String var_validationWD = var_base + "/03_validation";
@@ -40,6 +41,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 		String var_url2topicFile = "/Content/URLs_to_topic_TestuHutsa_th0_usageID.txt";
 		String var_url2url_DM = "/Content/DM_similarityHellingerTopic1TestuHutsa_usageID.txt";
 		String var_urlSimilarityMatrix = var_preprocessingWD + "/Content/similarityHellingerTopic1TestuHutsa.txt";
+		String var_clusterPartitionFile = var_preprocessingWD + "/Content/ClusterPartitionTestuHutsa.txt";
 		String var_usage2contentFile = var_preprocessingWD + "/Content/usa2cont.csv";
 		String var_evalFile = "/evaluation.txt";
 		// system's parameters
@@ -55,12 +57,17 @@ public class A000MainClassEdPamSpadeKnnEd {
 		float[][] var_rolesW = {{ 0f, 0f, 0f},
 								{ 0f, 0f, 0f},
 								{ 0f, 0f, 0f}};
+		// topic abstraction parameters
+		float var_topicmatch = 1f; // topic match
+		
+		
+		/////////////////////////////////////////////////////////////////////////////////////
 		
 		// LOAD PREPROCESS DATA
 		Website.setWorkDirectory(var_preprocessingWD);
 		Website.load(); // Load "preprocessingWD/_Website.javaData"
 		WebAccessSequencesUHC.setWorkDirectory(var_preprocessingWD);
-		WebAccessSequences.loadStructure(); // Load "preprocessingWD/_i_requests.javaData"
+		//WebAccessSequences.loadStructure(); // Load "preprocessingWD/_i_requests.javaData"
 		WebAccessSequences.loadSequences(); // Load "preprocessingWD/_sequences.javaData"
 		
 		// LOAD DATABASE
@@ -96,6 +103,10 @@ public class A000MainClassEdPamSpadeKnnEd {
 		int[] var_url2topic = (int[])objA[1];
 		int var_difftopics = (int)objA[2];
 		
+		///////////////////////////////////////////////////////////////////////
+		
+		
+		
 		// CLUSTERING: PAM
 		ModelEvaluatorClustPAM modelevPAM = 
 				new ModelEvaluatorClustPAM(
@@ -120,19 +131,23 @@ public class A000MainClassEdPamSpadeKnnEd {
 							var_trainAL, var_valAL, var_testAL,
 							var_modePrRe, var_usage2contentFile, var_urlSimilarityMatrix,
 							var_noProposeUrls);
+		modelevMed.setTopicParameters(
+				var_urlIDs, var_url2topic, var_difftopics, 
+				var_topicmatch, 
+				var_clusterPartitionFile);
 		modelevMed.setFmeasureBeta(var_beta);
 		modelevMed.setConfusionPoints(var_confusionPoints);
 		
 		BufferedWriter evalWriter = A000MainClassEdPamSpadeKnnEd.openFile(var_validationWD + var_evalFile);
 		// Results' header
 		System.out.print("options," + modelevMed.getEvaluationHeader());
-		for(int j=0; j<var_ks.length; j++){ // for each k
+		for(int j=0; j<var_ks.length; j++){ // for each k: 150
 			int k = var_ks[j];				
 			String esperimentationStr = "pam" + k;
 			String clustFile = var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData";
 			modelevMed.loadClusters(clustFile); // LOAD CLUSTERS
 
-			// for each SPADE: minsup
+			// for each SPADE: minsup: 0.2
 			for(int l=0; l<var_seqweights.length; l++){
 				float minsup = var_seqweights[l];
 				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
@@ -142,17 +157,8 @@ public class A000MainClassEdPamSpadeKnnEd {
 				String results = "";
 				String resultInfo = "";	
 				// for each number of recommendation
-				for(int ind=0; ind<var_nrecsA.length; ind++ ){
-					int nrec = var_nrecsA[ind];
-					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val";					
-					modelevMed.setLineHeader(resultInfo + ";", evalWriter);
-					modelevMed.setEsploitationParameters(true, var_rolesW, 100);
-					results = modelevMed.computeEvaluationVal("weighted", nrec, (long)0);
-					System.out.print(resultInfo + ",");
-					System.out.print(results);
-				}				
 				// TEST //
-				for(int ind=0; ind<var_nrecsA.length; ind++ ){
+				for(int ind=0; ind<var_nrecsA.length; ind++ ){ // nrec: 4
 					int nrec = var_nrecsA[ind];
 					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";					
 					modelevMed.setLineHeader(resultInfo + ";", evalWriter);
