@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import ehupatras.webrecommendation.A012MainClassDistanceMatrixED;
 import ehupatras.webrecommendation.A001MainClassCreateDatabase;
 import ehupatras.webrecommendation.A100MainClassAddContent;
+import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
@@ -19,7 +20,7 @@ import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 /**
  * The Class A000MainClassEdPamSpadeKnnEd.
  */
-public class A000MainClassEdPamSpadeKnnEd {
+public class A001MainClassEdPamSpadeKnnEd {
 
 	/**
 	 * The main method.
@@ -29,7 +30,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 	public static void main(String[] args) {
 		
 		// folders
-		String var_base = "experiments_FPlierni_wr_9000";
+		String var_base = "experiments_FPlierni_wr_11000";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
@@ -85,16 +86,21 @@ public class A000MainClassEdPamSpadeKnnEd {
 		dm.loadDistanceMatrix(var_databaseWD + var_dmWD); // Load "databaseWD/dmWD/_matrix.javaData"
 		Matrix var_matrix = dm.getMatrix();
 		
-		// LOAD HOLD-OUT
+		// CROSS-VALIDATION, 1-fold: HOLD-OUT
 		// Load "validationWD/_holdoutTrain.javaData"
 		// Load "validationWD/_holdoutValidation.javaData"
 		// Load "validationWD/_holdoutTest.javaData"
-		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
+		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		honestmodelval.load(var_validationWD);
-		// set of sequences compound by request indexes:
-		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
-		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
-		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();
+		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
+		ArrayList<ArrayList<Long>> var_trainAL = new ArrayList<ArrayList<Long>>();
+		var_trainAL.add(trainALaux.get(0));
+		ArrayList<ArrayList<Long>> valALaux  = honestmodelval.getValidation();
+		ArrayList<ArrayList<Long>> var_valAL  = new ArrayList<ArrayList<Long>>();
+		var_valAL.add(valALaux.get(0));
+		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
+		ArrayList<ArrayList<Long>> var_testAL = new ArrayList<ArrayList<Long>>();
+		var_testAL.add(testALaux.get(0));
 		
 		// LOAD TOPIC INFORMATION
 		A100MainClassAddContent cont = new A100MainClassAddContent();
@@ -138,7 +144,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 		modelevMed.setFmeasureBeta(var_beta);
 		modelevMed.setConfusionPoints(var_confusionPoints);
 		
-		BufferedWriter evalWriter = A000MainClassEdPamSpadeKnnEd.openFile(var_validationWD + var_evalFile);
+		BufferedWriter evalWriter = A001MainClassEdPamSpadeKnnEd.openFile(var_validationWD + var_evalFile);
 		// Results' header
 		System.out.print("options," + modelevMed.getEvaluationHeader());
 		for(int j=0; j<var_ks.length; j++){ // for each k: 150
@@ -170,7 +176,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 			}
 		}
 		
-		A000MainClassEdPamSpadeKnnEd.closeFile(evalWriter);
+		A001MainClassEdPamSpadeKnnEd.closeFile(evalWriter);
 	}
 	
 	
