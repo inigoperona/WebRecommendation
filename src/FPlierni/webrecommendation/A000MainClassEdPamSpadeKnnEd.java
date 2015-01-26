@@ -29,7 +29,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 	public static void main(String[] args) {
 		
 		// folders
-		String var_base = "experiments_FPlierni_wr";
+		String var_base = "experiments_FPlierni_wr_txikia";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
@@ -45,7 +45,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 		String var_usage2contentFile = var_preprocessingWD + "/Content/usa2cont.csv";
 		String var_evalFile = "/evaluation.txt";
 		// system's parameters
-		int[] var_ks = {100}; // number of clusters
+		int[] var_ks = {50, 100, 150, 200, 300, 400, 500}; // number of clusters
 		float[] var_seqweights = {0.20f}; // Sequence Mining algorithm's minimum support
 		// metrics' parameters
 		int var_modePrRe = 0; // 0: strict - 1: relax, precision and recall computation
@@ -122,7 +122,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 			modelevPAM.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
 			modelevPAM.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
 		}
-		
+		/*
 		// CREATE THE MEDOIDS+URLs MODEL and VALIDATE IT
 		ModelEvaluatorMedoids modelevMed = 
 					new ModelEvaluatorMedoids(
@@ -171,6 +171,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 		}
 		
 		A000MainClassEdPamSpadeKnnEd.closeFile(evalWriter);
+		*/
 	}
 	
 	

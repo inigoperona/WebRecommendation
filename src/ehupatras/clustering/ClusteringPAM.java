@@ -60,6 +60,9 @@ public class ClusteringPAM {
 		
 		// create the medoids array
 		m_medoids = new ArrayList<Integer>();
+		
+		// compute medoids
+		this.runPAM();
 	}
 	
 	/**
