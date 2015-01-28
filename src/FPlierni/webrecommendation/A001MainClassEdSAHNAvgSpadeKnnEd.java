@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import ehupatras.webrecommendation.A012MainClassDistanceMatrixED;
 import ehupatras.webrecommendation.A001MainClassCreateDatabase;
 import ehupatras.webrecommendation.A100MainClassAddContent;
@@ -13,6 +14,7 @@ import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustHclust;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustPAM;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 
@@ -20,7 +22,7 @@ import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 /**
  * The Class A000MainClassEdPamSpadeKnnEd.
  */
-public class A001MainClassEdPamSpadeKnnEd {
+public class A001MainClassEdSAHNAvgSpadeKnnEd {
 
 	/**
 	 * The main method.
@@ -46,7 +48,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 		String var_usage2contentFile = var_preprocessingWD + "/Content/usa2cont.csv";
 		String var_evalFile = "/evaluation.txt";
 		// system's parameters
-		int[] var_ks = {500}; // number of clusters
+		int[] var_ks = {15}; // number of clusters
 		float[] var_seqweights = {0.20f}; // Sequence Mining algorithm's minimum support
 		// metrics' parameters
 		int var_modePrRe = 0; // 0: strict - 1: relax, precision and recall computation
@@ -60,7 +62,9 @@ public class A001MainClassEdPamSpadeKnnEd {
 								{ 0f, 0f, 0f}};
 		// topic abstraction parameters
 		float var_topicmatch = 1f; // topic match
-		
+		//SAHN Method
+		String var_Method = "ehupatras.clustering.sapehac.agglomeration.AverageLinkage";
+		String var_MethodShort = "Avg";
 		
 		/////////////////////////////////////////////////////////////////////////////////////
 		
@@ -113,20 +117,22 @@ public class A001MainClassEdPamSpadeKnnEd {
 		
 		
 		
-		// CLUSTERING: PAM
-		ModelEvaluatorClustPAM modelevPAM = 
-				new ModelEvaluatorClustPAM(
+		// CLUSTERING: SAHN AVERAGE
+		ModelEvaluatorClustHclust modelevSAHN = 
+				new ModelEvaluatorClustHclust(
 						var_sequencesUHC, null, 
 						var_matrix,
 						var_trainAL, var_valAL, var_testAL,
 						var_modePrRe, var_usage2contentFile, var_urlSimilarityMatrix);
 		for(int j=0; j<var_ks.length; j++){ // for each k
 			int k = var_ks[j];
-			String esperimentationStr = "pam" + k;
+			String esperimentationStr = "SAHNagglo" + var_MethodShort + "_cl" + k;
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
-			modelevPAM.buildPAM(k); // CREATE CLUSTERS
-			modelevPAM.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
-			modelevPAM.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
+			System.out.println("Aurretik");
+			modelevSAHN.buildDendrograms(var_Method); // CREATE CLUSTERS
+			System.out.println("Ondoren");
+			modelevSAHN.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
+			modelevSAHN.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
 		}
 		
 		// CREATE THE MEDOIDS+URLs MODEL and VALIDATE IT
@@ -144,12 +150,12 @@ public class A001MainClassEdPamSpadeKnnEd {
 		modelevMed.setFmeasureBeta(var_beta);
 		modelevMed.setConfusionPoints(var_confusionPoints);
 		
-		BufferedWriter evalWriter = A001MainClassEdPamSpadeKnnEd.openFile(var_validationWD + var_evalFile);
+		BufferedWriter evalWriter = A001MainClassEdSAHNAvgSpadeKnnEd.openFile(var_validationWD + var_evalFile);
 		// Results' header
 		System.out.print("options," + modelevMed.getEvaluationHeader());
 		for(int j=0; j<var_ks.length; j++){ // for each k: 150
 			int k = var_ks[j];				
-			String esperimentationStr = "pam" + k;
+			String esperimentationStr = "SAHNagglo" + var_MethodShort + "_cl" + k;
 			String clustFile = var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData";
 			modelevMed.loadClusters(clustFile); // LOAD CLUSTERS
 
@@ -176,7 +182,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 			}
 		}
 		
-		A001MainClassEdPamSpadeKnnEd.closeFile(evalWriter);
+		A001MainClassEdSAHNAvgSpadeKnnEd.closeFile(evalWriter);
 	}
 	
 	

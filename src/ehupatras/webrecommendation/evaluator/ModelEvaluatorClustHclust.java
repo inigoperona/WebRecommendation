@@ -18,7 +18,8 @@ public class ModelEvaluatorClustHclust
 	private ArrayList<ClusteringHierarchical> m_dendroAL;
 	
 	/** The m_ agglomerative method class name. */
-	private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
+	//private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
+	private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.AverageLinkage";
 	
 	/** The m_p cut dendrogram diss. */
 	private float m_pCutDendrogramDiss = 50f;
