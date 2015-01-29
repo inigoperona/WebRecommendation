@@ -118,14 +118,14 @@ public final class HierarchicalAgglomerativeClusterer {
     public void cluster(final ClusteringBuilder clusteringBuilder) {
         final double[][] dissimilarityMatrix = computeDissimilarityMatrix();
         final int nObservations = dissimilarityMatrix.length;
-        
+                
         final boolean[] indexUsed = new boolean[nObservations];
         final int[] clusterCardinalities = new int[nObservations];
         for (int i = 0; i<nObservations; i++) {
             indexUsed[i] = true;
             clusterCardinalities[i] = 1;
         }
-        
+                
         // Perform nObservations-1 agglomerations
         for (int a = 1; a<nObservations; a++) {
             // Determine the two most similar clusters, i and j (such that i<j)
@@ -152,6 +152,7 @@ public final class HierarchicalAgglomerativeClusterer {
                     dissimilarityMatrix[k][i] = dissimilarity;
                 }
             }
+
             clusterCardinalities[i] = clusterCardinalities[i]+clusterCardinalities[j];
             
             // erase cluster j

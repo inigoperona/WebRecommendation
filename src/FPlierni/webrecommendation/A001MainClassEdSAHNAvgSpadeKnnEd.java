@@ -38,7 +38,7 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		String var_databaseWD = var_base + "/02_database";
 		String var_dmWD = "/DM_ED";
 		String var_validationWD = var_base + "/03_validation";
-		String var_clustWD = "/pam_DM_ED";
+		String var_clustWD = "/SAHN_DM_ED";
 		String var_profiWD = "/pam_DM_ED/spade1";
 		// files
 		String var_url2topicFile = "/Content/URLs_to_topic_TestuHutsa_th0_usageID.txt";
@@ -128,9 +128,8 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 			int k = var_ks[j];
 			String esperimentationStr = "SAHNagglo" + var_MethodShort + "_cl" + k;
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
-			System.out.println("Aurretik");
-			modelevSAHN.buildDendrograms(var_Method); // CREATE CLUSTERS
-			System.out.println("Ondoren");
+			modelevSAHN.buildDendrograms(var_Method); // CREATE DENDROGRAMS
+			modelevSAHN.cutDendrograms(50f); // CUT DENDROGRAMS AND CREATE CLUSTERS
 			modelevSAHN.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
 			modelevSAHN.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
 		}
