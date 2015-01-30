@@ -32,8 +32,8 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 	public static void main(String[] args) {
 		
 		// folders
-		//String var_base = "experiments_FPlierni_wr_11000";
-		String var_base = "experiments_FPlierni_wr_txikia";
+		String var_base = "experiments_FPlierni_wr_11000";
+		//String var_base = "experiments_FPlierni_wr_txikia";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
@@ -49,7 +49,7 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		String var_usage2contentFile = var_preprocessingWD + "/Content/usa2cont.csv";
 		String var_evalFile = "/evaluation.txt";
 		// system's parameters
-		int[] var_ks = {50, 100}; // number of clusters
+		int[] var_ks = {50, 100, 150, 200, 300, 400, 500}; // number of clusters
 		float[] var_seqweights = {0.20f}; // Sequence Mining algorithm's minimum support
 		// metrics' parameters
 		int var_modePrRe = 0; // 0: strict - 1: relax, precision and recall computation
@@ -95,7 +95,7 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		// Load "validationWD/_holdoutTrain.javaData"
 		// Load "validationWD/_holdoutValidation.javaData"
 		// Load "validationWD/_holdoutTest.javaData"
-		/*
+		
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		honestmodelval.load(var_validationWD);
 		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
@@ -107,14 +107,15 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
 		ArrayList<ArrayList<Long>> var_testAL = new ArrayList<ArrayList<Long>>();
 		var_testAL.add(testALaux.get(0));
-		*/
+		
+		/*
 		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
 		honestmodelval.load(var_validationWD);
 		// set of sequences compound by request indexes:
 		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
 		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
 		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();
-		
+		*/
 		// LOAD TOPIC INFORMATION
 		A100MainClassAddContent cont = new A100MainClassAddContent();
 		Object[] objA = cont.loadUrlsTopic(var_preprocessingWD + var_url2topicFile, " ");
