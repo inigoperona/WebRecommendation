@@ -310,9 +310,17 @@ public class ClusteringHierarchical {
 		
 		// Order the dissimilarityList 
 		// and take the element at pDissimilarity percentage position
-		int position = Math.round(((float)dissimilarityList.size()-1)*(1-pDissimilarity/100));
+		/*int position = Math.round(((float)dissimilarityList.size()-1)*(1-pDissimilarity/100));
 		Collections.sort(dissimilarityList);
-		return dissimilarityList.get(position);
+		return dissimilarityList.get(position);*/
+		
+		//Supose pDissimilarity is K
+		//Take the Kth dissimilarity
+		Collections.sort(dissimilarityList);
+		if ((int)pDissimilarity>dissimilarityList.size()){
+			return dissimilarityList.get(dissimilarityList.size()-1);
+		}
+		return dissimilarityList.get(dissimilarityList.size()-(int)pDissimilarity);
 	}
 	
 	/**
