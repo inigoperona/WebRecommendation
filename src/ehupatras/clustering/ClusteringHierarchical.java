@@ -300,8 +300,7 @@ public class ClusteringHierarchical {
 			if(nodeClassStr.contains("MergeNode")){
 				MergeNode mnode = (MergeNode)node;
 				double diss = mnode.getDissimilarity();
-				if(diss == (double)0.0){
-				//Hau da zuzena: if(diss != (double)0.0){
+				if(diss != (double)0.0){
 					dissimilarityList.add(diss);
 					nodesList.add(mnode.getLeft());
 					nodesList.add(mnode.getRight());

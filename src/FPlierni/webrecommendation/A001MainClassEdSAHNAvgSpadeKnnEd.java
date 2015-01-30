@@ -32,7 +32,8 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 	public static void main(String[] args) {
 		
 		// folders
-		String var_base = "experiments_FPlierni_wr_11000";
+		//String var_base = "experiments_FPlierni_wr_11000";
+		String var_base = "experiments_FPlierni_wr_txikia";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
@@ -94,6 +95,7 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		// Load "validationWD/_holdoutTrain.javaData"
 		// Load "validationWD/_holdoutValidation.javaData"
 		// Load "validationWD/_holdoutTest.javaData"
+		/*
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		honestmodelval.load(var_validationWD);
 		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
@@ -105,6 +107,13 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
 		ArrayList<ArrayList<Long>> var_testAL = new ArrayList<ArrayList<Long>>();
 		var_testAL.add(testALaux.get(0));
+		*/
+		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
+		honestmodelval.load(var_validationWD);
+		// set of sequences compound by request indexes:
+		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
+		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
+		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();
 		
 		// LOAD TOPIC INFORMATION
 		A100MainClassAddContent cont = new A100MainClassAddContent();
@@ -129,7 +138,7 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 			String esperimentationStr = "SAHNagglo" + var_MethodShort + "_cl" + k;
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			modelevSAHN.buildDendrograms(var_Method); // CREATE DENDROGRAMS
-			modelevSAHN.cutDendrograms(50f); // CUT DENDROGRAMS AND CREATE CLUSTERS
+			modelevSAHN.cutDendrograms(100f); // CUT DENDROGRAMS AND CREATE CLUSTERS
 			modelevSAHN.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
 			modelevSAHN.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
 		}
