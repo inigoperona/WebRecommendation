@@ -32,8 +32,8 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 	public static void main(String[] args) {
 		
 		// folders
-		String var_base = "experiments_FPlierni_wr_11000";
-		//String var_base = "experiments_FPlierni_wr_txikia";
+		//String var_base = "experiments_FPlierni_wr_11000";
+		String var_base = "experiments_FPlierni_wr_txikia";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
@@ -91,23 +91,42 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		dm.loadDistanceMatrix(var_databaseWD + var_dmWD); // Load "databaseWD/dmWD/_matrix.javaData"
 		Matrix var_matrix = dm.getMatrix();
 		
-		// CROSS-VALIDATION, 1-fold: HOLD-OUT
-		// Load "validationWD/_holdoutTrain.javaData"
-		// Load "validationWD/_holdoutValidation.javaData"
-		// Load "validationWD/_holdoutTest.javaData"
-		
+		// CROSS-VALIDATION, 10-fold:
+		/*
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		honestmodelval.load(var_validationWD);
 		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
-		ArrayList<ArrayList<Long>> var_trainAL = new ArrayList<ArrayList<Long>>();
-		var_trainAL.add(trainALaux.get(0));
+		ArrayList<ArrayList<Long>> var_trainAL = new ArrayList<ArrayList<Long>>();		
 		ArrayList<ArrayList<Long>> valALaux  = honestmodelval.getValidation();
 		ArrayList<ArrayList<Long>> var_valAL  = new ArrayList<ArrayList<Long>>();
-		var_valAL.add(valALaux.get(0));
 		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
 		ArrayList<ArrayList<Long>> var_testAL = new ArrayList<ArrayList<Long>>();
-		var_testAL.add(testALaux.get(0));
+		*/
 		
+		// CROSS-VALIDATION, 10-fold:
+		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
+		// create
+		int m_ptrain = 7;
+		int m_pval = 0;
+		int m_ptest = 3;
+		int m_nFold = 10;
+		honestmodelval.prepareData(var_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
+		honestmodelval.save(var_validationWD);
+		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
+		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
+		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();
+		// load
+		/*
+		honestmodelval.load(var_validationWD);
+		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
+		ArrayList<ArrayList<Long>> var_trainAL = new ArrayList<ArrayList<Long>>();		
+		ArrayList<ArrayList<Long>> valALaux  = honestmodelval.getValidation();
+		ArrayList<ArrayList<Long>> var_valAL  = new ArrayList<ArrayList<Long>>();
+		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
+		ArrayList<ArrayList<Long>> var_testAL = new ArrayList<ArrayList<Long>>();
+		*/
+		
+		//HOLD-OUT:
 		/*
 		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
 		honestmodelval.load(var_validationWD);
@@ -116,6 +135,7 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
 		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();
 		*/
+		
 		// LOAD TOPIC INFORMATION
 		A100MainClassAddContent cont = new A100MainClassAddContent();
 		Object[] objA = cont.loadUrlsTopic(var_preprocessingWD + var_url2topicFile, " ");

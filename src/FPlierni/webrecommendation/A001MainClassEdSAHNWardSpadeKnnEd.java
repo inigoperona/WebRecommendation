@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import ehupatras.webrecommendation.A012MainClassDistanceMatrixED;
 import ehupatras.webrecommendation.A001MainClassCreateDatabase;
 import ehupatras.webrecommendation.A100MainClassAddContent;
@@ -13,6 +14,7 @@ import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.distmatrix.Matrix;
+import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustHclust;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustPAM;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 
@@ -20,7 +22,7 @@ import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 /**
  * The Class A000MainClassEdPamSpadeKnnEd.
  */
-public class A001MainClassEdPamSpadeKnnEd {
+public class A001MainClassEdSAHNWardSpadeKnnEd {
 
 	/**
 	 * The main method.
@@ -31,12 +33,13 @@ public class A001MainClassEdPamSpadeKnnEd {
 		
 		// folders
 		String var_base = "experiments_FPlierni_wr_11000";
+		//String var_base = "experiments_FPlierni_wr_txikia";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
 		String var_dmWD = "/DM_ED";
 		String var_validationWD = var_base + "/03_validation";
-		String var_clustWD = "/pam_DM_ED";
+		String var_clustWD = "/SAHN_DM_ED";
 		String var_profiWD = "/pam_DM_ED/spade1";
 		// files
 		String var_url2topicFile = "/Content/URLs_to_topic_TestuHutsa_th0_usageID.txt";
@@ -46,7 +49,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 		String var_usage2contentFile = var_preprocessingWD + "/Content/usa2cont.csv";
 		String var_evalFile = "/evaluation.txt";
 		// system's parameters
-		int[] var_ks = {50, 100, 150, 200, 300, 400, 500}; // number of clusters
+		int[] var_ks = {2}; // number of clusters
 		float[] var_seqweights = {0.20f}; // Sequence Mining algorithm's minimum support
 		// metrics' parameters
 		int var_modePrRe = 0; // 0: strict - 1: relax, precision and recall computation
@@ -60,7 +63,9 @@ public class A001MainClassEdPamSpadeKnnEd {
 								{ 0f, 0f, 0f}};
 		// topic abstraction parameters
 		float var_topicmatch = 1f; // topic match
-		
+		//SAHN Method
+		String var_Method = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
+		String var_MethodShort = "Ward";
 		
 		/////////////////////////////////////////////////////////////////////////////////////
 		
@@ -86,13 +91,26 @@ public class A001MainClassEdPamSpadeKnnEd {
 		dm.loadDistanceMatrix(var_databaseWD + var_dmWD); // Load "databaseWD/dmWD/_matrix.javaData"
 		Matrix var_matrix = dm.getMatrix();
 		
+		
+		// CROSS-VALIDATION, 10-fold:
+		/*
+		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
+		honestmodelval.load(var_validationWD);
+		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
+		ArrayList<ArrayList<Long>> var_trainAL = new ArrayList<ArrayList<Long>>();		
+		ArrayList<ArrayList<Long>> valALaux  = honestmodelval.getValidation();
+		ArrayList<ArrayList<Long>> var_valAL  = new ArrayList<ArrayList<Long>>();
+		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
+		ArrayList<ArrayList<Long>> var_testAL = new ArrayList<ArrayList<Long>>();
+		*/
+		
 		// CROSS-VALIDATION, 10-fold:
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		// create
 		int m_ptrain = 7;
 		int m_pval = 0;
 		int m_ptest = 3;
-		int m_nFold = 10;
+		int m_nFold = 2;
 		honestmodelval.prepareData(var_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
 		honestmodelval.save(var_validationWD);
 		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
@@ -110,9 +128,14 @@ public class A001MainClassEdPamSpadeKnnEd {
 		*/
 		
 		//HOLD-OUT:
-		// Load "validationWD/_holdoutTrain.javaData"
-		// Load "validationWD/_holdoutValidation.javaData"
-		// Load "validationWD/_holdoutTest.javaData"
+		/*
+		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
+		honestmodelval.load(var_validationWD);
+		// set of sequences compound by request indexes:
+		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
+		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
+		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();
+		*/
 		
 		// LOAD TOPIC INFORMATION
 		A100MainClassAddContent cont = new A100MainClassAddContent();
@@ -125,20 +148,21 @@ public class A001MainClassEdPamSpadeKnnEd {
 		
 		
 		
-		// CLUSTERING: PAM
-		ModelEvaluatorClustPAM modelevPAM = 
-				new ModelEvaluatorClustPAM(
+		// CLUSTERING: SAHN AVERAGE
+		ModelEvaluatorClustHclust modelevSAHN = 
+				new ModelEvaluatorClustHclust(
 						var_sequencesUHC, null, 
 						var_matrix,
 						var_trainAL, var_valAL, var_testAL,
 						var_modePrRe, var_usage2contentFile, var_urlSimilarityMatrix);
 		for(int j=0; j<var_ks.length; j++){ // for each k
 			int k = var_ks[j];
-			String esperimentationStr = "pam" + k;
+			String esperimentationStr = "SAHNagglo" + var_MethodShort + "_cl" + k;
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
-			modelevPAM.buildPAM(k); // CREATE CLUSTERS
-			modelevPAM.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
-			modelevPAM.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
+			modelevSAHN.buildDendrograms(var_Method); // CREATE DENDROGRAMS
+			modelevSAHN.cutDendrograms((float)var_ks[j]); // CUT DENDROGRAMS AND CREATE CLUSTERS
+			modelevSAHN.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
+			modelevSAHN.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
 		}
 		
 		// CREATE THE MEDOIDS+URLs MODEL and VALIDATE IT
@@ -156,12 +180,12 @@ public class A001MainClassEdPamSpadeKnnEd {
 		modelevMed.setFmeasureBeta(var_beta);
 		modelevMed.setConfusionPoints(var_confusionPoints);
 		
-		BufferedWriter evalWriter = A001MainClassEdPamSpadeKnnEd.openFile(var_validationWD + var_evalFile);
+		BufferedWriter evalWriter = A001MainClassEdSAHNWardSpadeKnnEd.openFile(var_validationWD + var_evalFile);
 		// Results' header
 		System.out.print("options," + modelevMed.getEvaluationHeader());
 		for(int j=0; j<var_ks.length; j++){ // for each k: 150
 			int k = var_ks[j];				
-			String esperimentationStr = "pam" + k;
+			String esperimentationStr = "SAHNagglo" + var_MethodShort + "_cl" + k;
 			String clustFile = var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData";
 			modelevMed.loadClusters(clustFile); // LOAD CLUSTERS
 
@@ -188,7 +212,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 			}
 		}
 		
-		A001MainClassEdPamSpadeKnnEd.closeFile(evalWriter);
+		A001MainClassEdSAHNWardSpadeKnnEd.closeFile(evalWriter);
 	}
 	
 	
