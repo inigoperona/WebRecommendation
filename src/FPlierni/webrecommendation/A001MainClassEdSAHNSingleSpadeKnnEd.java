@@ -22,7 +22,7 @@ import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 /**
  * The Class A000MainClassEdPamSpadeKnnEd.
  */
-public class A001MainClassEdSAHNAvgSpadeKnnEd {
+public class A001MainClassEdSAHNSingleSpadeKnnEd {
 
 	/**
 	 * The main method.
@@ -50,7 +50,6 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		String var_evalFile = "/evaluation.txt";
 		// system's parameters
 		int[] var_ks = {50, 100, 150, 200, 300, 400, 500}; // number of clusters
-		//int[] var_ks = {2, 5};
 		float[] var_seqweights = {0.20f}; // Sequence Mining algorithm's minimum support
 		// metrics' parameters
 		int var_modePrRe = 0; // 0: strict - 1: relax, precision and recall computation
@@ -65,8 +64,8 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		// topic abstraction parameters
 		float var_topicmatch = 1f; // topic match
 		//SAHN Method
-		String var_Method = "ehupatras.clustering.sapehac.agglomeration.AverageLinkage";
-		String var_MethodShort = "Avg";
+		String var_Method = "ehupatras.clustering.sapehac.agglomeration.SingleLinkage";
+		String var_MethodShort = "Single";
 		
 		/////////////////////////////////////////////////////////////////////////////////////
 		
@@ -91,6 +90,7 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
 		dm.loadDistanceMatrix(var_databaseWD + var_dmWD); // Load "databaseWD/dmWD/_matrix.javaData"
 		Matrix var_matrix = dm.getMatrix();
+		
 		
 		// CROSS-VALIDATION, 10-fold:
 		/*
@@ -180,7 +180,7 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		modelevMed.setFmeasureBeta(var_beta);
 		modelevMed.setConfusionPoints(var_confusionPoints);
 		
-		BufferedWriter evalWriter = A001MainClassEdSAHNAvgSpadeKnnEd.openFile(var_validationWD + var_evalFile);
+		BufferedWriter evalWriter = A001MainClassEdSAHNSingleSpadeKnnEd.openFile(var_validationWD + var_evalFile);
 		// Results' header
 		System.out.print("options," + modelevMed.getEvaluationHeader());
 		for(int j=0; j<var_ks.length; j++){ // for each k: 150
@@ -212,7 +212,7 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 			}
 		}
 		
-		A001MainClassEdSAHNAvgSpadeKnnEd.closeFile(evalWriter);
+		A001MainClassEdSAHNSingleSpadeKnnEd.closeFile(evalWriter);
 	}
 	
 	

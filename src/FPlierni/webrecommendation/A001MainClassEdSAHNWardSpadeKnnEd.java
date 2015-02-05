@@ -49,7 +49,7 @@ public class A001MainClassEdSAHNWardSpadeKnnEd {
 		String var_usage2contentFile = var_preprocessingWD + "/Content/usa2cont.csv";
 		String var_evalFile = "/evaluation.txt";
 		// system's parameters
-		int[] var_ks = {2}; // number of clusters
+		int[] var_ks = {50, 100, 150, 200, 300, 400, 500}; // number of clusters
 		float[] var_seqweights = {0.20f}; // Sequence Mining algorithm's minimum support
 		// metrics' parameters
 		int var_modePrRe = 0; // 0: strict - 1: relax, precision and recall computation
@@ -110,7 +110,7 @@ public class A001MainClassEdSAHNWardSpadeKnnEd {
 		int m_ptrain = 7;
 		int m_pval = 0;
 		int m_ptest = 3;
-		int m_nFold = 2;
+		int m_nFold = 10;
 		honestmodelval.prepareData(var_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
 		honestmodelval.save(var_validationWD);
 		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();

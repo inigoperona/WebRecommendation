@@ -1352,7 +1352,7 @@ public abstract class TestSetEvaluator {
 	/**
 	 * Write results.
 	 */
-	public void writeResults(){
+	/*public void writeResults(){
 		// write headers
 		System.out.print("numberOfRecommendationsRatio,hitratio,clicksoonratio");
 		for(int i=0; i<m_points.length; i++){
@@ -1379,7 +1379,45 @@ public abstract class TestSetEvaluator {
 		for(int i=0; i<m_points.length; i++){
 			System.out.print("," + m_fmeasure[i]);
 		}
+		System.out.println();*/
+	public void writeResults(int j){
+		//VERSION: LIERNI
+		// write headers
+		System.out.print(" ,fold_" + j);
+		for (int l=0; l<19; l++){
+			System.out.print(", ");
+		}
+		
+		// write results
+		System.out.print("," + m_hitratio);
+		System.out.print("," + m_clicksoonratio);
+		for(int i=0; i<m_points.length; i++){
+			System.out.print("," + m_precision[i]);
+		}
+		for(int i=0; i<m_points.length; i++){
+			System.out.print("," + m_recall[i]);
+		}
+		for(int i=0; i<m_points.length; i++){
+			System.out.print("," + m_fmeasure[i]);
+		}
+		
+		for (int l=0; l<15; l++){
+			System.out.print(", ");
+		}
+		
+		for(int i=0; i<m_points.length; i++){
+			System.out.print("," + m_ModelPrecision[i]);
+		}
+		for(int i=0; i<m_points.length; i++){
+			System.out.print("," + m_ModelRecall[i]);
+		}
+		for(int i=0; i<m_points.length; i++){
+			System.out.print("," + m_ModelFmeasure[i]);
+		}
+		
+		
+		
 		System.out.println();
 	}
-	
+
 }

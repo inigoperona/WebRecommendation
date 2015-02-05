@@ -483,7 +483,7 @@ public abstract class ModelEvaluator {
 					m_homepages,
 					(modelMC!=null ? modelMC.getMarkovChain(i) : null)
 							);
-			//eval.writeResults();
+			eval.writeResults(i);
 			
 			
 			
