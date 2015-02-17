@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import ehupatras.webrecommendation.A012MainClassDistanceMatrixED;
 import ehupatras.webrecommendation.A001MainClassCreateDatabase;
 import ehupatras.webrecommendation.A100MainClassAddContent;
@@ -90,8 +91,8 @@ public class A001MainClassEdPamSpadeKnnEd {
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		// create
 		int m_ptrain = 7;
-		int m_pval = 0;
-		int m_ptest = 3;
+		int m_pval = 2;
+		int m_ptest = 1;
 		int m_nFold = 10;
 		honestmodelval.prepareData(var_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
 		honestmodelval.save(var_validationWD);
@@ -126,6 +127,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 		
 		
 		// CLUSTERING: PAM
+		/*
 		ModelEvaluatorClustPAM modelevPAM = 
 				new ModelEvaluatorClustPAM(
 						var_sequencesUHC, null, 
@@ -140,7 +142,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 			modelevPAM.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
 			modelevPAM.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
 		}
-		
+		*/
 		// CREATE THE MEDOIDS+URLs MODEL and VALIDATE IT
 		ModelEvaluatorMedoids modelevMed = 
 					new ModelEvaluatorMedoids(
@@ -174,6 +176,17 @@ public class A001MainClassEdPamSpadeKnnEd {
 				// VALIDATION //
 				String results = "";
 				String resultInfo = "";	
+				for(int ind=0; ind<var_nrecsA.length; ind++ ){ // nrec: 4
+					int nrec = var_nrecsA[ind];
+					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val";					
+					modelevMed.setLineHeader(resultInfo + ";", evalWriter);
+					modelevMed.setEsploitationParameters(true, var_rolesW, 100);
+					results = modelevMed.computeEvaluationVal("weighted", nrec, (long)0);					
+					System.out.print(resultInfo + ",");
+					System.out.print(results);
+				}	
+
+				
 				// for each number of recommendation
 				// TEST //
 				for(int ind=0; ind<var_nrecsA.length; ind++ ){ // nrec: 4

@@ -108,8 +108,8 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd {
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		// create
 		int m_ptrain = 7;
-		int m_pval = 0;
-		int m_ptest = 3;
+		int m_pval = 2;
+		int m_ptest = 1;
 		int m_nFold = 10;
 		honestmodelval.prepareData(var_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
 		honestmodelval.save(var_validationWD);

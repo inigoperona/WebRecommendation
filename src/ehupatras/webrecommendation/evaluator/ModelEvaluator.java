@@ -442,8 +442,6 @@ public abstract class ModelEvaluator {
 			modelMC.buildMC();
 		}
 		
-		
-		
 		// for each fold obtain the metrics
 		for(int i=0; i<m_nFolds; i++){
 			
@@ -745,7 +743,7 @@ public abstract class ModelEvaluator {
 			moReATop_OkHome[j] = moReATop_OkHome[j] / (float)m_nFolds;
 			moFmATop_OkHome[j] = moFmATop_OkHome[j] / (float)m_nFolds;
 		}
-		
+	
 		
 		
 		// WRITE //
@@ -831,10 +829,11 @@ public abstract class ModelEvaluator {
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moPrATop_OkHome[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moReATop_OkHome[j];}
 		for(int j=0; j<m_confusionPoints.length; j++){results = results + "," + moFmATop_OkHome[j];}		
-		
+	
 		// return
 		results = results + "\n";
 		return results;
+	
 	}
 	
 	// set line header, to write done recommendations
