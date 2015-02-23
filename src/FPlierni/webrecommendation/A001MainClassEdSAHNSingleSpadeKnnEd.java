@@ -160,7 +160,7 @@ public class A001MainClassEdSAHNSingleSpadeKnnEd {
 			String esperimentationStr = "SAHNagglo" + var_MethodShort + "_cl" + k;
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
 			modelevSAHN.buildDendrograms(var_Method); // CREATE DENDROGRAMS
-			modelevSAHN.cutDendrograms((float)var_ks[j]); // CUT DENDROGRAMS AND CREATE CLUSTERS
+			modelevSAHN.cutDendrogramsK((float)var_ks[j]); // CUT DENDROGRAMS AND CREATE CLUSTERS
 			modelevSAHN.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
 			modelevSAHN.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
 		}

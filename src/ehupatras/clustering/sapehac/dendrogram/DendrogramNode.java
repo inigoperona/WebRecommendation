@@ -22,6 +22,19 @@ package ehupatras.clustering.sapehac.dendrogram;
 public interface DendrogramNode {
 	
 	/**
+	 * Gets the COP value.
+	 *
+	 * @return the COP value
+	 */
+	public double getCOP();
+	
+	/**
+	 * Sets the COP value.
+	 *
+	 */
+	public void setCOP(double cop);
+	
+	/**
 	 * Gets the left.
 	 *
 	 * @return the left

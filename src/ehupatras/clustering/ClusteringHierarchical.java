@@ -314,25 +314,6 @@ public class ClusteringHierarchical {
 		Collections.sort(dissimilarityList);
 		return dissimilarityList.get(position);
 		
-		
-		/*
-		//Supose pDissimilarity is K
-		//Take the Kth dissimilarity
-		
-		//Remove duplicated values
-		ArrayList<Double> dissNotRepeated = new ArrayList<Double>();
-		HashSet<Double> hs = new HashSet<Double>();
-		hs.addAll(dissimilarityList);
-		dissNotRepeated.addAll(hs);
-		
-		//Order the dissimilarityList
-		Collections.sort(dissNotRepeated);
-				
-		if ((int)pDissimilarity>dissNotRepeated.size() && dissNotRepeated.size()!=0){
-			return dissNotRepeated.get(dissNotRepeated.size()-1);
-		}
-		return dissNotRepeated.get(dissNotRepeated.size()-(int)pDissimilarity);
-		*/
 	}
 	
 	/**
@@ -343,7 +324,7 @@ public class ClusteringHierarchical {
 	 */
 	public int[] cutDendrogramByDissimilarity(float pDissimilarity){
 		// get the dissimilarity threshold to cut the dendrogram
-		/*double dissimilarityThreshold = getCutDissimilarity(pDissimilarity);
+		double dissimilarityThreshold = getCutDissimilarity(pDissimilarity);
 		
 		// scan the dendrogram to find the the nodes we are interested in
 		ArrayList<DendrogramNode> clusterList = new ArrayList<DendrogramNode>();
@@ -367,9 +348,18 @@ public class ClusteringHierarchical {
 				ObservationNode onode = (ObservationNode)node;
 				clusterList.add(onode);
 			}
-		}*/
-		
-		//Supose that pDissimilarity is K
+		}
+		// return the clustering
+				int[] clustersA = getClustersFromNodes(clusterList);
+				return clustersA;
+	}
+		/**
+		 * Cut dendrogram by k.
+		 *
+		 * @param k the amount of clusters
+		 * @return the int[]
+		 */
+		public int[] cutDendrogramByK(float k){	
 		ArrayList<DendrogramNode> clusterList = new ArrayList<DendrogramNode>();
 		ArrayList<DendrogramNode> nodesList = new ArrayList<DendrogramNode>();
 		DendrogramNode root = m_dendrogram.getRoot();
@@ -378,7 +368,7 @@ public class ClusteringHierarchical {
 			DendrogramNode node = nodesList.get(i);
 			String nodeClassStr = node.getClass().toString();
 			//if we have enough nodes in the list, stop and add clusters
-			if (nodesList.size()-i>=pDissimilarity && pDissimilarity != 0){
+			if (nodesList.size()-i>=k && k != 0){
 				if(nodeClassStr.contains("MergeNode")){
 					MergeNode mnode = (MergeNode)node;
 					clusterList.add(mnode);
@@ -387,7 +377,7 @@ public class ClusteringHierarchical {
 					ObservationNode onode = (ObservationNode)node;
 					clusterList.add(onode);
 				}
-				pDissimilarity--;
+				k--;
 			} else {
 				if(nodeClassStr.contains("MergeNode")){
 					MergeNode mnode = (MergeNode)node;
@@ -397,7 +387,7 @@ public class ClusteringHierarchical {
 				if(nodeClassStr.contains("ObservationNode")){
 					ObservationNode onode = (ObservationNode)node;
 					clusterList.add(onode);
-					pDissimilarity--;
+					k--;
 				}
 			}
 		}
