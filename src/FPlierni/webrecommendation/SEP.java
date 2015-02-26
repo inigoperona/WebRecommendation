@@ -2,55 +2,50 @@ package FPlierni.webrecommendation;
 
 import java.util.ArrayList;
 
-import ehupatras.clustering.cvi.CVI;
 import ehupatras.clustering.sapehac.dendrogram.*;
-import ehupatras.clustering.ClusteringHierarchical.*;
 
 
 public class SEP {
 	
-	public ArrayList<DendrogramNode> computeSEP(CVI cop, DendrogramNode node){
+	public ArrayList<DendrogramNode> computeSEP(DendrogramNode node, Dendrogram dendrogram){
 		ArrayList<DendrogramNode> clusterList = new ArrayList<DendrogramNode>();
 		ArrayList<DendrogramNode> union = new ArrayList<DendrogramNode>();
+		ArrayList<DendrogramNode> nodeArray = new ArrayList<DendrogramNode>();
 		ArrayList<DendrogramNode> childSEP = new ArrayList<DendrogramNode>();
-		double unionCOP=0.0, unionCOPl=0.0, unionCOPr=0.0;
+		
+		int casesUnion = 0;
+		
+		COP copIndex = new COP(dendrogram);
+		
+		double unionCOP = 0.0, nodeCOP = 0.0;
 		String nodeClassStr = node.getClass().toString();
 		if(nodeClassStr.contains("ObservationNode")){
 			ObservationNode onode = (ObservationNode)node;
 			clusterList.add(onode);
+			return clusterList;
 		} else {
-			childSEP = computeSEP(cop, node.getLeft());
+			childSEP = computeSEP(node.getLeft(), dendrogram);
 			for (int j=0; j<childSEP.size(); j++){
 				union.add(childSEP.get(j));
-				unionCOPl=unionCOPl+childSEP.get(j).getCOP();
+				casesUnion=casesUnion+childSEP.get(j).getObservationCount();
 			}
-			unionCOPl=unionCOPl/childSEP.size();
-			childSEP = computeSEP(cop, node.getRight());
+			childSEP = computeSEP(node.getRight(), dendrogram);
 			for (int j=0; j<childSEP.size(); j++){
 				union.add(childSEP.get(j));
-				unionCOPr=unionCOPr+childSEP.get(j).getCOP();
+				casesUnion=casesUnion+childSEP.get(j).getObservationCount();
 			}
-			unionCOPr=unionCOPr/childSEP.size();
-			//Zati 2 behar do??
-			unionCOP=(unionCOPl+unionCOPr)/2;
-			/*for (int i=0; i<node.getObservationCount(); i++){
-				//GAIZKII
-				
-				childSEP = computeSEP(cop, node);
-				for (int j=0; j<childSEP.size(); j++){
-					union.add(childSEP.get(j));
-					unionCOP=unionCOP+childSEP.get(j).getCOP();
+			unionCOP = copIndex.computeCOP(union, this.getClustersFromNodes(union, casesUnion), );
+			nodeArray.add(node);
+			nodeCOP = copIndex.computeCOP(nodeArray, this.getClustersFromNodes(nodeArray, node.getObservationCount()), );
+			if (nodeCOP<unionCOP){
+				clusterList.add(node);
+			} else{
+				for (int l=0; l<union.size(); l++){
+					clusterList.add(union.get(l));
 				}
-			}*/
-		}
-		if (node.getCOP()< unionCOP){
-			clusterList.add(node);
-		} else{
-			for (int l=0; l<union.size(); l++){
-				clusterList.add(union.get(l));
 			}
+			return clusterList;
 		}
-		return clusterList;
 		
 	}
 	
@@ -60,7 +55,7 @@ public class SEP {
 		return clustersA;
 	}
 	
-	private int[] getClustersFromNodes(ArrayList<DendrogramNode> clusterList, int cases){
+	public int[] getClustersFromNodes(ArrayList<DendrogramNode> clusterList, int cases){
 		// See which cases are in the sub tree and assign the cluster
 		int[] clustersA = new int[cases];
 		for(int i=0; i<clusterList.size(); i++){

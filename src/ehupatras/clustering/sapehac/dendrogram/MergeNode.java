@@ -37,9 +37,6 @@ public final class MergeNode
 	
 	/** The observation count. */
 	private final int observationCount;
-	
-	/** COP value of the node */
-	public double copValue;
 
 	
 	
@@ -54,7 +51,6 @@ public final class MergeNode
 		this.left = left;
 		this.right = right;
 		this.dissimilarity = dissimilarity;
-		this.copValue=1.0;
 		observationCount = left.getObservationCount()+right.getObservationCount();
 	}
 	
@@ -86,23 +82,6 @@ public final class MergeNode
 	 */
 	public final double getDissimilarity() {
 		return dissimilarity;
-	}
-	
-	/**
-	 * Gets the COP value.
-	 *
-	 * @return the COP value
-	 */
-	public double getCOP(){
-		return copValue;
-	}
-	
-	/**
-	 * Sets the COP value.
-	 *
-	 */
-	public void setCOP(double cop){
-		this.copValue = cop;
 	}
 
 }

@@ -28,9 +28,6 @@ public final class ObservationNode
 	
 	/** The observation. */
 	private final int observation;
-	
-	/** COP value of the node */
-	public double copValue=1.0;
 
 	
 	/**
@@ -72,21 +69,5 @@ public final class ObservationNode
 		return observation;
 	}
 
-	/**
-	 * Gets the COP value.
-	 *
-	 * @return the COP value
-	 */
-	public double getCOP(){
-		return copValue;
-	}
-	
-	/**
-	 * Sets the COP value.
-	 *
-	 */
-	public void setCOP(double cop){
-		this.copValue = cop;
-	}
 
 }
