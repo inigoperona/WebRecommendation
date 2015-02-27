@@ -1,7 +1,6 @@
 package ehupatras.clustering;
 
 import ehupatras.clustering.sapehac.HierarchicalAgglomerativeClusterer;
-import ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod;
 import ehupatras.clustering.sapehac.agglomeration.*;
 import ehupatras.clustering.sapehac.dendrogram.*;
 import ehupatras.clustering.sapehac.experiment.DissimilarityMeasure;
@@ -9,9 +8,12 @@ import ehupatras.clustering.sapehac.experiment.DissimilarityMeasureEhupatras;
 import ehupatras.clustering.sapehac.experiment.Experiment;
 import ehupatras.clustering.sapehac.experiment.ExperimentEhuPatras;
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
+
 import java.util.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import FPlierni.webrecommendation.SEP;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -395,6 +397,13 @@ public class ClusteringHierarchical {
 		// return the clustering
 		int[] clustersA = getClustersFromNodes(clusterList);
 		return clustersA;
+	}
+		
+	public int[] cutDendrogramWithSEP(float[][] distanceMatrix){
+		ArrayList<DendrogramNode> partition = new ArrayList<DendrogramNode>();
+		SEP modelSEP = new SEP(m_dendrogram, distanceMatrix);
+		partition = modelSEP.computeSEP(m_dendrogram.getRoot());
+		return modelSEP.getClustersFromNodes(partition);
 	}
 
 }

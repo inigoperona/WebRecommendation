@@ -18,8 +18,8 @@ public class ModelEvaluatorClustHclust
 	private ArrayList<ClusteringHierarchical> m_dendroAL;
 	
 	/** The m_ agglomerative method class name. */
-	//private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
-	private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.AverageLinkage";
+	private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.WardLinkage";
+	//private String m_AgglomerativeMethodClassName = "ehupatras.clustering.sapehac.agglomeration.AverageLinkage";
 	
 	/** The m_p cut dendrogram diss. */
 	private float m_pCutDendrogramDiss = 50f;
@@ -105,6 +105,18 @@ public class ModelEvaluatorClustHclust
 	}
 	
 	/**
+	 * Cut dendrograms.
+	 *
+	 * @param cut dendrograms with SEP
+	 */
+	public void cutDendrogramsSEP(float[][] distanceMatrix){
+		m_clustersAL = new ArrayList<int[]>();
+		for(int i=0; i<m_nFolds; i++){
+			m_clustersAL.add(this.cutDendrogramSEP(i, distanceMatrix));
+		}
+	}
+	
+	/**
 	 * Do dendrogram.
 	 *
 	 * @param indexFold the index fold
@@ -141,6 +153,18 @@ public class ModelEvaluatorClustHclust
 	private int[] cutDendrogramK(int indexFold){
 		ClusteringHierarchical clustering = m_dendroAL.get(indexFold);
 		int[] clustersA = clustering.cutDendrogramByK(m_pCutDendrogramDiss);
+		return clustersA;
+	}
+	
+	/**
+	 * Cut dendrogram by k.
+	 *
+	 * @param indexFold the index fold
+	 * @return the int[]
+	 */
+	private int[] cutDendrogramSEP(int indexFold, float[][] distanceMatrix){
+		ClusteringHierarchical clustering = m_dendroAL.get(indexFold);
+		int[] clustersA = clustering.cutDendrogramWithSEP(distanceMatrix);
 		return clustersA;
 	}
 }
