@@ -2,7 +2,6 @@ package FPlierni.webrecommendation;
 
 import java.util.ArrayList;
 
-import ehupatras.clustering.cvi.CVI;
 import ehupatras.clustering.sapehac.dendrogram.DendrogramNode;
 import ehupatras.clustering.sapehac.dendrogram.ObservationNode;
 
@@ -18,7 +17,7 @@ public class COP {
 		ArrayList<ObservationNode> m_medoids = new ArrayList<ObservationNode>();
 		
 		// compute the MEDOIDS
-		for(int j=0; j<=m_clusters.size(); j++){
+		for(int j=0; j<m_clusters.size(); j++){
 			// Take the leafs of the cluster
 			ArrayList<ObservationNode> leafs = new ArrayList<ObservationNode>();
 			leafs = getLeafs(m_clusters.get(j));
