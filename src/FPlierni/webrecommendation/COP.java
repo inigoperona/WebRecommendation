@@ -114,11 +114,12 @@ public class COP {
 		return max;
 	}
 	
-	public ArrayList<ObservationNode> getLeafs(DendrogramNode node){
+	public ArrayList<ObservationNode> getLeafs(DendrogramNode dnode){
 		ArrayList<DendrogramNode> nodes = new ArrayList<DendrogramNode>();
 		ArrayList<ObservationNode> leafs = new ArrayList<ObservationNode>();
-		nodes.add(node);
+		nodes.add(dnode);
 		for (int i=0; i<nodes.size(); i++){
+			DendrogramNode node = nodes.get(i);
 			String nodeClassStr = node.getClass().toString();
 			if(nodeClassStr.contains("ObservationNode")){
 				ObservationNode onode = (ObservationNode)node;

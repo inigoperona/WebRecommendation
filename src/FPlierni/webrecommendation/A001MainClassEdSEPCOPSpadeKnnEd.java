@@ -32,8 +32,8 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 	public static void main(String[] args) {
 		
 		// folders
-		String var_base = "experiments_FPlierni_wr_11000";
-		//String var_base = "experiments_FPlierni_wr_txikia";
+		//String var_base = "experiments_FPlierni_wr_11000";
+		String var_base = "experiments_FPlierni_wr_txikia";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
@@ -90,19 +90,6 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
 		dm.loadDistanceMatrix(var_databaseWD + var_dmWD); // Load "databaseWD/dmWD/_matrix.javaData"
 		Matrix var_matrix = dm.getMatrix();
-		
-		
-		// CROSS-VALIDATION, 10-fold:
-		/*
-		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
-		honestmodelval.load(var_validationWD);
-		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
-		ArrayList<ArrayList<Long>> var_trainAL = new ArrayList<ArrayList<Long>>();		
-		ArrayList<ArrayList<Long>> valALaux  = honestmodelval.getValidation();
-		ArrayList<ArrayList<Long>> var_valAL  = new ArrayList<ArrayList<Long>>();
-		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
-		ArrayList<ArrayList<Long>> var_testAL = new ArrayList<ArrayList<Long>>();
-		*/
 		
 		// CROSS-VALIDATION, 10-fold:
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
