@@ -18,42 +18,35 @@ public class SEP {
 	}
 	
 	public ArrayList<DendrogramNode> computeSEP (DendrogramNode node){
-		ArrayList<DendrogramNode> clusterList = new ArrayList<DendrogramNode>();
 		ArrayList<DendrogramNode> union = new ArrayList<DendrogramNode>();
 		ArrayList<DendrogramNode> nodeArray = new ArrayList<DendrogramNode>();
 		ArrayList<DendrogramNode> childSEP = new ArrayList<DendrogramNode>();
-		int casesUnion=0;
-		float unionCOP=0, nodeCOP=0;
+		double unionCOP=0, nodeCOP=0;
 		
 		COP copIndex = new COP(m_distanceMatrix);
 		
 		String nodeClassStr = node.getClass().toString();
 		if(nodeClassStr.contains("ObservationNode")){
 			ObservationNode onode = (ObservationNode)node;
-			clusterList.add(onode);
-			return clusterList;
+			nodeArray.add(onode);
+			return nodeArray;
 		} else {
 			childSEP = computeSEP(node.getLeft());
 			for (int j=0; j<childSEP.size(); j++){
 				union.add(childSEP.get(j));
-				casesUnion=casesUnion+childSEP.get(j).getObservationCount();
 			}
 			childSEP = computeSEP(node.getRight());
 			for (int j=0; j<childSEP.size(); j++){
 				union.add(childSEP.get(j));
-				casesUnion=casesUnion+childSEP.get(j).getObservationCount();
 			}
 			unionCOP = copIndex.computeCOP(union);
 			nodeArray.add(node);
 			nodeCOP = copIndex.computeCOP(nodeArray);
-			if (nodeCOP<unionCOP){
-				clusterList.add(node);
+			if (nodeCOP<=unionCOP){
+				return nodeArray;
 			} else{
-				for (int l=0; l<union.size(); l++){
-					clusterList.add(union.get(l));
-				}
+				return union;
 			}
-			return clusterList;
 		}		
 	}
 	

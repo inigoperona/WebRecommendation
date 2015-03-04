@@ -32,7 +32,7 @@ public class COP {
 					float d = m_distanceMatrix[ind1][ind2];
 					sumdists = sumdists + d;
 				}
-				avgdist[i1] = sumdists / (float)leafs.size(); 
+				avgdist[i1] = sumdists / (float)(leafs.size()-1); 
 			}
 			
 			// Take the case that minimize the distance to all its cluster members as a medoid
@@ -51,52 +51,53 @@ public class COP {
 		
 	}
 
-	public float computeCOP(ArrayList<DendrogramNode> m_clusters){
+	public double computeCOP(ArrayList<DendrogramNode> m_clusters){
 		ArrayList<ObservationNode> leafsList = new ArrayList<ObservationNode>();
 		ArrayList<ObservationNode> medoids = new ArrayList<ObservationNode>();
-		float copvalue=0;
-		float clustercop=0;
-		float intracop, intercop;
-		float dist;
+		double copvalue=0.0;
+		double clustercop=0.0;
+		double intracop, intercop;
+		double dist;
 		
-		copvalue=1/m_clusters.size();
+		copvalue=1.0/m_clusters.size();
 		
 		medoids = computeMedoids(m_clusters);
 		
 		for (int i=0; i<m_clusters.size(); i++){
-			//Get the observationNodes of the cluster
-			leafsList = getLeafs(m_clusters.get(i));
-			//Calculate intraCOP
-			intracop=0;
-			for (int j=0; j<leafsList.size(); j++){
-				intracop = intracop + m_distanceMatrix[leafsList.get(j).getObservation()][medoids.get(i).getObservation()];
-			}
-			intracop=intracop/leafsList.size();
-			//Calculate interCOP
-			intercop=0;
-			for (int l=0; l<i; l++){
-				dist = max(m_clusters.get(i),m_clusters.get(l));
-				if (dist<intercop){
-					intercop=dist;
+			String nodeClassStr = m_clusters.get(i).getClass().toString();
+			if(nodeClassStr.contains("ObservationNode")){
+				clustercop=clustercop+1.0;
+			} else {
+				//Get the observationNodes of the cluster
+				leafsList = getLeafs(m_clusters.get(i));
+				//Calculate intraCOP
+				intracop=0.0;
+				for (int j=0; j<leafsList.size(); j++){
+					intracop = intracop + m_distanceMatrix[leafsList.get(j).getObservation()][medoids.get(i).getObservation()];
 				}
+				intracop=intracop/leafsList.size();
+				//Calculate interCOP
+				intercop= Double.MAX_VALUE;
+				for (int l=0; l<i; l++){
+					if (l!=i){
+						dist = max(m_clusters.get(i),m_clusters.get(l));
+						if (dist<intercop){
+							intercop=dist;
+						}
+					}
+				}	
+				//Add actual clusters value
+				clustercop=clustercop+(m_clusters.get(i).getObservationCount()*(intracop/intercop));
 			}
-			for (int l=i; l<m_clusters.size(); l++){
-				dist = max(m_clusters.get(i),m_clusters.get(l));
-				if (dist<intercop){
-					intercop=dist;
-				}
-			}			
-			//Add actual clusters value
-			clustercop=clustercop+(m_clusters.get(i).getObservationCount()*(intracop/intercop));
 		}
 		//Calculate COP
 		copvalue=copvalue*clustercop;
 		return copvalue;
 	}
 	
-	public float max(DendrogramNode node1, DendrogramNode node2){
-		float max=0;
-		float dist=0;
+	public double max(DendrogramNode node1, DendrogramNode node2){
+		double max=0.0;
+		double dist=0.0;
 		ArrayList<ObservationNode> node1leafs = new ArrayList<ObservationNode>();
 		ArrayList<ObservationNode> node2leafs = new ArrayList<ObservationNode>();
 		

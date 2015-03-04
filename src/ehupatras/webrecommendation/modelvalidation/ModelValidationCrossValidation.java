@@ -44,7 +44,9 @@ public class ModelValidationCrossValidation extends ModelValidation {
 		for(int i=0; i<m_nFold; i++){
 			ArrayList<Long> foldi = new ArrayList<Long>();
 			for(int j=until; j<(until+fsize); j++){
-				foldi.add(sessionsID.get(j));
+				if (j < ncases){
+					foldi.add(sessionsID.get(j));
+				}
 			}
 			folds.add(foldi);
 			until = until + fsize;
