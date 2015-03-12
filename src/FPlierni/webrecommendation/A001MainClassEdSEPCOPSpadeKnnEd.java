@@ -34,6 +34,7 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 		// folders
 		//String var_base = "experiments_FPlierni_wr_11000";
 		String var_base = "experiments_FPlierni_wr_txikia";
+		//String var_base = "experiments_Discapnet";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
@@ -94,12 +95,16 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 		// CROSS-VALIDATION, 10-fold:
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		// create
-		int m_ptrain = 7;
+		/*int m_ptrain = 7;
 		int m_pval = 2;
 		int m_ptest = 1;
 		int m_nFold = 10;
 		honestmodelval.prepareData(var_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
 		honestmodelval.save(var_validationWD);
+		*/
+		//load
+		honestmodelval.load(var_validationWD);
+
 		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
 		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
 		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();

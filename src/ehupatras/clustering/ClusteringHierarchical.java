@@ -403,6 +403,7 @@ public class ClusteringHierarchical {
 		ArrayList<DendrogramNode> partition = new ArrayList<DendrogramNode>();
 		SEP modelSEP = new SEP(m_dendrogram, distanceMatrix);
 		partition = modelSEP.computeSEP(m_dendrogram.getRoot());
+		System.out.println("ClusterKop: " + partition.size());
 		return modelSEP.getClustersFromNodes(partition);
 	}
 

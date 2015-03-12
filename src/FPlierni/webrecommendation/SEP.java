@@ -23,7 +23,7 @@ public class SEP {
 		ArrayList<DendrogramNode> childSEP = new ArrayList<DendrogramNode>();
 		double unionCOP=0, nodeCOP=0;
 		
-		COP copIndex = new COP(m_distanceMatrix);
+		COP copIndex = new COP(m_distanceMatrix, m_dendrogram);
 		
 		String nodeClassStr = node.getClass().toString();
 		if(nodeClassStr.contains("ObservationNode")){

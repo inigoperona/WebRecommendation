@@ -2,15 +2,18 @@ package FPlierni.webrecommendation;
 
 import java.util.ArrayList;
 
+import ehupatras.clustering.sapehac.dendrogram.Dendrogram;
 import ehupatras.clustering.sapehac.dendrogram.DendrogramNode;
 import ehupatras.clustering.sapehac.dendrogram.ObservationNode;
 
 public class COP {
 	
 	public float[][] m_distanceMatrix;
+	public Dendrogram m_dendrogram;
 	
-	public COP(float[][] distanceMatrix){
+	public COP(float[][] distanceMatrix, Dendrogram dendrogram){
 		m_distanceMatrix = distanceMatrix;
+		m_dendrogram = dendrogram;
 	}
 	
 	public ArrayList<ObservationNode> computeMedoids(ArrayList<DendrogramNode> m_clusters){
@@ -53,17 +56,45 @@ public class COP {
 
 	public double computeCOP(ArrayList<DendrogramNode> m_clusters){
 		ArrayList<ObservationNode> leafsList = new ArrayList<ObservationNode>();
+		ArrayList<ObservationNode> restLeafs = new ArrayList<ObservationNode>();
 		ArrayList<ObservationNode> medoids = new ArrayList<ObservationNode>();
 		double copvalue=0.0;
 		double clustercop=0.0;
 		double intracop, intercop;
 		double dist;
-		
-		copvalue=1.0/m_clusters.size();
+		double cases = 0;
 		
 		medoids = computeMedoids(m_clusters);
 		
+		if (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot()){
+			return 1.0;
+		}
+		
+		/*
+		if ((m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft()) 
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight())){
+			return 1.1;
+		}
+		if ((m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getLeft()) 
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getRight())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getLeft())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getRight())){
+			return 1.1;
+		}
+		if ((m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getLeft().getLeft())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getLeft().getRight())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getRight().getLeft())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getRight().getRight())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getLeft().getLeft())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getLeft().getRight())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getRight().getLeft())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getRight().getRight())){
+			return 1.1;
+		}
+		*/
+		
 		for (int i=0; i<m_clusters.size(); i++){
+			cases = cases + m_clusters.get(i).getObservationCount();
 			String nodeClassStr = m_clusters.get(i).getClass().toString();
 			if(nodeClassStr.contains("ObservationNode")){
 				clustercop=clustercop+1.0;
@@ -76,37 +107,36 @@ public class COP {
 					intracop = intracop + m_distanceMatrix[leafsList.get(j).getObservation()][medoids.get(i).getObservation()];
 				}
 				intracop=intracop/leafsList.size();
+				//Get the leafs that are not in the cluster
+				restLeafs = getRest(m_clusters.get(i));
 				//Calculate interCOP
-				intercop= Double.MAX_VALUE;
-				for (int l=0; l<i; l++){
-					if (l!=i){
-						dist = max(m_clusters.get(i),m_clusters.get(l));
-						if (dist<intercop){
-							intercop=dist;
-						}
+				intercop = Double.MAX_VALUE;
+				for (int m=0; m<restLeafs.size(); m++){
+					ArrayList<ObservationNode> oneLeaf = new ArrayList<ObservationNode>();
+					oneLeaf.add(restLeafs.get(m));
+					dist = max(leafsList, oneLeaf);
+					if (dist<intercop){
+						intercop=dist;
 					}
-				}	
+				}
 				//Add actual clusters value
-				clustercop=clustercop+(m_clusters.get(i).getObservationCount()*(intracop/intercop));
+				if (intercop!=0.0){
+					clustercop=clustercop+(m_clusters.get(i).getObservationCount()*(intracop/intercop));
+				}
 			}
 		}
 		//Calculate COP
-		copvalue=copvalue*clustercop;
+		copvalue=clustercop/cases;
 		return copvalue;
 	}
 	
-	public double max(DendrogramNode node1, DendrogramNode node2){
+	public double max(ArrayList<ObservationNode> node1leafs, ArrayList<ObservationNode> restleafs){
 		double max=0.0;
 		double dist=0.0;
-		ArrayList<ObservationNode> node1leafs = new ArrayList<ObservationNode>();
-		ArrayList<ObservationNode> node2leafs = new ArrayList<ObservationNode>();
-		
-		node1leafs = getLeafs(node1);
-		node2leafs = getLeafs(node2);
 		
 		for (int j=0; j<node1leafs.size(); j++){
-			for (int k=0; k<node2leafs.size(); k++){
-				dist = m_distanceMatrix[node1leafs.get(j).getObservation()][node2leafs.get(k).getObservation()];
+			for (int k=0; k<restleafs.size(); k++){
+				dist = m_distanceMatrix[node1leafs.get(j).getObservation()][restleafs.get(k).getObservation()];
 				if (dist > max){
 					max = dist;
 				}
@@ -131,6 +161,26 @@ public class COP {
 			}
 		}
 		return leafs;
+	}
+	
+	public ArrayList<ObservationNode> getRest(DendrogramNode dnode){
+		ArrayList<DendrogramNode> nodes = new ArrayList<DendrogramNode>();
+		ArrayList<ObservationNode> rest = new ArrayList<ObservationNode>();
+		nodes.add(m_dendrogram.getRoot());
+		for (int i=0; i<nodes.size(); i++){
+			DendrogramNode node = nodes.get(i);
+			if (!node.equals(dnode)){
+				String nodeClassStr = node.getClass().toString();
+				if(nodeClassStr.contains("ObservationNode")){
+					ObservationNode onode = (ObservationNode)node;
+					rest.add(onode);
+				} else {
+					nodes.add(node.getLeft());
+					nodes.add(node.getRight());
+				}
+			}
+		}
+		return rest;
 	}
 	
 	
