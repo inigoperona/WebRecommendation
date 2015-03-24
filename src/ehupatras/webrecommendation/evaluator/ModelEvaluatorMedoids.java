@@ -122,6 +122,11 @@ public class ModelEvaluatorMedoids
 		m_medoidsAL = new ArrayList<ArrayList<String[]>>();
 		m_gmedoidsAL = new ArrayList<int[]>();
 		if(computeRecos){m_recosAL = new ArrayList<ArrayList<Object[]>>();}
+		
+		//lierni
+		/*double luzera = 0.0, batezbeste = 0.0, cases = 0.0;
+		int luze = 0, motz = 100;*/
+		
 		for(int i=0; i<m_nFolds; i++){
 			Object[] medObjA = this.getMedoids(i);
 			ArrayList<String[]> medoids = (ArrayList<String[]>)medObjA[0];
@@ -129,7 +134,24 @@ public class ModelEvaluatorMedoids
 			m_medoidsAL.add(medoids);
 			m_gmedoidsAL.add(gmedoids);
 			if(computeRecos){m_recosAL.add(this.getRecommendations(i, minsup, m_noProposeURLs));}
+		
+			//lierni
+			/*cases = cases + m_medoidsAL.get(i).size();
+			for (int j=0; j<m_medoidsAL.get(i).size(); j++){
+				luzera = luzera + m_medoidsAL.get(i).get(j).length;
+				if (m_medoidsAL.get(i).get(j).length>luze){
+					luze = m_medoidsAL.get(i).get(j).length;
+				}
+				if (m_medoidsAL.get(i).get(j).length<motz){
+					motz = m_medoidsAL.get(i).get(j).length;
+				}
+			}*/
 		}
+		
+		//Lierni
+		/*batezbeste = luzera / cases;
+		System.out.println("Motzena: " + motz + " Luzeena: " + luze);
+		System.out.println("Medoideen batezbesteko luzera: " + batezbeste);*/
 	}
 	
 	/**

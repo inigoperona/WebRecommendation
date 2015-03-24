@@ -157,7 +157,7 @@ public class ModelEvaluatorClustHclust
 	}
 	
 	/**
-	 * Cut dendrogram by k.
+	 * Cut dendrogram with SEP
 	 *
 	 * @param indexFold the index fold
 	 * @return the int[]

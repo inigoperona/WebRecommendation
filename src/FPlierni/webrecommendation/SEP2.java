@@ -7,12 +7,12 @@ import ehupatras.clustering.sapehac.dendrogram.DendrogramNode;
 import ehupatras.clustering.sapehac.dendrogram.MergeNode;
 import ehupatras.clustering.sapehac.dendrogram.ObservationNode;
 
-public class SEP {
+public class SEP2 {
 	
 	public Dendrogram m_dendrogram;
 	public float[][] m_distanceMatrix;
 	
-	public SEP(Dendrogram dendrogram, float[][] distanceMatrix){
+	public SEP2(Dendrogram dendrogram, float[][] distanceMatrix){
 		m_dendrogram = dendrogram;
 		m_distanceMatrix = distanceMatrix;
 	}
@@ -23,7 +23,7 @@ public class SEP {
 		ArrayList<DendrogramNode> childSEP = new ArrayList<DendrogramNode>();
 		double unionCOP=0, nodeCOP=0;
 		
-		COP copIndex = new COP(m_distanceMatrix, m_dendrogram);
+		COP2 copIndex = new COP2(m_distanceMatrix, m_dendrogram);
 		
 		String nodeClassStr = node.getClass().toString();
 		if(nodeClassStr.contains("ObservationNode")){
@@ -39,9 +39,9 @@ public class SEP {
 			for (int j=0; j<childSEP.size(); j++){
 				union.add(childSEP.get(j));
 			}
-			unionCOP = copIndex.computeCOP(union);
+			unionCOP = copIndex.computeCOP2(union);
 			nodeArray.add(node);
-			nodeCOP = copIndex.computeCOP(nodeArray);
+			nodeCOP = copIndex.computeCOP2(nodeArray);
 			if (nodeCOP<=unionCOP){
 				return nodeArray;
 			} else{
@@ -98,6 +98,8 @@ public class SEP {
 				nodeId.add(node);
 				unionC.add(unionCOP);
 				nodeC.add(nodeCOP);
+				nodeCOP=0.8;
+				unionCOP=0.2;
 				if (nodeCOP<unionCOP){
 					bestPartition.add(nodeArray);
 				} else{

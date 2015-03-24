@@ -460,14 +460,13 @@ public abstract class TestSetEvaluator {
 		float[] modelFmeasureTop_OkHome = new float[m_points.length];
 		
 		int[] numOfSequencesA = new int[m_points.length];
+
 		for(int i=0; i<m_sequences.size(); i++){
 			String[] seq = m_sequences.get(i);
 			
 			
-			
 			// select the model
 			SequenceEvaluator seqEv = this.getSequenceEvaluator(seq);
-			
 			
 			
 			// if we want to write recommendations
@@ -640,6 +639,7 @@ public abstract class TestSetEvaluator {
 			
 		}
 		
+	
 		// Compute the average values
 		m_numberOfRecommendationsRatio = numberOfRecommendationsRatio/(float)m_sequences.size();
 		

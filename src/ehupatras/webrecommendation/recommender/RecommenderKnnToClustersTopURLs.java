@@ -430,7 +430,22 @@ public class RecommenderKnnToClustersTopURLs
 		// compute the similarities with the medoids
 		float[] simA = new float[m_medoids.size()];
 		for(int i=0; i<m_medoids.size(); i++){
-			String[] medoid = m_medoids.get(i);
+			//Originala
+			//String[] medoid = m_medoids.get(i);
+			//lierni
+			String[] medoid = {m_medoids.get(i)[0]};
+			if (m_medoids.get(i).length<=m_waydone.size()){
+				medoid = m_medoids.get(i);
+			} else {
+				//medoid = Arrays.copyOfRange(m_medoids.get(i), 0, m_waydone.size());
+				if (m_medoids.get(i).length==m_waydone.size()+1){
+					medoid = Arrays.copyOfRange(m_medoids.get(i), 0, m_waydone.size()+1);
+				} else {
+					medoid = Arrays.copyOfRange(m_medoids.get(i), 0, m_waydone.size()+2);
+				}
+			}
+			//System.out.println("Medoidea: " + m_medoids.get(i).length + "//" + medoid.length + " Bidea: " + m_waydone.size());
+			//
 			SequenceAlignment seqalign;
 			if(m_isDistance){
 				seqalign = new SequenceAlignmentLevenshtein();

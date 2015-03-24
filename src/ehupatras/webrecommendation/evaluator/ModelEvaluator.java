@@ -442,6 +442,9 @@ public abstract class ModelEvaluator {
 			modelMC.buildMC();
 		}
 		
+		//lierni
+		/*double batura = 0.0, batezbeste = 0.0, cases = 0.0;
+		int motz = 100, luze = 0;*/
 		// for each fold obtain the metrics
 		for(int i=0; i<m_nFolds; i++){
 			
@@ -452,13 +455,22 @@ public abstract class ModelEvaluator {
 			for(int j=0; j<inds.length; j++){
 				String[] seq = this.getDataSet(false).get(inds[j]);
 				testseqs.add(seq);
-			}
+				//lierni
+				/*batura = batura + seq.length;
+				if (seq.length>luze){
+					luze = seq.length;
+				}
+				if (seq.length<motz){
+					motz = seq.length;
+				}*/
+			}		
 			
+			//lierni
+			//cases = cases + testseqs.size();
 			
 			
 			// CREATE THE MODEL //
 			TestSetEvaluator eval = this.getTestSetEvaluator(i, testseqs);
-			
 			
 			
 			// if we have to write the recommendations
@@ -647,7 +659,14 @@ public abstract class ModelEvaluator {
 			
 		}
 		
-		
+		//lierni
+		/*batezbeste = batura / cases;
+		System.out.println("Motzena: " + motz + " Luzeena: " + luze);
+		double batezbeste25 = batezbeste*0.25;
+		System.out.println("Batezbesteko luzera %25: " + batezbeste25);
+		double batezbeste50 = batezbeste*0.50;
+		System.out.println("Batezbesteko luzera %50: " + batezbeste50);
+		*/
 		
 		// AVERAGE //
 		// compute the metric's average value of all folds
@@ -743,7 +762,6 @@ public abstract class ModelEvaluator {
 			moReATop_OkHome[j] = moReATop_OkHome[j] / (float)m_nFolds;
 			moFmATop_OkHome[j] = moFmATop_OkHome[j] / (float)m_nFolds;
 		}
-	
 		
 		
 		// WRITE //

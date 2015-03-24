@@ -6,12 +6,12 @@ import ehupatras.clustering.sapehac.dendrogram.Dendrogram;
 import ehupatras.clustering.sapehac.dendrogram.DendrogramNode;
 import ehupatras.clustering.sapehac.dendrogram.ObservationNode;
 
-public class COP {
+public class COP2 {
 	
 	public float[][] m_distanceMatrix;
 	public Dendrogram m_dendrogram;
 	
-	public COP(float[][] distanceMatrix, Dendrogram dendrogram){
+	public COP2(float[][] distanceMatrix, Dendrogram dendrogram){
 		m_distanceMatrix = distanceMatrix;
 		m_dendrogram = dendrogram;
 	}
@@ -54,12 +54,17 @@ public class COP {
 		
 	}
 
-	public double computeCOP(ArrayList<DendrogramNode> m_clusters){
+	public double computeCOP2(ArrayList<DendrogramNode> m_clusters){
+		ArrayList<ObservationNode> leafsList = new ArrayList<ObservationNode>();
+		ArrayList<ObservationNode> restLeafs = new ArrayList<ObservationNode>();
 		ArrayList<ObservationNode> medoids = new ArrayList<ObservationNode>();
-		ArrayList<ObservationNode> leafs = new ArrayList<ObservationNode>();
-		DendrogramNode cluster;
-		int cases = 0;
-		double intraCOP=0.0, interCOP=0.0, clusterCOP=0.0, copValue=0.0;
+		double copvalue=0.0;
+		double clustercop=0.0;
+		double intracop, intercop;
+		double dist;
+		double cases = 0;
+		
+		medoids = computeMedoids(m_clusters);
 		
 		if (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot()){
 			return 1.0;
@@ -69,62 +74,73 @@ public class COP {
 				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight())){
 			return 1.1;
 		}
+		/*
+		if ((m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getLeft()) 
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getRight())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getLeft())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getRight())){
+			return 1.1;
+		}
 		
-		medoids = computeMedoids(m_clusters);
+		if ((m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getLeft().getLeft())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getLeft().getRight())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getRight().getLeft())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getRight().getRight())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getLeft().getLeft())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getLeft().getRight())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getRight().getLeft())
+				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getRight().getRight())){
+			return 1.1;
+		}*/
+		
 		
 		for (int i=0; i<m_clusters.size(); i++){
-			cluster = m_clusters.get(i);
-			cases = cases + cluster.getObservationCount();
-			String nodeClassStr = cluster.getClass().toString();
+			cases = cases + m_clusters.get(i).getObservationCount();
+			String nodeClassStr = m_clusters.get(i).getClass().toString();
 			if(nodeClassStr.contains("ObservationNode")){
-				clusterCOP = clusterCOP + 1.0;
+				clustercop=clustercop+1.0;
 			} else {
-				leafs = getLeafs(cluster);
-				intraCOP = intracop(leafs, medoids.get(i));
-				interCOP = intercop(m_clusters.get(i), leafs);
-				if (interCOP!=0.0){
-					clusterCOP = clusterCOP + cluster.getObservationCount() * intraCOP / interCOP;
-				} 
-				//if interCOP==0.0 means that the two clusters are in the same place so we want them to be together in one cluster
-				//that's why we give that cluster the best COP value possible: 0
+				//Get the observationNodes of the cluster
+				leafsList = getLeafs(m_clusters.get(i));
+				//Calculate intraCOP
+				intracop=0.0;
+				for (int j=0; j<leafsList.size(); j++){
+					intracop = intracop + m_distanceMatrix[leafsList.get(j).getObservation()][medoids.get(i).getObservation()];
+				}
+				intracop=intracop/leafsList.size();
+				//Get the leafs that are not in the cluster
+				restLeafs = getRest(m_clusters.get(i));
+				//Calculate interCOP
+				intercop = Double.MAX_VALUE;
+				for (int m=0; m<restLeafs.size(); m++){
+					ArrayList<ObservationNode> oneLeaf = new ArrayList<ObservationNode>();
+					oneLeaf.add(restLeafs.get(m));
+					dist = max(leafsList, oneLeaf);
+					if (dist<intercop){
+						intercop=dist;
+					}
+				}
+				//Add actual clusters value
+				if (intercop!=0.0){
+					clustercop=clustercop+(m_clusters.get(i).getObservationCount()*(intracop/intercop));
+				}
 			}
 		}
-		copValue = clusterCOP / cases;
-		return copValue;
+		//Calculate COP
+		copvalue=clustercop/cases;
+		return copvalue;
 	}
 	
-	public double intracop(ArrayList<ObservationNode> cluster, ObservationNode medoid){
-		double distSum = 0.0;
-		
-		for (int i=0; i<cluster.size(); i++){
-			distSum = distSum + m_distanceMatrix[cluster.get(i).getObservation()][medoid.getObservation()];
-		}
-		return distSum / cluster.size();
-	}
-	
-	public double intercop(DendrogramNode cluster, ArrayList<ObservationNode> leafs){
-		ArrayList<ObservationNode> restLeafs = new ArrayList<ObservationNode>();
-		double dist = 0.0, min = Double.MAX_VALUE;
-		
-		restLeafs = getRest(cluster);
-		
-		for (int i=0; i<restLeafs.size(); i++){
-			dist = max(leafs, restLeafs.get(i));
-			if (dist<min){
-				min=dist;
-			}
-		}
-		return min;
-	}
-	
-	public double max(ArrayList<ObservationNode> leafs, ObservationNode node){
+	public double max(ArrayList<ObservationNode> node1leafs, ArrayList<ObservationNode> restleafs){
 		double max=0.0;
 		double dist=0.0;
 		
-		for (int i=0; i<leafs.size(); i++){
-			dist = m_distanceMatrix[leafs.get(i).getObservation()][node.getObservation()];
-			if (dist > max){
-				max = dist;
+		for (int j=0; j<node1leafs.size(); j++){
+			for (int k=0; k<restleafs.size(); k++){
+				dist = m_distanceMatrix[node1leafs.get(j).getObservation()][restleafs.get(k).getObservation()];
+				if (dist > max){
+					max = dist;
+				}
 			}
 		}
 		return max;
@@ -166,5 +182,8 @@ public class COP {
 			}
 		}
 		return rest;
-	}	
+	}
+	
+	
+	
 }
