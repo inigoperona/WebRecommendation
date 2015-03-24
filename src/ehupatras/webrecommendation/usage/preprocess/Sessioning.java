@@ -564,4 +564,26 @@ public class Sessioning {
 		System.out.println("  " + removecounter + " sequences were removed.");
 	}
 	
+	
+	
+	public void selectFixedNumberOfSequences(int nses){
+		Enumeration<Integer> keys = WebAccessSequences.m_sequences.keys();
+		int counter = 0;
+		
+		// admit the first sessions
+		while(keys.hasMoreElements()){
+			keys.nextElement();
+			counter++;
+			if(counter>=nses){
+				break;
+			}
+		}
+		
+		// remove the last sessions
+		while(keys.hasMoreElements()){
+			int sessionID = keys.nextElement().intValue();
+			WebAccessSequences.m_sequences.remove(sessionID);
+		}
+	}
+	
 }

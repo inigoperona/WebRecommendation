@@ -43,28 +43,32 @@ public class A001MainClassCreateDatabase {
 	
 	
 	
+	public void createDatabase(String databaseWD, int sizeDB){
+		// CREATE THE DATABASE
+    	System.out.println("CREATE THE DATABASE");
+				
+		// Sampling
+		Sampling samp = new Sampling();
+		m_sessionsIDs = samp.getSample(sizeDB, (long)0, false);
+		// Save
+		SaveLoadObjects sosess = new SaveLoadObjects();
+		sosess.save(m_sessionsIDs, databaseWD + "/_sessionIDs.javaData");
+				
+		// instantiated sequences
+		m_sequences = WebAccessSequencesUHC.getSequencesInstanciated(m_sessionsIDs);
+		// save
+		SaveLoadObjects soseqs = new SaveLoadObjects();
+		soseqs.save(m_sequences, databaseWD + "/_sequencesUHC.javaData");
+	}
+	
 	/**
 	 * Creates the database.
 	 *
 	 * @param databaseWD the database wd
 	 */
 	public void createDatabase(String databaseWD){
-		// CREATE THE DATABASE
-		System.out.println("CREATE THE DATABASE");
-		
-		// Sampling
-		Sampling samp = new Sampling();
 		int nseq = WebAccessSequences.getSequencesIDs().size();
-		m_sessionsIDs = samp.getSample(nseq, (long)0, false);
-		// Save
-		SaveLoadObjects sosess = new SaveLoadObjects();
-		sosess.save(m_sessionsIDs, databaseWD + "/_sessionIDs.javaData");
-		
-		// instantiated sequences
-		m_sequences = WebAccessSequencesUHC.getSequencesInstanciated(m_sessionsIDs);
-		// save
-		SaveLoadObjects soseqs = new SaveLoadObjects();
-		soseqs.save(m_sequences, databaseWD + "/_sequencesUHC.javaData");
+		this.createDatabase(databaseWD, nseq);
 	}
 	
 	/**

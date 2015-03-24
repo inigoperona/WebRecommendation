@@ -29,7 +29,9 @@ public class A000MainClassEdPamSpadeKnnEd {
 	public static void main(String[] args) {
 		
 		// folders
-		String var_base = "experiments_FPlierni_wr_txikia";
+		//String var_base = "experiments_FPlierni_wr_txikia";
+		String var_base = "experiments_FPlierni_wr_9000";
+		
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
@@ -65,7 +67,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 		
 		// LOAD PREPROCESS DATA
 		Website.setWorkDirectory(var_preprocessingWD);
-		Website.load(); // Load "preprocessingWD/_Website.javaData"
+		//Website.load(); // Load "preprocessingWD/_Website.javaData"
 		WebAccessSequencesUHC.setWorkDirectory(var_preprocessingWD);
 		//WebAccessSequences.loadStructure(); // Load "preprocessingWD/_i_requests.javaData"
 		WebAccessSequences.loadSequences(); // Load "preprocessingWD/_sequences.javaData"
@@ -82,7 +84,8 @@ public class A000MainClassEdPamSpadeKnnEd {
 		
 		// LOAD DISTANCE MATRIX
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
-		dm.loadDistanceMatrix(var_databaseWD + var_dmWD); // Load "databaseWD/dmWD/_matrix.javaData"
+		dm.createDistanceMatrix(var_databaseWD, var_sampleSessionIDs, var_sequencesUHC, new float[][]{{0f,0f,0f}, {0f,0f,0f}, {0f,0f,0f}} );
+		//dm.loadDistanceMatrix(var_databaseWD + var_dmWD); // Load "databaseWD/dmWD/_matrix.javaData"
 		Matrix var_matrix = dm.getMatrix();
 		
 		// LOAD HOLD-OUT
@@ -106,7 +109,6 @@ public class A000MainClassEdPamSpadeKnnEd {
 		///////////////////////////////////////////////////////////////////////
 		
 		
-		
 		// CLUSTERING: PAM
 		ModelEvaluatorClustPAM modelevPAM = 
 				new ModelEvaluatorClustPAM(
@@ -122,6 +124,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 			modelevPAM.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
 			modelevPAM.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
 		}
+		
 		/*
 		// CREATE THE MEDOIDS+URLs MODEL and VALIDATE IT
 		ModelEvaluatorMedoids modelevMed = 

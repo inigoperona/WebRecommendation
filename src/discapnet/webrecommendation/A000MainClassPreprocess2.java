@@ -228,7 +228,7 @@ public class A000MainClassPreprocess2 {
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
-		A000MainClassPreprocess main = new A000MainClassPreprocess();
+		A000MainClassPreprocess2 main = new A000MainClassPreprocess2();
 			
 		// READ THE LOG FILE(S) //
 		main.preprocessLogs(basedirectory, logfilesIndex);

@@ -140,7 +140,7 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 	
-		// remove those ssequences that have many Unimportant
+		// remove those sequences that have many Unimportant
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start removing Unimportant sequences.");
 		ses.computePageRoleUHC_removeOnlyUnimportant(0.75f);

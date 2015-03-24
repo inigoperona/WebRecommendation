@@ -574,6 +574,12 @@ public class WebAccessSequences {
 		m_workdirectory = workdirectory;
 	}
 	
+	
+	public static void saveSequences(String seqfilename){
+		m_seqfilename = seqfilename;
+		WebAccessSequences.saveSequences();
+	}
+	
 	/**
 	 * Save sequences.
 	 */

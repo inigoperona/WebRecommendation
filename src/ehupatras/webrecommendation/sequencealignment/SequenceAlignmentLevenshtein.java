@@ -83,6 +83,7 @@ public class SequenceAlignmentLevenshtein
     	String urlA = strA.substring(0,len-1);
     	String rolA = strA.substring(len-1,len);
     	int rolAi = this.role2int(rolA);
+    	len = strB.length();
     	String urlB = strB.substring(0,len-1);
     	String rolB = strB.substring(len-1,len);
     	int rolBi = this.role2int(rolB);
@@ -101,7 +102,7 @@ public class SequenceAlignmentLevenshtein
      * @return the int
      */
     protected int role2int(String role){
-    	int roli = 0;
+    	int roli = 0; // default
     	if(role.equals("U")){ roli = 0; }
     	else if(role.equals("H")){ roli = 1;}
     	else if(role.equals("C")){ roli = 2;}
@@ -121,6 +122,7 @@ public class SequenceAlignmentLevenshtein
     	String rolA = strA.substring(len-1,len);
     	int urlAi = m_UrlIDs.indexOf(Integer.valueOf(urlA));
     	int rolAi = this.role2int(rolA);
+    	len = strB.length();
     	String urlB = strB.substring(0,len-1);
     	String rolB = strB.substring(len-1,len);
     	int urlBi = m_UrlIDs.indexOf(Integer.valueOf(urlB));
@@ -161,6 +163,7 @@ public class SequenceAlignmentLevenshtein
     	String rolA = strA.substring(len-1,len);
     	int urlAi = m_UrlIDs.indexOf(Integer.valueOf(urlA));
     	int rolAi = this.role2int(rolA);
+    	len = strB.length();
     	String urlB = strB.substring(0,len-1);
     	String rolB = strB.substring(len-1,len);
     	int urlBi = m_UrlIDs.indexOf(Integer.valueOf(urlB));
