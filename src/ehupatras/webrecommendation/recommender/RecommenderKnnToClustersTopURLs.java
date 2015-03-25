@@ -23,6 +23,7 @@ public class RecommenderKnnToClustersTopURLs
 	// the model
 	/** The m_medoids. */
 	private ArrayList<String[]> m_medoids;
+	protected int[] m_clustersizes;
 	
 	/** The m_gmedoids. */
 	private int[] m_gmedoids; 
@@ -54,14 +55,15 @@ public class RecommenderKnnToClustersTopURLs
 	 * @param isDistance the is distance
 	 * @param rolesW the roles w
 	 */
-	public RecommenderKnnToClustersTopURLs(ArrayList<String[]> medoids,
-			int[] globalMedoids,
+	public RecommenderKnnToClustersTopURLs(
+			ArrayList<String[]> medoids, int[] clustersizes, int[] globalMedoids,
 			ArrayList<Object[]> recosForEachMedoid,
 			boolean isDistance,
 			float[][] rolesW){
 		m_medoids = medoids;
-		m_recosInEachCluster = recosForEachMedoid;
+		m_clustersizes = clustersizes;
 		m_gmedoids = globalMedoids;
+		m_recosInEachCluster = recosForEachMedoid;
 		m_waydone = new ArrayList<String>();
 		m_isDistance = isDistance;
 	}
@@ -104,7 +106,8 @@ public class RecommenderKnnToClustersTopURLs
 		ArrayList<String> recosL = (ArrayList<String>)objA[0];
 		//ArrayList<Integer> supportL = (ArrayList<Integer>)objA[1];
 		//ArrayList<Integer> clustersL = (ArrayList<Integer>)objA[2];
-		//ArrayList<Float> distsL = (ArrayList<Float>)objA[3];
+		//ArrayList<Integer> clustersizesL = (ArrayList<Integer>)objA[3];
+		//ArrayList<Float> distsL = (ArrayList<Float>)objA[4];
 		return recosL;
 	}
 	
@@ -120,6 +123,7 @@ public class RecommenderKnnToClustersTopURLs
 		ArrayList<String> recosL = new ArrayList<String>();
 		ArrayList<Integer> supportL = new ArrayList<Integer>();
 		ArrayList<Integer> clustersL = new ArrayList<Integer>();
+		ArrayList<Integer> clustersizesL = new ArrayList<Integer>();
 		ArrayList<Float> distsL = new ArrayList<Float>();
 		
 		// medoids ordered from the nearest to farthest
@@ -151,6 +155,7 @@ public class RecommenderKnnToClustersTopURLs
 						recosL.add(reco);
 						supportL.add(supports.get(j));
 						clustersL.add(nearesCl);
+						clustersizesL.add(m_clustersizes[nearesCl]);
 						distsL.add(dist2clust);
 					}
 				} else {
@@ -162,12 +167,25 @@ public class RecommenderKnnToClustersTopURLs
 		}
 		
 		// return the list of recommendations
-		Object[] objA = new Object[4];
+		Object[] objA = new Object[5];
 		objA[0] = recosL;
 		objA[1] = supportL;
 		objA[2] = clustersL;
-		objA[3] = distsL;
+		objA[3] = clustersizesL;
+		objA[4] = distsL;
 		return objA;
+	}
+	
+	private int findInArray(int[] array, int number){
+		int index = -1;
+		for(int i=0; i<array.length; i++){
+			int indDM = array[i];
+			if(indDM==number){
+				index = i;
+				break;
+			}
+		}
+		return index;
 	}
 	
 	/**
@@ -637,8 +655,10 @@ public class RecommenderKnnToClustersTopURLs
 		float[][] rolesW = {{ 0f, 0f, 0f},
 							{ 0f, 0f, 0f},
 							{ 0f, 0f, 0f}};
-		RecommenderKnnToClustersTopURLs rkt5 = new RecommenderKnnToClustersTopURLs(medoids, gmedoids, recos,
-														true, rolesW);
+		RecommenderKnnToClustersTopURLs rkt5 = 
+				new RecommenderKnnToClustersTopURLs(
+						medoids, null, gmedoids, 
+						recos, true, rolesW);
 		
 		// STEP0
 		list = rkt5.getNextpossibleSteps(5);

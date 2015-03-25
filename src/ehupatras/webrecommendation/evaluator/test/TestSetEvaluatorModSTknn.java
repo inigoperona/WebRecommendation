@@ -42,16 +42,16 @@ public class TestSetEvaluatorModSTknn
 			float[][] urlSimilarityMatrix,
 			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
-			ArrayList<MySuffixTree> clustSuffixTree,
-			ArrayList<String[]> medoids,
-			int[] gmedoids,
+			ArrayList<MySuffixTree> clustSuffixTree, 
+			ArrayList<String[]> medoids, int[] clustersizes, int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
 		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
 				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min,
 				clustSuffixTree,  
-				medoids, gmedoids, isDistance, rolesW, knn);
+				medoids, clustersizes, gmedoids, 
+				isDistance, rolesW, knn);
 	}
 	
 	// GET SEQUENCE EVALUATOR
@@ -65,7 +65,7 @@ public class TestSetEvaluatorModSTknn
 						m_nURLs, m_UrlSimilarityMatrix_Content, 
 						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						m_clustSuffixTree,
-						m_medoids, m_gmedoids, m_isDistance, m_rolesW, m_knn);
+						m_medoids, m_clustersizes, m_gmedoids, m_isDistance, m_rolesW, m_knn);
 		return seqEva;
 	}
 	

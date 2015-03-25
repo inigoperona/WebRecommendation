@@ -25,12 +25,11 @@ public class RecommenderTop03_1
 	 * @param rolesW the roles w
 	 */
 	public RecommenderTop03_1(
-			ArrayList<String[]> medoids,
-			int[] globalMedoids,
+			ArrayList<String[]> medoids, int[] clustersizes, int[] globalMedoids,
 			ArrayList<Object[]> recosForEachMedoid,
 			boolean isDistance,
 			float[][] rolesW){
-		super(medoids, globalMedoids, recosForEachMedoid, isDistance, rolesW);
+		super(medoids, clustersizes, globalMedoids, recosForEachMedoid, isDistance, rolesW);
 	}
 	
 	

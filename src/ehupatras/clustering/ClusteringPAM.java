@@ -26,6 +26,7 @@ public class ClusteringPAM {
 	
 	/** The m_medoids. */
 	private ArrayList<Integer> m_medoids;
+	private ArrayList<Integer> m_clustersizes;
 	
 	/** The m_cost. */
 	private double m_cost;

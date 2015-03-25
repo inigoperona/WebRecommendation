@@ -30,8 +30,7 @@ public class RecommenderKnnToClustersTopURLsAndContentsB2_noCl_TD
 	 * @param noProposeURLs the no propose ur ls
 	 */
 	public RecommenderKnnToClustersTopURLsAndContentsB2_noCl_TD(
-			ArrayList<String[]> medoids,
-			int[] globalMedoids,
+			ArrayList<String[]> medoids, int[] clustersizes, int[] globalMedoids,
 			ArrayList<Object[]> recosForEachMedoid,
 			boolean isDistance,
 			float[][] rolesW,
@@ -41,7 +40,7 @@ public class RecommenderKnnToClustersTopURLsAndContentsB2_noCl_TD
 			HashMap<Integer,Integer> urlClusteringDict,
 			URLconverterUsaCon conv,
 			ArrayList<Integer> noProposeURLs){
-		super(medoids, globalMedoids, recosForEachMedoid, isDistance, rolesW,
+		super(medoids, clustersizes, globalMedoids, recosForEachMedoid, isDistance, rolesW,
 				nURLs, urlSimilarityMatrix, urlRelationMatrix, urlClusteringDict,
 				conv,
 				noProposeURLs);

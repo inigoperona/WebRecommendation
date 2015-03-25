@@ -17,6 +17,7 @@ public class TestSetEvaluatorMed
 	
 	/** The m_medoids. */
 	protected ArrayList<String[]> m_medoids = null;
+	protected int[] m_clustersizes = null;
 	
 	/** The m_gmedoids. */
 	protected int[] m_gmedoids = null;
@@ -63,8 +64,7 @@ public class TestSetEvaluatorMed
 			float[][] urlSimilarityMatrix,
 			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
-			ArrayList<String[]> medoids,
-			int[] gmedoids,
+			ArrayList<String[]> medoids, int[] clustersizes, int[] gmedoids,
 			ArrayList<Object[]> recos,
 			boolean isDistance,
 			float[][] rolesW,
@@ -72,6 +72,7 @@ public class TestSetEvaluatorMed
 		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
 				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_medoids = medoids;
+		m_clustersizes = clustersizes;
 		m_gmedoids = gmedoids;
 		m_recos = recos;
 		m_isDistance = isDistance;
@@ -127,14 +128,14 @@ public class TestSetEvaluatorMed
 			float[][] urlSimilarityMatrix,
 			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
-			ArrayList<String[]> medoids,
-			int[] gmedoids,
+			ArrayList<String[]> medoids, int[] clustersizes, int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
 		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
 				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_medoids = medoids;
+		m_clustersizes = clustersizes;
 		m_gmedoids = gmedoids;
 		m_isDistance = isDistance;
 		m_rolesW = rolesW;
@@ -151,8 +152,8 @@ public class TestSetEvaluatorMed
 				new SequenceEvaluatorMed(sequence, m_modePrRe, m_conv,
 						m_nURLs, m_UrlSimilarityMatrix_Content, 
 						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
-						m_medoids, m_gmedoids, m_recos,
-						m_isDistance, m_rolesW, m_knn);
+						m_medoids, m_clustersizes, m_gmedoids, 
+						m_recos, m_isDistance, m_rolesW, m_knn);
 		return seqEva;
 	}
 	

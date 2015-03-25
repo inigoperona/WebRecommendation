@@ -58,8 +58,7 @@ public class TestSetEvaluatorMedContent
 			float[][] urlSimilarityMatrix,
 			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
-			ArrayList<String[]> medoids,
-			int[] gmedoids,
+			ArrayList<String[]> medoids, int[] clustersizes, int[] gmedoids,
 			ArrayList<Object[]> recos,
 			boolean isDistance,
 			float[][] rolesW,
@@ -70,7 +69,8 @@ public class TestSetEvaluatorMedContent
 			ArrayList<Integer> noProposeURLs){
 		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
 				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min,
-				medoids, gmedoids, recos, isDistance, rolesW, knn);
+				medoids, clustersizes, gmedoids,
+				recos, isDistance, rolesW, knn);
 		m_enrichStrategy = enrichStrategy;
 		m_UrlRelationMatrix = m_urlRelationMatrix;
 		m_urlClusteringDict = urlClusteringDict;
@@ -89,7 +89,7 @@ public class TestSetEvaluatorMedContent
 						m_nURLs, m_UrlSimilarityMatrix_Content,
 						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						
-						m_medoids, m_gmedoids, m_recos,
+						m_medoids, m_clustersizes, m_gmedoids, m_recos,
 						m_isDistance, m_rolesW, m_knn,
 						m_enrichStrategy,
 						m_UrlRelationMatrix,

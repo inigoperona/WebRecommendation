@@ -19,6 +19,7 @@ public class ModelEvaluatorMedoids
 	
 	/** The m_medoids al. */
 	protected ArrayList<ArrayList<String[]>> m_medoidsAL = null;
+	protected ArrayList<int[]> m_clustersizesAL = null;
 	
 	/** The m_gmedoids al. */
 	protected ArrayList<int[]> m_gmedoidsAL = null;	
@@ -86,8 +87,7 @@ public class ModelEvaluatorMedoids
 						m_nURLs, m_UrlSimilarityMatrix_Content,
 						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						
-						m_medoidsAL.get(iFold),
-						m_gmedoidsAL.get(iFold),
+						m_medoidsAL.get(iFold), m_clustersizesAL.get(iFold), m_gmedoidsAL.get(iFold),
 						m_recosAL.get(iFold),
 						m_isDistance, m_rolesW, m_knn);
 		return eval;
@@ -120,6 +120,7 @@ public class ModelEvaluatorMedoids
 	public void buildMedoids(float minsup, boolean computeRecos){
 		// compute medoids for each fold
 		m_medoidsAL = new ArrayList<ArrayList<String[]>>();
+		m_clustersizesAL = new ArrayList<int[]>();
 		m_gmedoidsAL = new ArrayList<int[]>();
 		if(computeRecos){m_recosAL = new ArrayList<ArrayList<Object[]>>();}
 		
@@ -130,8 +131,10 @@ public class ModelEvaluatorMedoids
 		for(int i=0; i<m_nFolds; i++){
 			Object[] medObjA = this.getMedoids(i);
 			ArrayList<String[]> medoids = (ArrayList<String[]>)medObjA[0];
-			int[] gmedoids = (int[])medObjA[1];
+			int[] clustersizes = (int[])medObjA[1];
+			int[] gmedoids = (int[])medObjA[2];
 			m_medoidsAL.add(medoids);
+			m_clustersizesAL.add(clustersizes);
 			m_gmedoidsAL.add(gmedoids);
 			if(computeRecos){m_recosAL.add(this.getRecommendations(i, minsup, m_noProposeURLs));}
 		
@@ -173,6 +176,7 @@ public class ModelEvaluatorMedoids
 		cvindex.computeMedoids(m_distancematrix.getMatrix(m_datasetSplit!=null));
 		// treat medoids
 		int[] medoids = cvindex.getMedoids();
+		int[] clustersizes = cvindex.getClusterSizes();
 		ArrayList<String[]> medoidSeqs = new ArrayList<String[]>();
 		for(int i=0; i<medoids.length; i++){
 			String[] medSeq = super.getDataSetUHC(m_datasetSplit!=null).get(medoids[i]);
@@ -182,9 +186,10 @@ public class ModelEvaluatorMedoids
 		int[] gmedoids = cvindex.getGlobalMedoids();
 		
 		// Return medoids
-		Object[] objA = new Object[2];
+		Object[] objA = new Object[3];
 		objA[0] = medoidSeqs;
-		objA[1] = gmedoids;
+		objA[1] = clustersizes;
+		objA[2] = gmedoids;
 		return objA;
 	}
 	

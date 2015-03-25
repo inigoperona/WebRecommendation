@@ -17,6 +17,7 @@ public class SequenceEvaluatorMed
 	
 	/** The m_medoids. */
 	protected ArrayList<String[]> m_medoids = null;
+	protected int[] m_clustersizes = null;
 	
 	/** The m_gmedoids. */
 	protected int[] m_gmedoids = null;
@@ -62,8 +63,7 @@ public class SequenceEvaluatorMed
 			int nURLs, float[][] urlSimilarityMatrix,
 			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
-			ArrayList<String[]> medoids,
-			int[] gmedoids,
+			ArrayList<String[]> medoids, int[] clustersizes, int[] gmedoids,
 			ArrayList<Object[]> recos,
 			boolean isDistance,
 			float[][] rolesW,
@@ -71,6 +71,7 @@ public class SequenceEvaluatorMed
 		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix, 
 				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_medoids = medoids;
+		m_clustersizes = clustersizes;
 		m_gmedoids = gmedoids;
 		m_recos = recos;
 		m_isDistance = isDistance;
@@ -126,14 +127,14 @@ public class SequenceEvaluatorMed
 			float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			
-			ArrayList<String[]> medoids,
-			int[] gmedoids,
+			ArrayList<String[]> medoids, int[] clustersizes, int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
 		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix, 
 				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min);
 		m_medoids = medoids;
+		m_clustersizes = clustersizes;
 		m_gmedoids = gmedoids;
 		m_isDistance = isDistance;
 		m_rolesW = rolesW;
@@ -148,8 +149,8 @@ public class SequenceEvaluatorMed
 	public Recommender getRecommender(){
 		Recommender recommender = 
 				new RecommenderKnnToClustersTopURLs(
-						m_medoids, m_gmedoids, m_recos,
-						m_isDistance, m_rolesW);
+						m_medoids, m_clustersizes, m_gmedoids, 
+						m_recos, m_isDistance, m_rolesW);
 		return recommender;
 	}
 	

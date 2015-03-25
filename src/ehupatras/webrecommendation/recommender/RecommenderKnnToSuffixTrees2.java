@@ -45,14 +45,14 @@ public class RecommenderKnnToSuffixTrees2 implements Recommender {
 	 * @param rolesW the roles w
 	 * @param knn the knn
 	 */
-	public RecommenderKnnToSuffixTrees2(ArrayList<String[]> medoids,
-				int[] globalMedoids,
+	public RecommenderKnnToSuffixTrees2(
+				ArrayList<String[]> medoids, int[] clustersizes, int[] globalMedoids,
 				ArrayList<MySuffixTree> stAL,
 				boolean isDistance,
 				float[][] rolesW,
 				int knn){
 		m_waydone = new ArrayList<String>();
-		m_recKnnToClustersTopURLs = new RecommenderKnnToClustersTopURLs(medoids, globalMedoids, null, isDistance, rolesW);
+		m_recKnnToClustersTopURLs = new RecommenderKnnToClustersTopURLs(medoids, clustersizes, globalMedoids, null, isDistance, rolesW);
 		m_recClustersSuffixTree = new RecommenderClustersSuffixTree2(stAL);
 		m_knn = Math.min(medoids.size(), knn);
 	}

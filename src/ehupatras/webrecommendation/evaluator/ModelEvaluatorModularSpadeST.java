@@ -62,8 +62,7 @@ public class ModelEvaluatorModularSpadeST
 						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						
 						m_clustSuffixTreeAL.get(iFold),
-						m_medoidsAL.get(iFold),
-						m_gmedoidsAL.get(iFold),
+						m_medoidsAL.get(iFold), m_clustersizesAL.get(iFold), m_gmedoidsAL.get(iFold),
 						m_isDistance, m_rolesW, m_knn);
 		return eval;
 	}

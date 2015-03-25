@@ -17,6 +17,7 @@ public class CVI {
 	
 	/** The m_medoids. */
 	private int[] m_medoids;
+	private int[] m_clustersizes;
 	
 	/** The m_global medoids. */
 	private int[] m_globalMedoids;
@@ -47,6 +48,7 @@ public class CVI {
 			}
 		}
 		m_medoids = new int[maxcli+1];
+		int[] clustersizes = new int[maxcli+1]; 
 		
 		// compute the MEDOIDS
 		for(int j=0; j<=maxcli; j++){
@@ -83,13 +85,25 @@ public class CVI {
 				}
 			}
 			m_medoids[j] = minind;
+			clustersizes[j] = inds.size();
 		}
 		
 		// remove the clusters that does not exists
 		ArrayList<Integer> medoidsA = new ArrayList<Integer>();
-		for(int i=0; i<m_medoids.length; i++){ if(m_medoids[i]>=0){medoidsA.add(m_medoids[i]);}}
+		ArrayList<Integer> clustersizesA = new ArrayList<Integer>();
+		for(int i=0; i<m_medoids.length; i++){
+			if(m_medoids[i]>=0){
+				medoidsA.add(m_medoids[i]);
+				clustersizesA.add(clustersizes[i]);
+			}
+		}
 		m_medoids = new int[medoidsA.size()];
-		for(int i=0; i<medoidsA.size(); i++){ m_medoids[i] = medoidsA.get(i);}
+		m_clustersizes = new int[medoidsA.size()];
+		for(int i=0; i<medoidsA.size(); i++){
+			m_medoids[i] = medoidsA.get(i);
+			m_clustersizes[i] = clustersizesA.get(i);
+			//System.out.println("m_" + m_medoids[i]);
+		}
 		
 		// compute the GLOBAL-MEDOIDS
 		float[] avgdist = new float[m_medoids.length];
@@ -132,6 +146,10 @@ public class CVI {
 	 */
 	public int[] getMedoids(){
 		return m_medoids;
+	}
+	
+	public int[] getClusterSizes(){
+		return m_clustersizes;
 	}
 	
 	/**

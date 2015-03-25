@@ -60,8 +60,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 	 * @param noProposeURLs the no propose ur ls
 	 */
 	public RecommenderKnnToClustersTopURLsAndContents(
-			ArrayList<String[]> medoids,
-			int[] globalMedoids,
+			ArrayList<String[]> medoids, int[] clustersizes, int[] globalMedoids,
 			ArrayList<Object[]> recosForEachMedoid,
 			boolean isDistance,
 			float[][] rolesW,
@@ -71,7 +70,7 @@ public abstract class RecommenderKnnToClustersTopURLsAndContents
 			HashMap<Integer,Integer> urlClusteringDict,
 			URLconverterUsaCon conv,
 			ArrayList<Integer> noProposeURLs){
-		super(medoids, globalMedoids, recosForEachMedoid, isDistance, rolesW);
+		super(medoids, clustersizes, globalMedoids, recosForEachMedoid, isDistance, rolesW);
 		m_nURLs = nURLs;
 		m_UrlSimilarityMatrix = urlSimilarityMatrix;
 		m_UrlRelationMatrix = urlRelationMatrix;

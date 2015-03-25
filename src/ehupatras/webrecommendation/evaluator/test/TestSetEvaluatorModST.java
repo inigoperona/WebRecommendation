@@ -75,14 +75,14 @@ public class TestSetEvaluatorModST
 			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min,
 			
 			ArrayList<MySuffixTree> clustSuffixTree,
-			ArrayList<String[]> medoids,
-			int[] gmedoids,
+			ArrayList<String[]> medoids, int[] clustersizes, int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
 		super(sequences, modePrRe, conv, nURLs, urlSimilarityMatrix, 
 				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min,
-				medoids, gmedoids, isDistance, rolesW, knn);
+				medoids, clustersizes, gmedoids, 
+				isDistance, rolesW, knn);
 		m_clustSuffixTree = clustSuffixTree;
 	}
 	

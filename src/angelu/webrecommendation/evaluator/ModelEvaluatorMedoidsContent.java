@@ -65,8 +65,7 @@ public class ModelEvaluatorMedoidsContent
 						m_nURLs, m_UrlSimilarityMatrix_Content,
 						m_UrlSimilarityMatrix_Usage, m_UrlSimilarityMatrix_Usage_max, m_UrlSimilarityMatrix_Usage_min,
 						
-						m_medoidsAL.get(iFold),
-						m_gmedoidsAL.get(iFold),
+						m_medoidsAL.get(iFold), m_clustersAL.get(iFold), m_gmedoidsAL.get(iFold),
 						m_recosAL.get(iFold),
 						m_isDistance, m_rolesW, m_knn,
 						m_enrichementStrategy,

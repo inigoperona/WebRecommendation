@@ -42,15 +42,14 @@ public class SequenceEvaluatorModSTknn
 			float[][] urlSimilarityMatrix_Usage, float[] urlSimilarityMatrix_Usage_max, float[] urlSimilarityMatrix_Usage_min, 
 			
 			ArrayList<MySuffixTree> clustSuffixTree,
-			ArrayList<String[]> medoids,
-			int[] gmedoids,
+			ArrayList<String[]> medoids, int[] clustersizes, int[] gmedoids,
 			boolean isDistance,
 			float[][] rolesW,
 			int knn){
 		super(sequence, modePrRe, conv, nURLs, urlSimilarityMatrix, 
 				urlSimilarityMatrix_Usage, urlSimilarityMatrix_Usage_max, urlSimilarityMatrix_Usage_min,
 				clustSuffixTree, 
-				medoids, gmedoids, isDistance, rolesW, knn);
+				medoids, clustersizes, gmedoids, isDistance, rolesW, knn);
 	}
 	
 	// GET RECOMMENDER
@@ -61,7 +60,7 @@ public class SequenceEvaluatorModSTknn
 	public Recommender getRecommender(){
 		Recommender recommender = 
 				new RecommenderKnnToSuffixTrees2(
-						m_medoids, m_gmedoids, 
+						m_medoids, m_clustersizes, m_gmedoids, 
 						m_clustSuffixTree, 
 						m_isDistance, m_rolesW, m_knn);
 		return recommender;
