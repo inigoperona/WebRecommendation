@@ -1,8 +1,12 @@
 package ehupatras.webrecommendation.evaluator;
 
 import ehupatras.clustering.ClusteringHierarchical;
+import ehupatras.clustering.sapehac.dendrogram.DendrogramNode;
+import ehupatras.clustering.sapehac.dendrogram.MergeNode;
+import ehupatras.clustering.sapehac.dendrogram.ObservationNode;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+
 import java.util.ArrayList;
 
 // TODO: Auto-generated Javadoc

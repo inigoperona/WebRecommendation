@@ -176,11 +176,34 @@ public class RecommenderKnnToClustersTopURLs
 		objA[0] = recosL;
 		objA[1] = supportL;
 		objA[2] = clustersL;
+<<<<<<< HEAD
 		objA[3] = clustersizesL;
 		objA[4] = distsL;
 		return objA;
 	}
 	
+	private int findInArray(int[] array, int number){
+		int index = -1;
+		for(int i=0; i<array.length; i++){
+			int indDM = array[i];
+			if(indDM==number){
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+=======
+		objA[3] = distsL;
+		
+		//lierni
+		ArrayList<Integer> support = new ArrayList<Integer>();
+		for (int i=0; i<supportL.size(); i++){
+			
+		}
+		
+		return objA;
+	}
 	
 	/**
 	 * Gets the nextpossible steps_ info.
@@ -258,7 +281,9 @@ public class RecommenderKnnToClustersTopURLs
 		objA[3] = distsL;
 		return objA;
 	}
-
+	
+	
+>>>>>>> db6a7ac77ad911127207733deed28c3dd6b198e1
 	
 	/**
 	 * Gets the nextpossible steps w.
