@@ -2,6 +2,9 @@ package ehupatras.webrecommendation.recommender;
 
 import java.util.*;
 
+import ehupatras.clustering.sapehac.dendrogram.DendrogramNode;
+import ehupatras.clustering.sapehac.dendrogram.MergeNode;
+import ehupatras.clustering.sapehac.dendrogram.ObservationNode;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignment;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLevenshtein;
@@ -101,6 +104,8 @@ public class RecommenderKnnToClustersTopURLs
 	 */
 	protected ArrayList<String> getNextpossibleSteps(int nRecos){
 		Object[] objA = this.getNextpossibleSteps_Info(nRecos);
+		//lierni
+		//Object[] objA = this.getNextpossibleSteps_Info_Comb(nRecos);
 		ArrayList<String> recosL = (ArrayList<String>)objA[0];
 		//ArrayList<Integer> supportL = (ArrayList<Integer>)objA[1];
 		//ArrayList<Integer> clustersL = (ArrayList<Integer>)objA[2];
@@ -167,8 +172,94 @@ public class RecommenderKnnToClustersTopURLs
 		objA[1] = supportL;
 		objA[2] = clustersL;
 		objA[3] = distsL;
+		
+		//lierni
+		ArrayList<Integer> support = new ArrayList<Integer>();
+		for (int i=0; i<supportL.size(); i++){
+			
+		}
+		
 		return objA;
 	}
+	
+	/**
+	 * Gets the nextpossible steps_ info.
+	 *
+	 * @param nRecos the n recos
+	 * @return the nextpossible steps_ info
+	 */
+	protected Object[] getNextpossibleSteps_Info_Comb(int nRecos){
+		
+		// the elements we are interested in
+		ArrayList<String> recosL = new ArrayList<String>();
+		ArrayList<Integer> supportL = new ArrayList<Integer>();
+		ArrayList<Integer> clustersL = new ArrayList<Integer>();
+		ArrayList<Float> distsL = new ArrayList<Float>();
+		
+		// medoids ordered from the nearest to farthest
+		Object[] objAa = this.knnSimShort();
+		int[] orderedMedoids = (int[])objAa[0];
+		float[] orderedSims = (float[])objAa[1]; // it can be null
+		
+		// for each medoid take the recommendations
+		boolean end = false;
+		int nearestCl = orderedMedoids[0];
+		int secondCl = orderedMedoids[1];
+		float dist2clust1 = 0f;
+		float dist2clust2 = 0f;
+		if(orderedSims==null){
+			if(m_isDistance){
+				dist2clust1 = 0f;
+				dist2clust2 = 0f;
+			} else{
+				dist2clust1 = 1f;
+				dist2clust2 = 1f;}
+		} else {
+			dist2clust1 = orderedSims[0];
+			dist2clust2 = orderedSims[1];
+		}
+		//get the recomendations of each cluster
+		Object[] objA1 = m_recosInEachCluster.get(nearestCl);
+		ArrayList<String> recosCl1 = (ArrayList<String>)objA1[0];
+		ArrayList<Integer> supports1 = (ArrayList<Integer>)objA1[1];
+		
+		Object[] objA2 = m_recosInEachCluster.get(secondCl);
+		ArrayList<String> recosCl2 = (ArrayList<String>)objA2[0];
+		ArrayList<Integer> supports2 = (ArrayList<Integer>)objA2[1];
+		
+		if(recosCl1.size()==0){m_0recosClusters++;}
+		if(recosCl2.size()==0){m_0recosClusters++;}
+		
+		for (int i=0; i<nRecos; i++){
+			
+		}
+		/*
+		for(int j=0; j<recosCl.size(); j++){
+			if(recosL.size()<nRecos){
+				String reco = recosCl.get(j);
+				if(!recosL.contains(reco)){
+					recosL.add(reco);
+					supportL.add(supports.get(j));
+					clustersL.add(nearesCl);
+					distsL.add(dist2clust);
+				}
+			} else {
+				end = true;
+				break;
+			}
+		}
+		if(end){ break;}*/
+		
+		// return the list of recommendations
+		Object[] objA = new Object[4];
+		objA[0] = recosL;
+		objA[1] = supportL;
+		objA[2] = clustersL;
+		objA[3] = distsL;
+		return objA;
+	}
+	
+	
 	
 	/**
 	 * Gets the nextpossible steps w.
@@ -430,9 +521,53 @@ public class RecommenderKnnToClustersTopURLs
 		// compute the similarities with the medoids
 		float[] simA = new float[m_medoids.size()];
 		for(int i=0; i<m_medoids.size(); i++){
-			//Originala
-			//String[] medoid = m_medoids.get(i);
-			//lierni
+			String[] medoid = m_medoids.get(i);
+			SequenceAlignment seqalign;
+			if(m_isDistance){
+				seqalign = new SequenceAlignmentLevenshtein();
+				seqalign.setRoleWeights(m_rolesW);
+			} else{
+				seqalign = new SequenceAlignmentCombineGlobalLocalDimopoulos2010();
+				seqalign.setRoleWeights(m_rolesW);
+			}
+			float sim = seqalign.getScore(waydone, medoid);
+			simA[i] = sim;
+		}
+		
+		// order the similarities or the distance
+		float[] simAord = this.orderSim(simA);
+		
+		// return the index of medoids ordered
+		Object[] objA = this.orderSimilarities(simA, simAord);
+		//int[] orderedMedoids = (int[])objA[0];
+		//float[] orderedSims = (float[])objA[1];
+		return objA;
+	}
+	
+	/**
+	 * Knn sim. with shorter medoids
+	 *
+	 * @return the object[]
+	 */
+	//lierni
+	protected Object[] knnSimShort(){
+		// if we do not know nothing about the navigation
+		// return the most centered medoid in the database
+		if(m_waydone.size()==0){
+			Object[] objA = new Object[2];
+			objA[0] = m_gmedoids;
+			objA[1] = null;
+			return objA;
+		}
+		
+		// Else find the nearest medoid
+		// waydone to String[]
+		String[] waydone = new String[m_waydone.size()];
+		for(int i=0; i<m_waydone.size(); i++){ waydone[i] = m_waydone.get(i); }
+
+		// compute the similarities with the medoids
+		float[] simA = new float[m_medoids.size()];
+		for(int i=0; i<m_medoids.size(); i++){
 			String[] medoid = {m_medoids.get(i)[0]};
 			if (m_medoids.get(i).length<=m_waydone.size()){
 				medoid = m_medoids.get(i);
