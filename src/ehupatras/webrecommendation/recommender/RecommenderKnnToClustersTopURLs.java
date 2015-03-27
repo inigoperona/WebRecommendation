@@ -132,7 +132,7 @@ public class RecommenderKnnToClustersTopURLs
 		ArrayList<Float> distsL = new ArrayList<Float>();
 		
 		// medoids ordered from the nearest to farthest
-		Object[] objAa = this.knnSim();
+		Object[] objAa = this.knnSimShort();
 		int[] orderedMedoids = (int[])objAa[0];
 		float[] orderedSims = (float[])objAa[1]; // it can be null
 		
@@ -178,6 +178,9 @@ public class RecommenderKnnToClustersTopURLs
 		objA[2] = clustersL;
 		objA[3] = clustersizesL;
 		objA[4] = distsL;
+		/*for (int n=0; n<recosL.size(); n++){
+			System.out.print("Support: " + supportL.get(n) + " Clusters: " + clustersL.get(n) + " Sizes: " + clustersizesL.get(n) + " Distances: " + distsL.get(n));
+		}*/
 		return objA;
 	}
 	
@@ -566,20 +569,22 @@ public class RecommenderKnnToClustersTopURLs
 
 		// compute the similarities with the medoids
 		float[] simA = new float[m_medoids.size()];
+		int max = 0; 
 		for(int i=0; i<m_medoids.size(); i++){
 			String[] medoid = {m_medoids.get(i)[0]};
 			if (m_medoids.get(i).length<=m_waydone.size()){
 				medoid = m_medoids.get(i);
+				max = m_waydone.size();
 			} else {
 				//medoid = Arrays.copyOfRange(m_medoids.get(i), 0, m_waydone.size());
 				if (m_medoids.get(i).length==m_waydone.size()+1){
 					medoid = Arrays.copyOfRange(m_medoids.get(i), 0, m_waydone.size()+1);
+					max = m_waydone.size()+1;
 				} else {
 					medoid = Arrays.copyOfRange(m_medoids.get(i), 0, m_waydone.size()+2);
+					max = m_waydone.size()+2;
 				}
 			}
-			//System.out.println("Medoidea: " + m_medoids.get(i).length + "//" + medoid.length + " Bidea: " + m_waydone.size());
-			//
 			SequenceAlignment seqalign;
 			if(m_isDistance){
 				seqalign = new SequenceAlignmentLevenshtein();
@@ -588,8 +593,15 @@ public class RecommenderKnnToClustersTopURLs
 				seqalign = new SequenceAlignmentCombineGlobalLocalDimopoulos2010();
 				seqalign.setRoleWeights(m_rolesW);
 			}
-			float sim = seqalign.getScore(waydone, medoid);
-			simA[i] = sim;
+			//lierni
+			//Medoideari bukaerako letra kendu
+			String[] medoidId = new String[medoid.length];
+			for (int m=0; m<medoid.length; m++){
+				String url = medoid[m].substring(0, medoid[m].length()-1);
+				medoidId[m] = url;
+			}
+			float sim = seqalign.getScore(waydone, medoidId);
+			simA[i] = sim/max;
 		}
 		
 		// order the similarities or the distance

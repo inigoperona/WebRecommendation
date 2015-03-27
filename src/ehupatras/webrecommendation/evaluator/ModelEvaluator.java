@@ -244,7 +244,9 @@ public abstract class ModelEvaluator {
 	 * @param isSplit the is split
 	 * @return the data set
 	 */
-	protected ArrayList<String[]> getDataSet(boolean isSplit){
+	//lierni
+	//protected ArrayList<String[]> getDataSet(boolean isSplit){
+	public ArrayList<String[]> getDataSet(boolean isSplit){
 		if(!isSplit){
 			return m_dataset;
 		} else {

@@ -182,7 +182,7 @@ public class A001MainClassEdSAHNWardSpadeKnnEd {
 		modelevMed.setFmeasureBeta(var_beta);
 		modelevMed.setConfusionPoints(var_confusionPoints);
 		
-		BufferedWriter evalWriter = A001MainClassEdSAHNWardSpadeKnnEd.openFile(var_validationWD + var_evalFile);
+		BufferedWriter evalWriter = A001MainClassEdSAHNWardSpadeKnnEd.openFile(var_validationWD + var_evalFile);		
 		// Results' header
 		System.out.print("options," + modelevMed.getEvaluationHeader());
 		for(int j=0; j<var_ks.length; j++){ // for each k: 150
@@ -190,6 +190,8 @@ public class A001MainClassEdSAHNWardSpadeKnnEd {
 			String esperimentationStr = "SAHNagglo" + var_MethodShort + "_cl" + k;
 			String clustFile = var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData";
 			modelevMed.loadClusters(clustFile); // LOAD CLUSTERS
+			
+			
 
 			// for each SPADE: minsup: 0.2
 			for(int l=0; l<var_seqweights.length; l++){
@@ -221,7 +223,58 @@ public class A001MainClassEdSAHNWardSpadeKnnEd {
 					results = modelevMed.computeEvaluationTest("weighted", nrec, (long)0);					
 					System.out.print(resultInfo + ",");
 					System.out.print(results);
-				}			
+				}		
+				
+				//lierni
+				/*double batura;
+				int motz, luze;
+				System.out.println("Balidazioa: ");
+				for(int i=0; i<10; i++){
+					batura=0.0;
+					motz=100;
+					luze=0;
+					// get the test sequences from sessionIDs
+					ArrayList<Long> sessionIDs = var_valAL.get(i); 
+					int[] inds = var_matrix.getSessionIDsIndexes(sessionIDs, false);
+					ArrayList<String[]> testseqs = new ArrayList<String[]>();
+					for(int j1=0; j1<inds.length; j1++){
+						String[] seq = modelevMed.getDataSet(false).get(inds[j1]);
+						testseqs.add(seq);
+						//lierni
+						batura = batura + 0.25*seq.length;
+						if (seq.length>luze){
+							luze = seq.length;
+						}
+						if (seq.length<motz){
+							motz = seq.length;
+						}
+					}	
+					System.out.println(i +".run. Batezbestekoa 0.25: " + batura/inds.length);
+				}
+				
+				System.out.println("Testa: ");
+				for(int i=0; i<10; i++){
+					batura=0.0;
+					motz=100;
+					luze=0;
+					// get the test sequences from sessionIDs
+					ArrayList<Long> sessionIDs = var_testAL.get(i); 
+					int[] inds = var_matrix.getSessionIDsIndexes(sessionIDs, false);
+					ArrayList<String[]> testseqs = new ArrayList<String[]>();
+					for(int j1=0; j1<inds.length; j1++){
+						String[] seq = modelevMed.getDataSet(false).get(inds[j1]);
+						testseqs.add(seq);
+						//lierni
+						batura = batura + 0.25*seq.length;
+						if (seq.length>luze){
+							luze = seq.length;
+						}
+						if (seq.length<motz){
+							motz = seq.length;
+						}
+					}	
+					System.out.println(i +".run. Batezbestekoa 0.25: " + batura/inds.length);
+				}*/
 			}
 		}
 		
