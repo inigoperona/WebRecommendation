@@ -69,12 +69,12 @@ public class COP2 {
 		if (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot()){
 			return 1.0;
 		}
-		
+		/*
 		if ((m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft()) 
 				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight())){
 			return 1.1;
 		}
-		/*
+		
 		if ((m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getLeft()) 
 				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft().getRight())
 				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight().getLeft())

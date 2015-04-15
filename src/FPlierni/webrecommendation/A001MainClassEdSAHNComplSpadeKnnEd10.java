@@ -22,7 +22,7 @@ import ehupatras.webrecommendation.evaluator.ModelEvaluatorMedoids;
 /**
  * The Class A000MainClassEdPamSpadeKnnEd.
  */
-public class A001MainClassEdSEPCOPSpadeKnnEd {
+public class A001MainClassEdSAHNComplSpadeKnnEd10 {
 
 	/**
 	 * The main method.
@@ -32,9 +32,8 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 	public static void main(String[] args) {
 		
 		// folders
-		//String var_base = "experiments_FPlierni_wr_11000";
-		String var_base = "experiments_FPlierni_wr_txikia";
-		//String var_base = "experiments_Discapnet";
+		String var_base = "experiments_FPlierni_wr_11000";
+		//String var_base = "experiments_FPlierni_wr_txikia";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
@@ -50,12 +49,12 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 		String var_usage2contentFile = var_preprocessingWD + "/Content/usa2cont.csv";
 		String var_evalFile = "/evaluation.txt";
 		// system's parameters
-		int[] var_ks = {5}; // number of clusters
+		int[] var_ks = {50, 100, 150, 200, 300, 400, 500}; // number of clusters
 		float[] var_seqweights = {0.20f}; // Sequence Mining algorithm's minimum support
 		// metrics' parameters
 		int var_modePrRe = 0; // 0: strict - 1: relax, precision and recall computation
 		float var_beta = 0.5f; // F-measured beta parameter
-		float[] var_confusionPoints = new float[]{0.25f,0.50f}; // the stages were the navigation will be analyzed
+		float[] var_confusionPoints = new float[]{0.25f,0.50f,0.75f}; // the stages were the navigation will be analyzed
 		int[] var_nrecsA = new int[]{4};
 		ArrayList<Integer> var_noProposeUrls = new ArrayList<Integer>(); // not let recommending. very very frequent URLs. They bias the results. 
 		//var_noProposeUrls.add(11); // homepage for example
@@ -92,6 +91,19 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 		dm.loadDistanceMatrix(var_databaseWD + var_dmWD); // Load "databaseWD/dmWD/_matrix.javaData"
 		Matrix var_matrix = dm.getMatrix();
 		
+		
+		// CROSS-VALIDATION, 10-fold:
+		/*
+		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
+		honestmodelval.load(var_validationWD);
+		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
+		ArrayList<ArrayList<Long>> var_trainAL = new ArrayList<ArrayList<Long>>();		
+		ArrayList<ArrayList<Long>> valALaux  = honestmodelval.getValidation();
+		ArrayList<ArrayList<Long>> var_valAL  = new ArrayList<ArrayList<Long>>();
+		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
+		ArrayList<ArrayList<Long>> var_testAL = new ArrayList<ArrayList<Long>>();
+		*/
+		
 		// CROSS-VALIDATION, 10-fold:
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		// create
@@ -101,10 +113,6 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 		int m_nFold = 10;
 		honestmodelval.prepareData(var_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
 		honestmodelval.save(var_validationWD);
-		
-		//load
-		//honestmodelval.load(var_validationWD);
-
 		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
 		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
 		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();
@@ -148,13 +156,16 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 						var_matrix,
 						var_trainAL, var_valAL, var_testAL,
 						var_modePrRe, var_usage2contentFile, var_urlSimilarityMatrix);
-		String esperimentationStr = "SAHNaggloSEPCOP" + var_MethodShort + "_cl";
-		System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
-		modelevSAHN.buildDendrograms(var_Method); // CREATE DENDROGRAMS
-		modelevSAHN.cutDendrogramsSEP(var_matrix.getMatrix(false)); //CUT DENDROGRAMS WITH SEP AND COP
-		modelevSAHN.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
-		modelevSAHN.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
-		
+		for(int j=0; j<var_ks.length; j++){ // for each k
+			int k = var_ks[j];
+			String esperimentationStr = "SAHNagglo" + var_MethodShort + "_cl" + k;
+			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
+			modelevSAHN.buildDendrograms(var_Method); // CREATE DENDROGRAMS
+			modelevSAHN.cutDendrogramsK((float)var_ks[j]); // CUT DENDROGRAMS AND CREATE CLUSTERS
+			modelevSAHN.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
+			modelevSAHN.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
+		}
+			
 		
 		// CREATE THE MEDOIDS+URLs MODEL and VALIDATE IT
 		ModelEvaluatorMedoids modelevMed = 
@@ -171,46 +182,103 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 		modelevMed.setFmeasureBeta(var_beta);
 		modelevMed.setConfusionPoints(var_confusionPoints);
 		
-		BufferedWriter evalWriter = A001MainClassEdSEPCOPSpadeKnnEd.openFile(var_validationWD + var_evalFile);
+		BufferedWriter evalWriter = A001MainClassEdSAHNComplSpadeKnnEd10.openFile(var_validationWD + var_evalFile);		
 		// Results' header
-		System.out.print("options," + modelevMed.getEvaluationHeader());			
-		//String esperimentationStr = "SAHNaggloSEPCOP" + var_MethodShort + "_cl";
-		String clustFile = var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData";
-		modelevMed.loadClusters(clustFile); // LOAD CLUSTERS
-
-		// for each SPADE: minsup: 0.2
-		for(int l=0; l<var_seqweights.length; l++){
-			float minsup = var_seqweights[l];
-			String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
-			modelevMed.buildMedoids(minsup, true);
-							
-			// VALIDATION //
-			String results = "";
-			String resultInfo = "";	
-			for(int ind=0; ind<var_nrecsA.length; ind++ ){ // nrec: 4
-				int nrec = var_nrecsA[ind];
-				resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val";					
-				modelevMed.setLineHeader(resultInfo + ";", evalWriter);
-				modelevMed.setEsploitationParameters(true, var_rolesW, 100);
-				results = modelevMed.computeEvaluationVal("weighted", nrec, (long)0);					
-				System.out.print(resultInfo + ",");
-				System.out.print(results);
-			}	
-
+		System.out.print("options," + modelevMed.getEvaluationHeader());
+		for(int j=0; j<var_ks.length; j++){ // for each k: 150
+			int k = var_ks[j];				
+			String esperimentationStr = "SAHNagglo" + var_MethodShort + "_cl" + k;
+			String clustFile = var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData";
+			modelevMed.loadClusters(clustFile); // LOAD CLUSTERS
 			
-			// for each number of recommendation
-			// TEST //
-			for(int ind=0; ind<var_nrecsA.length; ind++ ){ // nrec: 4
-				int nrec = var_nrecsA[ind];
-				resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";					
-				modelevMed.setLineHeader(resultInfo + ";", evalWriter);
-				modelevMed.setEsploitationParameters(true, var_rolesW, 100);
-				results = modelevMed.computeEvaluationTest("weighted", nrec, (long)0);					
-				System.out.print(resultInfo + ",");
-				System.out.print(results);
-			}			
+			
+
+			// for each SPADE: minsup: 0.2
+			for(int l=0; l<var_seqweights.length; l++){
+				float minsup = var_seqweights[l];
+				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
+				modelevMed.buildMedoids(minsup, true);
+								
+				// VALIDATION //
+				String results = "";
+				String resultInfo = "";	
+				for(int ind=0; ind<var_nrecsA.length; ind++ ){ // nrec: 4
+					int nrec = var_nrecsA[ind];
+					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_val";					
+					modelevMed.setLineHeader(resultInfo + ";", evalWriter);
+					modelevMed.setEsploitationParameters(true, var_rolesW, 100);
+					results = modelevMed.computeEvaluationVal("weighted", nrec, (long)0);					
+					System.out.print(resultInfo + ",");
+					System.out.print(results);
+				}	
+
+				
+				// for each number of recommendation
+				// TEST //
+				for(int ind=0; ind<var_nrecsA.length; ind++ ){ // nrec: 4
+					int nrec = var_nrecsA[ind];
+					resultInfo = esperimentationStr2 + "_weighted" + nrec + "_test";					
+					modelevMed.setLineHeader(resultInfo + ";", evalWriter);
+					modelevMed.setEsploitationParameters(true, var_rolesW, 100);
+					results = modelevMed.computeEvaluationTest("weighted", nrec, (long)0);					
+					System.out.print(resultInfo + ",");
+					System.out.print(results);
+				}		
+				
+				//lierni
+				/*double batura;
+				int motz, luze;
+				System.out.println("Balidazioa: ");
+				for(int i=0; i<10; i++){
+					batura=0.0;
+					motz=100;
+					luze=0;
+					// get the test sequences from sessionIDs
+					ArrayList<Long> sessionIDs = var_valAL.get(i); 
+					int[] inds = var_matrix.getSessionIDsIndexes(sessionIDs, false);
+					ArrayList<String[]> testseqs = new ArrayList<String[]>();
+					for(int j1=0; j1<inds.length; j1++){
+						String[] seq = modelevMed.getDataSet(false).get(inds[j1]);
+						testseqs.add(seq);
+						//lierni
+						batura = batura + 0.25*seq.length;
+						if (seq.length>luze){
+							luze = seq.length;
+						}
+						if (seq.length<motz){
+							motz = seq.length;
+						}
+					}	
+					System.out.println(i +".run. Batezbestekoa 0.25: " + batura/inds.length);
+				}
+				
+				System.out.println("Testa: ");
+				for(int i=0; i<10; i++){
+					batura=0.0;
+					motz=100;
+					luze=0;
+					// get the test sequences from sessionIDs
+					ArrayList<Long> sessionIDs = var_testAL.get(i); 
+					int[] inds = var_matrix.getSessionIDsIndexes(sessionIDs, false);
+					ArrayList<String[]> testseqs = new ArrayList<String[]>();
+					for(int j1=0; j1<inds.length; j1++){
+						String[] seq = modelevMed.getDataSet(false).get(inds[j1]);
+						testseqs.add(seq);
+						//lierni
+						batura = batura + 0.25*seq.length;
+						if (seq.length>luze){
+							luze = seq.length;
+						}
+						if (seq.length<motz){
+							motz = seq.length;
+						}
+					}	
+					System.out.println(i +".run. Batezbestekoa 0.25: " + batura/inds.length);
+				}*/
+			}
 		}
-		A001MainClassEdSEPCOPSpadeKnnEd.closeFile(evalWriter);
+		
+		A001MainClassEdSAHNComplSpadeKnnEd10.closeFile(evalWriter);
 	}
 	
 	

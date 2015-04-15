@@ -138,6 +138,7 @@ public class RecommenderKnnToClustersTopURLs
 		
 		// for each medoid take the recommendations
 		boolean end = false;
+		//int clusterKop = 0;
 		for(int i=0; i<orderedMedoids.length; i++){
 			int nearesCl = orderedMedoids[i];
 			float dist2clust = 0f;
@@ -169,8 +170,11 @@ public class RecommenderKnnToClustersTopURLs
 				}
 			}
 			if(end){ break;}
+			//clusterKop++;
 		}
 		
+		//System.out.println("Erabilitako cluster kopurua: " + clusterKop);
+
 		// return the list of recommendations
 		Object[] objA = new Object[5];
 		objA[0] = recosL;
@@ -197,72 +201,176 @@ public class RecommenderKnnToClustersTopURLs
 		ArrayList<String> recosL = new ArrayList<String>();
 		ArrayList<Integer> supportL = new ArrayList<Integer>();
 		ArrayList<Integer> clustersL = new ArrayList<Integer>();
+		ArrayList<Integer> clustersizesL = new ArrayList<Integer>();
 		ArrayList<Float> distsL = new ArrayList<Float>();
+		
+		ArrayList<String> recosAux = new ArrayList<String>();
+		ArrayList<Integer> supportAux = new ArrayList<Integer>();
+		ArrayList<Integer> clustersAux = new ArrayList<Integer>();
+		ArrayList<Integer> clustersizesAux = new ArrayList<Integer>();
+		ArrayList<Float> distsAux = new ArrayList<Float>();
+		ArrayList<Float> valsAux = new ArrayList<Float>();
 		
 		// medoids ordered from the nearest to farthest
 		Object[] objAa = this.knnSimShort();
 		int[] orderedMedoids = (int[])objAa[0];
 		float[] orderedSims = (float[])objAa[1]; // it can be null
 		
-		// for each medoid take the recommendations
-		boolean end = false;
-		int nearestCl = orderedMedoids[0];
-		int secondCl = orderedMedoids[1];
-		float dist2clust1 = 0f;
-		float dist2clust2 = 0f;
-		if(orderedSims==null){
-			if(m_isDistance){
-				dist2clust1 = 0f;
-				dist2clust2 = 0f;
-			} else{
-				dist2clust1 = 1f;
-				dist2clust2 = 1f;}
-		} else {
-			dist2clust1 = orderedSims[0];
-			dist2clust2 = orderedSims[1];
-		}
-		//get the recomendations of each cluster
-		Object[] objA1 = m_recosInEachCluster.get(nearestCl);
-		ArrayList<String> recosCl1 = (ArrayList<String>)objA1[0];
-		ArrayList<Integer> supports1 = (ArrayList<Integer>)objA1[1];
-		
-		Object[] objA2 = m_recosInEachCluster.get(secondCl);
-		ArrayList<String> recosCl2 = (ArrayList<String>)objA2[0];
-		ArrayList<Integer> supports2 = (ArrayList<Integer>)objA2[1];
-		
-		if(recosCl1.size()==0){m_0recosClusters++;}
-		if(recosCl2.size()==0){m_0recosClusters++;}
-		
-		for (int i=0; i<nRecos; i++){
-			
-		}
-		/*
-		for(int j=0; j<recosCl.size(); j++){
-			if(recosL.size()<nRecos){
-				String reco = recosCl.get(j);
-				if(!recosL.contains(reco)){
-					recosL.add(reco);
-					supportL.add(supports.get(j));
-					clustersL.add(nearesCl);
-					distsL.add(dist2clust);
-				}
+		float value = 0.0f;
+		for(int i=0; i<3; i++){
+			int nearesCl = orderedMedoids[i];
+			float dist2clust = 0f;
+			if(orderedSims==null){
+				if(m_isDistance){dist2clust = 0f;} 
+				else{dist2clust = 1f;}
 			} else {
-				end = true;
-				break;
+				dist2clust = orderedSims[i];
+			}
+			
+			Object[] objA = m_recosInEachCluster.get(nearesCl);
+			ArrayList<String> recosCl = (ArrayList<String>)objA[0];
+			ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
+			if(recosCl.size()==0){m_0recosClusters++;}
+			for(int j=0; j<recosCl.size(); j++){
+				String reco = recosCl.get(j);
+				recosAux.add(reco);
+				supportAux.add(supports.get(j));
+				clustersAux.add(nearesCl);
+				clustersizesAux.add(m_clustersizes[nearesCl]);
+				distsAux.add(dist2clust);
+				value = (1.0f - dist2clust) * supports.get(j);
+				valsAux.add(value);
 			}
 		}
-		if(end){ break;}*/
+		
+		// order all the arrays taking into account the result of  (1-dist)*support
+		Object[] objAux = this.sort(recosAux, supportAux, clustersAux, clustersizesAux, distsAux, valsAux);
+		String[] recosAux2 = (String[]) objAux[0];
+		String[] supportAux2 = (String[]) objAux[1];
+		String[] clustersAux2 = (String[]) objAux[2];
+		String[] clustersizesAux2 = (String[]) objAux[3];
+		String[] distsAux2 = (String[]) objAux[4];		
+		
+		for (int i=0; i<recosAux2.length; i++){
+			if (recosL.size()<nRecos){
+				if(!recosL.contains(recosAux2[i])){
+					recosL.add(recosAux2[i]);
+					supportL.add(Integer.parseInt(supportAux2[i]));
+					clustersL.add(Integer.parseInt(clustersAux2[i]));
+					clustersizesL.add(Integer.parseInt(clustersizesAux2[i]));
+					distsL.add(Float.parseFloat(distsAux2[i]));
+				}
+			}
+			
+		}	
+		
+		boolean end = false;
+		if (recosL.size()<nRecos){
+			for(int i=3; i<orderedMedoids.length; i++){
+				int nearesCl = orderedMedoids[i];
+				float dist2clust = 0f;
+				if(orderedSims==null){
+					if(m_isDistance){dist2clust = 0f;} 
+					else{dist2clust = 1f;}
+				} else {
+					dist2clust = orderedSims[i];
+				}
+				
+				Object[] objA = m_recosInEachCluster.get(nearesCl);
+				ArrayList<String> recosCl = (ArrayList<String>)objA[0];
+				ArrayList<Integer> supports = (ArrayList<Integer>)objA[1];
+				
+				if(recosCl.size()==0){m_0recosClusters++;}
+				for(int j=0; j<recosCl.size(); j++){
+					if(recosL.size()<nRecos){
+						String reco = recosCl.get(j);
+						if(!recosL.contains(reco)){
+							recosL.add(reco);
+							supportL.add(supports.get(j));
+							clustersL.add(nearesCl);
+							clustersizesL.add(m_clustersizes[nearesCl]);
+							distsL.add(dist2clust);
+						}
+					} else {
+						end = true;
+						break;
+					}
+				}
+				if(end){ break;}
+				//clusterKop++;
+			}
+		}
 		
 		// return the list of recommendations
-		Object[] objA = new Object[4];
+		Object[] objA = new Object[5];
 		objA[0] = recosL;
 		objA[1] = supportL;
 		objA[2] = clustersL;
-		objA[3] = distsL;
+		objA[3] = clustersizesL;
+		objA[4] = distsL;
+		/*for (int n=0; n<recosL.size(); n++){
+			System.out.print("Support: " + supportL.get(n) + " Clusters: " + clustersL.get(n) + " Sizes: " + clustersizesL.get(n) + " Distances: " + distsL.get(n));
+		}*/
 		return objA;
+		
+	}
+	
+	public Object[] sort(ArrayList<String> recosAux, ArrayList<Integer> supportAux,
+			ArrayList<Integer> clustersAux, ArrayList<Integer> clustersizesAux,
+			ArrayList<Float> distsAux, ArrayList<Float> valsAux) {
+	    
+		String[] recosArray = recosAux.toArray(new String[recosAux.size()]);
+		String[] supportArray = new String[recosAux.size()];
+		supportAux.toArray(new Integer[supportAux.size()]);
+		String[] clustersArray = new String[recosAux.size()];
+		String[] clustersizesArray = new String[recosAux.size()];
+		String[] distArray = new String[recosAux.size()];
+		String[] valsArray = new String[recosAux.size()];
+	    
+		for (int i=0; i<recosArray.length; i++){
+			supportArray[i] = supportAux.get(i).toString();
+			clustersArray[i] = clustersAux.get(i).toString();
+			clustersizesArray[i] = clustersizesAux.get(i).toString();
+			distArray[i] = distsAux.get(i).toString();
+			valsArray[i] = valsAux.get(i).toString();
+		}
+		
+
+	    int lenD = valsArray.length;
+	    int j = 0;
+	    for(int i=0;i<lenD;i++){
+	        j = i;
+	        for(int k = i;k<lenD;k++){
+	            if(valsArray[j].compareTo(valsArray[k])>0){
+	                j = k;
+	            }
+	        }
+	        permutation(valsArray, i, j);
+	        permutation(recosArray, i, j);
+	        permutation(supportArray, i, j);
+	        permutation(clustersArray, i, j);
+	        permutation(clustersizesArray, i, j);
+	        permutation(distArray, i, j);
+	    }
+
+	    Object[] objA = new Object[6];
+		objA[0] = recosArray;
+		objA[1] = supportArray;
+		objA[2] = clustersArray;
+		objA[3] = clustersizesArray;
+		objA[4] = distArray;
+		objA[5] = valsArray;
+		
+		return objA;
+	    
 	}
 
-	
+	private void permutation(String[] array, int i, int j) {
+	    String tmp = array[i];
+	    array[i] = array[j];
+	    array[j] = tmp;
+	}
+
 	/**
 	 * Gets the nextpossible steps w.
 	 *
@@ -532,6 +640,13 @@ public class RecommenderKnnToClustersTopURLs
 				seqalign = new SequenceAlignmentCombineGlobalLocalDimopoulos2010();
 				seqalign.setRoleWeights(m_rolesW);
 			}
+			//lierni
+			//Medoideari bukaerako letra kendu
+			String[] medoidId = new String[medoid.length];
+			for (int m=0; m<medoid.length; m++){
+				String url = medoid[m].substring(0, medoid[m].length()-1);
+				medoidId[m] = url;
+			}
 			float sim = seqalign.getScore(waydone, medoid);
 			simA[i] = sim;
 		}
@@ -601,6 +716,7 @@ public class RecommenderKnnToClustersTopURLs
 				medoidId[m] = url;
 			}
 			float sim = seqalign.getScore(waydone, medoidId);
+			//simA[i] = sim;
 			simA[i] = sim/max;
 		}
 		

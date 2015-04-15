@@ -65,11 +65,6 @@ public class COP {
 			return 1.0;
 		}
 		
-		if ((m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getLeft()) 
-				|| (m_clusters.size()==1 && m_clusters.get(0)==m_dendrogram.getRoot().getRight())){
-			return 1.1;
-		}
-		
 		medoids = computeMedoids(m_clusters);
 		
 		for (int i=0; i<m_clusters.size(); i++){
