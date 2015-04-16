@@ -105,9 +105,9 @@ public class RecommenderKnnToClustersTopURLs
 	 * @return the nextpossible steps
 	 */
 	protected ArrayList<String> getNextpossibleSteps(int nRecos){
-		Object[] objA = this.getNextpossibleSteps_Info(nRecos);
+		//Object[] objA = this.getNextpossibleSteps_Info(nRecos);
 		//lierni
-		//Object[] objA = this.getNextpossibleSteps_Info_Comb(nRecos);
+		Object[] objA = this.getNextpossibleSteps_Info_Comb(nRecos);
 		ArrayList<String> recosL = (ArrayList<String>)objA[0];
 		//ArrayList<Integer> supportL = (ArrayList<Integer>)objA[1];
 		//ArrayList<Integer> clustersL = (ArrayList<Integer>)objA[2];
@@ -217,7 +217,7 @@ public class RecommenderKnnToClustersTopURLs
 		float[] orderedSims = (float[])objAa[1]; // it can be null
 		
 		float value = 0.0f;
-		for(int i=0; i<3; i++){
+		for(int i=0; i<2; i++){
 			int nearesCl = orderedMedoids[i];
 			float dist2clust = 0f;
 			if(orderedSims==null){
@@ -238,7 +238,7 @@ public class RecommenderKnnToClustersTopURLs
 				clustersAux.add(nearesCl);
 				clustersizesAux.add(m_clustersizes[nearesCl]);
 				distsAux.add(dist2clust);
-				value = (1.0f - dist2clust) * supports.get(j);
+				value = (1.0f - dist2clust) + supports.get(j);
 				valsAux.add(value);
 			}
 		}
@@ -266,7 +266,7 @@ public class RecommenderKnnToClustersTopURLs
 		
 		boolean end = false;
 		if (recosL.size()<nRecos){
-			for(int i=3; i<orderedMedoids.length; i++){
+			for(int i=2; i<orderedMedoids.length; i++){
 				int nearesCl = orderedMedoids[i];
 				float dist2clust = 0f;
 				if(orderedSims==null){
@@ -321,7 +321,6 @@ public class RecommenderKnnToClustersTopURLs
 	    
 		String[] recosArray = recosAux.toArray(new String[recosAux.size()]);
 		String[] supportArray = new String[recosAux.size()];
-		supportAux.toArray(new Integer[supportAux.size()]);
 		String[] clustersArray = new String[recosAux.size()];
 		String[] clustersizesArray = new String[recosAux.size()];
 		String[] distArray = new String[recosAux.size()];
@@ -337,20 +336,18 @@ public class RecommenderKnnToClustersTopURLs
 		
 
 	    int lenD = valsArray.length;
-	    int j = 0;
 	    for(int i=0;i<lenD;i++){
-	        j = i;
 	        for(int k = i;k<lenD;k++){
-	            if(valsArray[j].compareTo(valsArray[k])>0){
-	                j = k;
+	            if(Float.parseFloat(valsArray[i])<Float.parseFloat(valsArray[k])){
+	            	permutation(valsArray, i, k);
+	    	        permutation(recosArray, i, k);
+	    	        permutation(supportArray, i, k);
+	    	        permutation(clustersArray, i, k);
+	    	        permutation(clustersizesArray, i, k);
+	    	        permutation(distArray, i, k);
 	            }
 	        }
-	        permutation(valsArray, i, j);
-	        permutation(recosArray, i, j);
-	        permutation(supportArray, i, j);
-	        permutation(clustersArray, i, j);
-	        permutation(clustersizesArray, i, j);
-	        permutation(distArray, i, j);
+	        
 	    }
 
 	    Object[] objA = new Object[6];
