@@ -79,7 +79,7 @@ public class COP {
 				interCOP = intercop(m_clusters.get(i), leafs);
 				if (interCOP!=0.0){
 					clusterCOP = clusterCOP + cluster.getObservationCount() * intraCOP / interCOP;
-				} 
+				}
 				//if interCOP==0.0 means that the two clusters are in the same place so we want them to be together in one cluster
 				//that's why we give that cluster the best COP value possible: 0
 			}

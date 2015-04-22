@@ -80,8 +80,8 @@ public class SEP {
 				nodeArray.add(onode);
 				nodeId.add(node);
 				bestPartition.add(nodeArray);
-				unionC.add(unionCOP);
-				nodeC.add(nodeCOP);
+				unionC.add(1.0);
+				nodeC.add(1.0);
 			} else {
 				ArrayList<DendrogramNode> union = new ArrayList<DendrogramNode>();
 				DendrogramNode left = node.getLeft();

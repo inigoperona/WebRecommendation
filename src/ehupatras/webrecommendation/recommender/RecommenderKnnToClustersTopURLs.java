@@ -238,7 +238,7 @@ public class RecommenderKnnToClustersTopURLs
 				clustersAux.add(nearesCl);
 				clustersizesAux.add(m_clustersizes[nearesCl]);
 				distsAux.add(dist2clust);
-				value = (1.0f - dist2clust) + supports.get(j);
+				value = (1.0f - dist2clust)*supports.get(j)/clustersizesAux.get(j);
 				valsAux.add(value);
 			}
 		}

@@ -54,7 +54,7 @@ public class A001MainClassEdSAHNAvgSpadeKnnEd10 {
 		// metrics' parameters
 		int var_modePrRe = 0; // 0: strict - 1: relax, precision and recall computation
 		float var_beta = 0.5f; // F-measured beta parameter
-		float[] var_confusionPoints = new float[]{0.25f,0.50f,0.75f}; // the stages were the navigation will be analyzed
+		float[] var_confusionPoints = new float[]{0.25f,0.50f}; // the stages were the navigation will be analyzed
 		int[] var_nrecsA = new int[]{4};
 		ArrayList<Integer> var_noProposeUrls = new ArrayList<Integer>(); // not let recommending. very very frequent URLs. They bias the results. 
 		//var_noProposeUrls.add(11); // homepage for example
