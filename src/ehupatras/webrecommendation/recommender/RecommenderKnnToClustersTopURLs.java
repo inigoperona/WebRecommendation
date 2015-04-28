@@ -132,7 +132,7 @@ public class RecommenderKnnToClustersTopURLs
 		ArrayList<Float> distsL = new ArrayList<Float>();
 		
 		// medoids ordered from the nearest to farthest
-		Object[] objAa = this.knnSimShort();
+		Object[] objAa = this.knnSim();
 		int[] orderedMedoids = (int[])objAa[0];
 		float[] orderedSims = (float[])objAa[1]; // it can be null
 		

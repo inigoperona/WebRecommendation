@@ -65,24 +65,32 @@ public class COP {
 			return 1.0;
 		}
 		
+		/*if (m_clusters.size()==1 && m_clusters.get(0).getClass().toString().contains("ObservationNode")){
+			return 1.0;
+		}*/
+		
+		
 		medoids = computeMedoids(m_clusters);
 		
 		for (int i=0; i<m_clusters.size(); i++){
 			cluster = m_clusters.get(i);
 			cases = cases + cluster.getObservationCount();
 			String nodeClassStr = cluster.getClass().toString();
-			if(nodeClassStr.contains("ObservationNode")){
+			/*if(nodeClassStr.contains("ObservationNode")){
 				clusterCOP = clusterCOP + 1.0;
-			} else {
+			} else {*/
 				leafs = getLeafs(cluster);
 				intraCOP = intracop(leafs, medoids.get(i));
-				interCOP = intercop(m_clusters.get(i), leafs);
+				interCOP = intercop(cluster, leafs);
 				if (interCOP!=0.0){
 					clusterCOP = clusterCOP + cluster.getObservationCount() * intraCOP / interCOP;
-				}
+				} 
+				/*if (intraCOP!=0.0){
+					clusterCOP = clusterCOP + cluster.getObservationCount() * interCOP/intraCOP;
+				}*/
 				//if interCOP==0.0 means that the two clusters are in the same place so we want them to be together in one cluster
 				//that's why we give that cluster the best COP value possible: 0
-			}
+			//}
 		}
 		copValue = clusterCOP / cases;
 		return copValue;
