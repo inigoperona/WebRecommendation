@@ -34,7 +34,7 @@ public class A000MainClassPreprocess3 {
 			
 		// write preprocessed logs
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexesSample.txt");
-		//WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRoleSample.txt");
+		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRoleSample.txt");
 						
 		// save the sessions structure we have created
 		WebAccessSequences.saveSequences("_sequencesSample.javaData");
@@ -49,7 +49,7 @@ public class A000MainClassPreprocess3 {
 	public static void main(String[] args) {
 		// Parameter control
 		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
-		String basedirectory = "experiments_FPlierni_wr_100";
+		String basedirectory = "experiments_discapnet";
 		String preDir = basedirectory + "/01_preprocess";
 		String logfilesIndex = "/logFilesIndex.txt";
 		String distDir = basedirectory + "/02_database";

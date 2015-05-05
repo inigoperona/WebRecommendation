@@ -87,13 +87,15 @@ public class A0000ParameterControl_angelu {
 	protected int m_nFold = 10;
 	
 	/** The m_ptrain. */
-	protected int m_ptrain = 7;
+	protected int m_ptrain = 10;
 	
 	/** The m_pval. */
-	protected int m_pval = 2;
+	//protected int m_pval = 2;
+	protected int m_pval = 0;
 	
 	/** The m_ptest. */
-	protected int m_ptest = 1;
+	//protected int m_ptest = 1;
+	protected int m_ptest = 0;
 	
 	/** The m_train al. */
 	protected ArrayList<ArrayList<Long>> m_trainAL;
@@ -178,8 +180,7 @@ public class A0000ParameterControl_angelu {
 	 * Instantiates a new a0000 parameter control_angelu.
 	 */
 	public A0000ParameterControl_angelu(){
-		this.exampleParameters();
-		this.initializeStructures();
+		this(new String[0]);
 	}
 	
 	/**
@@ -188,11 +189,22 @@ public class A0000ParameterControl_angelu {
 	 * @param args the args
 	 */
 	public A0000ParameterControl_angelu(String[] args){
+		System.out.println("------");
+		System.out.println("Number of parameters: " + args.length);
 		if(args.length==0){
+			System.out.println("Parameters given by hand: ");
 			this.exampleParameters();
 		} else {
+			// print parameters
+			System.out.println("Class: " + this.getClass().getCanonicalName());
+			System.out.println("Parameters given from command-line: ");
+			for(int i=0; i<args.length; i++){
+				System.out.println(args[i]);
+			}
+			// load parameters
 			this.readParameters(args);
 		}
+		System.out.println("------");
 		this.initializeStructures();
 	}
 	
@@ -255,6 +267,8 @@ public class A0000ParameterControl_angelu {
 	 */
 	public void exampleParameters(){
 		m_base = "experiments_angelu_wr_2";
+		m_base = "experiments_angelu_wr_3";
+		//m_base = "experiments_ehupatras_3";
 		
 		m_preprocessingWD = m_base + "/01_preprocess";
 		m_logfile = "/log20000.log";

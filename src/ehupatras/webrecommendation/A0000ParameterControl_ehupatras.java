@@ -60,7 +60,8 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		
 		// PAM: k
 		//m_ks = new int[]{150, 200, 250, 300};
-		m_ks = new int[]{150, 200, 250};
+		//m_ks = new int[]{150, 200, 250};
+		m_ks = new int[]{5};
 		
 		// SPADE: minimum support
 		//m_seqweights = new float[]{0.10f, 0.15f, 0.20f};
@@ -119,9 +120,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * Instantiates a new a0000 parameter control_ehupatras.
 	 */
 	public A0000ParameterControl_ehupatras(){
-		this.exampleParameters();
-		this.initializeSystemParameters();
-		super.initializeStructures();
+		this(new String[0]);
 	}
 	
 	/**
@@ -170,7 +169,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		//m_clustWD = "/pam_DM_04_edit";
 		//m_profiWD = "/pam_DM_04_edit/spade1";
 		m_clustWD = "/pam_DM_04_edit";
-		m_profiWD = m_profiWD + "/spade1";
+		m_profiWD = "/pam_DM_04_edit/spade1";
 		m_evalFile = "/evaluation.txt";
 		
 		m_noProposeUrls = new ArrayList<Integer>();
@@ -182,10 +181,10 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @see angelu.webrecommendation.A0000ParameterControl_angelu#exampleParameters()
 	 */
 	public void exampleParameters(){
-		m_base = "experiments_ehupatras_2";
+		m_base = "experiments_ehupatras_3";
 		
 		m_preprocessingWD = m_base + "/01_preprocess";
-		m_logfile = "/log20000.log";
+		m_logfile = "/log50000.txt";
 		
 		m_url2topicFile = "/Content/Topic/URLs_to_topic_th0/URLs_to_topic_TestuHutsa_th0_usageID.txt";
 		m_url2url_DM = "/Content/Topic/DM_similarityHellingerTopic1TestuHutsa_usageID.txt";
@@ -196,16 +195,16 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		m_usage2contentFile = m_preprocessingWD + "/Content/usa2cont.csv";
 		
 		m_databaseWD = m_base + "/02_DATABASE_5";
-		//m_dmWD = "/DM_04_edit";
-		m_dmWD = "/DM_00_norole_dist";
+		m_dmWD = "/DM_04_edit";
+		//m_dmWD = "/DM_00_norole_dist";
 		//m_dmWD = "/DM_00_norole_dist_TopicCont";
 		//m_dmWD = "/DM_04_edit_TopicCont";
 		
 		m_validationWD = m_base + "/03_VALIDATION_5";
-		//m_clustWD = "/pam_DM_04_edit";
-		//m_profiWD = "/pam_DM_04_edit/spade1";
-		m_clustWD = "/pam_DM_04_edit_TopicCont";
-		m_profiWD = m_profiWD + "/spade1";
+		m_clustWD = "/pam_DM_04_edit";
+		m_profiWD = "/pam_DM_04_edit/spade1";
+		//m_clustWD = "/hclust_DM_00_norole_dist";
+		//m_profiWD = "/hclust_DM_00_norole_dist/spade1";
 		m_evalFile = "/evaluation.txt";
 
 		m_noProposeUrls = new ArrayList<Integer>();

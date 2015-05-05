@@ -12,7 +12,6 @@ public class A041MainClassPAMcv {
 	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
-		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
 		
 		// take the start time of the program

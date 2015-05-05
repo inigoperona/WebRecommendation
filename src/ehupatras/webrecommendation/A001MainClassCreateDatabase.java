@@ -49,9 +49,6 @@ public class A001MainClassCreateDatabase {
 	 * @param databaseWD the database wd
 	 */
 	public void createDatabase(String databaseWD, int sizeDB){
-		// CREATE THE DATABASE
-		System.out.println("CREATE THE DATABASE");
-		
 		// Sampling
 		Sampling samp = new Sampling();
 		m_sessionsIDs = samp.getSample(sizeDB, (long)0, false);

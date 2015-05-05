@@ -22,8 +22,8 @@ public class A041MainClassPAMholdout {
 		param.loadDatabase();
 		param.loadDM();
 		param.loadHoldOut_cv();
-		param.createModelEvaluatorMedoids();
-		param.runModelEvaluatorM_pam();
+		param.createModelEvaluatorClustPAM();
+		param.runModelEvaluatorP();
 				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
