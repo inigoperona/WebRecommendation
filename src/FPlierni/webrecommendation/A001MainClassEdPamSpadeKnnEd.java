@@ -31,7 +31,8 @@ public class A001MainClassEdPamSpadeKnnEd {
 	public static void main(String[] args) {
 		
 		// folders
-		String var_base = "experiments_FPlierni_wr_11000";
+		//String var_base = "experiments_FPlierni_wr_11000";
+		String var_base = "experiments_Discapnet";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
@@ -52,7 +53,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 		// metrics' parameters
 		int var_modePrRe = 0; // 0: strict - 1: relax, precision and recall computation
 		float var_beta = 0.5f; // F-measured beta parameter
-		float[] var_confusionPoints = new float[]{0.25f,0.50f,0.75f}; // the stages were the navigation will be analyzed
+		float[] var_confusionPoints = new float[]{0.25f,0.50f}; // the stages were the navigation will be analyzed
 		int[] var_nrecsA = new int[]{4};
 		ArrayList<Integer> var_noProposeUrls = new ArrayList<Integer>(); // not let recommending. very very frequent URLs. They bias the results. 
 		//var_noProposeUrls.add(11); // homepage for example
@@ -127,7 +128,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 		
 		
 		// CLUSTERING: PAM
-		/*
+		
 		ModelEvaluatorClustPAM modelevPAM = 
 				new ModelEvaluatorClustPAM(
 						var_sequencesUHC, null, 
@@ -142,7 +143,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 			modelevPAM.saveClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".javaData");
 			modelevPAM.writeClusters(var_validationWD + var_clustWD + "/" + esperimentationStr + ".txt");
 		}
-		*/
+		
 		// CREATE THE MEDOIDS+URLs MODEL and VALIDATE IT
 		ModelEvaluatorMedoids modelevMed = 
 					new ModelEvaluatorMedoids(

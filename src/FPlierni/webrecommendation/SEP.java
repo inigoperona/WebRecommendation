@@ -80,8 +80,8 @@ public class SEP {
 				nodeArray.add(onode);
 				nodeId.add(node);
 				bestPartition.add(nodeArray);
-				unionC.add(unionCOP);
-				nodeC.add(nodeCOP);
+				unionC.add(1.0);
+				nodeC.add(1.0);
 			} else {
 				ArrayList<DendrogramNode> union = new ArrayList<DendrogramNode>();
 				DendrogramNode left = node.getLeft();
@@ -91,14 +91,24 @@ public class SEP {
 				int indexr = nodeId.indexOf(right);
 				union.addAll(bestPartition.get(indexr));
 				unionCOP = copIndex.computeCOP(union);
+				double unionCOP2=0.0;
+				int kasuak=0;
+				for (int n=0; n<union.size(); n++){
+					int indexU = nodeId.indexOf(union.get(n));
+					unionCOP2 = unionCOP2 + union.get(n).getObservationCount()*nodeC.get(indexU);
+					kasuak = kasuak + union.get(n).getObservationCount();
+				}
+				unionCOP2 = unionCOP2/kasuak;
+				double prop = (float)kasuak/(float)m_dendrogram.getRoot().getObservationCount();
+				unionCOP2 = unionCOP2*(1.0-prop);
 				ArrayList<DendrogramNode> nodeArray = new ArrayList<DendrogramNode>();
 				nodeArray.removeAll(nodeArray);
 				nodeArray.add(node);
 				nodeCOP = copIndex.computeCOP(nodeArray);
 				nodeId.add(node);
-				unionC.add(unionCOP);
+				unionC.add(unionCOP2);
 				nodeC.add(nodeCOP);
-				if (nodeCOP<unionCOP){
+				if (nodeCOP<unionCOP2){
 					bestPartition.add(nodeArray);
 				} else{
 					bestPartition.add(union);
