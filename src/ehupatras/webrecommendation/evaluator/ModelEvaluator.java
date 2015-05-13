@@ -78,10 +78,10 @@ public abstract class ModelEvaluator {
 	private float m_topicmatch = 0.5f;
 		// topic2: based on url clustering
 	/** The m_ url clustering dict. */
-		protected HashMap<Integer,Integer> m_UrlClusteringDict = null;
+	protected HashMap<Integer,Integer> m_UrlClusteringDict = null;
 	
 	/** The m_n diff clusters. */
-	private int m_nDiffClusters = 10;
+	private int m_nDiffClusters = -1;
 	// index pages
 	/** The m_homepages. */
 	private int[] m_homepages = null;
@@ -176,16 +176,22 @@ public abstract class ModelEvaluator {
 		m_modePrRe = modePrRe;
 		
 		// to convert from usage to URL
-		m_usage2contentFile = usage2contentFile;
-		m_conv = new URLconverterUsaCon(usage2contentFile);
+		if(!usage2contentFile.contains("empty.txt")){
+			m_usage2contentFile = usage2contentFile;
+			m_conv = new URLconverterUsaCon(usage2contentFile);
+		}
 		
 		// read similarity matrix
-		m_resSimilarityFile = resSimilarityFile;
-		this.readSimilarityMatrix(resSimilarityFile);
-		m_nURLs = m_UrlSimilarityMatrix_Content.length;
+		if(!resSimilarityFile.contains("empty.txt")){
+			m_resSimilarityFile = resSimilarityFile;
+			this.readSimilarityMatrix(resSimilarityFile);
+			m_nURLs = m_UrlSimilarityMatrix_Content.length;
+		}
 		
 		// convert the URL similarity matrix contentIDs to usageIDs
-		this.convertMatrixContent2Url();
+		if(!usage2contentFile.contains("empty.txt")){
+		  this.convertMatrixContent2Url();
+		}
 	}	
 	
 	/**
@@ -1003,7 +1009,9 @@ public abstract class ModelEvaluator {
 		m_url2topic = url2topic;
 		m_nDiffTopics = nDiffTopics;
 		m_topicmatch = topicmatch;
-		this.readUrlClustering(urlClusteringDictFile);
+		if(!urlClusteringDictFile.contains("empty.txt")){
+			this.readUrlClustering(urlClusteringDictFile);
+		}
 	}
 	
 	

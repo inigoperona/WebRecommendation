@@ -1,5 +1,7 @@
 package angelu.webrecommendation;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,13 +54,13 @@ public class A0000ParameterControl_angelu {
 	protected String m_usage2contentFile;
 	// structures usageID
 	/** The m_url i ds. */
-	protected ArrayList<Integer> m_urlIDs;
+	protected ArrayList<Integer> m_urlIDs = null;
 	
 	/** The m_url2topic. */
-	protected int[] m_url2topic;
+	protected int[] m_url2topic = null;
 	
 	/** The m_difftopics. */
-	protected int m_difftopics;
+	protected int m_difftopics = -1;
 	
 	// database
 	/** The m_database wd. */
@@ -82,20 +84,21 @@ public class A0000ParameterControl_angelu {
 	/** The m_sequences uh c_split. */
 	protected ArrayList<String[]> m_sequencesUHC_split = null;
 	
+	// size of the database
+	protected int m_sizeDB = 10000;
+	
 	// holdout / cross-validation
 	/** The m_n fold. */
 	protected int m_nFold = 10;
 	
 	/** The m_ptrain. */
-	protected int m_ptrain = 10;
+	protected int m_ptrain = 7;
 	
 	/** The m_pval. */
-	//protected int m_pval = 2;
-	protected int m_pval = 0;
+	protected int m_pval = 2;
 	
 	/** The m_ptest. */
-	//protected int m_ptest = 1;
-	protected int m_ptest = 0;
+	protected int m_ptest = 1;
 	
 	/** The m_train al. */
 	protected ArrayList<ArrayList<Long>> m_trainAL;
@@ -193,7 +196,7 @@ public class A0000ParameterControl_angelu {
 		System.out.println("Number of parameters: " + args.length);
 		if(args.length==0){
 			System.out.println("Parameters given by hand: ");
-			this.exampleParameters();
+			this.exampleParameters2();
 		} else {
 			// print parameters
 			System.out.println("Class: " + this.getClass().getCanonicalName());
@@ -306,6 +309,41 @@ public class A0000ParameterControl_angelu {
 		m_modePrRe = 1;
 	}
 	
+	public void exampleParameters2(){
+		m_base = "experiments_discapnet";
+		
+		m_preprocessingWD = m_base + "/01_preprocess";
+		m_logfile = "/empty.txt";
+		m_logfile = "/DB/DB9.txt"; // when we want to load session from a file
+		
+		m_url2topicFile = "/empty.txt";
+		// Topic
+		m_urlSimilarityMatrix = m_preprocessingWD + "/empty.txt";
+		m_urlRelationMatrix = m_preprocessingWD + "/empty.txt";
+		m_clusterPartitionFile = m_preprocessingWD + "/empty.txt";
+		///
+		m_usage2contentFile = m_preprocessingWD + "/empty.txt";
+		
+		m_databaseWD = m_base + "/02_database";
+		m_dmWD = "/DM_04_edit";
+		
+		m_validationWD = m_base + "/03_validation";
+		m_clustWD = "/pam_DM_04_edit";
+		m_profiWD = "/pam_DM_04_edit/spade1";
+		m_evalFile = "/evaluation.txt";
+		
+		m_noProposeUrls = new ArrayList<Integer>();
+		m_noProposeUrls.add(11);
+		m_noProposeUrls.add(74);
+		m_noProposeUrls.add(7);
+		m_noProposeUrls.add(89);
+		m_noProposeUrls.add(152);
+		
+		m_modePrRe = 1;
+	}
+	
+	
+	
 	// preprocess
 	
 	/**
@@ -331,7 +369,7 @@ public class A0000ParameterControl_angelu {
 	 */
 	public void createDatabase(){
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
-		database.createDatabase(m_databaseWD);
+		database.createDatabase(m_databaseWD, m_sizeDB);
 		m_sampleSessionIDs = database.getSessionsIDs();
 		m_sequencesUHC = database.getInstantiatedSequences();
 	}
@@ -345,6 +383,54 @@ public class A0000ParameterControl_angelu {
 		m_sampleSessionIDs = database.getSessionsIDs();
 		m_sequencesUHC = database.getInstantiatedSequences();
 	}
+	public void loadDatabase2(){
+		ArrayList<String[]> seqsDB = new ArrayList<String[]>();
+		ArrayList<Long> sesIdDB = new ArrayList<Long>();
+		
+		BufferedReader br = null;
+		try{
+			long ind = 0;
+			String sCurrentLine;
+			br = new BufferedReader(new FileReader(m_preprocessingWD + m_logfile));
+			while ((sCurrentLine = br.readLine()) != null) {
+				String[] sequenceA = sCurrentLine.split(",");
+				int seqlen = sequenceA.length - 1;
+				
+				// sessions IDs
+				int sesID = 0;
+				String sesIDstr = sequenceA[0];
+				
+				// sequence
+				String[] seqA = new String[seqlen]; 
+				for(int i=1; i<sequenceA.length; i++){
+					int urlInt = Integer.valueOf(sequenceA[i]).intValue();
+					String urlstr = urlInt + "C";
+					seqA[i-1] = urlstr;
+				}
+				
+				// add the sequence
+				seqsDB.add(seqA);
+				
+				// session ID
+				sesIdDB.add(ind);
+				ind++;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(br != null){
+					br.close();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	
+		// save the structures
+		m_sampleSessionIDs = sesIdDB;
+		m_sequencesUHC = seqsDB;
+	}
 	
 	// distance matrix
 	
@@ -352,7 +438,6 @@ public class A0000ParameterControl_angelu {
 	 * Creates the dm.
 	 */
 	public void createDM(){
-		this.loadDatabase();
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
 		dm.createDistanceMatrix(m_databaseWD + m_dmWD, 
 				m_sampleSessionIDs, m_sequencesUHC, 
@@ -447,11 +532,13 @@ public class A0000ParameterControl_angelu {
 	 * Load topic inf.
 	 */
 	public void loadTopicInf(){
-		A100MainClassAddContent cont = new A100MainClassAddContent();
-		Object[] objA = cont.loadUrlsTopic(m_preprocessingWD + m_url2topicFile, " ");
-		m_urlIDs = (ArrayList<Integer>)objA[0];
-		m_url2topic = (int[])objA[1];
-		m_difftopics = (int)objA[2];
+		if(!m_url2topicFile.contains("empty.txt")){
+		  A100MainClassAddContent cont = new A100MainClassAddContent();
+		  Object[] objA = cont.loadUrlsTopic(m_preprocessingWD + m_url2topicFile, " ");
+		  m_urlIDs = (ArrayList<Integer>)objA[0];
+		  m_url2topic = (int[])objA[1];
+		  m_difftopics = (int)objA[2];
+		}
 	}
 	
 	

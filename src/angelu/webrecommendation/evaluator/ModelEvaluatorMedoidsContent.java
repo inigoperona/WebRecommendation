@@ -85,7 +85,9 @@ public class ModelEvaluatorMedoidsContent
 			String selectedEnrichementStrategy,
 			String resRelationsFile){
 		m_enrichementStrategy = selectedEnrichementStrategy;
-		this.readRelationsMatrix(resRelationsFile);
+		if(!resRelationsFile.contains("empty.txt")){
+			this.readRelationsMatrix(resRelationsFile);
+		}
 		
 	}
 	

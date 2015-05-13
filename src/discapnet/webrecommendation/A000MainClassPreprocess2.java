@@ -1,6 +1,5 @@
 package discapnet.webrecommendation;
 
-import ehupatras.webrecommendation.A001MainClassCreateDatabase;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
