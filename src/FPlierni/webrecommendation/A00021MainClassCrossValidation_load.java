@@ -14,7 +14,7 @@ public class A00021MainClassCrossValidation_load {
 		// RUN
 		param.loadDatabase2();
 		param.loadDM();
-		param.createCrossValidation(7, 0, 3, 10);
+		param.createCrossValidation(7, 2, 1, 10);
 
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
