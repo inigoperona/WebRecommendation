@@ -494,6 +494,13 @@ public class A0000ParameterControl_angelu {
 		m_valAL   = honestmodelval.getValidation();
 		m_testAL  = honestmodelval.getTest();
 	}
+	public void createCrossValidation(int ptrain, int pval, int ptest, int nFold){
+		m_ptrain = ptrain;
+		m_pval = pval;
+		m_ptest = ptest;
+		m_nFold = nFold;
+		this.createCrossValidation();
+	}
 	
 	/**
 	 * Load hold out_cv.
