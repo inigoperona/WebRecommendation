@@ -1383,8 +1383,8 @@ public abstract class TestSetEvaluator {
 	public void writeResults(int j){
 		//VERSION: LIERNI
 		// write headers
-		System.out.print(" ,fold_" + j);
-		for (int l=0; l<19; l++){
+		System.out.print("fold_" + j);
+		for (int l=0; l<20; l++){
 			System.out.print(", ");
 		}
 		
@@ -1401,7 +1401,7 @@ public abstract class TestSetEvaluator {
 			System.out.print("," + m_fmeasure[i]);
 		}
 		
-		for (int l=0; l<15; l++){
+		for (int l=0; l<10; l++){
 			System.out.print(", ");
 		}
 		

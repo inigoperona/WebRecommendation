@@ -132,7 +132,7 @@ public class RecommenderKnnToClustersTopURLs
 		ArrayList<Float> distsL = new ArrayList<Float>();
 		
 		// medoids ordered from the nearest to farthest
-		Object[] objAa = this.knnSim();
+		Object[] objAa = this.knnSimShort();
 		int[] orderedMedoids = (int[])objAa[0];
 		float[] orderedSims = (float[])objAa[1]; // it can be null
 		
@@ -238,7 +238,9 @@ public class RecommenderKnnToClustersTopURLs
 				clustersAux.add(nearesCl);
 				clustersizesAux.add(m_clustersizes[nearesCl]);
 				distsAux.add(dist2clust);
-				value = (1.0f - dist2clust)*supports.get(j)/clustersizesAux.get(j);
+				value = (1.0f - dist2clust)*supports.get(j);
+				//value = (1.0f - dist2clust)+2*supports.get(j)/clustersizesAux.get(j);
+				//value = (1.0f - dist2clust)+supports.get(j);
 				valsAux.add(value);
 			}
 		}

@@ -122,7 +122,6 @@ public class ClusteringPAM {
 		    for(int j=0; j<nSeq; j++){
 		    	// j is a no-medoid case
 		    	if(m_medoids.contains(j)){ continue; }
-		      
 		    	// compute the contribution j does
 		    	double contribution = 0d;
 		    	for(int h=0; h<nSeq; h++){
@@ -140,8 +139,13 @@ public class ClusteringPAM {
 		    		representant = j;
 		    	}
 		    }
-		    m_medoids.add(representant);
+			if(representant!=-1){
+		    	m_medoids.add(representant);
+			}
 		}
+		
+		// update k
+		m_k = m_medoids.size();
 		
 		// print the medoids
 		System.out.print(" after build: medoids are ");

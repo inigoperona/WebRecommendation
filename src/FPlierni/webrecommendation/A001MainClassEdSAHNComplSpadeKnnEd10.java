@@ -32,8 +32,9 @@ public class A001MainClassEdSAHNComplSpadeKnnEd10 {
 	public static void main(String[] args) {
 		
 		// folders
-		String var_base = "experiments_FPlierni_wr_11000";
+		//String var_base = "experiments_FPlierni_wr_11000";
 		//String var_base = "experiments_FPlierni_wr_txikia";
+		String var_base = "experiments_Discapnet2";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";

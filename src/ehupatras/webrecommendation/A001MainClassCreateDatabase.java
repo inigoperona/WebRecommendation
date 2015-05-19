@@ -3,6 +3,10 @@ package ehupatras.webrecommendation;
 import ehupatras.webrecommendation.structures.*;
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
 import ehupatras.webrecommendation.modelvalidation.*;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 // TODO: Auto-generated Javadoc
@@ -77,6 +81,54 @@ public class A001MainClassCreateDatabase {
 		// INSTANCIATED SEQUENCES
 		SaveLoadObjects soseqs = new SaveLoadObjects();
 		m_sequences = (ArrayList<String[]>)soseqs.load(databaseWD + "/_sequencesUHC.javaData");
+	}
+	public void loadDatabase2(String seqfile){
+		ArrayList<String[]> seqsDB = new ArrayList<String[]>();
+		ArrayList<Integer> sesIdDB = new ArrayList<Integer>();
+		
+		BufferedReader br = null;
+		try{
+			int ind = 0;
+			String sCurrentLine;
+			br = new BufferedReader(new FileReader(seqfile));
+			while ((sCurrentLine = br.readLine()) != null) {
+				String[] sequenceA = sCurrentLine.split(",");
+				int seqlen = sequenceA.length - 1;
+				
+				// sessions IDs
+				int sesID = 0;
+				String sesIDstr = sequenceA[0];
+				
+				// sequence
+				String[] seqA = new String[seqlen]; 
+				for(int i=1; i<sequenceA.length; i++){
+					int urlInt = Integer.valueOf(sequenceA[i]).intValue();
+					String urlstr = urlInt + "C";
+					seqA[i-1] = urlstr;
+				}
+				
+				// add the sequence
+				seqsDB.add(seqA);
+				
+				// session ID
+				sesIdDB.add(ind);
+				ind++;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(br != null){
+					br.close();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	
+		// save the structures
+		m_sessionsIDs = sesIdDB;
+		m_sequences = seqsDB;
 	}
 	
 	/**

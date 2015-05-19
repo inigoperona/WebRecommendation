@@ -32,11 +32,12 @@ public class A001MainClassEdPamSpadeKnnEd {
 		
 		// folders
 		//String var_base = "experiments_FPlierni_wr_11000";
-		String var_base = "experiments_Discapnet";
+		String var_base = "experiments_Discapnet2";
+		//String var_base = "experiments_Ainhoa";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
-		String var_dmWD = "/DM_ED";
+		String var_dmWD = "/DM_EDk";
 		String var_validationWD = var_base + "/03_validation";
 		String var_clustWD = "/pam_DM_ED";
 		String var_profiWD = "/pam_DM_ED/spade1";
@@ -48,7 +49,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 		String var_usage2contentFile = var_preprocessingWD + "/Content/usa2cont.csv";
 		String var_evalFile = "/evaluation.txt";
 		// system's parameters
-		int[] var_ks = {50, 100, 150, 200, 300, 400, 500}; // number of clusters
+		int[] var_ks = {130}; // number of clusters
 		float[] var_seqweights = {0.20f}; // Sequence Mining algorithm's minimum support
 		// metrics' parameters
 		int var_modePrRe = 0; // 0: strict - 1: relax, precision and recall computation
@@ -67,26 +68,30 @@ public class A001MainClassEdPamSpadeKnnEd {
 		/////////////////////////////////////////////////////////////////////////////////////
 		
 		// LOAD PREPROCESS DATA
-		Website.setWorkDirectory(var_preprocessingWD);
+		/*Website.setWorkDirectory(var_preprocessingWD);
 		Website.load(); // Load "preprocessingWD/_Website.javaData"
 		WebAccessSequencesUHC.setWorkDirectory(var_preprocessingWD);
 		//WebAccessSequences.loadStructure(); // Load "preprocessingWD/_i_requests.javaData"
 		WebAccessSequences.loadSequences(); // Load "preprocessingWD/_sequences.javaData"
+		*/
 		
 		// LOAD DATABASE
 		// Load "databaseWD/_sessionIDs.javaData"
 		// Load "databaseWD/_sequencesUHC.javaData"
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
-		database.loadDatabase(var_databaseWD);
+		database.loadDatabase2(var_preprocessingWD + "/DB/DB0-9k.txt");
 		// sequences compound by request indexes:
 		ArrayList<Long> var_sampleSessionIDs = database.getSessionsIDs();
+		System.out.println("Sesiokop: "+ var_sampleSessionIDs.size());
 		// sequences compound by instantiation of requests into URL and role:
 		ArrayList<String[]> var_sequencesUHC = database.getInstantiatedSequences();
 		
 		// LOAD DISTANCE MATRIX
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
+		//dm.createDistanceMatrix(var_databaseWD, var_sampleSessionIDs, var_sequencesUHC, new float[][]{{0f,0f,0f}, {0f,0f,0f}, {0f,0f,0f}} );
 		dm.loadDistanceMatrix(var_databaseWD + var_dmWD); // Load "databaseWD/dmWD/_matrix.javaData"
 		Matrix var_matrix = dm.getMatrix();
+		System.out.println("Kasu kopurua: " + var_matrix.getMatrix(false).length);
 		
 		// CROSS-VALIDATION, 10-fold:
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
@@ -117,12 +122,16 @@ public class A001MainClassEdPamSpadeKnnEd {
 		// Load "validationWD/_holdoutTest.javaData"
 		
 		// LOAD TOPIC INFORMATION
+		/*
 		A100MainClassAddContent cont = new A100MainClassAddContent();
 		Object[] objA = cont.loadUrlsTopic(var_preprocessingWD + var_url2topicFile, " ");
 		ArrayList<Integer> var_urlIDs = (ArrayList<Integer>)objA[0];
 		int[] var_url2topic = (int[])objA[1];
 		int var_difftopics = (int)objA[2];
-		
+		*/
+		ArrayList<Integer> var_urlIDs = null;
+		int[] var_url2topic = null;
+		int var_difftopics = -1;
 		///////////////////////////////////////////////////////////////////////
 		
 		
@@ -187,6 +196,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 					System.out.print(results);
 				}	
 
+				System.out.println();
 				
 				// for each number of recommendation
 				// TEST //

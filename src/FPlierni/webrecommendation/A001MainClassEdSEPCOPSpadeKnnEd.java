@@ -35,13 +35,13 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 		//String var_base = "experiments_FPlierni_wr_11000";
 		//String var_base = "experiments_FPlierni_wr_txikia";
 		//String var_base = "experiments_ehupatras_3";
-		String var_base = "experiments_Discapnet";
+		String var_base = "experiments_Discapnet2";
 		String var_preprocessingWD = var_base + "/01_preprocess";
 		//String var_preprocessingWD = args[1]
 		String var_databaseWD = var_base + "/02_database";
 		String var_dmWD = "/DM_ED";
 		String var_validationWD = var_base + "/03_validation";
-		String var_clustWD = "/SAHN_DM_ED";
+		String var_clustWD = "/pam_DM_ED";
 		String var_profiWD = "/pam_DM_ED/spade1";
 		// files
 		String var_url2topicFile = "/Content/URLs_to_topic_TestuHutsa_th0_usageID.txt";
@@ -82,7 +82,7 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 		// Load "databaseWD/_sessionIDs.javaData"
 		// Load "databaseWD/_sequencesUHC.javaData"
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
-		database.loadDatabase(var_databaseWD);
+		database.loadDatabase2(var_preprocessingWD + "/DB/DB0-9.txt");
 		// sequences compound by request indexes:
 		ArrayList<Long> var_sampleSessionIDs = database.getSessionsIDs();
 		// sequences compound by instantiation of requests into URL and role:
@@ -102,24 +102,20 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 		int m_nFold = 10;
 		honestmodelval.prepareData(var_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
 		honestmodelval.save(var_validationWD);
-		
-		//load
-		//honestmodelval.load(var_validationWD);
 
 		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
 		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
 		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();
 		// load
-		/*
-		honestmodelval.load(var_validationWD);
+		
+		/*honestmodelval.load(var_validationWD);
 		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
 		ArrayList<ArrayList<Long>> var_trainAL = new ArrayList<ArrayList<Long>>();		
 		ArrayList<ArrayList<Long>> valALaux  = honestmodelval.getValidation();
 		ArrayList<ArrayList<Long>> var_valAL  = new ArrayList<ArrayList<Long>>();
 		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
-		ArrayList<ArrayList<Long>> var_testAL = new ArrayList<ArrayList<Long>>();
-		*/
-		
+		ArrayList<ArrayList<Long>> var_testAL = new ArrayList<ArrayList<Long>>();*/
+				
 		//HOLD-OUT:
 		/*
 		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
@@ -198,6 +194,7 @@ public class A001MainClassEdSEPCOPSpadeKnnEd {
 				System.out.print(results);
 			}	
 
+			System.out.println();
 			
 			// for each number of recommendation
 			// TEST //
