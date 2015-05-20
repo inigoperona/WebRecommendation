@@ -291,7 +291,11 @@ public abstract class SequenceEvaluator {
 	 * @param sequence the sequence
 	 */
 	private void constructor2(ArrayList<String> sequence){
-		m_usageURLs = m_conv.getUsageUrls();
+		if(m_conv!=null){
+			m_usageURLs = m_conv.getUsageUrls();
+		} else {
+			m_usageURLs = null;
+		}
 		
 		m_sequence = sequence;
 		m_sequenceURL = sequence;
@@ -497,27 +501,29 @@ public abstract class SequenceEvaluator {
 		this.computeHitScore(step, recommendatios);
 		this.computeClickSoonScore(stepIndex, recommendatios);
 		this.computeConfusionMatrix(stepIndex, recommendatios);
-		this.cosineEvaluation(stepIndex, recommendatios);
+		if(m_conv!=null){
+			this.cosineEvaluation(stepIndex, recommendatios);
 		
-		// TOPIC1 level
-		this.computeHitScoreTop(step, recommendatios, true);
-		this.computeClickSoonScoreTop(stepIndex, recommendatios, true);
-		this.computeConfusionMatrixTop(stepIndex, recommendatios, true);
+			// TOPIC1 level
+			this.computeHitScoreTop(step, recommendatios, true);
+			this.computeClickSoonScoreTop(stepIndex, recommendatios, true);
+			this.computeConfusionMatrixTop(stepIndex, recommendatios, true);
 		
-		// TOPIC2 level
-		this.computeHitScoreTop(step, recommendatios, false);
-		this.computeClickSoonScoreTop(stepIndex, recommendatios, false);
-		this.computeConfusionMatrixTop(stepIndex, recommendatios, false);
+			// TOPIC2 level
+			this.computeHitScoreTop(step, recommendatios, false);
+			this.computeClickSoonScoreTop(stepIndex, recommendatios, false);
+			this.computeConfusionMatrixTop(stepIndex, recommendatios, false);
 		
-		// URL level - homepage always correct
-		this.computeHitScore_OkHome(step, recommendatios);
-		this.computeClickSoonScore_OkHome(stepIndex, recommendatios);
-		this.computeConfusionMatrix_OkHome(stepIndex, recommendatios);
+			// URL level - homepage always correct
+			this.computeHitScore_OkHome(step, recommendatios);
+			this.computeClickSoonScore_OkHome(stepIndex, recommendatios);
+			this.computeConfusionMatrix_OkHome(stepIndex, recommendatios);
 		
-		// TOPIC level - homepage always correct
-		this.computeHitScoreTop_OkHome(step, recommendatios);
-		this.computeClickSoonScoreTop_OkHome(stepIndex, recommendatios);
-		this.computeConfusionMatrixTop_OkHome(stepIndex, recommendatios);
+			// TOPIC level - homepage always correct
+			this.computeHitScoreTop_OkHome(step, recommendatios);
+			this.computeClickSoonScoreTop_OkHome(stepIndex, recommendatios);
+			this.computeConfusionMatrixTop_OkHome(stepIndex, recommendatios);
+		}
 	}
 	
 	
@@ -602,31 +608,35 @@ public abstract class SequenceEvaluator {
 		float re = this.computeRecall(stepIndex, recommendatios);
 		m_precision[stepIndex] = pr;
 		m_recall[stepIndex] = re;
-		float cs = this.cosineEvaluation(stepIndex, recommendatios);
-		m_cosineSim[stepIndex] = cs;
-		float onenn = this.oneNNmetric(stepIndex, recommendatios);
-		m_oneNNmetric[stepIndex] = onenn;
-		float onennN1 = this.oneNNmetricNorm1(stepIndex, recommendatios);
-		m_oneNNmetricNorm1[stepIndex] = onennN1;
-		float onennN2 = this.oneNNmetricNorm2(stepIndex, recommendatios);
-		m_oneNNmetricNorm2[stepIndex] = onennN2;
-		float onennRank = this.oneNNmetricRank(stepIndex, recommendatios);
-		m_oneNNmetricRank[stepIndex] = onennRank;
+		if(m_conv!=null){
+			float cs = this.cosineEvaluation(stepIndex, recommendatios);
+			m_cosineSim[stepIndex] = cs;
+			float onenn = this.oneNNmetric(stepIndex, recommendatios);
+			m_oneNNmetric[stepIndex] = onenn;
+			float onennN1 = this.oneNNmetricNorm1(stepIndex, recommendatios);
+			m_oneNNmetricNorm1[stepIndex] = onennN1;
+			float onennN2 = this.oneNNmetricNorm2(stepIndex, recommendatios);
+			m_oneNNmetricNorm2[stepIndex] = onennN2;
+			float onennRank = this.oneNNmetricRank(stepIndex, recommendatios);
+			m_oneNNmetricRank[stepIndex] = onennRank;
+		}
 		
 		float prModel = this.computePrecision(0, recommendatios);
 		float reModel = this.computeRecall(0, recommendatios);
 		m_precisionModel[stepIndex] = prModel;
 		m_recallModel[stepIndex] = reModel;
-		float csModel = this.cosineEvaluation(0, recommendatios);
-		m_cosineSimModel[stepIndex] = csModel;
-		float onennModel = this.oneNNmetric(0, recommendatios);
-		m_oneNNmetricModel[stepIndex] = onennModel;
-		float onennNorm1Model = this.oneNNmetricNorm1(0, recommendatios);
-		m_oneNNmetricNorm1Model[stepIndex] = onennNorm1Model;
-		float onennNorm2Model = this.oneNNmetricNorm2(0, recommendatios);
-		m_oneNNmetricNorm2Model[stepIndex] = onennNorm2Model;
-		float onennRankModel = this.oneNNmetricRank(0, recommendatios);
-		m_oneNNmetricRankModel[stepIndex] = onennRankModel;
+		if(m_conv!=null){
+			float csModel = this.cosineEvaluation(0, recommendatios);
+			m_cosineSimModel[stepIndex] = csModel;
+			float onennModel = this.oneNNmetric(0, recommendatios);
+			m_oneNNmetricModel[stepIndex] = onennModel;
+			float onennNorm1Model = this.oneNNmetricNorm1(0, recommendatios);
+			m_oneNNmetricNorm1Model[stepIndex] = onennNorm1Model;
+			float onennNorm2Model = this.oneNNmetricNorm2(0, recommendatios);
+			m_oneNNmetricNorm2Model[stepIndex] = onennNorm2Model;
+			float onennRankModel = this.oneNNmetricRank(0, recommendatios);
+			m_oneNNmetricRankModel[stepIndex] = onennRankModel;
+		}
 	}
 	
 	/**
