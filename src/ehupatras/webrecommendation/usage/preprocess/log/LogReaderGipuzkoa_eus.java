@@ -1,32 +1,28 @@
 package ehupatras.webrecommendation.usage.preprocess.log;
 
-import ehupatras.webrecommendation.structures.WebAccessSequences;
-import ehupatras.webrecommendation.structures.Website;
-import ehupatras.webrecommendation.structures.page.Page;
-import ehupatras.webrecommendation.structures.page.PageBidasoaTurismo;
-import ehupatras.webrecommendation.structures.request.Request;
-import ehupatras.webrecommendation.structures.request.RequestBidasoaTurismo;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class LogReaderBidasoaTurismo.
- */
-public class LogReaderBidasoaTurismo extends LogReader {
+import ehupatras.webrecommendation.structures.WebAccessSequences;
+import ehupatras.webrecommendation.structures.Website;
+import ehupatras.webrecommendation.structures.page.Page;
+import ehupatras.webrecommendation.structures.page.PageGipuzkoa_eus;
+import ehupatras.webrecommendation.structures.request.Request;
+import ehupatras.webrecommendation.structures.request.RequestGipuzkoa_eus;
+
+public class LogReaderGipuzkoa_eus extends LogReader {
 
 	// HashTable to compute userID from the IP address
 	/** The m_ip2id ht. */
 	private Hashtable<String,Integer> m_ip2idHT = new Hashtable<String,Integer>();
-	
+		
 	// log file to analyze
 	/** The m_logfilenames a. */
 	private String[] m_logfilenamesA;
-	
+
 	// read the log file and save the attributes we need
 	/* (non-Javadoc)
 	 * @see ehupatras.webrecommendation.usage.preprocess.log.LogReader#readLogFile(java.lang.String[])
@@ -43,7 +39,7 @@ public class LogReaderBidasoaTurismo extends LogReader {
 		try{
 			reader = new BufferedReader(new FileReader(logfilenamei));
 		} catch(FileNotFoundException ex){
-			System.err.println("[ehupatras.webrecommendation.preprocess.log.LogReaderBidasoaTurismo] " +
+			System.err.println("[ehupatras.webrecommendation.preprocess.log.LogReaderDiscapnet] " +
 					"Not file found: " + logfilenamei);
 			System.err.println(ex.getMessage());
 			System.exit(1);
@@ -56,13 +52,14 @@ public class LogReaderBidasoaTurismo extends LogReader {
 			while ((line = reader.readLine()) != null) {
 				// split the request line
 				String[] lineA = line.split(" ");
-				if(lineA.length<9){ continue; }
+				if(lineA.length<12){ continue; }
 				
-				// the IP address field
+				// the fields
 				String ip = lineA[0];
 				if(!m_ip2idHT.containsKey(ip)){
 					ipID++;
 					m_ip2idHT.put(ip, new Integer(ipID));
+
 				}
 				
 				// Two not interesting fields.
@@ -90,7 +87,7 @@ public class LogReaderBidasoaTurismo extends LogReader {
 				String urlrequest2 = urlrequest.substring(2, urlrequest.length()-1);
 				String[] urlrequest2A = urlrequest2.split(" ");
 				String method = urlrequest2A[0];
-				Page page = new PageBidasoaTurismo(urlrequest2A[1]);
+				Page page = new PageGipuzkoa_eus(urlrequest2A[1]); // Create page
 				String protocol = urlrequest2A[2];
 				
 				// status field
@@ -117,11 +114,11 @@ public class LogReaderBidasoaTurismo extends LogReader {
 					useragent = useragent + " " + lineA[i];
 					if(lineA[i].endsWith("\"")){ break; }
 					i++;
-				}
+				}	
 				
 				// Create a request object
-				Request req = new RequestBidasoaTurismo(ip, ipID, time, 
-						method, page, protocol, status, 
+				Request req = new RequestGipuzkoa_eus(ip, m_ip2idHT.get(ip), 
+						time, method, page, protocol, status, 
 						reqsize, reference, useragent);
 				
 				// if it is valid request, store it
@@ -133,7 +130,7 @@ public class LogReaderBidasoaTurismo extends LogReader {
 				}
 			}
 		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.preprocess.log.LogReaderBidasoaTurismo] " +
+			System.err.println("[ehupatras.webrecommendation.preprocess.log.LogReaderDiscapnet] " +
 					"Problems reading from the file: " + logfilenamei);
 			System.err.println(ex.getMessage());
 			System.exit(1);
@@ -143,13 +140,19 @@ public class LogReaderBidasoaTurismo extends LogReader {
 		try{
 			reader.close();
 		} catch (IOException ex){
-			System.err.println("[ehupatras.webrecommendation.preprocess.log.LogReaderBidasoaTurismo] " +
+			System.err.println("[ehupatras.webrecommendation.preprocess.log.LogReaderDiscapnet] " +
 					"Problems at closing the file: " + logfilenamei);
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
 		
 		} // for each log file
+		
+		
+		// order the WebAccessSequences
+		System.out.println("  [" + System.currentTimeMillis() + 
+				"] Ordering the requests. ");
+		WebAccessSequences.orderRequests();
 	}
 	
 }

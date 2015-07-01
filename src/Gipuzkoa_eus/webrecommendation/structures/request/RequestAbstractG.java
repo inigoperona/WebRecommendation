@@ -1,4 +1,4 @@
-package ehupatras.webrecommendation.structures.request;
+package Gipuzkoa_eus.webrecommendation.structures.request;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -9,7 +9,7 @@ import ehupatras.webrecommendation.structures.page.Page;
 /**
  * The Class RequestAbstract.
  */
-public abstract class RequestAbstract
+public abstract class RequestAbstractG
 						implements Request, Serializable {
 
 	// The Serializable classes needs it 
@@ -29,7 +29,7 @@ public abstract class RequestAbstract
 	protected Calendar m_time = null;
 	
 	/** The m_method. */
-	protected String m_method = "-";
+	private String m_method = "-";
 	
 	/** The m_formated ur lname. */
 	private String m_formatedURLname = "-";	
@@ -38,7 +38,7 @@ public abstract class RequestAbstract
 	private String m_protocol = "-";
 	
 	/** The m_status. */
-	protected int m_status = -1;
+	private int m_status = -1;
 	
 	/** The m_reqsize. */
 	private String m_reqsize = "-";
@@ -57,7 +57,7 @@ public abstract class RequestAbstract
 
 	// if it is valid request or not
 	/** The m_isvalid. */
-	protected boolean m_isvalid = true;
+	private boolean m_isvalid = true;
 	// if it is valid for link prediction or not
 	/** The m_isvalid lp. */
 	private boolean m_isvalidLP = true;
@@ -94,7 +94,7 @@ public abstract class RequestAbstract
 	 * @param reference the reference
 	 * @param useragent the useragent
 	 */
-	public RequestAbstract(String ip, int ipID, String time, 
+	public RequestAbstractG(String ip, int ipID, String time, 
 			String method, Page page, String protocol,
 			int status, String reqsize, String reference, String useragent){
 		
@@ -164,8 +164,8 @@ public abstract class RequestAbstract
 			m_isvalid = false;
 		}
 		
-		// the status field has to be of the format 2xx
-		if(m_status/100 != 2){
+		// the status field has to be of the format 2xx or 3xx
+		if(m_status/100 != 2 && m_status/100!=3){
 			m_isvalid = false;
 		}
 	}
@@ -205,6 +205,8 @@ public abstract class RequestAbstract
 		if(	useragent2.contains("macintosh") ){ m_useragentLabel = m_useragentLabel + "_os_macintosh"; }
 		if(	useragent2.contains("linux") ){ m_useragentLabel = m_useragentLabel + "_os_linux"; }
 		if(	useragent2.contains("mobile") ){ m_useragentLabel = m_useragentLabel + "_os_mobile"; }
+		if(	useragent2.contains("android") ){ m_useragentLabel = m_useragentLabel + "_os_android"; }
+		if(	useragent2.contains("iphone") ){ m_useragentLabel = m_useragentLabel + "_os_iphone"; }
 	}
 	
 	/**
@@ -212,29 +214,55 @@ public abstract class RequestAbstract
 	 */
 	protected void analyzeReference(){
 		String reference2 = m_reference.toLowerCase();
-		// sites related with discapnet
-		if(	reference2.contains("discapnet") ){ m_referenceLabel = m_referenceLabel + "_disc"; }
-		if(	reference2.contains("www.discapnet.es") ){ m_referenceLabel = m_referenceLabel + "_disc"; }
-		if(	reference2.contains("discapnet.es") ){ m_referenceLabel = m_referenceLabel + "_disc_subdomain"; }
-		if(	reference2.contains("technosite") ){ m_referenceLabel = m_referenceLabel + "_disc_technosite"; }
-		if(	reference2.contains("once") ){ m_referenceLabel = m_referenceLabel + "_disc_once"; }
+		// sites related with gipuzkoa.eus/net
+		//	if(	reference2.contains("discapnet") ){ m_referenceLabel = m_referenceLabel + "_disc"; }
+		if(	reference2.contains("wwww.gipuzkoa.net") ){ m_referenceLabel = m_referenceLabel + "_wwwgipnet"; }
+		if(	reference2.contains("wwww.gipuzkoa.eus") ){ m_referenceLabel = m_referenceLabel + "_wwwgipeus"; }
+		//if(	reference2.contains("discapnet.es") ){ m_referenceLabel = m_referenceLabel + "_disc_subdomain"; }
+		if(	reference2.contains("gipuzkoa.net") ){ m_referenceLabel = m_referenceLabel + "_gipnet"; }
+		if(	reference2.contains("gipuzkoa.eus") ){ m_referenceLabel = m_referenceLabel + "_gipeus"; }
+		//if(	reference2.contains("technosite") ){ m_referenceLabel = m_referenceLabel + "_disc_technosite"; }
+		//if(	reference2.contains("once") ){ m_referenceLabel = m_referenceLabel + "_disc_once"; }
+		//if(	reference2.contains("wwww2.gipuzkoa.net") ){ m_referenceLabel = m_referenceLabel + "_Zergabide_inst"; }
+		//if(	reference2.contains("b5m.gipuzkoa.net") ){ m_referenceLabel = m_referenceLabel + "_Gipuzkoamapak"; }
+		
 		// search engine 
 		if(	reference2.contains("google") ||  reference2.contains("goo.gl") ){ m_referenceLabel = m_referenceLabel + "_se_google"; }
 		if(	reference2.contains("yahoo") ){ m_referenceLabel = m_referenceLabel + "_se_yahoo"; }
 		if(	reference2.contains("ask") ){ m_referenceLabel = m_referenceLabel + "_se_ask"; }
-		if(	reference2.contains("iconoce") ){ m_referenceLabel = m_referenceLabel + "_se_iconoce"; }
+		//if(	reference2.contains("iconoce") ){ m_referenceLabel = m_referenceLabel + "_se_iconoce"; }
 		if(	reference2.contains("bing") ){ m_referenceLabel = m_referenceLabel + "_se_bing"; }
 		// social networks
 		if(	reference2.contains("facebook") ){ m_referenceLabel = m_referenceLabel + "_sn_facebook"; }
-		if(	reference2.contains("t.co") || reference2.contains("twitter.com")){ m_referenceLabel = m_referenceLabel + "_sn_twitter"; }
+		if(	reference2.contains("twitter.com")){ m_referenceLabel = m_referenceLabel + "_sn_twitter"; }
 		if(	reference2.contains("blogspot") ){ m_referenceLabel = m_referenceLabel + "_sn_blogspot"; }
 		if(	reference2.contains("wordpress") ){ m_referenceLabel = m_referenceLabel + "_sn_wordpress"; }
 		if(	reference2.contains("meneame") ){ m_referenceLabel = m_referenceLabel + "_sn_meneame"; }
 		// other
-		if(	reference2.contains("imente") ){ m_referenceLabel = m_referenceLabel + "_oth_imente"; }
-		if(	reference2.contains("bit.ly") ){ m_referenceLabel = m_referenceLabel + "_oth_bit.ly"; }
+	
+		if(	reference2.contains("bbs.soul-plus.net")||
+			reference2.contains("freesex.mobi")||
+			reference2.contains("fuli8.erog.fr")||
+			reference2.contains("www.flyflv.com")||
+			reference2.contains("www.forum78.com")||
+			reference2.contains("www.freemomson.com")||
+			reference2.contains("www.fuqer.com")||
+			reference2.contains("www.haoxiee.net")||
+			reference2.contains("www.ijizz.mobi")||
+			reference2.contains("www.javlibrary.com")||
+			reference2.contains("www.jinxiujiaqi.com")||
+			reference2.contains("www.jz199.com")||
+			reference2.contains("www.keezmovies.com")||
+			reference2.contains("www.pixiv.net")||
+			reference2.contains("www.pornhd.com")||
+			reference2.contains("www.pornhub.com")||
+			reference2.contains("xxoogif.com")
+			){ m_referenceLabel = m_referenceLabel + "_porn"; }
+		
+		//if(	reference2.contains("imente") ){ m_referenceLabel = m_referenceLabel + "_oth_imente"; }
+		//if(	reference2.contains("bit.ly") ){ m_referenceLabel = m_referenceLabel + "_oth_bit.ly"; }
 		if(	reference2.contains("babylon") ){ m_referenceLabel = m_referenceLabel + "_oth_babylon"; }
-		if(	reference2.contains("portalento") ){ m_referenceLabel = m_referenceLabel + "_oth_portalento"; }
+		//if(	reference2.contains("portalento") ){ m_referenceLabel = m_referenceLabel + "_oth_portalento"; }
 		if(	reference2.contains("wikipedia") ){ m_referenceLabel = m_referenceLabel + "_oth_wikipedia"; }
 		if(	reference2.contains("173.194") ){ m_referenceLabel = m_referenceLabel + "_oth_ehu"; }
 	}
