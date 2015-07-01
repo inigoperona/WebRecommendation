@@ -120,7 +120,7 @@ public class LogReaderBidasoaTurismo extends LogReader {
 				}
 				
 				// Create a request object
-				Request req = new RequestBidasoaTurismo(ip, ipID, time, 
+				Request req = new RequestBidasoaTurismo(ip, m_ip2idHT.get(ip), time, 
 						method, page, protocol, status, 
 						reqsize, reference, useragent);
 				

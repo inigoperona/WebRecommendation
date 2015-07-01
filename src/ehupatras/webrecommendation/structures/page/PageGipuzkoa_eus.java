@@ -2,8 +2,6 @@ package ehupatras.webrecommendation.structures.page;
 
 import java.text.Normalizer;
 
-import Gipuzkoa_eus.webrecommendation.structures.page.PageAbstractG;
-
 //TODO: Auto-generated Javadoc
 /**
 * The Class PageGipuzkoa_eus.

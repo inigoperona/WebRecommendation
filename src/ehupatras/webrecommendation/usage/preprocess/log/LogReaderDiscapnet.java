@@ -102,7 +102,7 @@ public class LogReaderDiscapnet extends LogReader {
 				
 			
 				// Create a request object
-				Request req = new RequestDiscapnet(ip, ipID, time, 
+				Request req = new RequestDiscapnet(ip, m_ip2idHT.get(ip), time, 
 						method, page, "-", statuscode, 
 						reqsize, reference, useragent);
 				
