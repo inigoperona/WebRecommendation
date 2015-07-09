@@ -119,7 +119,8 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 				// Create a request object
 				Request req = new RequestGipuzkoa_eus(ip, m_ip2idHT.get(ip), 
 						time, method, page, protocol, status, 
-						reqsize, reference, useragent);
+						reqsize, reference, useragent,
+						h);
 				
 				// if it is valid request, store it
 				if(req.getIsValid()){

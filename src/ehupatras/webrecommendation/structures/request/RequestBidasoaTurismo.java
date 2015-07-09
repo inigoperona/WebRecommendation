@@ -33,8 +33,9 @@ public class RequestBidasoaTurismo
 	 */
 	public RequestBidasoaTurismo(String ip, int ipID, String time, 
 			String method, Page page, String protocol,
-			int status, String reqsize, String reference, String useragent){
-		super(ip, ipID, time, method, page, protocol, status, reqsize, reference, useragent);
+			int status, String reqsize, String reference, String useragent,
+			int logfilenumber){
+		super(ip, ipID, time, method, page, protocol, status, reqsize, reference, useragent, logfilenumber);
 	}
 	
 	

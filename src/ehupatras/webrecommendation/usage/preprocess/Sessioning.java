@@ -37,6 +37,7 @@ public class Sessioning {
 			Request actualreq = WebAccessSequences.getRequest(i);
 			int actualuser = actualreq.getUserID();
 			long actualtime = actualreq.getTimeInMillis();
+			int actualLogFileNumb = actualreq.getLogFileNumber();
 			if(oldrequests.containsKey(actualuser)){
 				Object[] objA = oldrequests.get(actualuser);
 				int oldsessioni = ((Integer)objA[0]).intValue();
@@ -44,8 +45,11 @@ public class Sessioning {
 				int oldindex = ((Integer)objA[2]).intValue();
 				float sum = ((Float)objA[3]).floatValue();
 				int nreq = ((Integer)objA[4]).intValue();
+				int oldLogFileNumb = ((Integer)objA[5]).intValue();
 				long elapsedTimeInSeconds = (actualtime-oldtime)/1000;
-				if( m_maxLenghtOfTheSequence>=nreq && elapsedTimeInSeconds<=expiredTimeInSeconds ){
+				if( 	oldLogFileNumb==actualLogFileNumb &&
+						nreq<=m_maxLenghtOfTheSequence && 
+						elapsedTimeInSeconds<=expiredTimeInSeconds ){
 					// this request is in the same session
 					float oldelapssedtime = (float)(actualtime-oldtime);
 					sum = sum + oldelapssedtime;
@@ -53,7 +57,7 @@ public class Sessioning {
 					// we now know the elapsed time, so, update the old requests
 					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni);
 					// Update the user with the actual request information
-					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, sum, nreq);
+					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, sum, nreq, oldLogFileNumb);
 					oldrequests.put(actualuser, objAr);
 				} else {
 					// update the last request of the previous session
@@ -61,11 +65,11 @@ public class Sessioning {
 					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni);
 					// now start a new session to the user
 					oldsessioni++;
-					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, 0.0f, 1);
+					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, 0.0f, 1, actualLogFileNumb);
 					oldrequests.put(actualuser, objAr);
 				}
 			} else {
-				Object[] objAr = this.createOldRequestsObj(1, actualtime, i, 0.0f, 1);
+				Object[] objAr = this.createOldRequestsObj(1, actualtime, i, 0.0f, 1, actualLogFileNumb);
 				oldrequests.put(actualuser, objAr);
 			}
 		}
@@ -118,13 +122,16 @@ public class Sessioning {
 	 * @param sessionNumReqs the session num reqs
 	 * @return the object[]
 	 */
-	private Object[] createOldRequestsObj(int sessionNumber, long starttime, int startIndex, float sessionDuration, int sessionNumReqs){
+	private Object[] createOldRequestsObj(int sessionNumber, long starttime, int startIndex, 
+			float sessionDuration, int sessionNumReqs,
+			int logFileNUmb){
 		Object[] objAr = new Object[5];
 		objAr[0] = new Integer(sessionNumber); // session number
 		objAr[1] = new Long(starttime); // last timestamp
 		objAr[2] = new Integer(startIndex); // last request index
 		objAr[3] = new Float(sessionDuration); // accumulated sum of elapsed times
 		objAr[4] = new Integer(sessionNumReqs); // number of request in the session so far
+		objAr[5] = new Integer(logFileNUmb); // the log file number form where the request was stored
 		return objAr;
 	}
 	

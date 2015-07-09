@@ -97,4 +97,6 @@ public interface Request {
 	 * @return the formated url name
 	 */
 	public abstract String getFormatedUrlName();
+	
+	public int getLogFileNumber();
 }
