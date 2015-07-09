@@ -222,8 +222,8 @@ public class A000MainClassPreprocess {
 		String basedirectory = "experiments_gieus/00_preprocess";
 		String logfilesIndex = "/loglist2.txt";
 		
-		//basedirectory = args[0];
-		//logfilesIndex = args[1];
+		basedirectory = args[0];
+		logfilesIndex = args[1];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(basedirectory);

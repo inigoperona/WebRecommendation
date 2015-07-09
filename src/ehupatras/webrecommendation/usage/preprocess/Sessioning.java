@@ -125,7 +125,7 @@ public class Sessioning {
 	private Object[] createOldRequestsObj(int sessionNumber, long starttime, int startIndex, 
 			float sessionDuration, int sessionNumReqs,
 			int logFileNUmb){
-		Object[] objAr = new Object[5];
+		Object[] objAr = new Object[6];
 		objAr[0] = new Integer(sessionNumber); // session number
 		objAr[1] = new Long(starttime); // last timestamp
 		objAr[2] = new Integer(startIndex); // last request index
