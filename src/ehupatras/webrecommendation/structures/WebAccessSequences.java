@@ -865,4 +865,8 @@ public class WebAccessSequences {
 		}
 	}
 	
+	public static void setnMemory(int nmem){
+		m_nMemory = nmem;
+	}
+	
 }

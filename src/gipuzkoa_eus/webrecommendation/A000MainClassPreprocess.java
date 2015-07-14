@@ -52,12 +52,15 @@ public class A000MainClassPreprocess {
 
 		
 		// SESSIONING //
+		WebAccessSequences.setnMemory(40); // 60MBytes * 40moduls = 2400Mbytes
 		Sessioning ses = new Sessioning();
 	
 		// create sessions
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
-		ses.createSessions(10, 1000); // maximum period of inactivity
+			// maximum period of inactivity 10 minutes
+			// maximum session length
+		ses.createSessions(10, 200); 
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
