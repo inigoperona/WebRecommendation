@@ -21,7 +21,7 @@ public class A000MainClassPreprocess {
 		// start preprocessing
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] PREPROCESSING.");
-		
+		WebAccessSequences.setnMemory(40); // 60MBytes * 40moduls = 2400Mbytes
 
 		// FILTER LOGS //
 		LogReader logreader = new LogReaderGipuzkoa_eus();
@@ -52,7 +52,6 @@ public class A000MainClassPreprocess {
 
 		
 		// SESSIONING //
-		WebAccessSequences.setnMemory(40); // 60MBytes * 40moduls = 2400Mbytes
 		Sessioning ses = new Sessioning();
 	
 		// create sessions

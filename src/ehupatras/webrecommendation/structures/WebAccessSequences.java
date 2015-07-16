@@ -86,6 +86,13 @@ public class WebAccessSequences {
 	
 	// protected constructor
 	static {
+		WebAccessSequences.initmodulus();
+	}
+	
+	private static void initmodulus(){
+		m_filterlogS = null;
+		m_actualloadedmodulusS = null;
+		System.gc();
 		m_filterlogS = new ArrayList<ArrayList<Request>>();
 		m_actualloadedmodulusS = new ArrayList<Integer>();
 		for(int i=0; i<m_nMemory; i++){
@@ -93,7 +100,6 @@ public class WebAccessSequences {
 			m_filterlogS.add(null);
 		}
 	}
-	
 	
 	// to have more control in modulus change
 	/**
@@ -867,6 +873,7 @@ public class WebAccessSequences {
 	
 	public static void setnMemory(int nmem){
 		m_nMemory = nmem;
+		WebAccessSequences.initmodulus();
 	}
 	
 }
