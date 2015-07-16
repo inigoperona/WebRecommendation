@@ -1,10 +1,5 @@
 package gipuzkoa_eus.webrecommendation;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -12,7 +7,7 @@ import ehupatras.webrecommendation.usage.preprocess.Sessioning;
 import ehupatras.webrecommendation.usage.preprocess.log.LogReader;
 import ehupatras.webrecommendation.usage.preprocess.log.LogReaderGipuzkoa_eus;
 
-public class A000MainClassPreprocess {
+public class A000MainClassPreprocess2 {
 
 	public void preprocessLogs(String basedirectory, String logFilesIndex){
 		long starttime;
@@ -22,10 +17,13 @@ public class A000MainClassPreprocess {
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] PREPROCESSING.");
 		WebAccessSequences.setnMemory(20); // 60MBytes * 20moduls = 1200Mbytes
-
-		// FILTER LOGS //
-		LogReader logreader = new LogReaderGipuzkoa_eus();
+		Website.load();
+		WebAccessSequences.loadStructure();
 		
+		// FILTER LOGS //
+		
+		LogReader logreader = new LogReaderGipuzkoa_eus();
+		/*
 		// It reads the log file and store the valid requests in [ehupatras.webrecommendation.structures.WebAccessSequences]
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start reading the log files and analyzing the URLs.");
@@ -36,9 +34,9 @@ public class A000MainClassPreprocess {
 				+ (endtime-starttime)/1000 + " seconds.");
 		Website.save();
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog1.log");
-
+		*/
+		
 		// ensure a minimum amount of apparitions of URLs.
-		/*
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start identifying frequent URLs.");
 		logreader.identifyFrequentURLs(10);
@@ -48,7 +46,6 @@ public class A000MainClassPreprocess {
 		
 		Website.save();
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
-		*/
 
 		
 		// SESSIONING //
@@ -149,67 +146,6 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-	}
-	
-	
-	/**
-	 * Gets the log files.
-	 *
-	 * @param basedirectory the basedirectory
-	 * @param logFilesIndex the log files index
-	 * @return the log files
-	 */
-	public String[] getLogFiles(String basedirectory, String logFilesIndex){
-		ArrayList<String> logFilesAL = new ArrayList<String>();
-		
-		// read the logFilesIndex file
-		BufferedReader br = null;
-		
-		// open
-		try{
-			br = new BufferedReader(new FileReader(basedirectory + logFilesIndex));
-		} catch (FileNotFoundException ex){
-			System.err.println(
-					"[discapnet.webrecommendation.A000MainClassPreprocess" +
-					"getLogFiles] " +
-					"Problems opening the file: " + logFilesIndex);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// read		
-		String sCurrentLine;
-		try{
-			while ((sCurrentLine = br.readLine()) != null) {
-				logFilesAL.add(basedirectory + "/" + sCurrentLine);
-			}
-		} catch(IOException ex){
-			System.err.println(
-					"[discapnet.webrecommendation.A000MainClassPreprocess." +
-					"getLogFiles] " +
-					"Problems reading the file: " + logFilesIndex);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// close
-		try{
-			if(br!=null){br.close();}
-		} catch (IOException ex){
-			System.err.println(
-					"[discapnet.webrecommendation.A000MainClassPreprocess." +
-					"getLogFiles] " +
-					"Problems closing the file: " + logFilesIndex);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// convert the array list to string-array
-		String[] logFilesA = new String[logFilesAL.size()];
-		for(int i=0; i<logFilesAL.size(); i++){
-			logFilesA[i] = logFilesAL.get(i);
-		}
-		return logFilesA;
 	}
 	
 	
