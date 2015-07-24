@@ -160,8 +160,8 @@ public class A000MainClassPreprocess2 {
 		String basedirectory = "experiments_gieus/00_preprocess";
 		String logfilesIndex = "/loglist2.txt";
 		
-		basedirectory = args[0];
-		logfilesIndex = args[1];
+		//basedirectory = args[0];
+		//logfilesIndex = args[1];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(basedirectory);
@@ -169,7 +169,7 @@ public class A000MainClassPreprocess2 {
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
-		A000MainClassPreprocess main = new A000MainClassPreprocess();
+		A000MainClassPreprocess2 main = new A000MainClassPreprocess2();
 			
 		// READ THE LOG FILE(S) //
 		main.preprocessLogs(basedirectory, logfilesIndex);
