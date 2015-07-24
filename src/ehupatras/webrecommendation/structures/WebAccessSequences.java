@@ -141,7 +141,7 @@ public class WebAccessSequences {
 	 * @param req the req
 	 * @param basenamejavadata the basenamejavadata
 	 */
-	public static void addRequest(Request req, String basenamejavadata) {
+	private static void addRequest(Request req, String basenamejavadata) {
 		// load the last modulus to add if we do not have already loaded
 		if(m_writedmodulus>m_actualloadedmodulus){
 			if(m_actualloadedmodulus==-1){m_actualloadedmodulus=0;}
@@ -180,7 +180,7 @@ public class WebAccessSequences {
 	 * @param req the req
 	 * @param basenamejavadata the basenamejavadata
 	 */
-	public static void addRequest2(Request req, String basenamejavadata) {
+	private static void addRequest2(Request req, String basenamejavadata) {
 		// load the last modulus to add if we do not have already loaded
 		if(m_writedmodulus2>m_actualloadedmodulus2){
 			if(m_actualloadedmodulus2==-1){m_actualloadedmodulus2=0;}
@@ -230,7 +230,7 @@ public class WebAccessSequences {
 	 * @param basenamejavadata the basenamejavadata
 	 * @return the request
 	 */
-	public static Request getRequest(int i, String basenamejavadata) {
+	private static Request getRequest(int i, String basenamejavadata) {
 		int imodulus = i / m_maxloadrequests;
 		int iindex = i % m_maxloadrequests;
 		
@@ -274,7 +274,7 @@ public class WebAccessSequences {
 	 * @param req the req
 	 * @param basenamejavadata the basenamejavadata
 	 */
-	public static void replaceRequest(int i, Request req, String basenamejavadata){
+	private static void replaceRequest(int i, Request req, String basenamejavadata){
 		int imodulus = i / m_maxloadrequests;
 		int iindex = i % m_maxloadrequests;
 		
@@ -832,6 +832,11 @@ public class WebAccessSequences {
 		m_basenamejavadata = m_basenamejavadata2;
 		m_lastloadedrequest = m_lastloadedrequest2;
 		WebAccessSequences.resetModulus();
+	}
+	
+	public static void changeToOrderedRequests(){
+		m_basenamejavadata = m_basenamejavadata2;
+		m_lastloadedrequest = m_lastloadedrequest2;
 	}
 	
 	/**
