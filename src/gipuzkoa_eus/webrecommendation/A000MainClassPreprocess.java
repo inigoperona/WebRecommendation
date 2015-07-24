@@ -34,9 +34,14 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
+		
 		Website.save();
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog1.log");
 
+		WebAccessSequences.orderRequests();
+		WebAccessSequences.changeToOrderedRequests();
+		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
+		
 		// ensure a minimum amount of apparitions of URLs.
 		/*
 			starttime = System.currentTimeMillis();
@@ -75,7 +80,7 @@ public class A000MainClassPreprocess {
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog4.log");
 
 		
-		// create sequences
+		// create se)quences
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start creating sequences.");
 		ses.createSequences();

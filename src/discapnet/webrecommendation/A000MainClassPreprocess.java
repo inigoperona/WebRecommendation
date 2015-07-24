@@ -65,7 +65,6 @@ public class A000MainClassPreprocess {
 				+ (endtime-starttime)/1000 + " seconds.");
 		Website.save();
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
-
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
