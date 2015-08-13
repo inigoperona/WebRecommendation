@@ -28,6 +28,8 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 	 * @see ehupatras.webrecommendation.usage.preprocess.log.LogReader#readLogFile(java.lang.String[])
 	 */
 	public void readLogFile(String[] logfilenamesA){
+		int ipID = 0;
+		
 		m_logfilenamesA = logfilenamesA;
 		for(int h=0; h<m_logfilenamesA.length; h++){
 			String logfilenamei = m_logfilenamesA[h];
@@ -47,7 +49,6 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 		
 		// Read the given file line by line
 		String line = null;
-		int ipID = 0;
 		try{
 			while ((line = reader.readLine()) != null) {
 				// split the request line
@@ -59,7 +60,6 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 				if(!m_ip2idHT.containsKey(ip)){
 					ipID++;
 					m_ip2idHT.put(ip, new Integer(ipID));
-
 				}
 				
 				// Two not interesting fields.

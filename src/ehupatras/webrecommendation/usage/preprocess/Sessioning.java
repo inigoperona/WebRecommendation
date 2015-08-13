@@ -35,9 +35,9 @@ public class Sessioning {
 						" analyzed [createSessions]");
 			}
 			Request actualreq = WebAccessSequences.getRequest(i);
-			int actualuser = actualreq.getUserID();
+			int actualuser = actualreq.getUserID(); // IP identifier
 			long actualtime = actualreq.getTimeInMillis();
-			int actualLogFileNumb = actualreq.getLogFileNumber();
+			int actualLogFileNumb = actualreq.getLogFileNumber(); // log number
 			if(oldrequests.containsKey(actualuser)){
 				Object[] objA = oldrequests.get(actualuser);
 				int oldsessioni = ((Integer)objA[0]).intValue();
