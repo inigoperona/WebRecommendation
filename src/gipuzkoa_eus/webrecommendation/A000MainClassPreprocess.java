@@ -38,7 +38,7 @@ public class A000MainClassPreprocess {
 		Website.save();
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog1.log");
 
-		WebAccessSequences.orderRequests();
+		//WebAccessSequences.orderRequests();
 		WebAccessSequences.changeToOrderedRequests();
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
 		
