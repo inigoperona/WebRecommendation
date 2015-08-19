@@ -117,7 +117,8 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 				}	
 				
 				// Create a request object
-				Request req = new RequestGipuzkoa_eus(ip, m_ip2idHT.get(ip), 
+				int ipid = m_ip2idHT.get(ip)*1000 + h;
+				Request req = new RequestGipuzkoa_eus(ip, ipid, 
 						time, method, page, protocol, status, 
 						reqsize, reference, useragent,
 						h);
