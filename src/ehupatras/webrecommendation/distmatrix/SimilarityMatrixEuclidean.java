@@ -26,9 +26,9 @@ public class SimilarityMatrixEuclidean
 							float[][] roleWeights,
 							boolean isplit){
 		if(!isplit){
-			m_matrix = new float[data.size()][data.size()];
+			m_matrix = new MatrixStructure(data.size());
 		} else {
-			m_matrixSplit = new float[data.size()][data.size()];
+			m_matrixSplit = new MatrixStructure(data.size());
 		}
 		
 		// create the similarity matrix
@@ -55,11 +55,11 @@ public class SimilarityMatrixEuclidean
 				float[] vectorj = similaritiesM[j];
 				double dist = this.getEuclideanDistance(vectori, vectorj);
 				if(!isplit){
-					m_matrix[i][j] = (float)dist;
-					m_matrix[j][i] = (float)dist;
+					m_matrix.setCell(i, j, (float)dist);
+					m_matrix.setCell(j, i, (float)dist);
 				} else {
-					m_matrixSplit[i][j] = (float)dist;
-					m_matrixSplit[j][i] = (float)dist;
+					m_matrixSplit.setCell(i, j, (float)dist);
+					m_matrixSplit.setCell(j, i, (float)dist);
 				}
 			}
 		}

@@ -1,5 +1,7 @@
 package ehupatras.clustering.sapehac.experiment;
 
+import ehupatras.webrecommendation.distmatrix.MatrixStructure;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class DissimilarityMeasureEhupatras.
@@ -7,7 +9,7 @@ package ehupatras.clustering.sapehac.experiment;
 public class DissimilarityMeasureEhupatras implements DissimilarityMeasure {
 	
 	/** The m_diastancematrix. */
-	private float[][] m_diastancematrix;
+	private MatrixStructure m_diastancematrix;
 	
 	/** The m_dmindexes. */
 	private int[] m_dmindexes;
@@ -18,7 +20,7 @@ public class DissimilarityMeasureEhupatras implements DissimilarityMeasure {
 	 * @param distancematrix the distancematrix
 	 * @param dmindexes the dmindexes
 	 */
-	public DissimilarityMeasureEhupatras(float[][] distancematrix, int[] dmindexes){
+	public DissimilarityMeasureEhupatras(MatrixStructure distancematrix, int[] dmindexes){
 		m_dmindexes = dmindexes;
 		m_diastancematrix = distancematrix;
 	}
@@ -29,6 +31,6 @@ public class DissimilarityMeasureEhupatras implements DissimilarityMeasure {
 	public double computeDissimilarity(Experiment experiment, int observation1, int observation2){
 		int rowi = m_dmindexes[observation1];
 		int coli = m_dmindexes[observation2];
-		return (double)m_diastancematrix[rowi][coli];
+		return (double)m_diastancematrix.getCell(rowi, coli);
 	}
 }

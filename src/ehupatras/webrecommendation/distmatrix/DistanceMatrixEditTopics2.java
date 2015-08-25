@@ -38,9 +38,9 @@ public class DistanceMatrixEditTopics2
 					float[][] roleWeights,
 					boolean isplit){
 		if(!isplit){
-			m_matrix = new float[data.size()][data.size()];
+			m_matrix = new MatrixStructure(data.size());
 		} else {
-			m_matrixSplit = new float[data.size()][data.size()];
+			m_matrixSplit = new MatrixStructure(data.size());
 		}
 		// create the similarity matrix
 		for(int i=0; i<data.size(); i++){
@@ -52,9 +52,9 @@ public class DistanceMatrixEditTopics2
 				seqalign.setRoleWeights(roleWeights);
 				float dist = seqalign.getScore(seqA, seqB);
 				if(!isplit){
-					m_matrix[i][j] = dist;
+					m_matrix.setCell(i, j, dist);
 				} else {
-					m_matrixSplit[i][j] = dist;
+					m_matrixSplit.setCell(i, j, dist);
 				}
 			}
 		}

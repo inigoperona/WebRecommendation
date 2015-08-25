@@ -2,6 +2,7 @@ package ehupatras.webrecommendation.sequencealignment.multiplealignment;
 
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentGlobalNeedlemanWunsch;
 import ehupatras.webrecommendation.sequencealignment.SequenceAlignmentBacktrack;
+import ehupatras.webrecommendation.distmatrix.MatrixStructure;
 import java.util.ArrayList;
 
 // TODO: Auto-generated Javadoc
@@ -23,7 +24,7 @@ public class MultipleSequenceAlignment {
 	 * @param d the d
 	 * @param was the was
 	 */
-	public void msa(int[] seqclust, float[][] d, ArrayList<String[]> was){
+	public void msa(int[] seqclust, MatrixStructure d, ArrayList<String[]> was){
 		ArrayList<Integer> seqclustList = new ArrayList<Integer>();
 		for(int i=0; i<seqclust.length; i++){
 			seqclustList.add(seqclust[i]);
@@ -38,7 +39,7 @@ public class MultipleSequenceAlignment {
 	 * @param d the d
 	 * @param was the was
 	 */
-	public void msa(ArrayList<Integer> seqclust, float[][] d, ArrayList<String[]> was){
+	public void msa(ArrayList<Integer> seqclust, MatrixStructure d, ArrayList<String[]> was){
 		// define the gap length
 		int gaplen = was.get(0)[0].length();
 		m_gap = "";
@@ -52,7 +53,7 @@ public class MultipleSequenceAlignment {
 				if(i!=j){
 					int rowindex = seqclust.get(j);
 					int colindex = seqclust.get(i);
-					float newdist = dist.get(i) + d[rowindex][colindex];
+					float newdist = dist.get(i) + d.getCell(rowindex, colindex);
 					dist.set(i, newdist);
 				}
 			}
@@ -248,7 +249,7 @@ public class MultipleSequenceAlignment {
 		ehupatras.webrecommendation.distmatrix.Matrix dm = 
 				new ehupatras.webrecommendation.distmatrix.SimilarityMatrixEuclidean(namesL);
 		dm.computeMatrix(wasL, roleW1, false);
-		float[][] dmatrix = dm.getMatrix(false);
+		MatrixStructure dmatrix = dm.getMatrix(false);
 
 		// Perform the multiple sequence alignment
 		MultipleSequenceAlignment malign = new MultipleSequenceAlignment();

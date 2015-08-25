@@ -91,7 +91,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 		//dm.createDistanceMatrix(var_databaseWD, var_sampleSessionIDs, var_sequencesUHC, new float[][]{{0f,0f,0f}, {0f,0f,0f}, {0f,0f,0f}} );
 		dm.loadDistanceMatrix(var_databaseWD + var_dmWD); // Load "databaseWD/dmWD/_matrix.javaData"
 		Matrix var_matrix = dm.getMatrix();
-		System.out.println("Kasu kopurua: " + var_matrix.getMatrix(false).length);
+		System.out.println("Kasu kopurua: " + var_matrix.getMatrix(false).getLength());
 		
 		// CROSS-VALIDATION, 10-fold:
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();

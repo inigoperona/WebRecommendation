@@ -5,6 +5,7 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
 import ehupatras.clustering.ClusteringPAM;
 import ehupatras.clustering.ClusteringSilly;
+import ehupatras.webrecommendation.distmatrix.MatrixStructure;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -83,7 +84,7 @@ public class ModelEvaluatorClustSilly
 	private int[] clusteringPAM(int indexFold){
 		ArrayList<Long> trainnames = m_trainAL.get(indexFold);
 		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
-		float[][] distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
+		MatrixStructure distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
 		
 		ClusteringSilly cs = new ClusteringSilly(m_k, distmatrix, trainDMindexes);
 		return cs.getClustering();

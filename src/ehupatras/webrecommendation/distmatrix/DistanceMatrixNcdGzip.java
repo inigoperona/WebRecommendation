@@ -49,9 +49,9 @@ public class DistanceMatrixNcdGzip extends Matrix {
 		
 		// initialize the matrix
 		if(!isplit){
-			m_matrix = new float[data.size()][data.size()];
+			m_matrix = new MatrixStructure(data.size());
 		} else {
-			m_matrixSplit = new float[data.size()][data.size()];
+			m_matrixSplit = new MatrixStructure(data.size());
 		}
 		
 		// fill the distance matrix
@@ -72,11 +72,11 @@ public class DistanceMatrixNcdGzip extends Matrix {
 				
 				// fill the matrix
 				if(!isplit){
-					m_matrix[i][j] = dist;
-					m_matrix[j][i] = dist;
+					m_matrix.setCell(i, j, dist);
+					m_matrix.setCell(j, i, dist);
 				} else {
-					m_matrixSplit[i][j] = dist;
-					m_matrixSplit[j][i] = dist;
+					m_matrixSplit.setCell(i, j, dist);
+					m_matrixSplit.setCell(j, i, dist);
 				}
 			}
 		}

@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import ehupatras.clustering.sapehac.dendrogram.Dendrogram;
 import ehupatras.clustering.sapehac.dendrogram.DendrogramNode;
 import ehupatras.clustering.sapehac.dendrogram.ObservationNode;
+import ehupatras.webrecommendation.distmatrix.MatrixStructure;
 
 public class COP2 {
 	
-	public float[][] m_distanceMatrix;
+	public MatrixStructure m_distanceMatrix;
 	public Dendrogram m_dendrogram;
 	
-	public COP2(float[][] distanceMatrix, Dendrogram dendrogram){
+	public COP2(MatrixStructure distanceMatrix, Dendrogram dendrogram){
 		m_distanceMatrix = distanceMatrix;
 		m_dendrogram = dendrogram;
 	}
@@ -32,7 +33,7 @@ public class COP2 {
 				float sumdists = 0f;
 				for(int i2=0; i2<leafs.size(); i2++){
 					int ind2 = leafs.get(i2).getObservation();
-					float d = m_distanceMatrix[ind1][ind2];
+					float d = m_distanceMatrix.getCell(ind1, ind2);
 					sumdists = sumdists + d;
 				}
 				avgdist[i1] = sumdists / (float)(leafs.size()-1); 
@@ -105,7 +106,9 @@ public class COP2 {
 				//Calculate intraCOP
 				intracop=0.0;
 				for (int j=0; j<leafsList.size(); j++){
-					intracop = intracop + m_distanceMatrix[leafsList.get(j).getObservation()][medoids.get(i).getObservation()];
+					intracop = intracop + 
+							m_distanceMatrix.getCell(leafsList.get(j).getObservation(), 
+									medoids.get(i).getObservation());
 				}
 				intracop=intracop/leafsList.size();
 				//Get the leafs that are not in the cluster
@@ -137,7 +140,8 @@ public class COP2 {
 		
 		for (int j=0; j<node1leafs.size(); j++){
 			for (int k=0; k<restleafs.size(); k++){
-				dist = m_distanceMatrix[node1leafs.get(j).getObservation()][restleafs.get(k).getObservation()];
+				dist = m_distanceMatrix.getCell(node1leafs.get(j).getObservation(), 
+						restleafs.get(k).getObservation());
 				if (dist > max){
 					max = dist;
 				}

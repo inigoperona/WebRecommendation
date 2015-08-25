@@ -2,6 +2,7 @@ package ehupatras.clustering;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import ehupatras.webrecommendation.distmatrix.MatrixStructure;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -13,7 +14,7 @@ public class ClusteringPAM {
 	private int m_k = 10;
 	
 	/** The m_dm. */
-	private float[][] m_dm;
+	private MatrixStructure m_dm;
 	
 	/** The m_min dm. */
 	private float m_minDM = Float.MAX_VALUE;
@@ -38,7 +39,7 @@ public class ClusteringPAM {
 	 * @param dm the dm
 	 * @param realIndexes the real indexes
 	 */
-	public ClusteringPAM(int k, float[][] dm, int[] realIndexes){
+	public ClusteringPAM(int k, MatrixStructure dm, int[] realIndexes){
 		if(k>realIndexes.length){
 			m_k = realIndexes.length;
 		} else {
@@ -46,9 +47,9 @@ public class ClusteringPAM {
 		}
 		
 		m_dm = dm;
-		for(int i=0;i<m_dm.length;i++){
-			for(int j=0;j<m_dm[i].length;j++){
-				float value = m_dm[i][j];
+		for(int i=0;i<m_dm.getLength();i++){
+			for(int j=0;j<m_dm.getLength();j++){
+				float value = m_dm.getCell(i, j);
 				if(value<m_minDM){
 					m_minDM = value;
 				}
@@ -353,12 +354,12 @@ public class ClusteringPAM {
 		if(i<m_realInds.length && j<m_realInds.length){
 			int i2 = m_realInds[i];
 			int j2 = m_realInds[j];
-			int nrow = m_dm.length;
+			int nrow = m_dm.getLength();
 			if(i2<nrow && j2<nrow){
 				if(i2<=j2){
-					return m_dm[i2][j2];
+					return m_dm.getCell(i2, j2);
 				} else {
-					return m_dm[j2][i2];
+					return m_dm.getCell(j2, i2);
 				}
 			} else {
 				return m_maxDM;
@@ -489,6 +490,7 @@ public class ClusteringPAM {
 				{1,2,3,0,1},
 				{1,2,3,4,0}
 		};
+		MatrixStructure ms = new MatrixStructure(dm0);
 		
 		// medoids
 		ArrayList<Integer> meds = new ArrayList<Integer>();
@@ -499,7 +501,7 @@ public class ClusteringPAM {
 		int[] inds = new int[]{0,1,3,4};
 		
 		// create the object
-		ClusteringPAM pam = new ClusteringPAM(2, dm0, inds);
+		ClusteringPAM pam = new ClusteringPAM(2, ms, inds);
 		
 		// the center of the database
 		pam.runPAM();

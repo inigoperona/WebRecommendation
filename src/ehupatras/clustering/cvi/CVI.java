@@ -2,6 +2,7 @@ package ehupatras.clustering.cvi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import ehupatras.webrecommendation.distmatrix.MatrixStructure;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -38,7 +39,7 @@ public class CVI {
 	 *
 	 * @param distancematrix the distancematrix
 	 */
-	public void computeMedoids(float[][] distancematrix){
+	public void computeMedoids(MatrixStructure distancematrix){
 		// compute the index of the biggest cluster
 		int maxcli = -1;
 		for(int i=0; i<m_clusters.length; i++){
@@ -68,7 +69,7 @@ public class CVI {
 				float sumdists = 0f;
 				for(int i2=0; i2<inds.size(); i2++){
 					int ind2 = inds.get(i2);
-					float d = distancematrix[ind1][ind2];
+					float d = distancematrix.getCell(ind1, ind2);
 					sumdists = sumdists + d;
 				}
 				avgdist[i1] = sumdists / (float)inds.size(); 
@@ -112,7 +113,7 @@ public class CVI {
 			float sumdists = 0f;
 			for(int j=0; j<m_medoids.length; j++){
 				int ind2 = m_medoids[j];
-				float d = distancematrix[ind1][ind2];
+				float d = distancematrix.getCell(ind1, ind2);
 				sumdists = sumdists + d;
 			}
 			avgdist[i] = sumdists / (float)m_medoids.length; 
@@ -178,9 +179,10 @@ public class CVI {
 								{.4f,.8f, 0f,.2f,.6f},
 								{.5f,.1f,.2f, 0f,.2f},
 								{.2f,.2f,.6f,.2f, 0f}};
+		MatrixStructure ms = new MatrixStructure(dm);
 		
 		CVI cvindex = new CVI(dataInds,clusters);
-		cvindex.computeMedoids(dm);
+		cvindex.computeMedoids(ms);
 		int[] meds  = cvindex.getMedoids();
 		int[] gmeds = cvindex.getGlobalMedoids();
 		System.out.println("medoids");

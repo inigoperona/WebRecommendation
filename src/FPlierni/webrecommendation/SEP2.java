@@ -6,13 +6,14 @@ import ehupatras.clustering.sapehac.dendrogram.Dendrogram;
 import ehupatras.clustering.sapehac.dendrogram.DendrogramNode;
 import ehupatras.clustering.sapehac.dendrogram.MergeNode;
 import ehupatras.clustering.sapehac.dendrogram.ObservationNode;
+import ehupatras.webrecommendation.distmatrix.MatrixStructure;
 
 public class SEP2 {
 	
 	public Dendrogram m_dendrogram;
-	public float[][] m_distanceMatrix;
+	public MatrixStructure m_distanceMatrix;
 	
-	public SEP2(Dendrogram dendrogram, float[][] distanceMatrix){
+	public SEP2(Dendrogram dendrogram, MatrixStructure distanceMatrix){
 		m_dendrogram = dendrogram;
 		m_distanceMatrix = distanceMatrix;
 	}

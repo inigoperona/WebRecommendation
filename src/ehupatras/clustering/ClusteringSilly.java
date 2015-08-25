@@ -1,6 +1,7 @@
 package ehupatras.clustering;
 
 import java.util.ArrayList;
+import ehupatras.webrecommendation.distmatrix.MatrixStructure;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -24,7 +25,7 @@ public class ClusteringSilly {
 	 * @param dm the dm
 	 * @param realIndexes the real indexes
 	 */
-	public ClusteringSilly(int k, float[][] dm, int[] realIndexes){
+	public ClusteringSilly(int k, MatrixStructure dm, int[] realIndexes){
 		// number of clusters (k) must be smaller than size of the training set 
 		if(k>realIndexes.length){
 			m_k = realIndexes.length;

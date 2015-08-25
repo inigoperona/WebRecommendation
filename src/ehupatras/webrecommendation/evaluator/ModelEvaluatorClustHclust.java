@@ -6,6 +6,7 @@ import ehupatras.clustering.sapehac.dendrogram.MergeNode;
 import ehupatras.clustering.sapehac.dendrogram.ObservationNode;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.evaluator.test.TestSetEvaluator;
+import ehupatras.webrecommendation.distmatrix.MatrixStructure;
 
 import java.util.ArrayList;
 
@@ -113,7 +114,7 @@ public class ModelEvaluatorClustHclust
 	 *
 	 * @param cut dendrograms with SEP
 	 */
-	public void cutDendrogramsSEP(float[][] distanceMatrix){
+	public void cutDendrogramsSEP(MatrixStructure distanceMatrix){
 		m_clustersAL = new ArrayList<int[]>();
 		for(int i=0; i<m_nFolds; i++){
 			m_clustersAL.add(this.cutDendrogramSEP(i, distanceMatrix));
@@ -131,7 +132,7 @@ public class ModelEvaluatorClustHclust
 		// hierarchical clustering: http://sape.inf.usi.ch/hac
 		ClusteringHierarchical clustering = new ClusteringHierarchical();
 		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
-		float[][] distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
+		MatrixStructure distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
 		clustering.computeHierarchicalClustering(distmatrix,trainDMindexes,m_AgglomerativeMethodClassName);
 		return clustering;
 	}
@@ -166,7 +167,7 @@ public class ModelEvaluatorClustHclust
 	 * @param indexFold the index fold
 	 * @return the int[]
 	 */
-	private int[] cutDendrogramSEP(int indexFold, float[][] distanceMatrix){
+	private int[] cutDendrogramSEP(int indexFold, MatrixStructure distanceMatrix){
 		ClusteringHierarchical clustering = m_dendroAL.get(indexFold);
 		int[] clustersA = clustering.cutDendrogramWithSEP(distanceMatrix);
 		return clustersA;

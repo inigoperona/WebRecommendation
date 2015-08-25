@@ -17,7 +17,7 @@ public abstract class Matrix {
 	
 	// distance matrix data
 	/** The m_matrix. */
-	protected float[][] m_matrix = null;
+	protected MatrixStructure m_matrix = null;
 	
 	/** The m_names. */
 	protected ArrayList<Long> m_names = null;
@@ -36,7 +36,7 @@ public abstract class Matrix {
 	protected ArrayList<Long> m_namesSplit = null;
 	
 	/** The m_matrix split. */
-	protected float[][] m_matrixSplit = null;
+	protected MatrixStructure m_matrixSplit = null;
 	
 	// attributes to work with topics
 	/** The m_ url i ds. */
@@ -46,13 +46,13 @@ public abstract class Matrix {
 	protected ArrayList<float[]> m_topicDistribution = null;
 		// URL 2 URL distance
 	/** The m_ urls dm. */
-		protected float[][] m_UrlsDM = null;
+	protected float[][] m_UrlsDM = null;
 	
 	/** The m_urls equalness threshold. */
 	protected float m_urlsEqualnessThreshold = 0.6f;
 		// URL 2 TOPIC
 	/** The m_url2topic. */
-		protected int[] m_url2topic; // -1 no topic assigned
+	protected int[] m_url2topic; // -1 no topic assigned
 	
 	/** The m_topicmatch. */
 	protected float m_topicmatch = 0.5f;
@@ -75,7 +75,7 @@ public abstract class Matrix {
 	 * @param isSplit the is split
 	 * @return the matrix
 	 */
-	public float[][] getMatrix(boolean isSplit){
+	public MatrixStructure getMatrix(boolean isSplit){
 		if(!isSplit){
 			return m_matrix;
 		} else {
@@ -203,7 +203,7 @@ public abstract class Matrix {
 	 * @param matrix the matrix
 	 * @param outfilename the outfilename
 	 */
-	public void writeMatrix(float[][] matrix, String outfilename){
+	public void writeMatrix(MatrixStructure matrix, String outfilename){
 		// Open the given file
 		BufferedWriter writer = null;
 		try{
@@ -217,10 +217,10 @@ public abstract class Matrix {
 	
 		// Write in a file line by line
 		try{
-			int n = matrix.length;
+			int n = matrix.getLength();
 			for(int i=0; i<n; i++){
 				for(int j=0; j<n; j++){
-					writer.write(matrix[i][j] + " ");
+					writer.write(matrix.getCell(i,j) + " ");
 				}
 				writer.write("\n");
 			}
@@ -265,10 +265,10 @@ public abstract class Matrix {
 	public void load(String wordirectory){
 		SaveLoadObjects slo = new SaveLoadObjects();
 		Object[] objA = (Object[])slo.load(wordirectory + m_savefilename);
-		m_matrix = (float[][])objA[0];
+		m_matrix = (MatrixStructure)objA[0];
 		m_names = (ArrayList<Long>)objA[1];
 		if(objA.length>2){
-			m_matrixSplit = (float[][])objA[2];
+			m_matrixSplit = (MatrixStructure)objA[2];
 			m_namesSplit = (ArrayList<Long>)objA[3];
 		}
 	}

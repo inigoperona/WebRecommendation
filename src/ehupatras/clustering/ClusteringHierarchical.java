@@ -14,6 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import FPlierni.webrecommendation.SEP;
+import ehupatras.webrecommendation.distmatrix.MatrixStructure;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -37,7 +38,7 @@ public class ClusteringHierarchical {
 	 * @param selectedcases the selectedcases
 	 * @param agglomerationMethodClassName the agglomeration method class name
 	 */
-	public void computeHierarchicalClustering(float[][] matrix, int[] selectedcases,
+	public void computeHierarchicalClustering(MatrixStructure matrix, int[] selectedcases,
 			String agglomerationMethodClassName) {
 		m_ncases = selectedcases.length;
 		Experiment experiment = new ExperimentEhuPatras(m_ncases);
@@ -399,7 +400,7 @@ public class ClusteringHierarchical {
 		return clustersA;
 	}
 		
-	public int[] cutDendrogramWithSEP(float[][] distanceMatrix){
+	public int[] cutDendrogramWithSEP(MatrixStructure distanceMatrix){
 		//ArrayList<DendrogramNode> partition = new ArrayList<DendrogramNode>();
 		SEP modelSEP = new SEP(m_dendrogram, distanceMatrix);
 		//partition = modelSEP.computeSEP(m_dendrogram.getRoot());
