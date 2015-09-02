@@ -71,7 +71,7 @@ public class A113MainClassDistanceMatrixInverseTopics2 {
 			String dmFile,
 			float topicmatch){
 		m_matrix = new SimilarityMatrixInverseTopics2(sampleSessionIDs, dmFile, topicmatch);
-		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
+		m_matrix.computeMatrix(sequencesUHC, roleWeights, false, databaseWD);
 		m_matrix.writeMatrix(m_matrix.getMatrix(false),
 					databaseWD + "/distance_matrix.txt");
 		

@@ -36,11 +36,12 @@ public class SimilarityMatrixInverseTopics2
 	 */
 	public void computeMatrix( ArrayList<String[]> data,
 			float[][] roleWeights,
-			boolean isplit){
+			boolean isplit,
+			String workdirectory){
 		if(!isplit){
-			m_matrix = new MatrixStructure(data.size());
+			m_matrix = new MatrixStructure(data.size(), workdirectory);
 		} else {
-			m_matrixSplit = new MatrixStructure(data.size());
+			m_matrixSplit = new MatrixStructure(data.size(), workdirectory);
 		}
 
 		float[][] simmatrix = new float[data.size()][data.size()];
@@ -74,10 +75,10 @@ public class SimilarityMatrixInverseTopics2
 				float sim = simmatrix[i][j];
 				if(!isplit){
 					float dist = 1f - sim;
-					m_matrix.setCell(i, j, dist);
+					m_matrix.addCell(i, j, dist);
 				} else {
 					float dist = 1f - sim;
-					m_matrixSplit.setCell(i, j, dist);
+					m_matrixSplit.addCell(i, j, dist);
 				}
 			}
 		}

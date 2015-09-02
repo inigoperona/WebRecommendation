@@ -22,6 +22,11 @@ public class A012MainClassDistanceMatrixED {
 	 */
 	public static void main(String[] args){
 		
+		String[] args2 = {"experiments_gieus/00_preprocess", "xxx", "/empty.txt", 
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+				"experiments_gieus/01_database", "/DM_ed",
+				"xxx", "xxx", "xxx", "xxx", "-", "1"};
+		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
 		
 		// take the start time of the program
@@ -54,10 +59,9 @@ public class A012MainClassDistanceMatrixED {
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights){
 		m_matrix = new DistanceMatrixEdit(sampleSessionIDs);
-		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
+		m_matrix.computeMatrix(sequencesUHC, roleWeights, false, databaseWD);
 		m_matrix.writeMatrix(m_matrix.getMatrix(false),
 				databaseWD + "/distance_matrix.txt");
-		
 		m_matrix.save(databaseWD);
 	}
 	

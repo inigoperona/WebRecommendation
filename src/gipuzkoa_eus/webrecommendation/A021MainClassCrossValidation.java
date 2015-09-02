@@ -14,7 +14,7 @@ public class A021MainClassCrossValidation {
 		// RUN
 		param.loadDatabase();
 		param.loadDM();
-		param.createCrossValidation(7,2,1,100); // we have 83000 cases
+		param.createCrossValidation(7,2,1,10); // we have 83000 cases
 
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

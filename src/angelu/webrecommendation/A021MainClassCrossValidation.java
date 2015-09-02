@@ -13,6 +13,12 @@ public class A021MainClassCrossValidation {
 	 */
 	public static void main(String[] args) {
 		
+		String[] args2 = {"experiments_gieus/00_preprocess", "xxx",
+				  "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+				  "experiments_gieus/01_database", "/DM_ed",
+				  "experiments_gieus/03_validation", "xxx", "xxx", "xxx",
+				  "-", "1"};
+		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
 		
 		// take the start time of the program

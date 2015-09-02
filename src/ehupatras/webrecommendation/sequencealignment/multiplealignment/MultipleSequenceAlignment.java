@@ -248,7 +248,7 @@ public class MultipleSequenceAlignment {
 		// Create the distance matrix of the sequences
 		ehupatras.webrecommendation.distmatrix.Matrix dm = 
 				new ehupatras.webrecommendation.distmatrix.SimilarityMatrixEuclidean(namesL);
-		dm.computeMatrix(wasL, roleW1, false);
+		dm.computeMatrix(wasL, roleW1, false, ".");
 		MatrixStructure dmatrix = dm.getMatrix(false);
 
 		// Perform the multiple sequence alignment

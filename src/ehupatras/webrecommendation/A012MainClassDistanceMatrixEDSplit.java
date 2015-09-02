@@ -74,7 +74,7 @@ public class A012MainClassDistanceMatrixEDSplit {
 		m_matrix.writeSeqs(databaseWD + "/sequences_split.txt", 
 				sesIDsSplit, seqsSplit);
 		
-		m_matrix.computeMatrix(seqsSplit, roleWeights, true);
+		m_matrix.computeMatrix(seqsSplit, roleWeights, true, databaseWD);
 		m_matrix.writeMatrix(m_matrix.getMatrix(true), 
 					databaseWD + "/distance_matrix_split.txt");
 		

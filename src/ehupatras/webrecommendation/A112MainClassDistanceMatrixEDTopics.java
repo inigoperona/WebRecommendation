@@ -62,7 +62,7 @@ public class A112MainClassDistanceMatrixEDTopics {
 			String dmFile,
 			float urlsEqualnessThreshold){
 		m_matrix = new DistanceMatrixEditTopics(sampleSessionIDs, dmFile, urlsEqualnessThreshold);
-		m_matrix.computeMatrix(sequencesUHC, roleWeights, false);
+		m_matrix.computeMatrix(sequencesUHC, roleWeights, false, databaseWD);
 		m_matrix.writeMatrix(m_matrix.getMatrix(false),
 					databaseWD + "/distance_matrix.txt");
 		

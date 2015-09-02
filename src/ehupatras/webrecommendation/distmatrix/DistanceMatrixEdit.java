@@ -24,11 +24,12 @@ public class DistanceMatrixEdit extends Matrix {
 	 */
 	public void computeMatrix(ArrayList<String[]> data,
 			float[][] roleWeights,
-			boolean isplit){
+			boolean isplit,
+			String workdirectory){
 		if(!isplit){
-			m_matrix = new MatrixStructure(data.size());
+			m_matrix = new MatrixStructure(data.size(), workdirectory);
 		} else {
-			m_matrixSplit = new MatrixStructure(data.size());
+			m_matrixSplit = new MatrixStructure(data.size(), workdirectory);
 		}
 		// create the similarity matrix
 		for(int i=0; i<data.size(); i++){
@@ -40,9 +41,9 @@ public class DistanceMatrixEdit extends Matrix {
 				seqalign.setRoleWeights(roleWeights);
 				float dist = seqalign.getScore(seqA, seqB);
 				if(!isplit){
-					m_matrix.setCell(i, j, dist);
+					m_matrix.addCell(i, j, dist);
 				} else {
-					m_matrixSplit.setCell(i, j, dist);
+					m_matrixSplit.addCell(i, j, dist);
 				}
 			}
 		}

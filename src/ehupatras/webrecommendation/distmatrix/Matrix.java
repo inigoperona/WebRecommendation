@@ -67,7 +67,8 @@ public abstract class Matrix {
 	 */
 	public abstract void computeMatrix(ArrayList<String[]> data,
 							float[][] roleWeights,
-							boolean isSplit);
+							boolean isSplit,
+							String workdirectory);
 	
 	/**
 	 * Gets the matrix.

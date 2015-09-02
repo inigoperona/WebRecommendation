@@ -24,11 +24,12 @@ public class SimilarityMatrixEuclidean
 	 */
 	public void computeMatrix(ArrayList<String[]> data,
 							float[][] roleWeights,
-							boolean isplit){
+							boolean isplit,
+							String workdirectory){
 		if(!isplit){
-			m_matrix = new MatrixStructure(data.size());
+			m_matrix = new MatrixStructure(data.size(), workdirectory);
 		} else {
-			m_matrixSplit = new MatrixStructure(data.size());
+			m_matrixSplit = new MatrixStructure(data.size(), workdirectory);
 		}
 		
 		// create the similarity matrix
@@ -55,11 +56,11 @@ public class SimilarityMatrixEuclidean
 				float[] vectorj = similaritiesM[j];
 				double dist = this.getEuclideanDistance(vectori, vectorj);
 				if(!isplit){
-					m_matrix.setCell(i, j, (float)dist);
-					m_matrix.setCell(j, i, (float)dist);
+					m_matrix.addCell(i, j, (float)dist);
+					m_matrix.addCell(j, i, (float)dist);
 				} else {
-					m_matrixSplit.setCell(i, j, (float)dist);
-					m_matrixSplit.setCell(j, i, (float)dist);
+					m_matrixSplit.addCell(i, j, (float)dist);
+					m_matrixSplit.addCell(j, i, (float)dist);
 				}
 			}
 		}

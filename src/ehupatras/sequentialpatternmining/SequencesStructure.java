@@ -88,7 +88,7 @@ public class SequencesStructure {
 		m_seqsW.add(sequence);
 		m_seqSupsW.add(support);
 		m_indsALW.add(indexes);
-		m_lastModulusLastIndex++;		
+		m_lastModulusLastIndex++;
 	}
 	
 	/**

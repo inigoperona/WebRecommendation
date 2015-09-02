@@ -94,7 +94,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	//float[] cutthA = {0.1f, 0.2f, 0.4f, 0.6f, 0.8f};
 	//float[] cutthA = {4f, 10f, 15f, 20f, 25f};
 	/** The m_cutth a. */
-	protected float[] m_cutthA = {4f, 10f, 15f};
+	protected float[] m_cutthA = {4f, 10f, 15f, 20f, 25f, 50f, 75f, 90f};
 	
 	/** The m_linkages. */
 	protected String[] m_linkages = 
@@ -457,11 +457,11 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 */
 	public void runModelEvaluatorH(int intLinkage){
 		String linkageClassName = m_linkages[intLinkage];
+		m_modelevH.buildDendrograms(linkageClassName);		
 		for(int j=0; j<m_cutthA.length; j++){ // for each height
 			float cutth = m_cutthA[j];
 			String esperimentationStr = "agglo" + intLinkage + "_cl" + cutth;
 			System.out.println("[" + System.currentTimeMillis() + "] " + esperimentationStr);
-			m_modelevH.buildDendrograms(linkageClassName);
 			m_modelevH.cutDendrograms(cutth);
 			m_modelevH.saveClusters(m_validationWD  + m_clustWD + "/" + esperimentationStr + ".javaData");
 			m_modelevH.writeClusters(m_validationWD + m_clustWD + "/" + esperimentationStr + ".txt");

@@ -28,7 +28,8 @@ public class DistanceMatrixNcdBzip2 extends Matrix {
 	 */
 	public void computeMatrix(ArrayList<String[]> data,
 			float[][] roleWeights,
-			boolean isplit){
+			boolean isplit,
+			String workdirectory){
 		
 		// Create the dictionary to convert URL-ID to 0-255 integer
 		m_dict = new Hashtable<Integer,Integer>(); 
@@ -48,9 +49,9 @@ public class DistanceMatrixNcdBzip2 extends Matrix {
 		
 		// initialize the matrix
 		if(!isplit){
-			m_matrix = new MatrixStructure(data.size());
+			m_matrix = new MatrixStructure(data.size(), workdirectory);
 		} else {
-			m_matrixSplit = new MatrixStructure(data.size());
+			m_matrixSplit = new MatrixStructure(data.size(), workdirectory);
 		}
 		
 		// fill the distance matrix
@@ -71,11 +72,11 @@ public class DistanceMatrixNcdBzip2 extends Matrix {
 				
 				// fill the matrix
 				if(!isplit){
-					m_matrix.setCell(i, j, dist);
-					m_matrix.setCell(j, i, dist);
+					m_matrix.addCell(i, j, dist);
+					m_matrix.addCell(j, i, dist);
 				} else {
-					m_matrixSplit.setCell(i, j, dist);
-					m_matrixSplit.setCell(j, i, dist);
+					m_matrixSplit.addCell(i, j, dist);
+					m_matrixSplit.addCell(j, i, dist);
 				}
 			}
 		}
