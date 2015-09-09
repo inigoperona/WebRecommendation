@@ -12,7 +12,7 @@ import java.util.*;
 public class A001MainClassCreateDatabase {
 
 	/** The m_sessions i ds. */
-	private ArrayList<Integer> m_sessionsIDs;
+	private ArrayList<Long> m_sessionsIDs;
 	
 	/** The m_sequences. */
 	private ArrayList<String[]> m_sequences;
@@ -76,7 +76,7 @@ public class A001MainClassCreateDatabase {
 	public void loadDatabase(String databaseWD){
 		// Sampling
 		SaveLoadObjects sosess = new SaveLoadObjects();
-		m_sessionsIDs = (ArrayList<Integer>)sosess.load(databaseWD + "/_sessionIDs.javaData");
+		m_sessionsIDs = (ArrayList<Long>)sosess.load(databaseWD + "/_sessionIDs.javaData");
 		
 		// INSTANCIATED SEQUENCES
 		SaveLoadObjects soseqs = new SaveLoadObjects();

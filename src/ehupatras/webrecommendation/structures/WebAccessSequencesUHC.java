@@ -36,11 +36,11 @@ public class WebAccessSequencesUHC
 		// Write the sequences in a file line by line
 		try{
 			// order the keys
-			ArrayList<Integer> keysOrd = getSequencesIDs();			
+			ArrayList<Long> keysOrd = getSequencesIDs();			
 			ArrayList<String[]> sequences = getSequencesInstanciated(keysOrd);
 			
 			for(int i=0; i<sequences.size(); i++){
-				int sessionID = keysOrd.get(i).intValue();
+				long sessionID = keysOrd.get(i).longValue();
 				writer.write(String.valueOf(sessionID));
 				String[] sequence = sequences.get(i);
 				for(int j=0; j<sequence.length; j++){
@@ -73,11 +73,11 @@ public class WebAccessSequencesUHC
 	 * @param sessionIDs the session i ds
 	 * @return the sequences instanciated
 	 */
-	public static ArrayList<String[]> getSequencesInstanciated(ArrayList<Integer> sessionIDs){
+	public static ArrayList<String[]> getSequencesInstanciated(ArrayList<Long> sessionIDs){
 		// First ordered all requests we need
 		ArrayList<Integer> requestIDs = new ArrayList<Integer>();
 		for(int i=0; i<sessionIDs.size(); i++){
-			int sessionID = sessionIDs.get(i).intValue();
+			long sessionID = sessionIDs.get(i).longValue();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 			for(int j=0; j<sequence.size(); j++){
 				int reqind = sequence.get(j).intValue();
@@ -108,7 +108,7 @@ public class WebAccessSequencesUHC
 		// create the structure of sequences to return
 		ArrayList<String[]> resultSequences = new ArrayList<String[]>();
 		for(int i=0; i<sessionIDs.size(); i++){
-			int sessionID = sessionIDs.get(i).intValue();
+			long sessionID = sessionIDs.get(i).longValue();
 			ArrayList<Integer> sequenceReqInd = WebAccessSequences.m_sequences.get(sessionID);
 			String[] sequenceUHC = new String[sequenceReqInd.size()];
 			for(int j=0; j<sequenceReqInd.size(); j++){

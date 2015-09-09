@@ -16,7 +16,7 @@ import java.util.*;
 public class A001MainClassCreateDatabase {
 
 	/** The m_sessions i ds. */
-	private ArrayList<Integer> m_sessionsIDs;
+	private ArrayList<Long> m_sessionsIDs;
 	
 	/** The m_sequences. */
 	private ArrayList<String[]> m_sequences;
@@ -76,7 +76,7 @@ public class A001MainClassCreateDatabase {
 		// Sampling
 		ArrayList<Integer> sampleSessionIDs;
 		SaveLoadObjects sosess = new SaveLoadObjects();
-		m_sessionsIDs = (ArrayList<Integer>)sosess.load(databaseWD + "/_sessionIDs.javaData");
+		m_sessionsIDs = (ArrayList<Long>)sosess.load(databaseWD + "/_sessionIDs.javaData");
 		
 		// INSTANCIATED SEQUENCES
 		SaveLoadObjects soseqs = new SaveLoadObjects();
@@ -84,11 +84,11 @@ public class A001MainClassCreateDatabase {
 	}
 	public void loadDatabase2(String seqfile){
 		ArrayList<String[]> seqsDB = new ArrayList<String[]>();
-		ArrayList<Integer> sesIdDB = new ArrayList<Integer>();
+		ArrayList<Long> sesIdDB = new ArrayList<Long>();
 		
 		BufferedReader br = null;
 		try{
-			int ind = 0;
+			long ind = 0;
 			String sCurrentLine;
 			br = new BufferedReader(new FileReader(seqfile));
 			while ((sCurrentLine = br.readLine()) != null) {

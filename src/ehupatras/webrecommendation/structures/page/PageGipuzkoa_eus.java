@@ -72,7 +72,10 @@ public class PageGipuzkoa_eus
 		if(	urlname2.equals("/") ||
 			urlname2.contains(".aspx") ||
 			urlname2.contains(".htm") ||
-			urlname2.contains(".html")){
+			urlname2.contains(".html") ||
+			urlname2.contains(".pdf") || 
+			urlname2.contains(".doc")
+			){
 			m_ishtml = true;
 		}
 	}

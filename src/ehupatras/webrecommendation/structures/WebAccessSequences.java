@@ -75,10 +75,10 @@ public class WebAccessSequences {
 	// The sequences we are going to use to link prediction
 	// sessionID1: req1, req2, req3
 	/** The m_sequences. */
-	public static Hashtable<Integer,ArrayList<Integer>> m_sequences = new Hashtable<Integer,ArrayList<Integer>>();
+	public static Hashtable<Long,ArrayList<Integer>> m_sequences = new Hashtable<Long,ArrayList<Integer>>();
 	
 	/** The m_validness of sequences. */
-	public static Hashtable<Integer,Float> m_validnessOfSequences = new Hashtable<Integer,Float>();
+	public static Hashtable<Long,Float> m_validnessOfSequences = new Hashtable<Long,Float>();
 	
 	/** The m_seqfilename. */
 	private static String m_seqfilename = "_sequences.javaData";
@@ -493,7 +493,7 @@ public class WebAccessSequences {
 	 */
 	public static void writeSequencesIndex(String outfilename){
 		// order the keys
-		ArrayList<Integer> keysOrd = getSequencesIDs();
+		ArrayList<Long> keysOrd = getSequencesIDs();
 		
 		// Open the given file
 		BufferedWriter writer = null;
@@ -509,7 +509,7 @@ public class WebAccessSequences {
 		// Write the sequences in a file line by line
 		try{
 			for(int i=0; i<keysOrd.size(); i++){
-				int sessionID = keysOrd.get(i).intValue();
+				long sessionID = keysOrd.get(i).longValue();
 				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 				writer.write(String.valueOf(sessionID)); // write the session identification
 				for(int j=0; j<sequence.size(); j++){
@@ -544,14 +544,14 @@ public class WebAccessSequences {
 	 * @param keys the keys
 	 * @return the array list
 	 */
-	public static ArrayList<Integer> orderHashtableKeys(Enumeration<Integer> keys){
+	public static ArrayList<Long> orderHashtableKeys(Enumeration<Long> keys){
 		// order the keys
-		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
+		ArrayList<Long> keysOrd = new ArrayList<Long>();
 		while(keys.hasMoreElements()){
-			int sessionID = keys.nextElement().intValue();
+			long sessionID = keys.nextElement().longValue();
 			int i;
 			for(i=0; i<keysOrd.size(); i++){
-				int sessionID2 = keysOrd.get(i);
+				long sessionID2 = keysOrd.get(i);
 				if(sessionID<=sessionID2){
 					break;
 				}
@@ -566,8 +566,8 @@ public class WebAccessSequences {
 	 *
 	 * @return the sequences i ds
 	 */
-	public static ArrayList<Integer> getSequencesIDs(){
-		ArrayList<Integer> keysOrd = orderHashtableKeys(m_sequences.keys());
+	public static ArrayList<Long> getSequencesIDs(){
+		ArrayList<Long> keysOrd = orderHashtableKeys(m_sequences.keys());
 		return keysOrd;
 	}
 	
@@ -645,7 +645,7 @@ public class WebAccessSequences {
 		ObjectInputStream ois = null;
 		try{
 			ois = new ObjectInputStream(fis);
-			m_sequences = (Hashtable<Integer,ArrayList<Integer>>)ois.readObject();
+			m_sequences = (Hashtable<Long,ArrayList<Integer>>)ois.readObject();
 		} catch(IOException ex){
 			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
 					"Problems at reading the file: " + outputfilename);
@@ -774,7 +774,7 @@ public class WebAccessSequences {
 	 */
 	public static void writeValidness(String outfilename){
 		// order the keys
-		ArrayList<Integer> keysOrd = getSequencesIDs();
+		ArrayList<Long> keysOrd = getSequencesIDs();
 		
 		// Open the given file
 		BufferedWriter writer = null;
@@ -790,7 +790,7 @@ public class WebAccessSequences {
 		// Write the sequences in a file line by line
 		try{
 			for(int i=0; i<keysOrd.size(); i++){
-				int sessionID = keysOrd.get(i).intValue();
+				long sessionID = keysOrd.get(i).longValue();
 				float prob = WebAccessSequences.m_validnessOfSequences.get(sessionID);
 				writer.write(String.valueOf(sessionID)); // write the session identification
 				writer.write(" " + String.valueOf(prob));

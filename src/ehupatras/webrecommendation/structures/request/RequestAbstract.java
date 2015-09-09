@@ -64,7 +64,7 @@ public abstract class RequestAbstract
 
 	// this information is related to a sessioning phase
 	/** The m_session id. */
-	private int m_sessionID = -1;
+	private long m_sessionID = -1;
 
 	// time in each URL and its related attributes
 	/** The m_elapsedtime. */
@@ -287,7 +287,7 @@ public abstract class RequestAbstract
 	/* (non-Javadoc)
 	 * @see ehupatras.webrecommendation.structures.request.Request#setSessionID(int)
 	 */
-	public void setSessionID(int sessionID){
+	public void setSessionID(long sessionID){
 		m_sessionID = sessionID;
 	}
 	
@@ -308,7 +308,7 @@ public abstract class RequestAbstract
 	/* (non-Javadoc)
 	 * @see ehupatras.webrecommendation.structures.request.Request#getSessionID()
 	 */
-	public int getSessionID(){
+	public long getSessionID(){
 		return m_sessionID;
 	}
 	

@@ -18,14 +18,14 @@ public interface Request {
 	 *
 	 * @return the session id
 	 */
-	public int getSessionID();
+	public long getSessionID();
 	
 	/**
 	 * Sets the session id.
 	 *
 	 * @param sessionID the new session id
 	 */
-	public void setSessionID(int sessionID);
+	public void setSessionID(long sessionID);
 	
 	/**
 	 * Gets the time in millis.

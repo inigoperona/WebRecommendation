@@ -13,6 +13,12 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 	 */
 	public static void main(String[] args) {
 		
+		String[] args2 = {"experiments_gieus/00_preprocess", "xxx",
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+				"experiments_gieus/01_database", "/DM_ed",
+				"experiments_gieus/03_validation", "/pam_DM_ED", "/pam_DM_ED/spade1", "evaluation_pam.txt",
+				"-", "1"};
+		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
 		
 		// take the start time of the program
