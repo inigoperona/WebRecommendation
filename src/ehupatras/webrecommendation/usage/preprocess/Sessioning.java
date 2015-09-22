@@ -345,6 +345,72 @@ public class Sessioning {
 		}
 	}
 	
+	public void createSessions2(int expireSessionsInMin){
+		float expiredTimeInSeconds = expireSessionsInMin*60;
+		
+		// store all request_indexes
+		ArrayList<Integer> reqindexes = new ArrayList<Integer>();
+		Enumeration<Long> keys = WebAccessSequences.m_sequences.keys();
+		while(keys.hasMoreElements()){
+			long sessionID = keys.nextElement().longValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);			
+			for(int i=0; i<sequence.size(); i++){
+				reqindexes.add(sequence.get(i));
+			}
+		}
+		int[] reqindexesA = new int[reqindexes.size()];
+		for(int i=0; i<reqindexes.size(); i++){ reqindexesA[i] = reqindexes.get(i); }
+		Arrays.sort(reqindexesA);
+		
+		// access to request data and take the URLname
+		Hashtable<Integer,Float> req2et = new Hashtable<Integer,Float>();
+		for(int i=0; i<reqindexesA.length; i++){
+			int reqi = reqindexesA[i];
+			Request req = WebAccessSequences.getRequest(reqi);
+			float et = req.getElapsedTime();
+			req2et.put(reqi, et);
+		}
+				
+		// when consecutive same URL find remove the following ones
+		Hashtable<Integer,Long> req2sesID = new Hashtable<Integer,Long>();
+		Enumeration<Long> keys2 = WebAccessSequences.m_sequences.keys();
+		int nsplitAll = 0;
+		while(keys2.hasMoreElements()){
+			long sessionID = keys2.nextElement().longValue();
+			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+			ArrayList<Integer> sequence2 = new ArrayList<Integer>();
+			int nsplit = 0;
+			for(int i=0; i<sequence.size(); i++){
+				int reqi = sequence.get(i);
+				float et = req2et.get(reqi);
+				float elapsedTimeInSeconds = et/1000f;				
+				if(elapsedTimeInSeconds<=expiredTimeInSeconds){
+					sequence2.add(reqi);
+					req2sesID.put(reqi, sessionID);
+				} else {
+					WebAccessSequences.m_sequences.put(sessionID, sequence2);
+					sessionID = sessionID * 100 + nsplit;
+					nsplit++;
+					nsplitAll++;
+					sequence2 = new ArrayList<Integer>();
+					sequence2.add(reqi);
+				}
+				req2sesID.put(reqi, sessionID);
+			}
+			WebAccessSequences.m_sequences.put(sessionID, sequence2);
+		}
+		System.out.println("  [createSessions2] Number of split sequences: " + nsplitAll);
+				
+		// update all request indexes
+		for(int i=0; i<reqindexesA.length; i++){
+			int reqi = reqindexesA[i];
+			long sesID = req2sesID.get(reqi);
+			Request req = WebAccessSequences.getRequest(reqi);
+			req.setSessionID(sesID);
+			WebAccessSequences.replaceRequest(reqi, req);
+		}
+	}
+	
 	/**
 	 * Ensure minimum valid ur ls.
 	 *

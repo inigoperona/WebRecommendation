@@ -14,6 +14,8 @@ import ehupatras.clustering.sapehac.agglomeration.AgglomerationMethod;
 import ehupatras.clustering.sapehac.experiment.DissimilarityMeasure;
 import ehupatras.clustering.sapehac.experiment.Experiment;
 import ehupatras.webrecommendation.distmatrix.MatrixStructure;
+import java.io.*
+;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -115,6 +117,9 @@ public final class HierarchicalAgglomerativeClusterer {
      *
      * @param clusteringBuilder the clustering builder
      */
+    private double getij(int i, int j){
+    	return dissimilarityMeasure.computeDissimilarity(experiment, i, j);
+    }
     public void cluster(final ClusteringBuilder clusteringBuilder) {
         final double[][] dissimilarityMatrix = computeDissimilarityMatrix();
         final int nObservations = dissimilarityMatrix.length;
@@ -166,10 +171,9 @@ public final class HierarchicalAgglomerativeClusterer {
             clusteringBuilder.merge(i, j, d);
         }
     }
-    /*
-    public void cluster1(final ClusteringBuilder clusteringBuilder) {
-        final MatrixStructure dissimilarityMatrix = computeDissimilarityMatrix();
-        final int nObservations = dissimilarityMatrix.length;
+    public void cluster2(final ClusteringBuilder clusteringBuilder) {
+    	final MatrixStructure dissimilarityMatrix = computeDissimilarityMatrix2();
+        final int nObservations = experiment.getNumberOfObservations();
                 
         final boolean[] indexUsed = new boolean[nObservations];
         final int[] clusterCardinalities = new int[nObservations];
@@ -181,10 +185,10 @@ public final class HierarchicalAgglomerativeClusterer {
         // Perform nObservations-1 agglomerations
         for (int a = 1; a<nObservations; a++) {
             // Determine the two most similar clusters, i and j (such that i<j)
-            final Pair pair = findMostSimilarClusters(dissimilarityMatrix, indexUsed);
+            final Pair pair = findMostSimilarClusters2(dissimilarityMatrix, indexUsed);
             final int i = pair.getSmaller();
             final int j = pair.getLarger();
-            final double d = dissimilarityMatrix[i][j];
+            final double d = this.getij(i,j);
             
             //System.out.println("Agglomeration #"+a+
             //        ": merging clusters "+i+
@@ -196,10 +200,16 @@ public final class HierarchicalAgglomerativeClusterer {
             // update dissimilarityMatrix[i][*] and dissimilarityMatrix[*][i]
             for (int k = 0; k<nObservations; k++) {
                 if ((k!=i)&&(k!=j)&&indexUsed[k]) {
-                    final double dissimilarity = agglomerationMethod.computeDissimilarity(dissimilarityMatrix[i][k], dissimilarityMatrix[j][k],
-                            dissimilarityMatrix[i][j], clusterCardinalities[i], clusterCardinalities[j], clusterCardinalities[k]);
-                    dissimilarityMatrix[i][k] = dissimilarity;
-                    dissimilarityMatrix[k][i] = dissimilarity;
+                    final double dissimilarity = 
+                    		agglomerationMethod.computeDissimilarity(
+                    				getij(i,k), 
+                    				getij(j,k),
+                    				getij(i,j), 
+                    				clusterCardinalities[i], 
+                    				clusterCardinalities[j], 
+                    				clusterCardinalities[k]);
+                    dissimilarityMatrix.setCell(i,k,dissimilarity);
+                    dissimilarityMatrix.setCell(k,i,dissimilarity);
                 }
             }
 
@@ -208,15 +218,14 @@ public final class HierarchicalAgglomerativeClusterer {
             // erase cluster j
             indexUsed[j] = false;
             for (int k = 0; k<nObservations; k++) {
-                dissimilarityMatrix[j][k] = Double.POSITIVE_INFINITY;
-                dissimilarityMatrix[k][j] = Double.POSITIVE_INFINITY;
+            	dissimilarityMatrix.setCell(j,k,Double.POSITIVE_INFINITY);
+            	dissimilarityMatrix.setCell(k,j,Double.POSITIVE_INFINITY);
             }
             
             // update clustering
             clusteringBuilder.merge(i, j, d);
         }
     }
-    */
     
     /**
      * Compute dissimilarity matrix.
@@ -240,25 +249,28 @@ public final class HierarchicalAgglomerativeClusterer {
         }
         return dissimilarityMatrix;
     }
-    /*
-    private double[][] computeDissimilarityMatrix1() {
-        final MatrixStructure dissimilarityMatrix = new MatrixStructure(experiment.getNumberOfObservations());
-        // fill diagonal
-        for (int o = 0; o<dissimilarityMatrix.length; o++) {
-            dissimilarityMatrix[o][o] = 0.0;
-        }
+    private MatrixStructure computeDissimilarityMatrix2() {
+    	String foldername = "hclust_tmp_folder";
+    	this.createFolder(foldername);
+        final MatrixStructure dissimilarityMatrix = new MatrixStructure(experiment.getNumberOfObservations(),foldername);
         // fill rest (only compute half, then mirror accross diagonal, assuming
         // a symmetric dissimilarity measure)
-        for (int o1 = 0; o1<dissimilarityMatrix.length; o1++) {
-            for (int o2 = 0; o2<o1; o2++) {
+        for (int o1 = 0; o1<dissimilarityMatrix.getLength(); o1++) {
+            for (int o2 = 0; o2<dissimilarityMatrix.getLength(); o2++) {
                 final double dissimilarity = dissimilarityMeasure.computeDissimilarity(experiment, o1, o2);
-                dissimilarityMatrix[o1][o2] = dissimilarity;
-                dissimilarityMatrix[o2][o1] = dissimilarity;
+                dissimilarityMatrix.addCell(o1, o2, (float)dissimilarity);
             }
         }
         return dissimilarityMatrix;
     }
-    */
+    private void createFolder(String foldername){
+    	File foldf = new File(foldername);
+    	boolean success = foldf.mkdirs();
+    	if (!success) {
+    	    System.err.println("Error at creating folder " + foldername);
+    	    System.exit(1);
+    	}
+    }
 
     /**
      * Find most similar clusters.
@@ -275,6 +287,23 @@ public final class HierarchicalAgglomerativeClusterer {
                 for (int neighbor = 0; neighbor<dissimilarityMatrix.length; neighbor++) {
                     if (indexUsed[neighbor]&&dissimilarityMatrix[cluster][neighbor]<smallestDissimilarity&&cluster!=neighbor) {
                         smallestDissimilarity = dissimilarityMatrix[cluster][neighbor];
+                        mostSimilarPair.set(cluster, neighbor);
+                    }
+                }
+            }
+        }
+        return mostSimilarPair;
+    }
+    private static Pair findMostSimilarClusters2(final MatrixStructure dissimilarityMatrix, final boolean[] indexUsed) {
+        final Pair mostSimilarPair = new Pair();
+        double smallestDissimilarity = Double.POSITIVE_INFINITY;
+        for (int cluster = 0; cluster<dissimilarityMatrix.getLength(); cluster++) {
+            if (indexUsed[cluster]) {
+                for (int neighbor = 0; neighbor<dissimilarityMatrix.getLength(); neighbor++) {
+                    if (indexUsed[neighbor] && 
+                    		dissimilarityMatrix.getCell(cluster,neighbor) < smallestDissimilarity && 
+                    		cluster!=neighbor) {
+                        smallestDissimilarity = dissimilarityMatrix.getCell(cluster, neighbor);
                         mostSimilarPair.set(cluster, neighbor);
                     }
                 }

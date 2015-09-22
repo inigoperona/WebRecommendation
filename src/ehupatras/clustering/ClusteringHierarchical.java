@@ -100,7 +100,8 @@ public class ClusteringHierarchical {
 		
 		// Compute the dendrogram
 		DendrogramBuilder dendrogramBuilder = new DendrogramBuilder(experiment.getNumberOfObservations());
-		HierarchicalAgglomerativeClusterer clusterer = new HierarchicalAgglomerativeClusterer(experiment, dissimilarityMeasure, agglomerationMethod);
+		HierarchicalAgglomerativeClusterer clusterer = 
+				new HierarchicalAgglomerativeClusterer(experiment, dissimilarityMeasure, agglomerationMethod);
 		clusterer.cluster(dendrogramBuilder);
 		m_dendrogram = dendrogramBuilder.getDendrogram();
 	}

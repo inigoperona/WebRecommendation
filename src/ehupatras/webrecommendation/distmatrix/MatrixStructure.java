@@ -9,8 +9,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.io.Serializable;
 
-import ehupatras.webrecommendation.structures.request.Request;
-
 public class MatrixStructure implements Serializable {
 	private static final long serialVersionUID = 1L;	
 	
@@ -27,7 +25,7 @@ public class MatrixStructure implements Serializable {
 	private String m_workdir = "/home/burdinadar";
 	// swapping memory
 	private static int m_nMemory = 6; //10
-	private static ArrayList<ArrayList<float[]>> m_filterlogS = null;
+	private static ArrayList<ArrayList<float[]>> m_matrixS = null;
 	private static ArrayList<Integer> m_actualloadedmodulusS = null;
 		
 	
@@ -50,14 +48,14 @@ public class MatrixStructure implements Serializable {
 	}
 	
 	private void initmodulus(){
-		m_filterlogS = null;
+		m_matrixS = null;
 		m_actualloadedmodulusS = null;
 		System.gc();
-		m_filterlogS = new ArrayList<ArrayList<float[]>>();
+		m_matrixS = new ArrayList<ArrayList<float[]>>();
 		m_actualloadedmodulusS = new ArrayList<Integer>();
 		for(int i=0; i<m_nMemory; i++){
 			m_actualloadedmodulusS.add(-1);
-			m_filterlogS.add(null);
+			m_matrixS.add(null);
 		}
 	}
 	
@@ -98,12 +96,12 @@ public class MatrixStructure implements Serializable {
 		int iindex = i % m_maxLoadedSequences;
 		
 		// if we have in memory return it
-		if(m_filterlogS==null){
+		if(m_matrixS==null){
 			this.initmodulus();
 		}
 		int iMem = m_actualloadedmodulusS.indexOf(new Integer(imodulus));
 		if(iMem!=-1){
-			return m_filterlogS.get(iMem).get(iindex)[j];
+			return m_matrixS.get(iMem).get(iindex)[j];
 		}
 		
 		// if we want data from the last modul take from the write-structure
@@ -113,6 +111,22 @@ public class MatrixStructure implements Serializable {
 		
 		// return structure
 		return m_maAL.get(iindex)[j];
+	}
+	
+	public float getCelldump(int i, int j){
+		return 0f;
+	}
+	
+	public void setCell(int i, int j, double d){
+		int imodulus = i / m_maxLoadedSequences;
+		int iindex = i % m_maxLoadedSequences;
+		
+		// if we have in memory return it
+		int iMem = m_actualloadedmodulusS.indexOf(new Integer(imodulus));
+		if(iMem!=-1){
+			//m_vectorsS.get(iMem).remove(iindex);
+			//m_vectorsS.get(iMem).add(iindex, (float)d);
+		}
 	}
 	
 	public int getLength(){
@@ -175,7 +189,7 @@ public class MatrixStructure implements Serializable {
 			int modtosave = m_actualloadedmodulusS.get(lastIndexMem);
 			if(modtosave!=-1){ // remove the first module in going out
 				m_actualloadedmodulusS.set(lastIndexMem, -1);
-				m_filterlogS.set(lastIndexMem, null);
+				m_matrixS.set(lastIndexMem, null);
 			}
 			// move all other modulus in the memory
 			for(int i2Mem=m_nMemory-2; i2Mem>=0; i2Mem--){
@@ -183,16 +197,16 @@ public class MatrixStructure implements Serializable {
 				if(i2Mod==-1){
 					continue;
 				} else {
-					ArrayList<float[]> filterlogAux2 = m_filterlogS.get(i2Mem);
-					m_filterlogS.set(i2Mem+1, filterlogAux2);
+					ArrayList<float[]> filterlogAux2 = m_matrixS.get(i2Mem);
+					m_matrixS.set(i2Mem+1, filterlogAux2);
 					m_actualloadedmodulusS.set(i2Mem+1, i2Mod);
-					m_filterlogS.set(i2Mem, null);
+					m_matrixS.set(i2Mem, null);
 					m_actualloadedmodulusS.set(i2Mem, -1);
 				}
 			}
 		}
 		if(m_maAL.size()>0){
-			m_filterlogS.set(0, m_maAL);
+			m_matrixS.set(0, m_maAL);
 			m_actualloadedmodulusS.set(0, m_actualModulusInMemory);
 		}
 		
