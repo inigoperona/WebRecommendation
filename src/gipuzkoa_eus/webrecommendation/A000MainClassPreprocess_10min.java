@@ -226,8 +226,10 @@ public class A000MainClassPreprocess_10min {
 	public static void main(String[] args) {
 		// Parameter control
 		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
-		String basedirectory = "experiments_gieus/00_preprocess";
-		String logfilesIndex = "/loglist2.txt";
+		//String basedirectory = "experiments_gieus/00_preprocess";
+		//String logfilesIndex = "/loglist2.txt";
+		String basedirectory = "experiments_giberri/00_preprocess";
+		String logfilesIndex = "/loglist.txt";
 		
 		basedirectory = args[0];
 		logfilesIndex = args[1];

@@ -51,12 +51,23 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 		String line = null;
 		try{
 			while ((line = reader.readLine()) != null) {
+				String ip = "-";
+				String time = "-";
+				String method = "-";
+				Page page = null;
+				String protocol = "-";
+				int status = 0;
+				String reqsize = "0";
+				String reference = "-";
+				String useragent = "-";
+				
+				try{
 				// split the request line
 				String[] lineA = line.split(" ");
 				if(lineA.length<12){ continue; }
 				
 				// the fields
-				String ip = lineA[0];
+				ip = lineA[0];
 				if(!m_ip2idHT.containsKey(ip)){
 					ipID++;
 					m_ip2idHT.put(ip, new Integer(ipID));
@@ -68,7 +79,7 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 				
 				// time field has special separator ([...])
 				int i = 3;
-				String time = "";
+				time = "";
 				while(true){
 					time = time + " " + lineA[i];
 					if(lineA[i].endsWith("]")){ break; }
@@ -86,21 +97,21 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 				// URL request line
 				String urlrequest2 = urlrequest.substring(2, urlrequest.length()-1);
 				String[] urlrequest2A = urlrequest2.split(" ");
-				String method = urlrequest2A[0];
-				Page page = new PageGipuzkoa_eus(urlrequest2A[1]); // Create page
-				String protocol = urlrequest2A[2];
+				method = urlrequest2A[0];
+				page = new PageGipuzkoa_eus(urlrequest2A[1]); // Create page
+				protocol = urlrequest2A[2];
 				
 				// status field
 				i++;
-				int status = Integer.valueOf(lineA[i]).intValue();
+				status = Integer.valueOf(lineA[i]).intValue();
 				
 				// size of the request in bytes
 				i++;
-				String reqsize = lineA[i];
+				reqsize = lineA[i];
 				
 				// reference has special separator ("...")
 				i++;
-				String reference = "";
+				reference = "";
 				while(true){
 					reference = reference + " " + lineA[i];
 					if(lineA[i].endsWith("\"")){ break; }
@@ -109,12 +120,16 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 				
 				// user agent has special separator ("...")
 				i++;
-				String useragent = "";
+				useragent = "";
 				while(true){
 					useragent = useragent + " " + lineA[i];
 					if(lineA[i].endsWith("\"")){ break; }
 					i++;
 				}	
+				
+				} catch(Exception ex){
+					continue;
+				}
 				
 				// Create a request object
 				int ipid = m_ip2idHT.get(ip)*1000 + h;
