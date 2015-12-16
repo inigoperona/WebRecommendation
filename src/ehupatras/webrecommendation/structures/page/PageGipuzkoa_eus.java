@@ -40,7 +40,8 @@ public class PageGipuzkoa_eus
 			!urlname2.contains(".htm") &&
 			!urlname2.contains(".html") &&
 			!urlname2.contains(".doc") &&
-			!urlname2.contains(".xml") ){
+			!urlname2.contains(".xml") &&
+			!urlname2.contains(".do")){
 			m_isvalid = false;
 		}
 		
