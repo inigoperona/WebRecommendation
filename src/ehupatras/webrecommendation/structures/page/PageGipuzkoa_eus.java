@@ -93,53 +93,84 @@ public class PageGipuzkoa_eus
 		// label some URLs by hand //
 		while(true){
 			
-			// index slash
-			if(urlname2.equals("/")){
-				m_labelByHand = "index_slash"; break;
-			}
+			/// index slash
+			///if(urlname2.equals("/")){
+			///	m_labelByHand = "index_slash"; break;
+			///}
 		
-		// Aktualitatea
-		if(urlname2.contains("aktualitatea")){
-			m_labelByHand = "aktualitatea"; break;
-		}	
-		// Tramiteak eta Zerbitzuak
-		if(urlname2.contains("tramiteak-eta-zerbitzuak")){
-			m_labelByHand = "tramiteak_eta_zerbitzuak"; break;
-		}
-		// Aldundia
-		if(urlname2.contains("aldundia")){
-			m_labelByHand = "aldundia"; break;
-		}
-		// Partaidetza
-		if(urlname2.contains("partaidetza")){
-			m_labelByHand = "partaidetza"; break;
-		}	
+		///* GIPUZKOA.EUS -EN ERABILITAKOAK *///
+		///* Aktualitatea
+		///*if(urlname2.contains("aktualitatea")){
+		///*	m_labelByHand = "aktualitatea"; break;
+		///*}	
+		// *Tramiteak eta Zerbitzuak
+	///*	if(urlname2.contains("tramiteak-eta-zerbitzuak")){
+		///*	m_labelByHand = "tramiteak_eta_zerbitzuak"; break;
+	///*	}
+		///* Aldundia
+	///*	if(urlname2.contains("aldundia")){
+		///*	m_labelByHand = "aldundia"; break;
+	///*	}
+		/// *Partaidetza
+	///*	if(urlname2.contains("partaidetza")){
+		///*	m_labelByHand = "partaidetza"; break;
+	///*	}	
 		
-		// Bilatzailea
-		if(urlname2.contains("bilaketaren-emaitzak")){
-			m_labelByHand = "bilatzailea"; break;
-		}	
+		// /*Bilatzailea
+		///*if(urlname2.contains("bilaketaren-emaitzak")){
+		///*	m_labelByHand = "bilatzailea"; break;
+		///*}	
 		
-		// Castellano
+		///* Castellano
+		///*		if(urlname2.contains("/es/")){
+		///*			m_labelByHand = "castellano"; break;
+		///*		}	
+		
+		///* Euskara
+			///*	if(urlname2.contains("/eu/")){
+			///*		m_labelByHand = "euskara"; break;
+			///*	}
+		
+		///* Gipuzkoa.net
+		///*		if(urlname2.contains("gipuzkoa.net")){
+			///*		m_labelByHand = ".net"; break;
+			///*	}	
+		
+		///* Gipuzkoa.eus
+			///*	if(urlname2.contains("gipuzkoa.eus")){
+			///*		m_labelByHand = ".eus"; break;
+		///*		}
+		
+			////** EHU.LOGETAN ERABILITAKOAK
+			
+			////** Ehu.eus
+			    if(urlname2.contains("ehu.eus")){
+			       m_labelByHand = ".eus"; break;
+				}	
+			
+			////** Ehu.es
+				if(urlname2.contains("ehu.es")){
+			    	m_labelByHand = ".es"; break;
+				}
+			////** Castellano
 				if(urlname2.contains("/es/")){
-					m_labelByHand = "castellano"; break;
+		        	m_labelByHand = "castellano"; break;
 				}	
-		
-		// Euskara
+				
+			////** Euskara
 				if(urlname2.contains("/eu/")){
-					m_labelByHand = "euskara"; break;
+			    	m_labelByHand = "euskara"; break;
 				}
-		
-		// Gipuzkoa.net
-				if(urlname2.contains("gipuzkoa.net")){
-					m_labelByHand = ".net"; break;
-				}	
-		
-		// Gipuzkoa.eus
-				if(urlname2.contains("gipuzkoa.eus")){
-					m_labelByHand = ".eus"; break;
+				
+			////**Sarrera-acceso (matrikulazioa)
+				if(urlname2.contains("/sarrera-acceso")){
+			    	m_labelByHand = "sarrera-acceso"; break;
 				}
-		
+				
+			////**Wposta-correow (matrikulazioa)
+				if(urlname2.contains("/wposta") || urlname2.contains("/correow")){
+					m_labelByHand = "wposta-correow"; break;
+				}
 		break;
 		}
 		

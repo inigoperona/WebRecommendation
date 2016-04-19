@@ -139,13 +139,20 @@ public class RequestGipuzkoa_eus
 	 */
 	protected void analyzeReference(){
 		String reference2 = m_reference.toLowerCase();
-		// sites related with gipuzkoa.eus/net
+		// SITES RELATED with gipuzkoa.eus/net ///*
 		//	if(	reference2.contains("discapnet") ){ m_referenceLabel = m_referenceLabel + "_disc"; }
-		if(	reference2.contains("wwww.gipuzkoa.net") ){ m_referenceLabel = m_referenceLabel + "_wwwgipnet"; }
-		if(	reference2.contains("wwww.gipuzkoa.eus") ){ m_referenceLabel = m_referenceLabel + "_wwwgipeus"; }
+	///*	if(	reference2.contains("wwww.gipuzkoa.net") ){ m_referenceLabel = m_referenceLabel + "_wwwgipnet"; }
+	///*	if(	reference2.contains("wwww.gipuzkoa.eus") ){ m_referenceLabel = m_referenceLabel + "_wwwgipeus"; }
 		//if(	reference2.contains("discapnet.es") ){ m_referenceLabel = m_referenceLabel + "_disc_subdomain"; }
-		if(	reference2.contains("gipuzkoa.net") ){ m_referenceLabel = m_referenceLabel + "_gipnet"; }
-		if(	reference2.contains("gipuzkoa.eus") ){ m_referenceLabel = m_referenceLabel + "_gipeus"; }
+		
+		// SITES RELATED WITH ehu.eus
+		if(	reference2.contains("www.ehu.eus") ){ m_referenceLabel = m_referenceLabel + "_wwwehu_eus"; }
+		if(	reference2.contains("www.ehu.es") ){ m_referenceLabel = m_referenceLabel + "_wwwehu_es"; }
+		if(	reference2.contains("ehu.eus") ){ m_referenceLabel = m_referenceLabel + "_ehu_eus"; }
+		if(	reference2.contains("ehu.es") ){ m_referenceLabel = m_referenceLabel + "_ehu_es"; }
+		
+		///*if(	reference2.contains("gipuzkoa.net") ){ m_referenceLabel = m_referenceLabel + "_gipnet"; }
+		///*if(	reference2.contains("gipuzkoa.eus") ){ m_referenceLabel = m_referenceLabel + "_gipeus"; }
 		//if(	reference2.contains("technosite") ){ m_referenceLabel = m_referenceLabel + "_disc_technosite"; }
 		//if(	reference2.contains("once") ){ m_referenceLabel = m_referenceLabel + "_disc_once"; }
 		//if(	reference2.contains("wwww2.gipuzkoa.net") ){ m_referenceLabel = m_referenceLabel + "_Zergabide_inst"; }
