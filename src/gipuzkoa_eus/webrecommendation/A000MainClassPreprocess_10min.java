@@ -80,7 +80,7 @@ public class A000MainClassPreprocess_10min {
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog4.log");
 
 		
-		// create se)quences
+		// create sequences
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start creating sequences.");
 		ses.createSequences();
