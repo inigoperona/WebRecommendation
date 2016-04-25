@@ -532,7 +532,8 @@ public class Sessioning {
 		// compute the given percentile's position
 		int nseqs = lengthsInOrder.size();
 		int position = Math.round((float)nseqs*(lengthpercentile/(float)100));
-		int value = lengthsInOrder.size()>0 ? lengthsInOrder.get(position) : -1;
+		int position2 = position>=lengthsInOrder.size() ?  lengthsInOrder.size()-1 : position;
+		int value = lengthsInOrder.size()>0 ? lengthsInOrder.get(position2) : -1;
 		System.out.println("  " + value + " is the sequence length of the " +
 			"percentile " + lengthpercentile + "%.");
 		removeLongSequences(value);
