@@ -99,4 +99,8 @@ public interface Request {
 	public abstract String getFormatedUrlName();
 	
 	public int getLogFileNumber();
+	
+	public void setIsTheEndOfTheSession(boolean isTheEndOfTheSession);
+	
+	public boolean getIsTheEndOfTheSession();
 }

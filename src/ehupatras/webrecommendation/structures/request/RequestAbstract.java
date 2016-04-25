@@ -79,7 +79,7 @@ public abstract class RequestAbstract
 	
 	protected int m_logFileNumber;
 	
-	
+	protected boolean m_isTheEndOfTheSession = false;
 	
 	// constructor
 	/**
@@ -337,6 +337,14 @@ public abstract class RequestAbstract
 		return m_logFileNumber;
 	}
 	
+	public void setIsTheEndOfTheSession(boolean isTheEndOfTheSession){
+		m_isTheEndOfTheSession = isTheEndOfTheSession;
+	}
+	
+	public boolean getIsTheEndOfTheSession(){
+		return m_isTheEndOfTheSession;
+	}
+	
 	// writing the requests information
 	
 	/* (non-Javadoc)
@@ -361,6 +369,7 @@ public abstract class RequestAbstract
 				"pageRoleUHC " +
 				"isbot " +
 				"isvalidLinkPrediction " +
+				"isTheEndOfTheSession" +
 				"logfilenumber " +
 				page.toStringLongHeader();
 	}
@@ -387,6 +396,7 @@ public abstract class RequestAbstract
 				m_pageRoleUHC  + " " +
 				m_isbot + " " +
 				m_isvalidLP + " " +
+				m_isTheEndOfTheSession + " " +
 				m_logFileNumber + " " +
 				page.toStringLong();
 	}

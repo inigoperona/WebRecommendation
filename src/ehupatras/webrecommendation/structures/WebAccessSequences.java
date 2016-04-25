@@ -31,7 +31,7 @@ public class WebAccessSequences {
 	
 	// Auxiliar ArrayList<Request> to read faster
 	/** The m_n memory. */
-	private static int m_nMemory = 6;
+	private static int m_nMemory = 4;
 	
 	/** The m_filterlog s. */
 	private static ArrayList<ArrayList<Request>> m_filterlogS;
@@ -449,6 +449,8 @@ public class WebAccessSequences {
 	 * @param outfilename the outfilename
 	 */
 	public static void writeFilteredLog(String outfilename){
+		System.out.println("  [" + System.currentTimeMillis() + "] Start writing txt filteredLog. ");
+		
 		// Open the given file
 		BufferedWriter writer = null;
 		try{
@@ -492,6 +494,8 @@ public class WebAccessSequences {
 	 * @param outfilename the outfilename
 	 */
 	public static void writeSequencesIndex(String outfilename){
+		System.out.println("  [" + System.currentTimeMillis() + "] Start writing txt sequencesIndexes. ");
+		
 		// order the keys
 		ArrayList<Long> keysOrd = getSequencesIDs();
 		
