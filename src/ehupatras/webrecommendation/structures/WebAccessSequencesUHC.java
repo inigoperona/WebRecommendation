@@ -39,13 +39,13 @@ public class WebAccessSequencesUHC
 		try{
 			// order the keys
 			System.out.println("  [" + System.currentTimeMillis() + "]   Get sequencesID. ");
-			ArrayList<Long> keysOrd = getSequencesIDs();
+			ArrayList<String> keysOrd = getSequencesIDs();
 			System.out.println("  [" + System.currentTimeMillis() + "]   Get all sequences. ");
 			ArrayList<String[]> sequences = getSequencesInstanciated(keysOrd);
 			
 			for(int i=0; i<sequences.size(); i++){
 				// write the sessionID
-				long sessionID = keysOrd.get(i).longValue();
+				String sessionID = keysOrd.get(i);
 				writer.write(String.valueOf(sessionID));
 				
 				// write the URLs
@@ -92,14 +92,14 @@ public class WebAccessSequencesUHC
 		try{
 			// order the keys
 			System.out.println("  [" + System.currentTimeMillis() + "]   Get sequencesID. ");
-			ArrayList<Long> keysOrd = getSequencesIDs();
+			ArrayList<String> keysOrd = getSequencesIDs();
 			//System.out.println("  [" + System.currentTimeMillis() + "]   Get all sequences. ");
 			//ArrayList<String[]> sequences = getSequencesInstanciated(keysOrd);
 			
 			// First ordered all requests we need
 			ArrayList<Integer> requestIDs = new ArrayList<Integer>();
 			for(int i=0; i<keysOrd.size(); i++){
-				long sessionID = keysOrd.get(i).longValue();
+				String sessionID = keysOrd.get(i);
 				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 				for(int j=0; j<sequence.size(); j++){
 					// get the index of the request
@@ -148,7 +148,7 @@ public class WebAccessSequencesUHC
 			// write the information
 			for(int i=0; i<keysOrd.size(); i++){
 				// write the sessionID
-				long sessionID = keysOrd.get(i).longValue();
+				String sessionID = keysOrd.get(i);
 				writer.write(String.valueOf(sessionID));
 				
 				// write the clicks
@@ -197,14 +197,14 @@ public class WebAccessSequencesUHC
 		try{
 			// order the keys
 			System.out.println("  [" + System.currentTimeMillis() + "]   Get sequencesID. ");
-			ArrayList<Long> keysOrd = getSequencesIDs();
+			ArrayList<String> keysOrd = getSequencesIDs();
 			//System.out.println("  [" + System.currentTimeMillis() + "]   Get all sequences. ");
 			//ArrayList<String[]> sequences = getSequencesInstanciated(keysOrd);
 			
 			// First ordered all requests we need
 			ArrayList<Integer> requestIDs = new ArrayList<Integer>();
 			for(int i=0; i<keysOrd.size(); i++){
-				long sessionID = keysOrd.get(i).longValue();
+				String sessionID = keysOrd.get(i);
 				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 				for(int j=0; j<sequence.size(); j++){
 					// get the index of the request
@@ -239,7 +239,7 @@ public class WebAccessSequencesUHC
 			// write the information
 			for(int i=0; i<keysOrd.size(); i++){
 				// write the sessionID
-				long sessionID = keysOrd.get(i).longValue();
+				String sessionID = keysOrd.get(i);
 				writer.write(String.valueOf(sessionID));
 				
 				// write the clicks
@@ -279,11 +279,11 @@ public class WebAccessSequencesUHC
 	 * @param sessionIDs the session i ds
 	 * @return the sequences instanciated
 	 */
-	public static ArrayList<String[]> getSequencesInstanciated(ArrayList<Long> sessionIDs){
+	public static ArrayList<String[]> getSequencesInstanciated(ArrayList<String> sessionIDs){
 		// First ordered all requests we need
 		ArrayList<Integer> requestIDs = new ArrayList<Integer>();
 		for(int i=0; i<sessionIDs.size(); i++){
-			long sessionID = sessionIDs.get(i).longValue();
+			String sessionID = sessionIDs.get(i);
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 			for(int j=0; j<sequence.size(); j++){
 				int reqind = sequence.get(j).intValue();
@@ -314,7 +314,7 @@ public class WebAccessSequencesUHC
 		// create the structure of sequences to return
 		ArrayList<String[]> resultSequences = new ArrayList<String[]>();
 		for(int i=0; i<sessionIDs.size(); i++){
-			long sessionID = sessionIDs.get(i).longValue();
+			String sessionID = sessionIDs.get(i);
 			ArrayList<Integer> sequenceReqInd = WebAccessSequences.m_sequences.get(sessionID);
 			String[] sequenceUHC = new String[sequenceReqInd.size()];
 			for(int j=0; j<sequenceReqInd.size(); j++){

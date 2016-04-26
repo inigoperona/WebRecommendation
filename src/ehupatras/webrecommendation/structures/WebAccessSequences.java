@@ -1,9 +1,9 @@
 package ehupatras.webrecommendation.structures;
 
 import ehupatras.webrecommendation.structures.request.Request;
-
 import java.io.*;
 import java.util.*;
+import java.math.BigInteger;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -75,10 +75,10 @@ public class WebAccessSequences {
 	// The sequences we are going to use to link prediction
 	// sessionID1: req1, req2, req3
 	/** The m_sequences. */
-	public static Hashtable<Long,ArrayList<Integer>> m_sequences = new Hashtable<Long,ArrayList<Integer>>();
+	public static Hashtable<String,ArrayList<Integer>> m_sequences = new Hashtable<String,ArrayList<Integer>>();
 	
 	/** The m_validness of sequences. */
-	public static Hashtable<Long,Float> m_validnessOfSequences = new Hashtable<Long,Float>();
+	public static Hashtable<String,Float> m_validnessOfSequences = new Hashtable<String,Float>();
 	
 	/** The m_seqfilename. */
 	private static String m_seqfilename = "_sequences.javaData";
@@ -497,7 +497,7 @@ public class WebAccessSequences {
 		System.out.println("  [" + System.currentTimeMillis() + "] Start writing txt sequencesIndexes. ");
 		
 		// order the keys
-		ArrayList<Long> keysOrd = getSequencesIDs();
+		ArrayList<String> keysOrd = getSequencesIDs();
 		
 		// Open the given file
 		BufferedWriter writer = null;
@@ -513,7 +513,7 @@ public class WebAccessSequences {
 		// Write the sequences in a file line by line
 		try{
 			for(int i=0; i<keysOrd.size(); i++){
-				long sessionID = keysOrd.get(i).longValue();
+				String sessionID = keysOrd.get(i);
 				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 				writer.write(String.valueOf(sessionID)); // write the session identification
 				for(int j=0; j<sequence.size(); j++){
@@ -548,15 +548,17 @@ public class WebAccessSequences {
 	 * @param keys the keys
 	 * @return the array list
 	 */
-	public static ArrayList<Long> orderHashtableKeys(Enumeration<Long> keys){
+	public static ArrayList<String> orderHashtableKeys(Enumeration<String> keys){
 		// order the keys
-		ArrayList<Long> keysOrd = new ArrayList<Long>();
+		ArrayList<String> keysOrd = new ArrayList<String>();
 		while(keys.hasMoreElements()){
-			long sessionID = keys.nextElement().longValue();
+			String sessionID = keys.nextElement();
+			BigInteger sessionIDBI = new BigInteger(sessionID);  
 			int i;
 			for(i=0; i<keysOrd.size(); i++){
-				long sessionID2 = keysOrd.get(i);
-				if(sessionID<=sessionID2){
+				String sessionID2 = keysOrd.get(i);
+				BigInteger sessionID2BI = new BigInteger(sessionID2);
+				if(sessionIDBI.compareTo(sessionID2BI) <= 0){
 					break;
 				}
 			}
@@ -570,8 +572,8 @@ public class WebAccessSequences {
 	 *
 	 * @return the sequences i ds
 	 */
-	public static ArrayList<Long> getSequencesIDs(){
-		ArrayList<Long> keysOrd = orderHashtableKeys(m_sequences.keys());
+	public static ArrayList<String> getSequencesIDs(){
+		ArrayList<String> keysOrd = orderHashtableKeys(m_sequences.keys());
 		return keysOrd;
 	}
 	
@@ -649,7 +651,7 @@ public class WebAccessSequences {
 		ObjectInputStream ois = null;
 		try{
 			ois = new ObjectInputStream(fis);
-			m_sequences = (Hashtable<Long,ArrayList<Integer>>)ois.readObject();
+			m_sequences = (Hashtable<String,ArrayList<Integer>>)ois.readObject();
 		} catch(IOException ex){
 			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
 					"Problems at reading the file: " + outputfilename);
@@ -778,7 +780,7 @@ public class WebAccessSequences {
 	 */
 	public static void writeValidness(String outfilename){
 		// order the keys
-		ArrayList<Long> keysOrd = getSequencesIDs();
+		ArrayList<String> keysOrd = getSequencesIDs();
 		
 		// Open the given file
 		BufferedWriter writer = null;
@@ -794,9 +796,9 @@ public class WebAccessSequences {
 		// Write the sequences in a file line by line
 		try{
 			for(int i=0; i<keysOrd.size(); i++){
-				long sessionID = keysOrd.get(i).longValue();
+				String sessionID = keysOrd.get(i);
 				float prob = WebAccessSequences.m_validnessOfSequences.get(sessionID);
-				writer.write(String.valueOf(sessionID)); // write the session identification
+				writer.write(sessionID); // write the session identification
 				writer.write(" " + String.valueOf(prob));
 				writer.write("\n");
 			}

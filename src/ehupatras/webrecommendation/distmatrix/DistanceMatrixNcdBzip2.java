@@ -19,7 +19,7 @@ public class DistanceMatrixNcdBzip2 extends Matrix {
 	 *
 	 * @param names the names
 	 */
-	public DistanceMatrixNcdBzip2(ArrayList<Long> names){
+	public DistanceMatrixNcdBzip2(ArrayList<String> names){
 		m_names = names;
 	}
 	

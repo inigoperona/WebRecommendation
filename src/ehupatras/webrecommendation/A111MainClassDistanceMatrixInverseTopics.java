@@ -65,7 +65,7 @@ public class A111MainClassDistanceMatrixInverseTopics {
 	 * @param urlsEqualnessThreshold the urls equalness threshold
 	 */
 	public void createDistanceMatrix(String databaseWD,
-			ArrayList<Long> sampleSessionIDs,
+			ArrayList<String> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights,
 			String dmFile,

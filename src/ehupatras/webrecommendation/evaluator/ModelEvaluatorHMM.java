@@ -42,9 +42,9 @@ public class ModelEvaluatorHMM
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
 			Matrix dm,
-			ArrayList<ArrayList<Long>> trainAL,
-			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL,
+			ArrayList<ArrayList<String>> trainAL,
+			ArrayList<ArrayList<String>> valAL,
+			ArrayList<ArrayList<String>> testAL,
 			int modePrRe,
 			String usage2contentFile,
 			String resSimilarityFile){
@@ -106,7 +106,7 @@ public class ModelEvaluatorHMM
 	 */
 	protected HiddenMarkovModel getHMM(int indexFold, String outfilename, int hmmMode){
 		// train sequences indexes
-		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
+		ArrayList<String> trSesIDs = m_trainAL.get(indexFold);
 		int[] trInds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
 		
 		// clusters. Assign cluster to each train case

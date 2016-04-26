@@ -20,7 +20,7 @@ public class DistanceMatrixNcdGzip extends Matrix {
 	 *
 	 * @param names the names
 	 */
-	public DistanceMatrixNcdGzip(ArrayList<Long> names){
+	public DistanceMatrixNcdGzip(ArrayList<String> names){
 		m_names = names;
 	}
 	

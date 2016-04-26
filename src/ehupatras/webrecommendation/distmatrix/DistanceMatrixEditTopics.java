@@ -19,7 +19,7 @@ public class DistanceMatrixEditTopics
 	 * @param urlsDMfile the urls d mfile
 	 * @param urlsEqualnessThreshold the urls equalness threshold
 	 */
-	public DistanceMatrixEditTopics(ArrayList<Long> names, String urlsDMfile, float urlsEqualnessThreshold){
+	public DistanceMatrixEditTopics(ArrayList<String> names, String urlsDMfile, float urlsEqualnessThreshold){
 		super(names);
 		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
 		

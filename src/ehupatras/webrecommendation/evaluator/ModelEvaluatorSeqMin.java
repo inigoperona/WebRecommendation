@@ -41,9 +41,9 @@ public class ModelEvaluatorSeqMin
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
 			Matrix dm,
-			ArrayList<ArrayList<Long>> trainAL,
-			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL,
+			ArrayList<ArrayList<String>> trainAL,
+			ArrayList<ArrayList<String>> valAL,
+			ArrayList<ArrayList<String>> testAL,
 			int modePrRe,
 			String usage2contentFile,
 			String resSimilarityFile){

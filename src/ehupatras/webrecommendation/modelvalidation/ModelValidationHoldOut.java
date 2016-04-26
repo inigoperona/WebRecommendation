@@ -11,13 +11,13 @@ import java.util.*;
 public class ModelValidationHoldOut extends ModelValidation {
 
 	/** The m_train list. */
-	private ArrayList<Long> m_trainList = new ArrayList<Long>();
+	private ArrayList<String> m_trainList = new ArrayList<String>();
 	
 	/** The m_validation list. */
-	private ArrayList<Long> m_validationList = new ArrayList<Long>();
+	private ArrayList<String> m_validationList = new ArrayList<String>();
 	
 	/** The m_test list. */
-	private ArrayList<Long> m_testList = new ArrayList<Long>();
+	private ArrayList<String> m_testList = new ArrayList<String>();
 	
 	/**
 	 * Instantiates a new model validation hold out.
@@ -34,7 +34,7 @@ public class ModelValidationHoldOut extends ModelValidation {
 	 * @param pvalidation the pvalidation
 	 * @param ptest the ptest
 	 */
-	public void prepareData(ArrayList<Long> sessionsID, int ptrain, int pvalidation, int ptest){
+	public void prepareData(ArrayList<String> sessionsID, int ptrain, int pvalidation, int ptest){
 		// number of cases we have in the database
 		int ncases = sessionsID.size();
 		
@@ -48,21 +48,21 @@ public class ModelValidationHoldOut extends ModelValidation {
 		
 		// train
 		int until = i + positionTrainUntil;
-		m_trainList = new ArrayList<Long>();
+		m_trainList = new ArrayList<String>();
 		for(i=0; i<until; i++){
 			m_trainList.add(sessionsID.get(i));
 		}
 		
 		// parameters validation part
 		until = i + positionValUntil;
-		m_validationList = new ArrayList<Long>();
+		m_validationList = new ArrayList<String>();
 		for( ; i<until; i++){
 			m_validationList.add(sessionsID.get(i));
 		}
 		
 		// test
 		until = i + positionTestUntil;
-		m_testList = new ArrayList<Long>();
+		m_testList = new ArrayList<String>();
 		for( ;i<until && i<ncases; i++){
 			m_testList.add(sessionsID.get(i));
 		}
@@ -73,8 +73,8 @@ public class ModelValidationHoldOut extends ModelValidation {
 	 *
 	 * @return the train
 	 */
-	public ArrayList<ArrayList<Long>> getTrain(){
-		ArrayList<ArrayList<Long>> trainAL = new ArrayList<ArrayList<Long>>();
+	public ArrayList<ArrayList<String>> getTrain(){
+		ArrayList<ArrayList<String>> trainAL = new ArrayList<ArrayList<String>>();
 		trainAL.add(m_trainList);
 		return trainAL;
 	}
@@ -84,8 +84,8 @@ public class ModelValidationHoldOut extends ModelValidation {
 	 *
 	 * @return the validation
 	 */
-	public ArrayList<ArrayList<Long>> getValidation(){
-		ArrayList<ArrayList<Long>> validationAL = new ArrayList<ArrayList<Long>>();
+	public ArrayList<ArrayList<String>> getValidation(){
+		ArrayList<ArrayList<String>> validationAL = new ArrayList<ArrayList<String>>();
 		validationAL.add(m_validationList);
 		return validationAL;
 	} 
@@ -95,8 +95,8 @@ public class ModelValidationHoldOut extends ModelValidation {
 	 *
 	 * @return the test
 	 */
-	public ArrayList<ArrayList<Long>> getTest(){
-		ArrayList<ArrayList<Long>> testAL = new ArrayList<ArrayList<Long>>();
+	public ArrayList<ArrayList<String>> getTest(){
+		ArrayList<ArrayList<String>> testAL = new ArrayList<ArrayList<String>>();
 		testAL.add(m_testList);
 		return testAL;
 	}
@@ -122,9 +122,9 @@ public class ModelValidationHoldOut extends ModelValidation {
 	public void load(String workdirectory){
 		m_workdirectory = workdirectory;
 		SaveLoadObjects slo = new SaveLoadObjects();
-		m_trainList =      (ArrayList<Long>)slo.load(m_workdirectory + "/_holdoutTrain.javaData");
-		m_validationList = (ArrayList<Long>)slo.load(m_workdirectory + "/_holdoutValidation.javaData");
-		m_testList =       (ArrayList<Long>)slo.load(m_workdirectory + "/_holdoutTest.javaData");
+		m_trainList =      (ArrayList<String>)slo.load(m_workdirectory + "/_holdoutTrain.javaData");
+		m_validationList = (ArrayList<String>)slo.load(m_workdirectory + "/_holdoutValidation.javaData");
+		m_testList =       (ArrayList<String>)slo.load(m_workdirectory + "/_holdoutTest.javaData");
 	}
 	
 	/**

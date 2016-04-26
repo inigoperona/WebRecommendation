@@ -33,9 +33,9 @@ public class ModelEvaluatorSuffixTreeGlobal
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
 			Matrix dm,
-			ArrayList<ArrayList<Long>> trainAL,
-			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL,
+			ArrayList<ArrayList<String>> trainAL,
+			ArrayList<ArrayList<String>> valAL,
+			ArrayList<ArrayList<String>> testAL,
 			int modePrRe,
 			String usage2contentFile,
 			String resSimilarityFile){
@@ -62,7 +62,7 @@ public class ModelEvaluatorSuffixTreeGlobal
 	 * @return the my suffix tree
 	 */
 	private MySuffixTree createSuffixTreeFromOriginalSequences(int indexFold){		
-		ArrayList<Long> trainnames = m_trainAL.get(indexFold);
+		ArrayList<String> trainnames = m_trainAL.get(indexFold);
 		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
 		ArrayList<String[]> sequences = new ArrayList<String[]>(); 
 		for(int i=0; i<trainDMindexes.length; i++){

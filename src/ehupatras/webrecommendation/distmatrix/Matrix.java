@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.math.BigInteger;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -20,7 +21,7 @@ public abstract class Matrix {
 	protected MatrixStructure m_matrix = null;
 	
 	/** The m_names. */
-	protected ArrayList<Long> m_names = null;
+	protected ArrayList<String> m_names = null;
 	
 	/** The m_savefilename. */
 	private String m_savefilename = "/_matrix.javaData";
@@ -33,7 +34,7 @@ public abstract class Matrix {
 	private int m_minimumActivity = 3;
 	
 	/** The m_names split. */
-	protected ArrayList<Long> m_namesSplit = null;
+	protected ArrayList<String> m_namesSplit = null;
 	
 	/** The m_matrix split. */
 	protected MatrixStructure m_matrixSplit = null;
@@ -105,16 +106,17 @@ public abstract class Matrix {
 	 * @param isSplit the is split
 	 * @return the session i ds indexes
 	 */
-	public int[] getSessionIDsIndexes(ArrayList<Long> sessionIDs, boolean isSplit){
+	public int[] getSessionIDsIndexes(ArrayList<String> sessionIDs, boolean isSplit){
 		int[] indexes = null;
 		if(!isSplit){
 			// compute the positions of session-IDs in the distance matrix
 			indexes = new int[sessionIDs.size()];
 			for(int i=0; i<sessionIDs.size(); i++){
-				long sesID = sessionIDs.get(i);
+				String sesID = sessionIDs.get(i);
+				BigInteger sesIDBI = new BigInteger(sesID); 
 				int j;
 				for(j=0; j<m_names.size(); j++){
-					long sesID2 = m_names.get(j);
+					String sesID2 = m_names.get(j);
 					if(sesID==sesID2){
 						break;
 					}
@@ -125,11 +127,15 @@ public abstract class Matrix {
 			// compute the positions of session-IDs in the split distance matrix
 			ArrayList<Integer> indexesAL = new ArrayList<Integer>();
 			for(int i=0; i<sessionIDs.size(); i++){
-				long sesID = sessionIDs.get(i);
+				String sesID = sessionIDs.get(i);
+				BigInteger sesIDBI = new BigInteger(sesID);  
 				for(int j=0; j<m_namesSplit.size(); j++){
-					long sesIDSplit = m_namesSplit.get(j);
-					long sesID2 = sesIDSplit / 100l;
-					if(sesID==sesID2){
+					String sesIDSplit = m_namesSplit.get(j);
+					int len = sesIDSplit.length();
+					String sesID2Str = sesIDSplit.substring(0, len-2);
+					//long sesID2 = sesIDSplit / 100l;
+					BigInteger sesID2BI = new BigInteger(sesID2Str);
+					if(sesIDBI.compareTo(sesID2BI) == 0){
 						indexesAL.add(j);
 					}
 				}
@@ -150,8 +156,8 @@ public abstract class Matrix {
 	 * @param isSplit the is split
 	 * @return the session i ds indexes2
 	 */
-	public int[] getSessionIDsIndexes2(ArrayList<Long> sessionIDs, boolean isSplit){
-		ArrayList<Long> names;
+	public int[] getSessionIDsIndexes2(ArrayList<String> sessionIDs, boolean isSplit){
+		ArrayList<String> names;
 		if(!isSplit){
 			names = m_names;
 		} else {
@@ -160,7 +166,7 @@ public abstract class Matrix {
 		
 		int[] indexes = new int[sessionIDs.size()];
 		for(int i=0; i<sessionIDs.size(); i++){
-			long sesID = sessionIDs.get(i);
+			String sesID = sessionIDs.get(i);
 			indexes[i] = names.indexOf(sesID);
 		}
 
@@ -175,17 +181,21 @@ public abstract class Matrix {
 	 * @param isSplit the is split
 	 * @return the session i ds
 	 */
-	public ArrayList<Long> getSessionIDs(ArrayList<Long> sessionIDs, boolean isSplit){
+	public ArrayList<String> getSessionIDs(ArrayList<String> sessionIDs, boolean isSplit){
 		if(!isSplit){
 			return sessionIDs;
 		} else {
-			ArrayList<Long> sessionIDs2 = new ArrayList<Long>();
+			ArrayList<String> sessionIDs2 = new ArrayList<String>();
 			for(int i=0; i<sessionIDs.size(); i++){
-				long sesID = sessionIDs.get(i);
+				String sesID = sessionIDs.get(i);
+				BigInteger sesIDBI = new BigInteger(sesID);
 				for(int j=0; j<m_namesSplit.size(); j++){
-					long sesIDSplit = m_namesSplit.get(j);
-					long sesID2 = sesIDSplit / 100l;
-					if(sesID==sesID2){
+					String sesIDSplit = m_namesSplit.get(j);
+					int len = sesIDSplit.length();
+					String sesID2Str = sesIDSplit.substring(0, len-2);
+					//long sesID2 = sesIDSplit / 100l;
+					BigInteger sesID2BI = new BigInteger(sesID2Str);
+					if(sesIDBI.compareTo(sesID2BI) == 0){
 						sessionIDs2.add(sesIDSplit);
 					}
 				}
@@ -267,10 +277,10 @@ public abstract class Matrix {
 		SaveLoadObjects slo = new SaveLoadObjects();
 		Object[] objA = (Object[])slo.load(wordirectory + m_savefilename);
 		m_matrix = (MatrixStructure)objA[0];
-		m_names = (ArrayList<Long>)objA[1];
+		m_names = (ArrayList<String>)objA[1];
 		if(objA.length>2){
 			m_matrixSplit = (MatrixStructure)objA[2];
-			m_namesSplit = (ArrayList<Long>)objA[3];
+			m_namesSplit = (ArrayList<String>)objA[3];
 		}
 	}
     
@@ -285,12 +295,12 @@ public abstract class Matrix {
      * @return the object[]
      */
     public Object[] splitSequences(ArrayList<String[]> data){
-    	ArrayList<Long> namesSplit = new ArrayList<Long>();
+    	ArrayList<String> namesSplit = new ArrayList<String>();
     	ArrayList<String[]> dataSplit = new ArrayList<String[]>();
     	int nseq = m_names.size();
     	for(int i=0; i<nseq; i++){
     		// original session-id and the original sequence
-    		long sesID = m_names.get(i);
+    		String sesID = m_names.get(i);
     		String[] seq = data.get(i);
     		
     		// put the first element in the new sequence
@@ -312,8 +322,10 @@ public abstract class Matrix {
             			}
             			dataSplit.add(seqSplitA);
             			// update the subsequence identifier
-            			long subseqID = (long)sesID*100l+(long)subseq;
-            			namesSplit.add(subseqID);
+            			String subseqStr = String.format("%02d", subseq);
+            			String subseqIDStr = sesID + subseqStr;
+            			//long subseqID = (long)sesID*100l+(long)subseq;
+            			namesSplit.add(subseqIDStr);
             			// increment the subsequence counter
             			subseq++;
             		}
@@ -329,8 +341,10 @@ public abstract class Matrix {
     			}
     			dataSplit.add(seqSplitA);
     			// update the subsequence identifier
-    			long subseqID = (long)sesID*100l+(long)subseq;
-    			namesSplit.add(subseqID);
+    			String subseqStr = String.format("%02d", subseq);
+    			String subseqIDStr = sesID + subseqStr;
+    			//long subseqID = (long)sesID*100l+(long)subseq;
+    			namesSplit.add(subseqIDStr);
     		}
     		
     	}
@@ -351,7 +365,7 @@ public abstract class Matrix {
      * @param seqs the seqs
      */
     public void writeSeqs(String outputFilename, 
-    		ArrayList<Long> names, 
+    		ArrayList<String> names, 
     		ArrayList<String[]> seqs){
     	
 		// Open the given file
@@ -368,7 +382,7 @@ public abstract class Matrix {
 		// Write in a file line by line
 		try{
 			for(int i=0; i<names.size(); i++){
-				long sesID = names.get(i);
+				String sesID = names.get(i);
 				writer.write(String.valueOf(sesID));
 				String[] seq = seqs.get(i);
 				for(int j=0; j<seq.length; j++){
@@ -402,14 +416,14 @@ public abstract class Matrix {
      * @return the object[]
      */
     public Object[] readSeqs(String inputFilename){
-    	ArrayList<Long> names = new ArrayList<Long>();
+    	ArrayList<String> names = new ArrayList<String>();
     	ArrayList<String[]> seqs = new ArrayList<String[]>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(inputFilename));
 			String sCurrentLine;
 			while ((sCurrentLine = br.readLine()) != null) {
 				String[] line = sCurrentLine.split(",");
-				names.add(Long.valueOf(line[0]));
+				names.add(line[0]);
 				int nURLs = line.length-1;
 				String[] seq = new String[nURLs];
 				for(int i=1; i<line.length; i++){

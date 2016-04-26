@@ -48,13 +48,13 @@ public abstract class ModelEvaluator {
 	protected Matrix m_distancematrix;
 	// To do the evaluation based on the database
 	/** The m_train al. */
-	protected ArrayList<ArrayList<Long>> m_trainAL;
+	protected ArrayList<ArrayList<String>> m_trainAL;
 	
 	/** The m_val al. */
-	protected ArrayList<ArrayList<Long>> m_valAL;
+	protected ArrayList<ArrayList<String>> m_valAL;
 	
 	/** The m_test al. */
-	protected ArrayList<ArrayList<Long>> m_testAL;
+	protected ArrayList<ArrayList<String>> m_testAL;
 	
 	
 	// metrics' parameters
@@ -145,9 +145,9 @@ public abstract class ModelEvaluator {
 					ArrayList<String[]> dataset,
 					ArrayList<String[]> datasetSplit,
 					Matrix dm,
-					ArrayList<ArrayList<Long>> trainAL,
-					ArrayList<ArrayList<Long>> valAL,
-					ArrayList<ArrayList<Long>> testAL,
+					ArrayList<ArrayList<String>> trainAL,
+					ArrayList<ArrayList<String>> valAL,
+					ArrayList<ArrayList<String>> testAL,
 					int modePrRe,
 					String usage2contentFile,
 					String resSimilarityFile){
@@ -358,7 +358,7 @@ public abstract class ModelEvaluator {
 	 * @return the string
 	 */
 	private String computeEvaluation(
-					ArrayList<ArrayList<Long>> evalAL,
+					ArrayList<ArrayList<String>> evalAL,
 					String mode, 
 					int nrecos,
 					long seed){
@@ -457,7 +457,7 @@ public abstract class ModelEvaluator {
 		for(int i=0; i<m_nFolds; i++){
 			
 			// get the test sequences from sessionIDs
-			ArrayList<Long> sessionIDs = evalAL.get(i); 
+			ArrayList<String> sessionIDs = evalAL.get(i); 
 			int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs, false);
 			ArrayList<String[]> testseqs = new ArrayList<String[]>();
 			for(int j=0; j<inds.length; j++){
@@ -508,7 +508,7 @@ public abstract class ModelEvaluator {
 			// METRICS1
 			
 			// get the train sequences from sessionIDs
-			ArrayList<Long> trsessionIDs = m_trainAL.get(i); 
+			ArrayList<String> trsessionIDs = m_trainAL.get(i); 
 			int[] trinds = m_distancematrix.getSessionIDsIndexes(trsessionIDs, m_datasetSplit!=null);
 			ArrayList<String[]> trainseqs = new ArrayList<String[]>();
 			for(int j=0; j<trinds.length; j++){

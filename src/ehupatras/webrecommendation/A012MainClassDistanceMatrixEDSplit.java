@@ -60,7 +60,7 @@ public class A012MainClassDistanceMatrixEDSplit {
 	 * @param starters the starters
 	 */
 	public void createDistanceMatrix(String databaseWD,
-			ArrayList<Long> sampleSessionIDs,
+			ArrayList<String> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights,
 			int[] starters){
@@ -69,7 +69,7 @@ public class A012MainClassDistanceMatrixEDSplit {
 		// split the sequences 
 		m_matrix.setSplitParameters(starters, 3);
 		Object[] objA = m_matrix.splitSequences(sequencesUHC);
-		ArrayList<Long> sesIDsSplit = (ArrayList<Long>)objA[0];
+		ArrayList<String> sesIDsSplit = (ArrayList<String>)objA[0];
 		ArrayList<String[]> seqsSplit = (ArrayList<String[]>)objA[1];
 		m_matrix.writeSeqs(databaseWD + "/sequences_split.txt", 
 				sesIDsSplit, seqsSplit);

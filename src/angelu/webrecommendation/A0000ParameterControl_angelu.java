@@ -71,7 +71,7 @@ public class A0000ParameterControl_angelu {
 	protected String m_dmWD;
 	
 	/** The m_sample session i ds. */
-	protected ArrayList<Long> m_sampleSessionIDs;
+	protected ArrayList<String> m_sampleSessionIDs;
 	
 	/** The m_sequences uhc. */
 	protected ArrayList<String[]> m_sequencesUHC;
@@ -102,13 +102,13 @@ public class A0000ParameterControl_angelu {
 	protected int m_ptest = 1;
 	
 	/** The m_train al. */
-	protected ArrayList<ArrayList<Long>> m_trainAL;
+	protected ArrayList<ArrayList<String>> m_trainAL;
 	
 	/** The m_val al. */
-	protected ArrayList<ArrayList<Long>> m_valAL;
+	protected ArrayList<ArrayList<String>> m_valAL;
 	
 	/** The m_test al. */
-	protected ArrayList<ArrayList<Long>> m_testAL;
+	protected ArrayList<ArrayList<String>> m_testAL;
 	
 	// validation
 	/** The m_validation wd. */
@@ -385,9 +385,10 @@ public class A0000ParameterControl_angelu {
 		m_sampleSessionIDs = database.getSessionsIDs();
 		m_sequencesUHC = database.getInstantiatedSequences();
 	}
+	
 	public void loadDatabase2(){
 		ArrayList<String[]> seqsDB = new ArrayList<String[]>();
-		ArrayList<Long> sesIdDB = new ArrayList<Long>();
+		ArrayList<String> sesIdDB = new ArrayList<String>();
 		
 		BufferedReader br = null;
 		try{
@@ -414,7 +415,8 @@ public class A0000ParameterControl_angelu {
 				seqsDB.add(seqA);
 				
 				// session ID
-				sesIdDB.add(ind);
+				String indStr = String.valueOf(ind);
+				sesIdDB.add(indStr);
 				ind++;
 			}
 		} catch (IOException e) {
@@ -511,16 +513,16 @@ public class A0000ParameterControl_angelu {
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		honestmodelval.load(m_validationWD);
 		
-		ArrayList<ArrayList<Long>> trainALaux = honestmodelval.getTrain();
-		m_trainAL = new ArrayList<ArrayList<Long>>();
+		ArrayList<ArrayList<String>> trainALaux = honestmodelval.getTrain();
+		m_trainAL = new ArrayList<ArrayList<String>>();
 		m_trainAL.add(trainALaux.get(0));
 		
-		ArrayList<ArrayList<Long>> valALaux  = honestmodelval.getValidation();
-		m_valAL  = new ArrayList<ArrayList<Long>>();
+		ArrayList<ArrayList<String>> valALaux  = honestmodelval.getValidation();
+		m_valAL  = new ArrayList<ArrayList<String>>();
 		m_valAL.add(valALaux.get(0));
 		
-		ArrayList<ArrayList<Long>> testALaux  = honestmodelval.getTest();
-		m_testAL = new ArrayList<ArrayList<Long>>();
+		ArrayList<ArrayList<String>> testALaux  = honestmodelval.getTest();
+		m_testAL = new ArrayList<ArrayList<String>>();
 		m_testAL.add(testALaux.get(0));
 	}
 	

@@ -37,9 +37,9 @@ public class ModelEvaluatorModularSpadeST
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
 			Matrix dm,
-			ArrayList<ArrayList<Long>> trainAL,
-			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL,
+			ArrayList<ArrayList<String>> trainAL,
+			ArrayList<ArrayList<String>> valAL,
+			ArrayList<ArrayList<String>> testAL,
 			int modePrRe,
 			String usage2contentFile,
 			String resSimilarityFile){
@@ -94,8 +94,8 @@ public class ModelEvaluatorModularSpadeST
 	 */
 	private ArrayList<MySuffixTree> createClustersSPADESuffixTrees(int indexFold, String workdir){
 		// train sessions names
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
+		ArrayList<String> trainsetnames = m_trainAL.get(indexFold);
+		ArrayList<String> trainsetnames2 = 
 				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
 		
 		// assignment to each case
@@ -108,7 +108,7 @@ public class ModelEvaluatorModularSpadeST
 		ArrayList<MySuffixTree> stAL = new ArrayList<MySuffixTree>(); 
 		for(int cli=0; cli<=climax; cli++){
 			// take the sessions we are interested in
-			ArrayList<Long> names = new ArrayList<Long>();
+			ArrayList<String> names = new ArrayList<String>();
 			for(int i=0; i<clindexes.length; i++){
 				if(cli==clindexes[i]){
 					names.add(trainsetnames2.get(i));
