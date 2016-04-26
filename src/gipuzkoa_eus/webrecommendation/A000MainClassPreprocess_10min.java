@@ -21,7 +21,7 @@ public class A000MainClassPreprocess_10min {
 		// start preprocessing
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] PREPROCESSING.");
-		WebAccessSequences.setnMemory(20); // 60MBytes * 20moduls = 1200Mbytes
+		WebAccessSequences.setnMemory(10); // 60MBytes * 20moduls = 1200Mbytes
 
 		// FILTER LOGS //
 		LogReader logreader = new LogReaderGipuzkoa_eus();
@@ -127,16 +127,15 @@ public class A000MainClassPreprocess_10min {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
 
-		
-		// write preprocessed logs
-		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
-		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
-		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
-						
 		// save the sessions structure we have created
 		WebAccessSequences.saveStructure();
 		WebAccessSequences.saveSequences();
 		Website.save();
+			
+		// write preprocessed logs
+		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
+		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
+		WebAccessSequencesUHC.writeSequencesInstanciated2(basedirectory + "/sequences_urlIDurlRole.txt");
 	}
 	
 	/**
