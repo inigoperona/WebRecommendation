@@ -228,11 +228,11 @@ public class A000MainClassPreprocess_10min {
 		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
 		//String basedirectory = "experiments_gieus/00_preprocess";
 		//String logfilesIndex = "/loglist2.txt";
-		String basedirectory = "experiments_giberri/00_preprocess";
+		String basedirectory = "/home/ainhoa/workspace_WebRecommendation";
 		String logfilesIndex = "/loglist.txt";
 		
-		basedirectory = args[0];
-		logfilesIndex = args[1];
+		//basedirectory = args[0];
+		//logfilesIndex = args[1];
 		
 		// initialize the data structure
 		WebAccessSequencesUHC.setWorkDirectory(basedirectory);
