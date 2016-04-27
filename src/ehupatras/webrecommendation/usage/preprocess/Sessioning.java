@@ -29,7 +29,9 @@ public class Sessioning {
 		m_maxLenghtOfTheSequence = maxLenghtOfTheSequence;
 		
 		long expiredTimeInSeconds = expireSessionsInMin*60;
+		//Map<String, String> map = Collections.synchronizedMap(new LinkedHashMap<String, String>());
 		Hashtable<Integer,Object[]> oldrequests = new Hashtable<Integer,Object[]>();
+		//ArrayList<Object[]> oldrequests = new ArrayList<Object[]>();
 		
 		// for each request
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
@@ -302,6 +304,7 @@ public class Sessioning {
 			
 			// fast approach to the exact point
 			int i = 0;
+			/*
 			int a = 10;
 			int b = 0;
 			for(; i<keysOrd.size();){
@@ -317,6 +320,7 @@ public class Sessioning {
 			}
 			i = (int)Math.pow((double)a, (double)(b-1));
 			i = i>=1 ? i : 0;
+			*/
 			
 			for(; i<keysOrd.size(); i=i+10000){
 				int userID2 = keysOrd.get(i);
