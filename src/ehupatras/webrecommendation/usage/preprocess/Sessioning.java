@@ -302,6 +302,22 @@ public class Sessioning {
 			
 			// fast approach to the exact point
 			int i = 0;
+			int a = 10;
+			int b = 0;
+			for(; i<keysOrd.size();){
+				int userID2 = keysOrd.get(i);
+				Object[] objA2 = objHt.get(userID2);
+				int oldindex2 = ((Integer)objA2[iData]).intValue();
+				int mod2 = WebAccessSequences.getModulusAfterGetRequest(oldindex2);
+				if(mod1<mod2){
+					break;
+				}
+				i = (int)Math.pow((double)a, (double)b);
+				b++;
+			}
+			i = (int)Math.pow((double)a, (double)(b-1));
+			i = i>=1 ? i : 0;
+			
 			for(; i<keysOrd.size(); i=i+10000){
 				int userID2 = keysOrd.get(i);
 				Object[] objA2 = objHt.get(userID2);
