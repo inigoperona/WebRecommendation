@@ -62,9 +62,9 @@ public class ModelEvaluatorMedoids
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
 			Matrix dm,
-			ArrayList<ArrayList<Long>> trainAL,
-			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL,
+			ArrayList<ArrayList<String>> trainAL,
+			ArrayList<ArrayList<String>> valAL,
+			ArrayList<ArrayList<String>> testAL,
 			int modePrRe,
 			String usage2contentFile,
 			String resSimilarityFile,
@@ -165,7 +165,7 @@ public class ModelEvaluatorMedoids
 	 */
 	private Object[] getMedoids(int indexFold){
 		// train cases indexes
-		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
+		ArrayList<String> trSesIDs = m_trainAL.get(indexFold);
 		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
 		
 		// cluster indexes
@@ -203,7 +203,7 @@ public class ModelEvaluatorMedoids
 	 */
 	private ArrayList<Object[]> getRecommendations(int indexFold, float minsup, ArrayList<Integer> noExtractA){
 		// train cases indexes
-		ArrayList<Long> trSesIDs = m_trainAL.get(indexFold);
+		ArrayList<String> trSesIDs = m_trainAL.get(indexFold);
 		int[] inds = m_distancematrix.getSessionIDsIndexes(trSesIDs, m_datasetSplit!=null);
 		
 		// cluster indexes

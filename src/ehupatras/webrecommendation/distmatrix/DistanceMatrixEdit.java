@@ -15,7 +15,7 @@ public class DistanceMatrixEdit extends Matrix {
 	 *
 	 * @param names the names
 	 */
-	public DistanceMatrixEdit(ArrayList<Long> names){
+	public DistanceMatrixEdit(ArrayList<String> names){
 		m_names = names;
 	}
 	

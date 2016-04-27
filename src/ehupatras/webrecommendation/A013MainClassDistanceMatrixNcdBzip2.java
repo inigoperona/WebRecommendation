@@ -52,7 +52,7 @@ public class A013MainClassDistanceMatrixNcdBzip2 {
 	 * @param roleWeights the role weights
 	 */
 	public void createDistanceMatrix(String databaseWD,
-			ArrayList<Long> sampleSessionIDs,
+			ArrayList<String> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights){
 		m_matrix = new DistanceMatrixNcdBzip2(sampleSessionIDs);

@@ -15,7 +15,7 @@ public class SimilarityMatrixEuclidean
 	 *
 	 * @param names the names
 	 */
-	public SimilarityMatrixEuclidean(ArrayList<Long> names){
+	public SimilarityMatrixEuclidean(ArrayList<String> names){
 		m_names = names;
 	}
 	

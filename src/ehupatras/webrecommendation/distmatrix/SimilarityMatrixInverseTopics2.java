@@ -20,7 +20,7 @@ public class SimilarityMatrixInverseTopics2
 	 * @param urls2topicfile the urls2topicfile
 	 * @param topicmatch the topicmatch
 	 */
-	public SimilarityMatrixInverseTopics2(ArrayList<Long> names, String urls2topicfile, float topicmatch){
+	public SimilarityMatrixInverseTopics2(ArrayList<String> names, String urls2topicfile, float topicmatch){
 		super(names);
 		m_topicmatch = topicmatch;
 		

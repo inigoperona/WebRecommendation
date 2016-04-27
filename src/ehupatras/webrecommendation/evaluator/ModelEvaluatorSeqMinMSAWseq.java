@@ -41,9 +41,9 @@ public class ModelEvaluatorSeqMinMSAWseq
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
 			Matrix dm,
-			ArrayList<ArrayList<Long>> trainAL,
-			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL,
+			ArrayList<ArrayList<String>> trainAL,
+			ArrayList<ArrayList<String>> valAL,
+			ArrayList<ArrayList<String>> testAL,
 			int modePrRe,
 			String usage2contentFile,
 			String resSimilarityFile){
@@ -100,8 +100,8 @@ public class ModelEvaluatorSeqMinMSAWseq
 	 */
 	private ArrayList<String[][]> msa(int indexFold){
 		// Web Access Sequences (WAS)
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
+		ArrayList<String> trainsetnames = m_trainAL.get(indexFold);
+		ArrayList<String> trainsetnames2 = 
 				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
 		
 		// Cluster-IDs for each WAS
@@ -114,7 +114,7 @@ public class ModelEvaluatorSeqMinMSAWseq
 		ArrayList<String[][]> multAlignsList = new ArrayList<String[][]>(); 
 		MultipleSequenceAlignment malign = new MultipleSequenceAlignment();
 		for(int cli=0; cli<=maxcluster; cli++){
-			ArrayList<Long> names = new ArrayList<Long>();
+			ArrayList<String> names = new ArrayList<String>();
 			for(int i=0; i<clusters.length; i++){
 				if(cli==clusters[i]){
 					names.add(trainsetnames2.get(i));
@@ -183,8 +183,8 @@ public class ModelEvaluatorSeqMinMSAWseq
 	private String[] alignmentToString(int indexFold){
 		ArrayList<String[][]> mAligns = m_msaAL.get(indexFold);
 		int[] clustersID = m_clustersAL.get(indexFold);
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
+		ArrayList<String> trainsetnames = m_trainAL.get(indexFold);
+		ArrayList<String> trainsetnames2 = 
 				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
 		
 		String[] strA = new String[clustersID.length];

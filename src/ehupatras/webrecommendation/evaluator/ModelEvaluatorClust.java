@@ -39,9 +39,9 @@ public abstract class ModelEvaluatorClust
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
 			Matrix dm,
-			ArrayList<ArrayList<Long>> trainAL,
-			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL,
+			ArrayList<ArrayList<String>> trainAL,
+			ArrayList<ArrayList<String>> valAL,
+			ArrayList<ArrayList<String>> testAL,
 			int modePrRe,
 			String usage2contentFile,
 			String resSimilarityFile){
@@ -102,8 +102,8 @@ public abstract class ModelEvaluatorClust
 	 */
 	private String[] clusteringToString(int indexFold){
 		int[] clustersID = m_clustersAL.get(indexFold);
-		ArrayList<Long> trainsetnames = m_trainAL.get(indexFold);
-		ArrayList<Long> trainsetnames2 = 
+		ArrayList<String> trainsetnames = m_trainAL.get(indexFold);
+		ArrayList<String> trainsetnames2 = 
 				m_distancematrix.getSessionIDs(trainsetnames, m_datasetSplit!=null);
 		
 		String[] strA = new String[clustersID.length];

@@ -17,7 +17,7 @@ public class SimilarityMatrixInverse
 	 *
 	 * @param names the names
 	 */
-	public SimilarityMatrixInverse(ArrayList<Long> names){
+	public SimilarityMatrixInverse(ArrayList<String> names){
 		m_names = names;
 	}
 	

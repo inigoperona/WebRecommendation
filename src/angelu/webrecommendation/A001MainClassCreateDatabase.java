@@ -12,7 +12,7 @@ import java.util.*;
 public class A001MainClassCreateDatabase {
 
 	/** The m_sessions i ds. */
-	private ArrayList<Long> m_sessionsIDs;
+	private ArrayList<String> m_sessionsIDs;
 	
 	/** The m_sequences. */
 	private ArrayList<String[]> m_sequences;
@@ -76,7 +76,7 @@ public class A001MainClassCreateDatabase {
 	public void loadDatabase(String databaseWD){
 		// Sampling
 		SaveLoadObjects sosess = new SaveLoadObjects();
-		m_sessionsIDs = (ArrayList<Long>)sosess.load(databaseWD + "/_sessionIDs.javaData");
+		m_sessionsIDs = (ArrayList<String>)sosess.load(databaseWD + "/_sessionIDs.javaData");
 		
 		// INSTANCIATED SEQUENCES
 		SaveLoadObjects soseqs = new SaveLoadObjects();
@@ -88,10 +88,10 @@ public class A001MainClassCreateDatabase {
 	 *
 	 * @return the sessions i ds
 	 */
-	public ArrayList<Long> getSessionsIDs(){
-		ArrayList<Long> ses = new ArrayList<Long>();
+	public ArrayList<String> getSessionsIDs(){
+		ArrayList<String> ses = new ArrayList<String>();
 		for(int i=0; i<m_sessionsIDs.size(); i++){
-			ses.add((long)m_sessionsIDs.get(i));
+			ses.add(m_sessionsIDs.get(i));
 		}
 		return ses;
 	}

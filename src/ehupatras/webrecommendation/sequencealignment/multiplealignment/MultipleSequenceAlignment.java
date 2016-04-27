@@ -225,13 +225,13 @@ public class MultipleSequenceAlignment {
 		
 		// Create WAS-array
 		ArrayList<String[]> wasL = new ArrayList<String[]>();
-		ArrayList<Long> namesL = new ArrayList<Long>();
-		wasL.add(seq1); namesL.add(0l);
-		wasL.add(seq2); namesL.add(1l);
-		wasL.add(seq3); namesL.add(2l);
-		wasL.add(seq4); namesL.add(3l);
-		wasL.add(seq5); namesL.add(4l);
-		wasL.add(seq6); namesL.add(5l);
+		ArrayList<String> namesL = new ArrayList<String>();
+		wasL.add(seq1); namesL.add("0");
+		wasL.add(seq2); namesL.add("1");
+		wasL.add(seq3); namesL.add("2");
+		wasL.add(seq4); namesL.add("3");
+		wasL.add(seq5); namesL.add("4");
+		wasL.add(seq6); namesL.add("5");
 		
 		// Which are in the same cluster?
 		ArrayList<Integer> clusters = new ArrayList<Integer>();

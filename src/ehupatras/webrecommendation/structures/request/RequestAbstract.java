@@ -64,7 +64,7 @@ public abstract class RequestAbstract
 
 	// this information is related to a sessioning phase
 	/** The m_session id. */
-	private long m_sessionID = -1;
+	private String m_sessionID = "-";
 
 	// time in each URL and its related attributes
 	/** The m_elapsedtime. */
@@ -79,7 +79,7 @@ public abstract class RequestAbstract
 	
 	protected int m_logFileNumber;
 	
-	
+	protected boolean m_isTheEndOfTheSession = false;
 	
 	// constructor
 	/**
@@ -287,7 +287,7 @@ public abstract class RequestAbstract
 	/* (non-Javadoc)
 	 * @see ehupatras.webrecommendation.structures.request.Request#setSessionID(int)
 	 */
-	public void setSessionID(long sessionID){
+	public void setSessionID(String sessionID){
 		m_sessionID = sessionID;
 	}
 	
@@ -308,7 +308,7 @@ public abstract class RequestAbstract
 	/* (non-Javadoc)
 	 * @see ehupatras.webrecommendation.structures.request.Request#getSessionID()
 	 */
-	public long getSessionID(){
+	public String getSessionID(){
 		return m_sessionID;
 	}
 	
@@ -337,6 +337,14 @@ public abstract class RequestAbstract
 		return m_logFileNumber;
 	}
 	
+	public void setIsTheEndOfTheSession(boolean isTheEndOfTheSession){
+		m_isTheEndOfTheSession = isTheEndOfTheSession;
+	}
+	
+	public boolean getIsTheEndOfTheSession(){
+		return m_isTheEndOfTheSession;
+	}
+	
 	// writing the requests information
 	
 	/* (non-Javadoc)
@@ -361,6 +369,7 @@ public abstract class RequestAbstract
 				"pageRoleUHC " +
 				"isbot " +
 				"isvalidLinkPrediction " +
+				"isTheEndOfTheSession" +
 				"logfilenumber " +
 				page.toStringLongHeader();
 	}
@@ -387,6 +396,7 @@ public abstract class RequestAbstract
 				m_pageRoleUHC  + " " +
 				m_isbot + " " +
 				m_isvalidLP + " " +
+				m_isTheEndOfTheSession + " " +
 				m_logFileNumber + " " +
 				page.toStringLong();
 	}

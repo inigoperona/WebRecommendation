@@ -17,9 +17,9 @@ public class Sampling {
 	 * @param allowrepetitions the allowrepetitions
 	 * @return the sample
 	 */
-	public ArrayList<Long> getSample(int ncases, long randomseed, boolean allowrepetitions){
+	public ArrayList<String> getSample(int ncases, long randomseed, boolean allowrepetitions){
 		// ordered sessionsIDs
-		ArrayList<Long> keysOrd = WebAccessSequences.getSequencesIDs();
+		ArrayList<String> keysOrd = WebAccessSequences.getSequencesIDs();
 		
 		// if more than database size is required
 		// then allow repetition of cases
@@ -28,11 +28,11 @@ public class Sampling {
 		}
 		
 		// take ncases sessionsIDs randomly
-		ArrayList<Long> selectedKeys = new ArrayList<Long>(); 
+		ArrayList<String> selectedKeys = new ArrayList<String>(); 
 		Random rand = new Random(randomseed);
 		for(int i=0; i<ncases;){
 			int pos = rand.nextInt(keysOrd.size());
-			long sessionID = keysOrd.get(pos);
+			String sessionID = keysOrd.get(pos);
 			if(allowrepetitions){
 				selectedKeys.add(sessionID);
 				i++;

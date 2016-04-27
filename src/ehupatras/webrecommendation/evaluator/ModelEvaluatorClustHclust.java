@@ -48,9 +48,9 @@ public class ModelEvaluatorClustHclust
 			ArrayList<String[]> dataset,
 			ArrayList<String[]> datasetSplit,
 			Matrix dm,
-			ArrayList<ArrayList<Long>> trainAL,
-			ArrayList<ArrayList<Long>> valAL,
-			ArrayList<ArrayList<Long>> testAL,
+			ArrayList<ArrayList<String>> trainAL,
+			ArrayList<ArrayList<String>> valAL,
+			ArrayList<ArrayList<String>> testAL,
 			int modePrRe,
 			String usage2contentFile,
 			String resSimilarityFile){
@@ -128,7 +128,7 @@ public class ModelEvaluatorClustHclust
 	 * @return the clustering hierarchical
 	 */
 	private ClusteringHierarchical doDendrogram(int indexFold){
-		ArrayList<Long> trainnames = m_trainAL.get(indexFold);
+		ArrayList<String> trainnames = m_trainAL.get(indexFold);
 		// hierarchical clustering: http://sape.inf.usi.ch/hac
 		ClusteringHierarchical clustering = new ClusteringHierarchical();
 		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);

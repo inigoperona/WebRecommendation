@@ -78,7 +78,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		database.loadDatabase(var_databaseWD);
 		// sequences compound by request indexes:
-		ArrayList<Long> var_sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<String> var_sampleSessionIDs = database.getSessionsIDs();
 		// sequences compound by instantiation of requests into URL and role:
 		ArrayList<String[]> var_sequencesUHC = database.getInstantiatedSequences();
 		
@@ -95,9 +95,9 @@ public class A000MainClassEdPamSpadeKnnEd {
 		ModelValidationHoldOut honestmodelval = new ModelValidationHoldOut();
 		honestmodelval.load(var_validationWD);
 		// set of sequences compound by request indexes:
-		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
-		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
-		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();
+		ArrayList<ArrayList<String>> var_trainAL = honestmodelval.getTrain();
+		ArrayList<ArrayList<String>> var_valAL   = honestmodelval.getValidation();
+		ArrayList<ArrayList<String>> var_testAL  = honestmodelval.getTest();
 		
 		// LOAD TOPIC INFORMATION
 		A100MainClassAddContent cont = new A100MainClassAddContent();

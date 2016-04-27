@@ -47,7 +47,7 @@ public class A00012MainClassDistanceMatrixED_load {
 	 * @param roleWeights the role weights
 	 */
 	public void createDistanceMatrix(String databaseWD,
-			ArrayList<Long> sampleSessionIDs,
+			ArrayList<String> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights){
 		m_matrix = new DistanceMatrixEdit(sampleSessionIDs);

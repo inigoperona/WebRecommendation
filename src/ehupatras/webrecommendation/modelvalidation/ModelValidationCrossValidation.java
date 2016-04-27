@@ -11,13 +11,13 @@ import ehupatras.webrecommendation.utils.SaveLoadObjects;
 public class ModelValidationCrossValidation extends ModelValidation {
 
 	/** The m_train list. */
-	private ArrayList<ArrayList<Long>> m_trainList = new ArrayList<ArrayList<Long>>();
+	private ArrayList<ArrayList<String>> m_trainList = new ArrayList<ArrayList<String>>();
 	
 	/** The m_validation list. */
-	private ArrayList<ArrayList<Long>> m_validationList = new ArrayList<ArrayList<Long>>();
+	private ArrayList<ArrayList<String>> m_validationList = new ArrayList<ArrayList<String>>();
 	
 	/** The m_test list. */
-	private ArrayList<ArrayList<Long>> m_testList = new ArrayList<ArrayList<Long>>();
+	private ArrayList<ArrayList<String>> m_testList = new ArrayList<ArrayList<String>>();
 	
 	/** The m_n fold. */
 	private int m_nFold = 10;
@@ -31,18 +31,18 @@ public class ModelValidationCrossValidation extends ModelValidation {
 	 * @param nftest the nftest
 	 * @param nFold the n fold
 	 */
-	public void prepareData(ArrayList<Long> sessionsID, int nftrain, int nfvalidation, int nftest, int nFold){
+	public void prepareData(ArrayList<String> sessionsID, int nftrain, int nfvalidation, int nftest, int nFold){
 		m_nFold = nFold;
 		
 		// number of cases we have in the database
 		int ncases = sessionsID.size();
 		
 		// create folds
-		ArrayList<ArrayList<Long>> folds = new ArrayList<ArrayList<Long>>();
+		ArrayList<ArrayList<String>> folds = new ArrayList<ArrayList<String>>();
 		int fsize = Math.round((float)ncases/(float)m_nFold);
 		int until = 0;
 		for(int i=0; i<m_nFold; i++){
-			ArrayList<Long> foldi = new ArrayList<Long>();
+			ArrayList<String> foldi = new ArrayList<String>();
 			for(int j=until; j<(until+fsize); j++){
 				if (j < ncases){
 					foldi.add(sessionsID.get(j));
@@ -58,9 +58,9 @@ public class ModelValidationCrossValidation extends ModelValidation {
 			int start2 = start;
 			
 			// train
-			ArrayList<Long> trL = new ArrayList<Long>();
+			ArrayList<String> trL = new ArrayList<String>();
 			for(int j=0; j<nftrain; j++){
-				ArrayList<Long> fo = folds.get(start2);
+				ArrayList<String> fo = folds.get(start2);
 				for(int k=0; k<fo.size(); k++){
 					trL.add(fo.get(k));
 				}
@@ -68,9 +68,9 @@ public class ModelValidationCrossValidation extends ModelValidation {
 			}
 			
 			// validation
-			ArrayList<Long> vaL = new ArrayList<Long>();
+			ArrayList<String> vaL = new ArrayList<String>();
 			for(int j=0; j<nfvalidation; j++){
-				ArrayList<Long> fo = folds.get(start2);
+				ArrayList<String> fo = folds.get(start2);
 				for(int k=0; k<fo.size(); k++){
 					vaL.add(fo.get(k));
 				}
@@ -78,9 +78,9 @@ public class ModelValidationCrossValidation extends ModelValidation {
 			}
 			
 			// test
-			ArrayList<Long> tsL = new ArrayList<Long>();
+			ArrayList<String> tsL = new ArrayList<String>();
 			for(int j=0; j<nftest; j++){
-				ArrayList<Long> fo = folds.get(start2);
+				ArrayList<String> fo = folds.get(start2);
 				for(int k=0; k<fo.size(); k++){
 					tsL.add(fo.get(k));
 				}
@@ -115,7 +115,7 @@ public class ModelValidationCrossValidation extends ModelValidation {
 	 *
 	 * @return the train
 	 */
-	public ArrayList<ArrayList<Long>> getTrain(){
+	public ArrayList<ArrayList<String>> getTrain(){
 		return m_trainList;
 	}
 	
@@ -124,7 +124,7 @@ public class ModelValidationCrossValidation extends ModelValidation {
 	 *
 	 * @return the validation
 	 */
-	public ArrayList<ArrayList<Long>> getValidation(){
+	public ArrayList<ArrayList<String>> getValidation(){
 		return m_validationList;
 	} 
 	
@@ -133,7 +133,7 @@ public class ModelValidationCrossValidation extends ModelValidation {
 	 *
 	 * @return the test
 	 */
-	public ArrayList<ArrayList<Long>> getTest(){
+	public ArrayList<ArrayList<String>> getTest(){
 		return m_testList;
 	}
 	
@@ -158,9 +158,9 @@ public class ModelValidationCrossValidation extends ModelValidation {
 	public void load(String workdirectory){
 		m_workdirectory = workdirectory;
 		SaveLoadObjects slo = new SaveLoadObjects();
-		m_trainList =      (ArrayList<ArrayList<Long>>)slo.load(m_workdirectory + "/_crossvalTrain.javaData");
-		m_validationList = (ArrayList<ArrayList<Long>>)slo.load(m_workdirectory + "/_crossvalValidation.javaData");
-		m_testList =       (ArrayList<ArrayList<Long>>)slo.load(m_workdirectory + "/_crossvalTest.javaData");
+		m_trainList =      (ArrayList<ArrayList<String>>)slo.load(m_workdirectory + "/_crossvalTrain.javaData");
+		m_validationList = (ArrayList<ArrayList<String>>)slo.load(m_workdirectory + "/_crossvalValidation.javaData");
+		m_testList =       (ArrayList<ArrayList<String>>)slo.load(m_workdirectory + "/_crossvalTest.javaData");
 	}
 	
 	/**

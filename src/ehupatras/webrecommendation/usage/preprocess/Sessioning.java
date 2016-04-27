@@ -15,6 +15,8 @@ public class Sessioning {
 	/** The m_max lenght of the sequence. */
 	private int m_maxLenghtOfTheSequence = 200;
 	
+	
+	
 	// expireSessionsInMin: We suppose after this time that a new session starts.
 	// expireSessionsInMin: We split up sequences in two sessions when we see this jump of time between clicks.
 	/**
@@ -29,16 +31,23 @@ public class Sessioning {
 		long expiredTimeInSeconds = expireSessionsInMin*60;
 		Hashtable<Integer,Object[]> oldrequests = new Hashtable<Integer,Object[]>();
 		
+		// for each request
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			// print the situation every X number of processed requests
 			if(i%100000==0){
 				System.out.println("  " + i + "/" + WebAccessSequences.filteredlogsize() +
 						" analyzed [createSessions]");
 			}
+			
+			// get the request features
 			Request actualreq = WebAccessSequences.getRequest(i);
 			int actualuser = actualreq.getUserID(); // IP identifier
 			long actualtime = actualreq.getTimeInMillis();
 			int actualLogFileNumb = actualreq.getLogFileNumber(); // log number
+			
+			// whether the user already has appeared or not 
 			if(oldrequests.containsKey(actualuser)){
+				// get the previous request's features
 				Object[] objA = oldrequests.get(actualuser);
 				int oldsessioni = ((Integer)objA[0]).intValue();
 				long oldtime = ((Long)objA[1]).longValue();
@@ -46,53 +55,104 @@ public class Sessioning {
 				float sum = ((Float)objA[3]).floatValue();
 				int nreq = ((Integer)objA[4]).intValue();
 				int oldLogFileNumb = ((Integer)objA[5]).intValue();
+				boolean oldIsOpened = ((Boolean)objA[6]).booleanValue();
 				long elapsedTimeInSeconds = (actualtime-oldtime)/1000;
-				if( 	oldLogFileNumb==actualLogFileNumb &&
+				
+				// whether the new requests is in the same session or not
+				if( 	oldIsOpened &&
+						oldLogFileNumb==actualLogFileNumb &&
 						nreq<=m_maxLenghtOfTheSequence && 
 						elapsedTimeInSeconds<=expiredTimeInSeconds ){
 					// this request is in the same session
 					float oldelapssedtime = (float)(actualtime-oldtime);
 					sum = sum + oldelapssedtime;
 					nreq++;
-					// we now know the elapsed time, so, update the old requests
-					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni);
-					// Update the user with the actual request information
-					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, sum, nreq, oldLogFileNumb);
+					
+					// we now know the elapsed time, so, update the old request
+					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni, false);
+					
+					// update the user with the actual request information
+					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, sum, nreq, oldLogFileNumb, true);
 					oldrequests.put(actualuser, objAr);
 				} else {
+					// this requests is first of the next session
 					// update the last request of the previous session
 					float oldelapssedtime = nreq==1 ? -1f : sum/(float)(nreq-1);
-					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni);
+					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni, true);
+					
 					// now start a new session to the user
 					oldsessioni++;
-					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, 0.0f, 1, actualLogFileNumb);
+					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, 0.0f, 1, actualLogFileNumb, true);
 					oldrequests.put(actualuser, objAr);
 				}
-			} else {
-				Object[] objAr = this.createOldRequestsObj(1, actualtime, i, 0.0f, 1, actualLogFileNumb);
+			} else { // the first occurrence of the user
+				// start the first session
+				Object[] objAr = this.createOldRequestsObj(1, actualtime, i, 0.0f, 1, actualLogFileNumb, true);
 				oldrequests.put(actualuser, objAr);
 			}
+			
+			// check all oldrequests if the sessions are closed
+			if(i%10000==0){
+				// order the keys to optimized the access to each module.
+				ArrayList<Integer> keysOrd = this.orderHashtableKeysByDataUser(oldrequests, 2);
+				
+				// close the sessions
+				for(int j=0; j<keysOrd.size(); j++){
+					// get the user and its last request's features
+					int userid = keysOrd.get(j).intValue();
+					Object[] objA = oldrequests.get(userid);
+					int oldsessioni = ((Integer)objA[0]).intValue();
+					long oldtime = ((Long)objA[1]).longValue();
+					int oldindex = ((Integer)objA[2]).intValue();
+					float sum = ((Float)objA[3]).floatValue();
+					int nreq = ((Integer)objA[4]).intValue();
+					int oldLogFileNumb = ((Integer)objA[5]).intValue();
+					boolean oldIsOpened = ((Boolean)objA[6]).booleanValue();
+					
+					// analyze the session to close it
+					long diffInSeconds = (actualtime-oldtime)/1000;
+					if( diffInSeconds>expiredTimeInSeconds ){
+						// close the session in the DB
+						float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
+						this.updateTheOldRequest(oldindex, oldelapssedtime, userid, oldsessioni, true);
+						
+						// close the session in oldrequests
+						Object[] objAr = this.createOldRequestsObj(oldsessioni, oldtime, oldindex, sum, nreq, oldLogFileNumb, false);
+						oldrequests.put(userid, objAr);
+					}
+				}
+			}
 		}
-		// close the sessions that there are in the hashtable
+		
+		// close the sessions that there are in the hashTable
 		// order the keys to optimized the access to each module.
 		ArrayList<Integer> keysOrd = this.orderHashtableKeysByDataUser(oldrequests, 2);
+		
 		// close the sessions
 		System.out.println("  Number of connections to close: " + keysOrd.size());
 		for(int i=0; i<keysOrd.size(); i++){
+			// write the situation every X number of requests
 			if(i%10000==0){
 				System.out.println("  " + i + "/" + keysOrd.size() +
 						" closing connections [createSessions]");
 			}
+			
+			// get the user and its last request's features
 			int userid = keysOrd.get(i).intValue();
 			Object[] objA = oldrequests.get(userid);
 			int oldsessioni = ((Integer)objA[0]).intValue();
-			//long oldtime = ((Long)objA[1]).longValue();
+			long oldtime = ((Long)objA[1]).longValue();
 			int oldindex = ((Integer)objA[2]).intValue();
 			float sum = ((Float)objA[3]).floatValue();
 			int nreq = ((Integer)objA[4]).intValue();
-			// update the request registry
-			float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
-			this.updateTheOldRequest(oldindex, oldelapssedtime, userid, oldsessioni);
+			int oldLogFileNumb = ((Integer)objA[5]).intValue();
+			boolean oldIsOpened = ((Boolean)objA[6]).booleanValue();
+			
+			if(oldIsOpened){
+				// update the request registry
+				float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
+				this.updateTheOldRequest(oldindex, oldelapssedtime, userid, oldsessioni, true);
+			}
 		}
 	}
 	
@@ -104,11 +164,19 @@ public class Sessioning {
 	 * @param actualuser the actualuser
 	 * @param oldsessioni the oldsessioni
 	 */
-	private void updateTheOldRequest(int oldindex, float oldelapssedtime, int actualuser, int oldsessioni){
+	private void updateTheOldRequest(
+			int oldindex, float oldelapssedtime, 
+			int actualuser, int oldsessioni,
+			boolean isTheEndOfTheSession){
 		Request oldreq = WebAccessSequences.getRequest(oldindex);
 		oldreq.setElapsedTime(oldelapssedtime);
-		long oldsessionint = (long)actualuser*10000l+(long)oldsessioni;
-		oldreq.setSessionID(oldsessionint);
+		// compute the sessionID and update
+		String actualuserStr = String.valueOf(actualuser);
+		String oldsessioniStr = String.format("%04d", oldsessioni);
+		String oldsessionIDStr = actualuserStr + oldsessioniStr;
+		//long oldsessionint = (long)actualuser*10000l+(long)oldsessioni; // create the sessions ID
+		oldreq.setSessionID(oldsessionIDStr);
+		oldreq.setIsTheEndOfTheSession(isTheEndOfTheSession);
 		WebAccessSequences.replaceRequest(oldindex, oldreq);
 	}
 	
@@ -122,16 +190,19 @@ public class Sessioning {
 	 * @param sessionNumReqs the session num reqs
 	 * @return the object[]
 	 */
-	private Object[] createOldRequestsObj(int sessionNumber, long starttime, int startIndex, 
+	private Object[] createOldRequestsObj(
+			int sessionNumber, long starttime, int startIndex, 
 			float sessionDuration, int sessionNumReqs,
-			int logFileNUmb){
-		Object[] objAr = new Object[6];
+			int logFileNUmb, 
+			boolean isOpened){
+		Object[] objAr = new Object[7];
 		objAr[0] = new Integer(sessionNumber); // session number
 		objAr[1] = new Long(starttime); // last timestamp
 		objAr[2] = new Integer(startIndex); // last request index
 		objAr[3] = new Float(sessionDuration); // accumulated sum of elapsed times
 		objAr[4] = new Integer(sessionNumReqs); // number of request in the session so far
 		objAr[5] = new Integer(logFileNUmb); // the log file number form where the request was stored
+		objAr[6] = new Boolean(isOpened); // this requests id the last of the session. The session is closed
 		return objAr;
 	}
 	
@@ -142,23 +213,34 @@ public class Sessioning {
 	 * Join consecutive same urls.
 	 */
 	public void joinConsecutiveSameUrls(){
-		Hashtable<Long,Object[]> oldrequests = new Hashtable<Long,Object[]>();
+		Hashtable<String,Object[]> oldrequests = new Hashtable<String,Object[]>();
+		
+		// for each request
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			// print the situation every X number of processed requests
 			if(i%100000==0){
 				System.out.println("  " + i + "/" + WebAccessSequences.filteredlogsize() +
 						" analyzed [joinConsecutiveSameUrls]");
 			}
+			
+			// get the request features
 			Request actualreq = WebAccessSequences.getRequest(i);
-			long actualsessionid = actualreq.getSessionID();
+			String actualsessionid = actualreq.getSessionID();
 			String urlname = actualreq.getFormatedUrlName();
+			boolean isTheEndOfTheSession = actualreq.getIsTheEndOfTheSession();
 			Page pag = Website.getPage(urlname);
 			int actualUrl = pag.getUrlIDusage();
 			float actualelapsedtime = actualreq.getElapsedTime();
+			
+			// whether the session already has appeared or not
 			if(oldrequests.containsKey(actualsessionid)){
+				// get the previous request's features
 				Object[] objA = oldrequests.get(actualsessionid);
 				int oldindex = ((Integer)objA[0]).intValue();
 				int oldUrl = ((Integer)objA[1]).intValue();
 				float sum = ((Float)objA[2]).floatValue();
+				
+				// whether the consecutive URLs are equal or not
 				if(actualUrl==oldUrl){
 					// there are consecutive same URLs. Join them.
 					// update the first URL's data in the consecutive same URL sequence
@@ -170,6 +252,7 @@ public class Sessioning {
 					actualreq.setElapsedTime((float)-2.0);
 					WebAccessSequences.replaceRequest(i, actualreq);
 				} else {
+					// the next one is a different URL
 					// write the last URLs information
 					Request oldreq = WebAccessSequences.getRequest(oldindex);
 					oldreq.setElapsedTime(sum);
@@ -182,33 +265,19 @@ public class Sessioning {
 					oldrequests.put(actualsessionid, objA);
 				}
 			} else {
-				// enter a new object in the hashtable
+				// the first occurrence of the session
+				// enter a new object in the hashTable
 				Object[] objA = new Object[3];
 				objA[0] = i;
 				objA[1] = actualUrl;
 				objA[2] = actualelapsedtime;
 				oldrequests.put(actualsessionid, objA);
 			}
-		}
-		// close the join actions that remain in the hashtable
-		// order the keys to optimized the access to each module.
-		System.out.println("  Start ordering elements: " + oldrequests.size());
-		ArrayList<Long> keysOrd = this.orderHashtableKeysByDataSession(oldrequests, 0);
-		// close the join actions
-		System.out.println("  Number of connections to close: " + keysOrd.size());
-		for(int i=0; i<keysOrd.size(); i++){
-			if(i%100000==0){
-				System.out.println("  " + i + "/" + keysOrd.size() +
-						" closing connections [joinConsecutiveSameUrls]");
+			
+			// if it is the last request of the session
+			if(isTheEndOfTheSession){
+				oldrequests.remove(actualsessionid);
 			}
-			long sessionID = keysOrd.get(i).longValue();
-			Object[] objA = oldrequests.get(sessionID);
-			int oldindex = ((Integer)objA[0]).intValue();
-			//int oldUrl = ((Integer)objA[1]).intValue();
-			float sum = ((Float)objA[2]).floatValue();
-			Request oldreq = WebAccessSequences.getRequest(oldindex);
-			oldreq.setElapsedTime(sum);
-			WebAccessSequences.replaceRequest(oldindex, oldreq);
 		}
 	}
 	
@@ -223,12 +292,16 @@ public class Sessioning {
 		Enumeration<Integer> keys = objHt.keys();
 		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
 		while(keys.hasMoreElements()){
+			// get the userID or sessionID
 			int userID = keys.nextElement().intValue();
+			
+			// get the info stored about the user/session
 			Object[] objA1 = objHt.get(userID);
 			int oldindex1 = ((Integer)objA1[iData]).intValue();
 			int mod1 = WebAccessSequences.getModulusAfterGetRequest(oldindex1);
-			int i = 0;
+			
 			// fast approach to the exact point
+			int i = 0;
 			for(; i<keysOrd.size(); i=i+10000){
 				int userID2 = keysOrd.get(i);
 				Object[] objA2 = objHt.get(userID2);
@@ -239,6 +312,7 @@ public class Sessioning {
 				}
 			}
 			i = i>0 ? i-10000 : 0;
+			
 			// the very exact point 
 			for(; i<keysOrd.size(); i++){
 				int userID2 = keysOrd.get(i);
@@ -250,12 +324,15 @@ public class Sessioning {
 				}
 			}
 			keysOrd.add(i, userID);
+			
+			// print the situation
 			if(keysOrd.size() % 100000==0){
 				System.out.println("  [" + System.currentTimeMillis() + "] Ordering elements: " + keysOrd.size());
 			}
 		}
 		return keysOrd;		
 	}
+	
 	private ArrayList<Long> orderHashtableKeysByDataSession(Hashtable<Long,Object[]> objHt, int iData){
 		Enumeration<Long> keys = objHt.keys();
 		ArrayList<Long> keysOrd = new ArrayList<Long>();
@@ -298,17 +375,24 @@ public class Sessioning {
 	 * Creates the sequences.
 	 */
 	public void createSequences(){
+		System.out.println("  [" + System.currentTimeMillis() + "] Start creating sequences.");
+		
 		// to measure the proportion of valid URLs in a session
-		Hashtable<Long,Integer[]> validnessOfSequences = new Hashtable<Long,Integer[]>();
+		Hashtable<String,Integer[]> validnessOfSequences = new Hashtable<String,Integer[]>();
 		
 		int sequencecounter = 0;
+		// for each request
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
+			// get the request's information
 			Request req = WebAccessSequences.getRequest(i);
-			long sessionID = req.getSessionID();
+			String sessionID = req.getSessionID();
 			int nvalid = 0;
 			int len = 0;
-			boolean isSuitableForLinkPrediction = req.getIsSuitableToLinkPrediction(); 
+			boolean isSuitableForLinkPrediction = req.getIsSuitableToLinkPrediction();
+			
+			// if the request is valid then take for the sequence
 			if(	isSuitableForLinkPrediction ){
+				// whether the session is already recorded
 				if( WebAccessSequences.m_sequences.containsKey(sessionID) ){
 					ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 					sequence.add(i);
@@ -331,12 +415,14 @@ public class Sessioning {
 				validnessOfSequences.put(sessionID, newObjA);
 			}
 		}
-		System.out.println("  " + sequencecounter + " sequences created.");
+		System.out.println("  [" + System.currentTimeMillis() + "] " + sequencecounter + " sequences created.");
 		
 		// update validness
-		Enumeration<Long> keys = validnessOfSequences.keys();
+		System.out.println("  [" + System.currentTimeMillis() + "] Start updating the validness.");
+		Enumeration<String> keys = validnessOfSequences.keys();
+		// for each valid sequence
 		while(keys.hasMoreElements()){
-			long sessionID = keys.nextElement();
+			String sessionID = keys.nextElement();
 			Integer[] freqData = validnessOfSequences.get(sessionID);
 			int nvalid = freqData[0];
 			int len = freqData[1];
@@ -350,9 +436,9 @@ public class Sessioning {
 		
 		// store all request_indexes
 		ArrayList<Integer> reqindexes = new ArrayList<Integer>();
-		Enumeration<Long> keys = WebAccessSequences.m_sequences.keys();
+		Enumeration<String> keys = WebAccessSequences.m_sequences.keys();
 		while(keys.hasMoreElements()){
-			long sessionID = keys.nextElement().longValue();
+			String sessionID = keys.nextElement();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);			
 			for(int i=0; i<sequence.size(); i++){
 				reqindexes.add(sequence.get(i));
@@ -372,11 +458,11 @@ public class Sessioning {
 		}
 				
 		// when consecutive same URL find remove the following ones
-		Hashtable<Integer,Long> req2sesID = new Hashtable<Integer,Long>();
-		Enumeration<Long> keys2 = WebAccessSequences.m_sequences.keys();
+		Hashtable<Integer,String> req2sesID = new Hashtable<Integer,String>();
+		Enumeration<String> keys2 = WebAccessSequences.m_sequences.keys();
 		int nsplitAll = 0;
 		while(keys2.hasMoreElements()){
-			long sessionID = keys2.nextElement().longValue();
+			String sessionID = keys2.nextElement();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 			ArrayList<Integer> sequence2 = new ArrayList<Integer>();
 			int nsplit = 0;
@@ -389,7 +475,9 @@ public class Sessioning {
 					req2sesID.put(reqi, sessionID);
 				} else {
 					WebAccessSequences.m_sequences.put(sessionID, sequence2);
-					sessionID = sessionID * 100 + nsplit;
+					String nsplitStr = String.format("%02d", nsplit);
+					sessionID = sessionID + nsplitStr;
+					//sessionID = sessionID * 100 + nsplit;
 					nsplit++;
 					nsplitAll++;
 					sequence2 = new ArrayList<Integer>();
@@ -404,7 +492,7 @@ public class Sessioning {
 		// update all request indexes
 		for(int i=0; i<reqindexesA.length; i++){
 			int reqi = reqindexesA[i];
-			long sesID = req2sesID.get(reqi);
+			String sesID = req2sesID.get(reqi);
 			Request req = WebAccessSequences.getRequest(reqi);
 			req.setSessionID(sesID);
 			WebAccessSequences.replaceRequest(reqi, req);
@@ -417,10 +505,10 @@ public class Sessioning {
 	 * @param pValid the valid
 	 */
 	public void ensureMinimumValidURLs(float pValid){
-		Enumeration<Long> keys = WebAccessSequences.m_sequences.keys();
+		Enumeration<String> keys = WebAccessSequences.m_sequences.keys();
 		int removecounter = 0;
 		while(keys.hasMoreElements()){
-			long sessionID = keys.nextElement().longValue();
+			String sessionID = keys.nextElement();
 			float pValidSeq = WebAccessSequences.m_validnessOfSequences.get(sessionID);
 			if(pValidSeq<pValid){
 				WebAccessSequences.m_sequences.remove(sessionID);
@@ -431,19 +519,23 @@ public class Sessioning {
 	}
 	
 	/**
-	 * Removes the consecutive same ur ls.
+	 * Removes the consecutive same urls.
 	 */
 	public void removeConsecutiveSameURLs(){
+		System.out.println("  [" + System.currentTimeMillis() + "] Remove consecutive same URLs.");
+		
 		// store all request_indexes
+		System.out.println("  [" + System.currentTimeMillis() + "] Take all valid request indexes.");
 		ArrayList<Integer> reqindexes = new ArrayList<Integer>();
-		Enumeration<Long> keys = WebAccessSequences.m_sequences.keys();
+		Enumeration<String> keys = WebAccessSequences.m_sequences.keys();
 		while(keys.hasMoreElements()){
-			long sessionID = keys.nextElement().longValue();
+			String sessionID = keys.nextElement();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);			
 			for(int i=0; i<sequence.size(); i++){
 				reqindexes.add(sequence.get(i));
 			}
 		}
+		System.out.println("  [" + System.currentTimeMillis() + "]   and sort these indexes.");
 		int[] reqindexesA = new int[reqindexes.size()];
 		for(int i=0; i<reqindexes.size(); i++){ reqindexesA[i] = reqindexes.get(i); }
 		Arrays.sort(reqindexesA);
@@ -458,10 +550,10 @@ public class Sessioning {
 		}
 		
 		// when consecutive same URL find remove the following ones
-		Enumeration<Long> keys2 = WebAccessSequences.m_sequences.keys();
+		Enumeration<String> keys2 = WebAccessSequences.m_sequences.keys();
 		int removecounter = 0;
 		while(keys2.hasMoreElements()){
-			long sessionID = keys2.nextElement().longValue();
+			String sessionID = keys2.nextElement();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 			ArrayList<Integer> sequence2 = new ArrayList<Integer>();
 			String urlnameold = "";
@@ -491,17 +583,19 @@ public class Sessioning {
 	 * @param nclicks the nclicks
 	 */
 	public void ensureMinimumActivityInEachSequence(int nclicks){
-		Enumeration<Long> keys = WebAccessSequences.m_sequences.keys();
+		System.out.println("  [" + System.currentTimeMillis() + "] Start ensuring a minimum activity in each sequence.");
+		
+		Enumeration<String> keys = WebAccessSequences.m_sequences.keys();
 		int removecounter = 0;
 		while(keys.hasMoreElements()){
-			long sessionID = keys.nextElement().longValue();
+			String sessionID = keys.nextElement();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 			if(sequence.size()<nclicks){
 				WebAccessSequences.m_sequences.remove(sessionID);
 				removecounter++;
 			}
 		}
-		System.out.println("  " + removecounter + " sequences removed.");
+		System.out.println("  [" + System.currentTimeMillis() + "]   " + removecounter + " sequences removed.");
 	}
 	
 	// we assume that this long activity were generated by web robots.
@@ -511,12 +605,15 @@ public class Sessioning {
 	 * @param lengthpercentile the lengthpercentile
 	 */
 	public void removeLongSequences(float lengthpercentile){
-		Enumeration<Long> keys = WebAccessSequences.m_sequences.keys();
+		System.out.println("  [" + System.currentTimeMillis() + "] Start computing the length percentile: " + lengthpercentile);
+		
+		// get all sessionIDs
+		Enumeration<String> keys = WebAccessSequences.m_sequences.keys();
 		
 		// order the sequences' lengths
 		ArrayList<Integer> lengthsInOrder = new ArrayList<Integer>();
 		while(keys.hasMoreElements()){
-			long sessionID = keys.nextElement().longValue();
+			String sessionID = keys.nextElement();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 			int seqlength = sequence.size();
 			int i;
@@ -546,10 +643,12 @@ public class Sessioning {
 	 * @param nclicks the nclicks
 	 */
 	public void removeLongSequences(int nclicks){
-		Enumeration<Long> keys = WebAccessSequences.m_sequences.keys();
+		System.out.println("  [" + System.currentTimeMillis() + "] Start removing long sequences up to: " + nclicks);
+		
+		Enumeration<String> keys = WebAccessSequences.m_sequences.keys();
 		int removecounter = 0;
 		while(keys.hasMoreElements()){
-			long sessionID = keys.nextElement().longValue();
+			String sessionID = keys.nextElement();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 			if(sequence.size()>=nclicks){
 				WebAccessSequences.m_sequences.remove(sessionID);
@@ -568,12 +667,12 @@ public class Sessioning {
 	 */
 	public void computePageRoleUHC_time(int shortTimeSeconds, int hubMaxTimeSeconds, int contentMaxTimeSeconds){
 		// get ordered sessionIDs
-		ArrayList<Long> keysOrd = WebAccessSequences.getSequencesIDs();
+		ArrayList<String> keysOrd = WebAccessSequences.getSequencesIDs();
 		
 		// take all request indexes and order them.
 		ArrayList<Integer> reqIndexes = new ArrayList<Integer>(); 
 		for(int i=0; i<keysOrd.size(); i++){
-			long sessionID = keysOrd.get(i).longValue();
+			String sessionID = keysOrd.get(i);
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 			for(int j=0; j<sequence.size(); j++){
 				int reqind = sequence.get(j).intValue();
@@ -631,9 +730,9 @@ public class Sessioning {
 	public void computePageRoleUHC_removeOnlyUnimportant(float pMaxUnimportant){
 		// store all request_indexes
 		ArrayList<Integer> reqindexes = new ArrayList<Integer>();
-		Enumeration<Long> keys = WebAccessSequences.m_sequences.keys();
+		Enumeration<String> keys = WebAccessSequences.m_sequences.keys();
 		while(keys.hasMoreElements()){
-			long sessionID = keys.nextElement().longValue();
+			String sessionID = keys.nextElement();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);			
 			for(int i=0; i<sequence.size(); i++){
 				reqindexes.add(sequence.get(i));
@@ -653,10 +752,10 @@ public class Sessioning {
 		}
 		
 		// remove the sequences that have a lot of Unimportant
-		Enumeration<Long> keys2 = WebAccessSequences.m_sequences.keys();
+		Enumeration<String> keys2 = WebAccessSequences.m_sequences.keys();
 		int removecounter = 0;
 		while(keys2.hasMoreElements()){
-			long sessionID = keys2.nextElement().longValue();
+			String sessionID = keys2.nextElement();
 			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
 			int nU = 0;
 			for(int i=0; i<sequence.size(); i++){
@@ -678,7 +777,7 @@ public class Sessioning {
 	
 	
 	public void selectFixedNumberOfSequences(int nses){
-		Enumeration<Long> keys = WebAccessSequences.m_sequences.keys();
+		Enumeration<String> keys = WebAccessSequences.m_sequences.keys();
 		int counter = 0;
 		
 		// admit the first sessions
@@ -692,7 +791,7 @@ public class Sessioning {
 		
 		// remove the last sessions
 		while(keys.hasMoreElements()){
-			long sessionID = keys.nextElement().longValue();
+			String sessionID = keys.nextElement();
 			WebAccessSequences.m_sequences.remove(sessionID);
 		}
 	}

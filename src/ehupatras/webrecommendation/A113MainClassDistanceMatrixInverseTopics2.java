@@ -65,7 +65,7 @@ public class A113MainClassDistanceMatrixInverseTopics2 {
 	 * @param topicmatch the topicmatch
 	 */
 	public void createDistanceMatrix(String databaseWD,
-			ArrayList<Long> sampleSessionIDs,
+			ArrayList<String> sampleSessionIDs,
 			ArrayList<String[]> sequencesUHC,
 			float[][] roleWeights,
 			String dmFile,

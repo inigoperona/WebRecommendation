@@ -81,7 +81,7 @@ public class A001MainClassEdPamSpadeKnnEd {
 		A001MainClassCreateDatabase database = new A001MainClassCreateDatabase();
 		database.loadDatabase2(var_preprocessingWD + "/DB/DB0-9k.txt");
 		// sequences compound by request indexes:
-		ArrayList<Long> var_sampleSessionIDs = database.getSessionsIDs();
+		ArrayList<String> var_sampleSessionIDs = database.getSessionsIDs();
 		System.out.println("Sesiokop: "+ var_sampleSessionIDs.size());
 		// sequences compound by instantiation of requests into URL and role:
 		ArrayList<String[]> var_sequencesUHC = database.getInstantiatedSequences();
@@ -102,9 +102,9 @@ public class A001MainClassEdPamSpadeKnnEd {
 		int m_nFold = 10;
 		honestmodelval.prepareData(var_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
 		honestmodelval.save(var_validationWD);
-		ArrayList<ArrayList<Long>> var_trainAL = honestmodelval.getTrain();
-		ArrayList<ArrayList<Long>> var_valAL   = honestmodelval.getValidation();
-		ArrayList<ArrayList<Long>> var_testAL  = honestmodelval.getTest();
+		ArrayList<ArrayList<String>> var_trainAL = honestmodelval.getTrain();
+		ArrayList<ArrayList<String>> var_valAL   = honestmodelval.getValidation();
+		ArrayList<ArrayList<String>> var_testAL  = honestmodelval.getTest();
 		// load
 		/*
 		honestmodelval.load(var_validationWD);

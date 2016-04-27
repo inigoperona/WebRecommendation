@@ -20,7 +20,7 @@ public class SimilarityMatrixInverseTopics
 	 * @param urlsDMfile the urls d mfile
 	 * @param urlsEqualnessThreshold the urls equalness threshold
 	 */
-	public SimilarityMatrixInverseTopics(ArrayList<Long> names, String urlsDMfile, float urlsEqualnessThreshold){
+	public SimilarityMatrixInverseTopics(ArrayList<String> names, String urlsDMfile, float urlsEqualnessThreshold){
 		super(names);
 		m_urlsEqualnessThreshold = urlsEqualnessThreshold;
 		
