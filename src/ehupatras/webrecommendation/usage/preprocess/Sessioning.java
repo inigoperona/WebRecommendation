@@ -29,7 +29,8 @@ public class Sessioning {
 		m_maxLenghtOfTheSequence = maxLenghtOfTheSequence;
 		
 		long expiredTimeInSeconds = expireSessionsInMin*60;
-		Hashtable<Integer,Object[]> oldrequests = new Hashtable<Integer,Object[]>();
+		//Hashtable<Integer,Object[]> oldrequests = new Hashtable<Integer,Object[]>();
+		Map<Integer, Object[]> oldrequests = Collections.synchronizedMap(new LinkedHashMap<Integer, Object[]>());
 		
 		// for each request
 		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
@@ -94,12 +95,14 @@ public class Sessioning {
 			// check all oldrequests if the sessions are closed
 			if(i%10000==0){
 				// order the keys to optimized the access to each module.
-				ArrayList<Integer> keysOrd = this.orderHashtableKeysByDataUser(oldrequests, 2);
+				// ArrayList<Integer> keysOrd = this.orderHashtableKeysByDataUser(oldrequests, 2);
+				Set<Integer> col = oldrequests.keySet();
+				Iterator<Integer> it = col.iterator();
 				
 				// close the sessions
-				for(int j=0; j<keysOrd.size(); j++){
+				while(it.hasNext()){
 					// get the user and its last request's features
-					int userid = keysOrd.get(j).intValue();
+					int userid = it.next();
 					Object[] objA = oldrequests.get(userid);
 					int oldsessioni = ((Integer)objA[0]).intValue();
 					long oldtime = ((Long)objA[1]).longValue();
@@ -109,16 +112,18 @@ public class Sessioning {
 					int oldLogFileNumb = ((Integer)objA[5]).intValue();
 					boolean oldIsOpened = ((Boolean)objA[6]).booleanValue();
 					
-					// analyze the session to close it
-					long diffInSeconds = (actualtime-oldtime)/1000;
-					if( diffInSeconds>expiredTimeInSeconds ){
-						// close the session in the DB
-						float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
-						this.updateTheOldRequest(oldindex, oldelapssedtime, userid, oldsessioni, true);
-						
-						// close the session in oldrequests
-						Object[] objAr = this.createOldRequestsObj(oldsessioni, oldtime, oldindex, sum, nreq, oldLogFileNumb, false);
-						oldrequests.put(userid, objAr);
+					if(oldIsOpened){
+						// analyze the session to close it
+						long diffInSeconds = (actualtime-oldtime)/1000;
+						if( diffInSeconds>expiredTimeInSeconds ){
+							// close the session in the DB
+							float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
+							this.updateTheOldRequest(oldindex, oldelapssedtime, userid, oldsessioni, true);
+							
+							// close the session in oldrequests
+							Object[] objAr = this.createOldRequestsObj(oldsessioni, oldtime, oldindex, sum, nreq, oldLogFileNumb, false);
+							oldrequests.put(userid, objAr);
+						}
 					}
 				}
 			}
@@ -126,19 +131,21 @@ public class Sessioning {
 		
 		// close the sessions that there are in the hashTable
 		// order the keys to optimized the access to each module.
-		ArrayList<Integer> keysOrd = this.orderHashtableKeysByDataUser(oldrequests, 2);
+		//ArrayList<Integer> keysOrd = this.orderHashtableKeysByDataUser(oldrequests, 2);
+		Set<Integer> col = oldrequests.keySet();
+		Iterator<Integer> it = col.iterator();
 		
 		// close the sessions
-		System.out.println("  Number of connections to close: " + keysOrd.size());
-		for(int i=0; i<keysOrd.size(); i++){
+		System.out.println("  Number of connections to close: " + oldrequests.size());
+		for(int i=0; it.hasNext(); i++){
 			// write the situation every X number of requests
 			if(i%10000==0){
-				System.out.println("  " + i + "/" + keysOrd.size() +
+				System.out.println("  " + i + "/" + oldrequests.size() +
 						" closing connections [createSessions]");
 			}
 			
 			// get the user and its last request's features
-			int userid = keysOrd.get(i).intValue();
+			int userid = it.next();
 			Object[] objA = oldrequests.get(userid);
 			int oldsessioni = ((Integer)objA[0]).intValue();
 			long oldtime = ((Long)objA[1]).longValue();
@@ -281,13 +288,8 @@ public class Sessioning {
 		}
 	}
 	
-	/**
-	 * Order hashtable keys by data.
-	 *
-	 * @param objHt the obj ht
-	 * @param iData the i data
-	 * @return the array list
-	 */
+
+	/*
 	private ArrayList<Integer> orderHashtableKeysByDataUser(Hashtable<Integer,Object[]> objHt, int iData){
 		Enumeration<Integer> keys = objHt.keys();
 		ArrayList<Integer> keysOrd = new ArrayList<Integer>();
@@ -302,6 +304,22 @@ public class Sessioning {
 			
 			// fast approach to the exact point
 			int i = 0;
+//			int a = 10;
+//			int b = 0;
+//			for(; i<keysOrd.size();){
+//				int userID2 = keysOrd.get(i);
+//				Object[] objA2 = objHt.get(userID2);
+//				int oldindex2 = ((Integer)objA2[iData]).intValue();
+//				int mod2 = WebAccessSequences.getModulusAfterGetRequest(oldindex2);
+//				if(mod1<mod2){
+//					break;
+//				}
+//				i = (int)Math.pow((double)a, (double)b);
+//				b++;
+//			}
+//			i = (int)Math.pow((double)a, (double)(b-1));
+//			i = i>=1 ? i : 0;
+			
 			for(; i<keysOrd.size(); i=i+10000){
 				int userID2 = keysOrd.get(i);
 				Object[] objA2 = objHt.get(userID2);
@@ -332,6 +350,7 @@ public class Sessioning {
 		}
 		return keysOrd;		
 	}
+	*/
 	
 	private ArrayList<Long> orderHashtableKeysByDataSession(Hashtable<Long,Object[]> objHt, int iData){
 		Enumeration<Long> keys = objHt.keys();

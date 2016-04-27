@@ -39,12 +39,14 @@ public class A011MainClassDistanceMatrixLGInverse {
 		param.createDM("SimilarityMatrixNormalize", rolesW, 
 				param.getDMdirectory() + "_norole", new int[0]);
 		
+		/*
 		// 2 roles: similar_HC
 		rolesW = new float[][]{	{ 0f,    0f,    0f},
 	    						{ 0f,    1f, 0.75f},
 	    						{ 0f, 0.75f,    1f}};
 		param.createDM("SimilarityMatrixNormalize", rolesW, 
 				param.getDMdirectory() + "_wirole", new int[0]);
+		*/
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

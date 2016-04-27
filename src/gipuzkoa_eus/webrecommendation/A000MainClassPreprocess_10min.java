@@ -17,7 +17,7 @@ public class A000MainClassPreprocess_10min {
 	public void preprocessLogs(String basedirectory, String logFilesIndex){
 		long starttime;
 		long endtime;
-		
+
 		// start preprocessing
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] PREPROCESSING.");
@@ -50,11 +50,13 @@ public class A000MainClassPreprocess_10min {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
+		*/
 		
 		Website.save();
 		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
-		*/
 
+		//Website.load();
+		//WebAccessSequences.loadStructure();
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
