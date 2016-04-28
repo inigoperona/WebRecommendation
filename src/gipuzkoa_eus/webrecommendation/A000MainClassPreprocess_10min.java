@@ -38,11 +38,9 @@ public class A000MainClassPreprocess_10min {
 				+ (endtime-starttime)/1000 + " seconds.");
 		
 		Website.save();
-		WebAccess.writeFilteredLog(basedirectory + "/filteredLog1.log");
-
-		//WebAccessSequences.orderRequests();
+		//WebAccess.writeFilteredLog(basedirectory + "/filteredLog1.log");
 		WebAccess.changeToOrderedRequests();
-		WebAccess.writeFilteredLog(basedirectory + "/filteredLog2.log");
+		//WebAccess.writeFilteredLog(basedirectory + "/filteredLog2.log");
 		
 		// ensure a minimum amount of apparitions of URLs.
 		/*
@@ -71,7 +69,7 @@ public class A000MainClassPreprocess_10min {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-		WebAccess.writeFilteredLog(basedirectory + "/filteredLog3.log");
+		//WebAccess.writeFilteredLog(basedirectory + "/filteredLog3.log");
 
 		// join consecutive same URLs
 			starttime = System.currentTimeMillis();
@@ -80,7 +78,7 @@ public class A000MainClassPreprocess_10min {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-		WebAccess.writeFilteredLog(basedirectory + "/filteredLog4.log");
+		//WebAccess.writeFilteredLog(basedirectory + "/filteredLog4.log");
 
 		
 		// create sequences
@@ -114,10 +112,19 @@ public class A000MainClassPreprocess_10min {
 					+ (endtime-starttime)/1000 + " seconds.");
 		*/
 		
+		// create sequences
+			starttime = System.currentTimeMillis();
+			System.out.println("[" + starttime + "] Take first URL of time zero.");
+		ses.takeFirstUrlOfTimeZero();
+		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes_all2.txt");
+			endtime = System.currentTimeMillis();
+			System.out.println("[" + endtime + "] End. Elapsed time: "
+				+ (endtime-starttime)/1000 + " seconds.");
+			
 		// ensure a minimum activity in each sequence
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start ensuring a minimun activity in each sequence.");
-		ses.ensureMinimumActivityInEachSequence(3);
+		ses.ensureMinimumActivityInEachSequence(1);
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
@@ -125,7 +132,7 @@ public class A000MainClassPreprocess_10min {
 		// remove long sequences, the activity web robots generate
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start removing long sequences.");
-		ses.removeLongSequences((float)98);
+		ses.removeLongSequences((float)99.9);
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
@@ -234,8 +241,8 @@ public class A000MainClassPreprocess_10min {
 		String basedirectory = "experiments_EHU_LOG_LAGINA2/00_preprocess";
 		String logfilesIndex = "/loglist.txt";
 		
-		//basedirectory = args[0];
-		//logfilesIndex = args[1];
+		basedirectory = args[0];
+		logfilesIndex = args[1];
 		
 		// initialize the data structure
 		WebAccess.setWorkDirectory(basedirectory);
