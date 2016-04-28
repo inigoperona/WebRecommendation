@@ -23,6 +23,7 @@ public class A000MainClassPreprocess_10min {
 		System.out.println("[" + starttime + "] PREPROCESSING.");
 		WebAccessSequences.setnMemory(10); // 60MBytes * 20moduls = 1200Mbytes
 
+		
 		// FILTER LOGS //
 		LogReader logreader = new LogReaderGipuzkoa_eus();
 		
@@ -52,9 +53,8 @@ public class A000MainClassPreprocess_10min {
 				+ (endtime-starttime)/1000 + " seconds.");
 		*/
 		
-		Website.save();
-		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
-
+		//Website.save();
+		//WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
 		//Website.load();
 		//WebAccessSequences.loadStructure();
 		
