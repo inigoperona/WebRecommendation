@@ -1,6 +1,7 @@
 package discapnet.webrecommendation;
 
 import ehupatras.webrecommendation.A001MainClassCreateDatabase;
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -59,7 +60,7 @@ public class A000MainClassPreprocess3 {
 		distDir = args[2];
 		
 		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(preDir);
+		WebAccess.setWorkDirectory(preDir);
 		Website.setWorkDirectory(preDir);
 		
 		// take the start time of the program

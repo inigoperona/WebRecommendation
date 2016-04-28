@@ -1,5 +1,6 @@
 package ehupatras.webrecommendation;
 
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -51,7 +52,7 @@ public class A000MainClassPreprocess30min {
 		
 		// load structures
 		Website.load();
-		WebAccessSequences.loadStructure();
+		WebAccess.loadStructure();
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
@@ -130,12 +131,12 @@ public class A000MainClassPreprocess30min {
 					+ (endtime-starttime)/1000 + " seconds.");
 		
 		// write preprocessed logs
-		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
+		WebAccess.writeFilteredLog(basedirectory + "/filteredLog.log");
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
 		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
 		
 		// save the sessions structure we have created
-		WebAccessSequences.saveStructure();
+		WebAccess.saveStructure();
 		WebAccessSequences.saveSequences();
 		Website.save();
 	}

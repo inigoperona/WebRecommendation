@@ -8,6 +8,7 @@ import ehupatras.webrecommendation.A012MainClassDistanceMatrixED;
 import ehupatras.webrecommendation.A001MainClassCreateDatabase;
 import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -68,7 +69,7 @@ public class A000MainClassEdPamSpadeKnnEd {
 		// LOAD PREPROCESS DATA
 		Website.setWorkDirectory(var_preprocessingWD);
 		//Website.load(); // Load "preprocessingWD/_Website.javaData"
-		WebAccessSequencesUHC.setWorkDirectory(var_preprocessingWD);
+		WebAccess.setWorkDirectory(var_preprocessingWD);
 		//WebAccessSequences.loadStructure(); // Load "preprocessingWD/_i_requests.javaData"
 		WebAccessSequences.loadSequences(); // Load "preprocessingWD/_sequences.javaData"
 		

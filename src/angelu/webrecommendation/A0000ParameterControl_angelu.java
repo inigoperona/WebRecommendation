@@ -14,7 +14,7 @@ import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
-import ehupatras.webrecommendation.structures.WebAccessSequences;
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
@@ -216,7 +216,7 @@ public class A0000ParameterControl_angelu {
 	 * Initialize structures.
 	 */
 	protected void initializeStructures(){
-		WebAccessSequencesUHC.setWorkDirectory(m_preprocessingWD);
+		WebAccess.setWorkDirectory(m_preprocessingWD);
 		Website.setWorkDirectory(m_preprocessingWD);
 	}
 	
@@ -361,7 +361,7 @@ public class A0000ParameterControl_angelu {
 	public void loadLogs(){
 		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		preprocess.loadPreprocess();
-		m_sizeDB = WebAccessSequences.m_sequences.size();
+		m_sizeDB = WebAccessSequencesUHC.getNumberOfSessions();
 	}
 	
 	// database

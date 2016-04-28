@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 
-import ehupatras.webrecommendation.structures.WebAccessSequences;
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.page.PageDiscapnet;
@@ -113,7 +113,7 @@ public class LogReaderDiscapnet extends LogReader {
 					// Store the page
 					Website.storeURL(page);
 					// save the valid requests
-					WebAccessSequences.addRequest(req);
+					WebAccess.addRequest(req);
 				}
 			}
 		} catch(IOException ex){
@@ -139,7 +139,7 @@ public class LogReaderDiscapnet extends LogReader {
 		// order the WebAccessSequences
 		System.out.println("  [" + System.currentTimeMillis() + 
 				"] Ordering the requests. ");
-		WebAccessSequences.orderRequests();
+		WebAccess.orderRequests();
 	}
 	
 }

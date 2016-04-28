@@ -100,7 +100,7 @@ public class WebAccessSequencesUHC
 			ArrayList<Integer> requestIDs = new ArrayList<Integer>();
 			for(int i=0; i<keysOrd.size(); i++){
 				String sessionID = keysOrd.get(i);
-				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+				ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
 				for(int j=0; j<sequence.size(); j++){
 					// get the index of the request
 					int reqind = sequence.get(j).intValue();
@@ -135,7 +135,7 @@ public class WebAccessSequencesUHC
 			Hashtable<Integer,String> requestsInfo = new Hashtable<Integer,String>();
 			for(int i=0; i<requestIDs.size(); i++){
 				int reqind = requestIDs.get(i);
-				Request req = WebAccessSequences.getRequest(reqind);
+				Request req = WebAccess.getRequest(reqind);
 				String urlname = req.getFormatedUrlName();
 				Page pag = Website.getPage(urlname);
 				int urlid = pag.getUrlIDusage();
@@ -152,7 +152,7 @@ public class WebAccessSequencesUHC
 				writer.write(String.valueOf(sessionID));
 				
 				// write the clicks
-				ArrayList<Integer> sequenceReqInd = WebAccessSequences.m_sequences.get(sessionID);
+				ArrayList<Integer> sequenceReqInd = WebAccessSequences.getSession(sessionID);
 				for(int j=0; j<sequenceReqInd.size(); j++){
 					int reqind = sequenceReqInd.get(j).intValue();
 					String urlStr = requestsInfo.get(reqind);
@@ -205,7 +205,7 @@ public class WebAccessSequencesUHC
 			ArrayList<Integer> requestIDs = new ArrayList<Integer>();
 			for(int i=0; i<keysOrd.size(); i++){
 				String sessionID = keysOrd.get(i);
-				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+				ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
 				for(int j=0; j<sequence.size(); j++){
 					// get the index of the request
 					int reqind = sequence.get(j).intValue();
@@ -243,10 +243,10 @@ public class WebAccessSequencesUHC
 				writer.write(String.valueOf(sessionID));
 				
 				// write the clicks
-				ArrayList<Integer> sequenceReqInd = WebAccessSequences.m_sequences.get(sessionID);
+				ArrayList<Integer> sequenceReqInd = WebAccessSequences.getSession(sessionID);
 				for(int j=0; j<sequenceReqInd.size(); j++){
 					int reqind = sequenceReqInd.get(j).intValue();
-					Request req = WebAccessSequences.getRequest(reqind);
+					Request req = WebAccess.getRequest(reqind);
 					String urlname = req.getFormatedUrlName();
 					Page pag = Website.getPage(urlname);
 					int urlid = pag.getUrlIDusage();
@@ -284,7 +284,7 @@ public class WebAccessSequencesUHC
 		ArrayList<Integer> requestIDs = new ArrayList<Integer>();
 		for(int i=0; i<sessionIDs.size(); i++){
 			String sessionID = sessionIDs.get(i);
-			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
 			for(int j=0; j<sequence.size(); j++){
 				int reqind = sequence.get(j).intValue();
 				int k;
@@ -302,7 +302,7 @@ public class WebAccessSequencesUHC
 		Hashtable<Integer,String> requestsInfo = new Hashtable<Integer,String>();
 		for(int i=0; i<requestIDs.size(); i++){
 			int reqind = requestIDs.get(i);
-			Request req = WebAccessSequences.getRequest(reqind);
+			Request req = WebAccess.getRequest(reqind);
 			String urlname = req.getFormatedUrlName();
 			Page pag = Website.getPage(urlname);
 			int urlid = pag.getUrlIDusage();
@@ -315,7 +315,7 @@ public class WebAccessSequencesUHC
 		ArrayList<String[]> resultSequences = new ArrayList<String[]>();
 		for(int i=0; i<sessionIDs.size(); i++){
 			String sessionID = sessionIDs.get(i);
-			ArrayList<Integer> sequenceReqInd = WebAccessSequences.m_sequences.get(sessionID);
+			ArrayList<Integer> sequenceReqInd = WebAccessSequences.getSession(sessionID);
 			String[] sequenceUHC = new String[sequenceReqInd.size()];
 			for(int j=0; j<sequenceReqInd.size(); j++){
 				int reqind = sequenceReqInd.get(j).intValue();
