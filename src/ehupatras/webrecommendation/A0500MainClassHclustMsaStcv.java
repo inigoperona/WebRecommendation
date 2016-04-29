@@ -1,19 +1,10 @@
-package angelu.webrecommendation;
+package ehupatras.webrecommendation;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class A053MainClassPamSpadeKnnEDcv.
- */
-public class A053MainClassPamSpadeKnnEDcv {
+public class A0500MainClassHclustMsaStcv {
 
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
 	public static void main(String[] args) {
-		
-		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
+
+		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -22,8 +13,8 @@ public class A053MainClassPamSpadeKnnEDcv {
 		param.loadDatabase();
 		param.loadDM();
 		param.loadCrossValidation();
-		param.createModelEvaluatorMedoids();
-		param.runModelEvaluatorM_pam();
+		param.createModelEvaluatorSeqMinMSAWseq();
+		param.runModelEvaluatorHclustMS(5, "ST_w_eS1");
 				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

@@ -15,6 +15,7 @@ import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccess;
+import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
@@ -96,10 +97,10 @@ public class A0000ParameterControl_angelu {
 	protected int m_ptrain = 7;
 	
 	/** The m_pval. */
-	protected int m_pval = 2;
+	protected int m_pval = 0;
 	
 	/** The m_ptest. */
-	protected int m_ptest = 1;
+	protected int m_ptest = 3;
 	
 	/** The m_train al. */
 	protected ArrayList<ArrayList<String>> m_trainAL;
@@ -361,7 +362,7 @@ public class A0000ParameterControl_angelu {
 	public void loadLogs(){
 		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		preprocess.loadPreprocess();
-		m_sizeDB = WebAccessSequencesUHC.getNumberOfSessions();
+		m_sizeDB = WebAccessSequences.getNumberOfSessions();
 	}
 	
 	// database

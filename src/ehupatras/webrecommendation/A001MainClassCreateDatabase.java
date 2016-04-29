@@ -34,6 +34,7 @@ public class A001MainClassCreateDatabase {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
+		WebAccess.changeToOrderedRequests();
 		param.loadLogs();
 		param.createDatabase();
 		

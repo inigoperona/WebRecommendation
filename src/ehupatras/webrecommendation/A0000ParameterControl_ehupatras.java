@@ -94,7 +94,8 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	//float[] cutthA = {0.1f, 0.2f, 0.4f, 0.6f, 0.8f};
 	//float[] cutthA = {4f, 10f, 15f, 20f, 25f};
 	/** The m_cutth a. */
-	protected float[] m_cutthA = {4f, 10f, 15f, 20f, 25f, 50f, 75f, 90f};
+	//protected float[] m_cutthA = {4f, 10f, 15f, 20f, 25f, 50f, 75f};
+	protected float[] m_cutthA = {4f};
 	
 	/** The m_linkages. */
 	protected String[] m_linkages = 

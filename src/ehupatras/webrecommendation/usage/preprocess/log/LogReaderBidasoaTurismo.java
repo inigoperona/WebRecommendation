@@ -152,6 +152,11 @@ public class LogReaderBidasoaTurismo extends LogReader {
 		}
 		
 		} // for each log file
+		
+		// order the WebAccessSequences
+		System.out.println("  [" + System.currentTimeMillis() + 
+				"] Ordering the requests. ");
+		WebAccess.orderRequests();
 	}
 	
 }

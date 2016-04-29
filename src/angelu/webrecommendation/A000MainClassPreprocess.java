@@ -81,6 +81,8 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 
+		Website.save();
+		WebAccess.changeToOrderedRequests();
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
@@ -149,8 +151,7 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-			
-		/*
+
 		// remove those ssequences that have many Unimportant
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start removing Unimportant sequences.");
@@ -158,17 +159,16 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
-		*/
 		
-		// write preprocessed logs
-		WebAccess.writeFilteredLog(basedirectory + "/filteredLog.log");
-		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
-		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
-						
 		// save the sessions structure we have created
 		WebAccess.saveStructure();
 		WebAccessSequences.saveSequences();
 		Website.save();
+			
+		// write preprocessed logs
+		WebAccess.writeFilteredLog(basedirectory + "/filteredLog.log");
+		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
+		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
 	}
 	
 	/**

@@ -80,6 +80,8 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 		
+		Website.save();
+		WebAccess.changeToOrderedRequests();
 
 		
 		// SESSIONING //
