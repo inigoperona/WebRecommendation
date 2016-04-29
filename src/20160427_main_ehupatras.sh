@@ -53,7 +53,13 @@ java -Xmx4G -cp webreco.jar angelu.webrecommendation.A021MainClassCrossValidatio
   "-" 1 > 03_crossvalidation.txt
 
 # MODEL GENERATION & EVALUATION: Markov Chain
-# ehupatras.webrecommendation.A030MainClassMarkovChaincv
+java -Xmx4G -cp webreco.jar ehupatras.webrecommendation.A030MainClassMarkovChaincv \
+  $pre "xxx" \
+  "/empty.txt" "/empty.txt" "/empty.txt" "/empty.txt" "/empty.txt" "/empty.txt" \
+  $dbs "/$dm" \
+  $val $pam "xxx" "xxx" \
+  "-" 1 > 04_pam.txt
+# kkkkkkkkkkkkkkkkkkkkkkkkkk
 
 # MODEL GENERATION & EVALUATION: Global Suffix Tree
 # ehupatras.webrecommendation.

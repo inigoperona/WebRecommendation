@@ -113,7 +113,7 @@ public class A000MainClassPreprocessSplit_10min {
 		// write preprocessed logs
 		WebAccess.writeFilteredLog(basedirectory + "/filteredLog_split.log");
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes_split.txt");
-		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole_split.txt");
+		WebAccessSequences.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole_split.txt");
 						
 		// save the sessions structure we have created
 		WebAccess.saveStructure();

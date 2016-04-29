@@ -468,7 +468,7 @@ public class Sessioning {
 		
 		// store all request_indexes
 		ArrayList<String> keys = WebAccessSequences.getSessionsIDs();
-		int[] reqindexesA = this.sesIDs2reqIndexList(keys);
+		int[] reqindexesA = WebAccessSequences.sesIDs2reqIndexList(keys);
 		
 		// access to request data and take the URLname
 		Hashtable<Integer,Float> req2et = new Hashtable<Integer,Float>();
@@ -550,7 +550,7 @@ public class Sessioning {
 		
 		// store all request_indexes
 		ArrayList<String> keys = WebAccessSequences.getSessionsIDs();
-		int[] reqindexesA = this.sesIDs2reqIndexList(keys);
+		int[] reqindexesA = WebAccessSequences.sesIDs2reqIndexList(keys);
 		
 		// access to request data and take the URLname
 		Hashtable<Integer,String> req2url = new Hashtable<Integer,String>();
@@ -589,33 +589,12 @@ public class Sessioning {
 		System.out.println("  " + removecounter + " requests were removed.");
 	}
 	
-	private int[] sesIDs2reqIndexList(ArrayList<String> sesIDs){
-		System.out.println("  [" + System.currentTimeMillis() + "] Take all valid request indexes.");
-		ArrayList<Integer> reqindexes = new ArrayList<Integer>();
-
-		for(int i=0; i<sesIDs.size(); i++){
-			String sessionID = sesIDs.get(i);
-			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);			
-			for(int j=0; j<sequence.size(); j++){
-				reqindexes.add(sequence.get(j));
-			}
-		}
-		System.out.println("  [" + System.currentTimeMillis() + "]   and sort these indexes.");
-		int[] reqindexesA = new int[reqindexes.size()];
-		for(int i=0; i<reqindexes.size(); i++){
-			reqindexesA[i] = reqindexes.get(i);
-		}
-		Arrays.sort(reqindexesA);
-		
-		return reqindexesA;
-	}
-	
 	public void takeFirstUrlOfTimeZero(){
 		System.out.println("  [" + System.currentTimeMillis() + "] Take first URL of time 0.");		
 		
 		// store all request_indexes
 		ArrayList<String> keys = WebAccessSequences.getSessionsIDs();
-		int[] reqindexesA = this.sesIDs2reqIndexList(keys);
+		int[] reqindexesA = WebAccessSequences.sesIDs2reqIndexList(keys);
 		
 		// access to request data and take the elapsedtime
 		Hashtable<Integer,Float> req2et = new Hashtable<Integer,Float>();
@@ -837,7 +816,7 @@ public class Sessioning {
 	public void computePageRoleUHC_removeOnlyUnimportant(float pMaxUnimportant){
 		// store all request_indexes
 		ArrayList<String> keys = WebAccessSequences.getSessionsIDs();
-		int[] reqindexesA = this.sesIDs2reqIndexList(keys);
+		int[] reqindexesA = WebAccessSequences.sesIDs2reqIndexList(keys);
 		
 		// access to request data and take the URLname
 		Hashtable<Integer,String> req2role = new Hashtable<Integer,String>();

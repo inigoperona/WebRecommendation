@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -305,4 +306,34 @@ public class WebAccessSequences {
 		
 	}
 	
+	
+	public static int[] sesIDs2reqIndexList(ArrayList<String> sesIDs){
+		System.out.println("  [" + System.currentTimeMillis() + "] Take all valid request indexes.");
+		ArrayList<Integer> reqindexes = new ArrayList<Integer>();
+
+		for(int i=0; i<sesIDs.size(); i++){
+			String sessionID = sesIDs.get(i);
+			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);			
+			for(int j=0; j<sequence.size(); j++){
+				reqindexes.add(sequence.get(j));
+			}
+		}
+		System.out.println("  [" + System.currentTimeMillis() + "]   and sort these indexes.");
+		int[] reqindexesA = new int[reqindexes.size()];
+		for(int i=0; i<reqindexes.size(); i++){
+			reqindexesA[i] = reqindexes.get(i);
+		}
+		Arrays.sort(reqindexesA);
+		
+		return reqindexesA;
+	}
+
+	
+	public static void writeSequencesInstanciated(String outfilename){
+		WebAccessSequencesUHC.writeSequencesInstanciated(outfilename, false);
+	}
+	
+	public static ArrayList<String[]> getSequencesInstanciated(ArrayList<String> sessionIDs){
+		return WebAccessSequencesUHC.getSequencesInstanciated(sessionIDs, false);
+	}
 }

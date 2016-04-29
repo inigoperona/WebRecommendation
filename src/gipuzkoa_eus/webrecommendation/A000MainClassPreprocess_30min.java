@@ -132,7 +132,7 @@ public class A000MainClassPreprocess_30min {
 		// write preprocessed logs
 		WebAccess.writeFilteredLog(basedirectory + "/filteredLog.log");
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
-		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
+		WebAccessSequences.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
 						
 		// save the sessions structure we have created
 		WebAccess.saveStructure();

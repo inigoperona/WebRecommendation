@@ -35,7 +35,7 @@ public class A000MainClassPreprocess3 {
 			
 		// write preprocessed logs
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexesSample.txt");
-		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRoleSample.txt");
+		WebAccessSequences.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRoleSample.txt");
 						
 		// save the sessions structure we have created
 		WebAccessSequences.saveSequences("_sequencesSample.javaData");
