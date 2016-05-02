@@ -61,7 +61,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		// PAM: k
 		//m_ks = new int[]{150, 200, 250, 300};
 		//m_ks = new int[]{150, 200, 250};
-		m_ks = new int[]{5};
+		m_ks = new int[]{150};
 		
 		// SPADE: minimum support
 		//m_seqweights = new float[]{0.10f, 0.15f, 0.20f};
@@ -94,7 +94,8 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	//float[] cutthA = {0.1f, 0.2f, 0.4f, 0.6f, 0.8f};
 	//float[] cutthA = {4f, 10f, 15f, 20f, 25f};
 	/** The m_cutth a. */
-	protected float[] m_cutthA = {4f, 10f, 15f, 20f, 25f, 50f, 75f, 90f};
+	//protected float[] m_cutthA = {4f, 10f, 15f, 20f, 25f, 50f, 75f};
+	protected float[] m_cutthA = {4f};
 	
 	/** The m_linkages. */
 	protected String[] m_linkages = 
@@ -342,7 +343,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * Run model evaluator mc.
 	 */
 	public void runModelEvaluatorMC(){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 		
 		// Results' header
 		System.out.print("options," + m_modelevMC.getEvaluationHeader());		
@@ -401,7 +402,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		// mode = 2: GoToLongestPrefix
 		// gtmem (gotomemory 1000)
 		
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 		
 		// Results' header
 		System.out.print("options," + m_modelevSTG.getEvaluationHeader());		
@@ -500,7 +501,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @param strategyST the strategy st
 	 */
 	public void runModelEvaluatorHclustMS(int indLinkage, String strategyST){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevCMS.getEvaluationHeader());
@@ -551,7 +552,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @param strategyST the strategy st
 	 */
 	public void runModelEvaluatorPamMS(int indLinkage, String strategyST){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevCMS.getEvaluationHeader());
@@ -624,7 +625,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @param strategyST the strategy st
 	 */
 	public void runModelEvaluatorHclustSpadeST(int indLinkage, String strategyST){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevCSS.getEvaluationHeader());
@@ -669,7 +670,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @param strategyST the strategy st
 	 */
 	public void runModelEvaluatorPamSpadeST(String strategyST){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevCSS.getEvaluationHeader());
@@ -737,7 +738,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @param indLinkage the ind linkage
 	 */
 	public void runModelEvaluatorM_hclust(int indLinkage){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevM.getEvaluationHeader());
@@ -776,7 +777,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @see angelu.webrecommendation.A0000ParameterControl_angelu#runModelEvaluatorM_pam()
 	 */
 	public void runModelEvaluatorM_pam(){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevM.getEvaluationHeader());
@@ -842,7 +843,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @param indLinkage the ind linkage
 	 */
 	public void runModelEvaluatorMGST_fit(int indLinkage){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevMGST.getEvaluationHeader());
@@ -881,7 +882,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @param indLinkage the ind linkage
 	 */
 	public void runModelEvaluatorMGST_knn(int indLinkage){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevMGST.getEvaluationHeader());
@@ -948,7 +949,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @param indLinkage the ind linkage
 	 */
 	public void runModelEvaluatorMSpST_knn(int indLinkage){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevMSpST.getEvaluationHeader());
@@ -1016,7 +1017,7 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 * @param hmmMode the hmm mode
 	 */
 	public void runModelEvaluatorHMM(int indLinkage, int hmmMode){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevHMM.getEvaluationHeader());

@@ -117,7 +117,8 @@ public abstract class Matrix {
 				int j;
 				for(j=0; j<m_names.size(); j++){
 					String sesID2 = m_names.get(j);
-					if(sesID==sesID2){
+					BigInteger sesID2BI = new BigInteger(sesID2);
+					if(sesIDBI.compareTo(sesID2BI) == 0){
 						break;
 					}
 				}

@@ -1,15 +1,13 @@
 package ehupatras.webrecommendation;
 
-import ehupatras.webrecommendation.A0000ParameterControl_ehupatras;
-
-public class A030MainClassMarkovChaincv {
+public class A040MainClassHclustcv {
 
 	public static void main(String[] args) {
-		
+
 		String[] args2 = {"20160502_experiments_BT/00_preprocess", "xxx", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
-				"20160502_experiments_BT/01_databases", "/DM_ED",
-				"20160502_experiments_BT/03_validation", "/00_mc", "xxx", "/eval.txt", "-", "1"};
+				"20160502_experiments_BT/01_databases", "/DM_LG",
+				"20160502_experiments_BT/03_validation", "/03_hclust_DM_LG", "xxx", "xxx", "-", "1"};
 		
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
 		
@@ -20,12 +18,12 @@ public class A030MainClassMarkovChaincv {
 		param.loadDatabase();
 		param.loadDM();
 		param.loadCrossValidation();
-		param.createModelEvaluatorMarkovChain();
-		param.runModelEvaluatorMC();
-		
+		param.createModelEvaluatorClustHclust();
+		param.runModelEvaluatorH(5);
+				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
-		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
+		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");		
 	}
 	
 }

@@ -1,5 +1,6 @@
 package gipuzkoa_eus.webrecommendation;
 
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -14,12 +15,12 @@ public class A000MainClassPreprocessSplit_10min {
 		// start preprocessing
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] PREPROCESSING.");
-		WebAccessSequences.setnMemory(20); // 60MBytes * 20moduls = 1200Mbytes
-		WebAccessSequences.changeToOrderedRequests();
+		WebAccess.setnMemory(20); // 60MBytes * 20moduls = 1200Mbytes
+		WebAccess.changeToOrderedRequests();
 		
 		// load the preprocess
 		Website.load();
-		WebAccessSequences.loadStructure();
+		WebAccess.loadStructure();
 		WebAccessSequences.loadSequences();
 		
 		// SESSIONING //
@@ -110,12 +111,12 @@ public class A000MainClassPreprocessSplit_10min {
 
 		
 		// write preprocessed logs
-		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog_split.log");
+		WebAccess.writeFilteredLog(basedirectory + "/filteredLog_split.log");
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes_split.txt");
-		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole_split.txt");
+		WebAccessSequences.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole_split.txt");
 						
 		// save the sessions structure we have created
-		WebAccessSequences.saveStructure();
+		WebAccess.saveStructure();
 		WebAccessSequences.saveSequences();
 		Website.save();
 	}

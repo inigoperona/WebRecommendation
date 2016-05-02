@@ -1,5 +1,6 @@
 package discapnet.webrecommendation;
 
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -23,8 +24,8 @@ public class A000MainClassPreprocess2 {
 
 		Website.load();
 		System.out.println("Website. loaded items: " + Website.size());
-		WebAccessSequences.loadStructure("orderedrequests.javaData");
-		System.out.println("WebAccessSequences. loaded items: " + WebAccessSequences.filteredlogsize());
+		WebAccess.loadStructure("orderedrequests.javaData");
+		System.out.println("WebAccessSequences. loaded items: " + WebAccess.filteredlogsize());
 
 
 		// SESSIONING //
@@ -35,7 +36,7 @@ public class A000MainClassPreprocess2 {
 		
 		// write preprocessed logs
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexesSample.txt");
-		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRoleSample.txt");
+		WebAccessSequences.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRoleSample.txt");
 		WebAccessSequences.saveSequences("_sequencesSample.javaData");
 	}
 	
@@ -52,7 +53,7 @@ public class A000MainClassPreprocess2 {
 		//distDir = args[2];
 		
 		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(preDir);
+		WebAccess.setWorkDirectory(preDir);
 		Website.setWorkDirectory(preDir);
 		
 		// take the start time of the program

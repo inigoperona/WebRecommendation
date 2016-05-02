@@ -14,6 +14,7 @@ import ehupatras.webrecommendation.A100MainClassAddContent;
 import ehupatras.webrecommendation.distmatrix.Matrix;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidation;
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -96,10 +97,10 @@ public class A0000ParameterControl_angelu {
 	protected int m_ptrain = 7;
 	
 	/** The m_pval. */
-	protected int m_pval = 2;
+	protected int m_pval = 0;
 	
 	/** The m_ptest. */
-	protected int m_ptest = 1;
+	protected int m_ptest = 3;
 	
 	/** The m_train al. */
 	protected ArrayList<ArrayList<String>> m_trainAL;
@@ -216,7 +217,7 @@ public class A0000ParameterControl_angelu {
 	 * Initialize structures.
 	 */
 	protected void initializeStructures(){
-		WebAccessSequencesUHC.setWorkDirectory(m_preprocessingWD);
+		WebAccess.setWorkDirectory(m_preprocessingWD);
 		Website.setWorkDirectory(m_preprocessingWD);
 	}
 	
@@ -361,7 +362,7 @@ public class A0000ParameterControl_angelu {
 	public void loadLogs(){
 		A000MainClassPreprocess preprocess = new A000MainClassPreprocess();
 		preprocess.loadPreprocess();
-		m_sizeDB = WebAccessSequences.m_sequences.size();
+		m_sizeDB = WebAccessSequences.getNumberOfSessions();
 	}
 	
 	// database
@@ -617,7 +618,7 @@ public class A0000ParameterControl_angelu {
 	 * Run model evaluator m_pam.
 	 */
 	public void runModelEvaluatorM_pam(){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevM.getEvaluationHeader());
@@ -693,7 +694,7 @@ public class A0000ParameterControl_angelu {
 	 * @param recommender the recommender
 	 */
 	public void runModelEvaluatorMC(String recommender){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 		
 		// Results' header
 		System.out.print("options," + m_modelevMC.getEvaluationHeader());

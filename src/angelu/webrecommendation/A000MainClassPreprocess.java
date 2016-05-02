@@ -18,6 +18,11 @@ public class A000MainClassPreprocess {
 	 */
 	public static void main(String[] args) {
 		
+		String[] args2 = {"20160502_experiments_BT/00_preprocess", "/logBT150000.txt", "/empty.txt", 
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+				"xxx", "xxx",
+				"xxx", "xxx", "xxx", "xxx", "-", "1"};
+		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
 		
 		// take the start time of the program
@@ -81,6 +86,8 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 
+		Website.save();
+		WebAccess.changeToOrderedRequests();
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
@@ -149,8 +156,7 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-			
-		/*
+
 		// remove those ssequences that have many Unimportant
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start removing Unimportant sequences.");
@@ -158,17 +164,16 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 					+ (endtime-starttime)/1000 + " seconds.");
-		*/
 		
-		// write preprocessed logs
-		WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog.log");
-		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
-		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
-						
 		// save the sessions structure we have created
-		WebAccessSequences.saveStructure();
+		WebAccess.saveStructure();
 		WebAccessSequences.saveSequences();
 		Website.save();
+			
+		// write preprocessed logs
+		WebAccess.writeFilteredLog(basedirectory + "/filteredLog.log");
+		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
+		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
 	}
 	
 	/**
@@ -181,7 +186,7 @@ public class A000MainClassPreprocess {
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start loading preprocessed data.");
 		Website.load();
-		WebAccessSequences.loadStructure();
+		WebAccess.loadStructure();
 		WebAccessSequences.loadSequences();
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "

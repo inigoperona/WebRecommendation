@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.content.preprocess.PreprocessContent;
 
@@ -188,7 +188,7 @@ public class A100MainClassAddContent {
 		float topicTh = Float.parseFloat(topicThStr);
 
 		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(preprocessingWD);
+		WebAccess.setWorkDirectory(preprocessingWD);
 		Website.setWorkDirectory(preprocessingWD);
 		
 		

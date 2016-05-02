@@ -16,66 +16,20 @@ import ehupatras.webrecommendation.structures.request.Request;
 public class WebAccessSequencesUHC 
 				extends WebAccessSequences {
 
-	/**
-	 * Write sequences instanciated.
-	 *
-	 * @param outfilename the outfilename
-	 */
+
 	public static void writeSequencesInstanciated(String outfilename){
-		System.out.println("  [" + System.currentTimeMillis() + "] Start writing txt sequencesInstantiated. ");
-		
-		// Open the given file
-		BufferedWriter writer = null;
-		try{
-			writer = new BufferedWriter(new FileWriter(outfilename));
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
-					"Not possible to open the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// Write the sequences in a file line by line
-		try{
-			// order the keys
-			System.out.println("  [" + System.currentTimeMillis() + "]   Get sequencesID. ");
-			ArrayList<String> keysOrd = getSequencesIDs();
-			System.out.println("  [" + System.currentTimeMillis() + "]   Get all sequences. ");
-			ArrayList<String[]> sequences = getSequencesInstanciated(keysOrd);
-			
-			for(int i=0; i<sequences.size(); i++){
-				// write the sessionID
-				String sessionID = keysOrd.get(i);
-				writer.write(String.valueOf(sessionID));
-				
-				// write the URLs
-				String[] sequence = sequences.get(i);
-				for(int j=0; j<sequence.length; j++){
-					writer.write("," + sequence[j]);
-				}
-				writer.write("\n");
-			}
-			System.out.println("  " + keysOrd.size() + " lines have been written.");
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
-					"Problems writing to the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// close the file
-		try{
-			writer.close();
-		} catch (IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
-					"Problems at closing the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
+		WebAccessSequencesUHC.writeSequencesInstanciated(outfilename, true);
 	}
 	
-	public static void writeSequencesInstanciated2(String outfilename){
+	protected static void writeSequencesInstanciated(String outfilename, boolean writeRoles){
 		System.out.println("  [" + System.currentTimeMillis() + "] Start writing txt sequencesInstantiated. ");
+		
+		// get sessionsID
+		System.out.println("  [" + System.currentTimeMillis() + "]   Get sequencesID. ");
+		ArrayList<String> keysOrd = getSequencesIDs();
+		
+		// order all requests
+		int[] reqindexesA = WebAccessSequences.sesIDs2reqIndexList(keysOrd);
 		
 		// Open the given file
 		BufferedWriter writer = null;
@@ -90,167 +44,41 @@ public class WebAccessSequencesUHC
 		
 		// Write the sequences in a file line by line
 		try{
-			// order the keys
-			System.out.println("  [" + System.currentTimeMillis() + "]   Get sequencesID. ");
-			ArrayList<String> keysOrd = getSequencesIDs();
-			//System.out.println("  [" + System.currentTimeMillis() + "]   Get all sequences. ");
-			//ArrayList<String[]> sequences = getSequencesInstanciated(keysOrd);
-			
-			// First ordered all requests we need
-			ArrayList<Integer> requestIDs = new ArrayList<Integer>();
-			for(int i=0; i<keysOrd.size(); i++){
-				String sessionID = keysOrd.get(i);
-				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
-				for(int j=0; j<sequence.size(); j++){
-					// get the index of the request
-					int reqind = sequence.get(j).intValue();
-					
-					// get near to order fastly
-					int k = 0;
-					int kold = 0;
-					for(; k<requestIDs.size();){
-						int ireqind = requestIDs.get(k);
-						if(reqind<ireqind){
-							break;
-						}
-						kold = k;
-						k = k + 1000;
-					}
-					
-					// fine search
-					k = kold;
-					for(; k<requestIDs.size(); k++){
-						int ireqind = requestIDs.get(k);
-						if(reqind<ireqind){
-							break;
-						}
-					}
-					
-					// add ordered the request index
-					requestIDs.add(k, reqind);
-				}
-			}
-			
-			// Access to the information we need
+			// write the information
 			Hashtable<Integer,String> requestsInfo = new Hashtable<Integer,String>();
-			for(int i=0; i<requestIDs.size(); i++){
-				int reqind = requestIDs.get(i);
-				Request req = WebAccessSequences.getRequest(reqind);
-				String urlname = req.getFormatedUrlName();
-				Page pag = Website.getPage(urlname);
-				int urlid = pag.getUrlIDusage();
-				//String pagrole = req.getPageRoleUHC();
-				//String seqelem = String.format("%06d%s", urlid, pagrole);
-				String seqelem = String.format("%06d", urlid);
-				requestsInfo.put(reqind, seqelem);
-			}
-			
-			// write the information
+			int k = 0;
 			for(int i=0; i<keysOrd.size(); i++){
 				// write the sessionID
 				String sessionID = keysOrd.get(i);
 				writer.write(String.valueOf(sessionID));
 				
-				// write the clicks
-				ArrayList<Integer> sequenceReqInd = WebAccessSequences.m_sequences.get(sessionID);
-				for(int j=0; j<sequenceReqInd.size(); j++){
-					int reqind = sequenceReqInd.get(j).intValue();
-					String urlStr = requestsInfo.get(reqind);
-					writer.write("," + urlStr);
-				}
-				writer.write("\n");
-			}
-			System.out.println("  " + keysOrd.size() + " lines have been written.");
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
-					"Problems writing to the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// close the file
-		try{
-			writer.close();
-		} catch (IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
-					"Problems at closing the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-	}
-	
-	public static void writeSequencesInstanciated3(String outfilename){
-		System.out.println("  [" + System.currentTimeMillis() + "] Start writing txt sequencesInstantiated. ");
-		
-		// Open the given file
-		BufferedWriter writer = null;
-		try{
-			writer = new BufferedWriter(new FileWriter(outfilename));
-		} catch(IOException ex){
-			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.writeSequences_URLwithUHC] " +
-					"Not possible to open the file: " + outfilename);
-			System.err.println(ex.getMessage());
-			System.exit(1);
-		}
-		
-		// Write the sequences in a file line by line
-		try{
-			// order the keys
-			System.out.println("  [" + System.currentTimeMillis() + "]   Get sequencesID. ");
-			ArrayList<String> keysOrd = getSequencesIDs();
-			//System.out.println("  [" + System.currentTimeMillis() + "]   Get all sequences. ");
-			//ArrayList<String[]> sequences = getSequencesInstanciated(keysOrd);
-			
-			// First ordered all requests we need
-			ArrayList<Integer> requestIDs = new ArrayList<Integer>();
-			for(int i=0; i<keysOrd.size(); i++){
-				String sessionID = keysOrd.get(i);
-				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
-				for(int j=0; j<sequence.size(); j++){
-					// get the index of the request
-					int reqind = sequence.get(j).intValue();
-					
-					// get near to order fastly
-					int k = 0;
-					int kold = 0;
-					for(; k<requestIDs.size();){
-						int ireqind = requestIDs.get(k);
-						if(reqind<ireqind){
-							break;
-						}
-						kold = k;
-						k = k + 1000;
+				// store the information we need
+				ArrayList<Integer> sequenceReqInd = WebAccessSequences.getSession(sessionID);
+				int lenses = sequenceReqInd.size();
+				int lastReqInd = sequenceReqInd.get(lenses-1);
+				for(; k<reqindexesA.length; k++){
+					int reqind = reqindexesA[k];
+					if(reqind>lastReqInd){
+						break;
 					}
-					
-					// fine search
-					k = kold;
-					for(; k<requestIDs.size(); k++){
-						int ireqind = requestIDs.get(k);
-						if(reqind<ireqind){
-							break;
-						}
-					}
-					
-					// add ordered the request index
-					requestIDs.add(k, reqind);
-				}
-			}
-			
-			// write the information
-			for(int i=0; i<keysOrd.size(); i++){
-				// write the sessionID
-				String sessionID = keysOrd.get(i);
-				writer.write(String.valueOf(sessionID));
-				
-				// write the clicks
-				ArrayList<Integer> sequenceReqInd = WebAccessSequences.m_sequences.get(sessionID);
-				for(int j=0; j<sequenceReqInd.size(); j++){
-					int reqind = sequenceReqInd.get(j).intValue();
-					Request req = WebAccessSequences.getRequest(reqind);
+					Request req = WebAccess.getRequest(reqind);
 					String urlname = req.getFormatedUrlName();
 					Page pag = Website.getPage(urlname);
 					int urlid = pag.getUrlIDusage();
-					writer.write("," + urlid);
+					String seqelem = String.format("%06d", urlid);
+					if(writeRoles){
+						String pagrole = req.getPageRoleUHC();
+						seqelem = seqelem + pagrole;
+					}
+					requestsInfo.put(reqind, seqelem);
+				}
+				
+				// write the clicks
+				for(int j=0; j<sequenceReqInd.size(); j++){
+					int reqind = sequenceReqInd.get(j);
+					String urlidstr = requestsInfo.get(reqind);
+					writer.write("," + urlidstr);
+					requestsInfo.remove(reqind);
 				}
 				writer.write("\n");
 			}
@@ -273,56 +101,56 @@ public class WebAccessSequencesUHC
 		}
 	}	
 	
-	/**
-	 * Gets the sequences instanciated.
-	 *
-	 * @param sessionIDs the session i ds
-	 * @return the sequences instanciated
-	 */
 	public static ArrayList<String[]> getSequencesInstanciated(ArrayList<String> sessionIDs){
-		// First ordered all requests we need
-		ArrayList<Integer> requestIDs = new ArrayList<Integer>();
-		for(int i=0; i<sessionIDs.size(); i++){
-			String sessionID = sessionIDs.get(i);
-			ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
-			for(int j=0; j<sequence.size(); j++){
-				int reqind = sequence.get(j).intValue();
-				int k;
-				for(k=0; k<requestIDs.size(); k++){
-					int ireqind = requestIDs.get(k);
-					if(reqind<ireqind){
-						break;
-					}
-				}
-				requestIDs.add(k, reqind);
-			}
-		}
+		return WebAccessSequencesUHC.getSequencesInstanciated(sessionIDs, true);
+	}
 	
-		// Access to the information we need
-		Hashtable<Integer,String> requestsInfo = new Hashtable<Integer,String>();
-		for(int i=0; i<requestIDs.size(); i++){
-			int reqind = requestIDs.get(i);
-			Request req = WebAccessSequences.getRequest(reqind);
-			String urlname = req.getFormatedUrlName();
-			Page pag = Website.getPage(urlname);
-			int urlid = pag.getUrlIDusage();
-			String pagrole = req.getPageRoleUHC();
-			String seqelem = String.format("%06d%s", urlid, pagrole);
-			requestsInfo.put(reqind, seqelem);
-		}
-		
-		// create the structure of sequences to return
+	protected static ArrayList<String[]> getSequencesInstanciated(ArrayList<String> sessionIDs, boolean writeRoles){
+		// get sessionsID
+		System.out.println("  [" + System.currentTimeMillis() + "]   Get sequencesID. ");
+		ArrayList<String> keysOrd = getSequencesIDs();
+				
+		// order all requests
+		int[] reqindexesA = WebAccessSequences.sesIDs2reqIndexList(keysOrd);
+				
+		// save the information
 		ArrayList<String[]> resultSequences = new ArrayList<String[]>();
-		for(int i=0; i<sessionIDs.size(); i++){
-			String sessionID = sessionIDs.get(i);
-			ArrayList<Integer> sequenceReqInd = WebAccessSequences.m_sequences.get(sessionID);
+		Hashtable<Integer,String> requestsInfo = new Hashtable<Integer,String>();
+		int k = 0;
+		for(int i=0; i<keysOrd.size(); i++){
+			String sessionID = keysOrd.get(i);
+			
+			// store the information we need
+			ArrayList<Integer> sequenceReqInd = WebAccessSequences.getSession(sessionID);
+			int lenses = sequenceReqInd.size();
+			int lastReqInd = sequenceReqInd.get(lenses-1);
+			for(; k<reqindexesA.length; k++){
+				int reqind = reqindexesA[k];
+				if(reqind>lastReqInd){
+					break;
+				}
+				Request req = WebAccess.getRequest(reqind);
+				String urlname = req.getFormatedUrlName();
+				Page pag = Website.getPage(urlname);
+				int urlid = pag.getUrlIDusage();
+				String seqelem = String.format("%06d", urlid);
+				if(writeRoles){
+					String pagrole = req.getPageRoleUHC();
+					seqelem = seqelem + pagrole;
+				}
+				requestsInfo.put(reqind, seqelem);
+			}
+			
+			// write the clicks
 			String[] sequenceUHC = new String[sequenceReqInd.size()];
-			for(int j=0; j<sequenceReqInd.size(); j++){
-				int reqind = sequenceReqInd.get(j).intValue();
+			for(int j=0; j<sequenceReqInd.size(); j++){				
+				int reqind = sequenceReqInd.get(j);
 				sequenceUHC[j] = requestsInfo.get(reqind);
+				requestsInfo.remove(reqind);
 			}
 			resultSequences.add(sequenceUHC);
 		}
+		
 		return resultSequences;
 	}
 	

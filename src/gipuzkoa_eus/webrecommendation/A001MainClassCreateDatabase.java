@@ -1,7 +1,7 @@
 package gipuzkoa_eus.webrecommendation;
 
 import angelu.webrecommendation.A0000ParameterControl_angelu;
-import ehupatras.webrecommendation.structures.WebAccessSequences;
+import ehupatras.webrecommendation.structures.WebAccess;
 
 public class A001MainClassCreateDatabase {
 
@@ -23,7 +23,7 @@ public class A001MainClassCreateDatabase {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		WebAccessSequences.changeToOrderedRequests();
+		WebAccess.changeToOrderedRequests();
 		param.loadLogs();
 		param.createDatabase();
 		

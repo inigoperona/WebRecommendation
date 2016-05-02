@@ -1,6 +1,7 @@
 package discapnet.webrecommendation;
 
 import ehupatras.webrecommendation.A001MainClassCreateDatabase;
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
@@ -34,7 +35,7 @@ public class A000MainClassPreprocess3 {
 			
 		// write preprocessed logs
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexesSample.txt");
-		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRoleSample.txt");
+		WebAccessSequences.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRoleSample.txt");
 						
 		// save the sessions structure we have created
 		WebAccessSequences.saveSequences("_sequencesSample.javaData");
@@ -59,7 +60,7 @@ public class A000MainClassPreprocess3 {
 		distDir = args[2];
 		
 		// initialize the data structure
-		WebAccessSequencesUHC.setWorkDirectory(preDir);
+		WebAccess.setWorkDirectory(preDir);
 		Website.setWorkDirectory(preDir);
 		
 		// take the start time of the program

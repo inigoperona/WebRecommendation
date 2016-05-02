@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation.usage.preprocess.log;
 
-import ehupatras.webrecommendation.structures.WebAccessSequences;
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.page.PageBidasoaTurismo;
@@ -131,7 +131,7 @@ public class LogReaderBidasoaTurismo extends LogReader {
 					// Store the page
 					Website.storeURL(page);
 					// save the valid requests
-					WebAccessSequences.addRequest(req);
+					WebAccess.addRequest(req);
 				}
 			}
 		} catch(IOException ex){
@@ -152,6 +152,11 @@ public class LogReaderBidasoaTurismo extends LogReader {
 		}
 		
 		} // for each log file
+		
+		// order the WebAccessSequences
+		System.out.println("  [" + System.currentTimeMillis() + 
+				"] Ordering the requests. ");
+		WebAccess.orderRequests();
 	}
 	
 }

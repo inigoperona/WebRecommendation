@@ -1,17 +1,13 @@
 package ehupatras.webrecommendation;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class A054MainClassHclustSpadeSt.
- */
-public class A054MainClassHclustSpadeSt {
+public class A054MainClassHclustSpadeStcv {
 
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
 	public static void main(String[] args) {
+		
+		String[] args2 = {"20160502_experiments_BT/00_preprocess", "xxx", "/empty.txt", 
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+				"20160502_experiments_BT/01_databases", "/DM_LG",
+				"20160502_experiments_BT/03_validation", "/03_hclust_DM_LG", "/03_hclust_DM_LG/spade", "hclust_spade_st_eval.txt", "-", "1"};
 		
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
 		
@@ -21,9 +17,7 @@ public class A054MainClassHclustSpadeSt {
 		// RUN
 		param.loadDatabase();
 		param.loadDM();
-		param.loadHoldOut();
-		param.loadTopicInf();		
-		param.setTopicMatchWeight(0.5f);
+		param.loadCrossValidation();
 		param.createModelEvaluatorSeqMinSPADE();
 		param.runModelEvaluatorHclustSpadeST(5, "ST_w_eS1");
 				

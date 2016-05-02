@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation.usage.preprocess.log;
 
-import ehupatras.webrecommendation.structures.WebAccessSequences;
+import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.request.Request;
@@ -61,8 +61,8 @@ public abstract class LogReader {
 		long endtime = Long.MAX_VALUE;
 		int[] urlfrequenciesi = new int[maxurlid+1];
 		int[] urlInPeriods = new int[maxurlid+1];
-		for(int i=0; i<WebAccessSequences.filteredlogsize(); i++){
-			Request req = WebAccessSequences.getRequest(i);
+		for(int i=0; i<WebAccess.filteredlogsize(); i++){
+			Request req = WebAccess.getRequest(i);
 			
 			// define the new period of time
 			long actualtime = req.getTimeInMillis();
