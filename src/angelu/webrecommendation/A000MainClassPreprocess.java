@@ -18,6 +18,11 @@ public class A000MainClassPreprocess {
 	 */
 	public static void main(String[] args) {
 		
+		String[] args2 = {"20160502_experiments_BT/00_preprocess", "/logBT150000.txt", "/empty.txt", 
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+				"xxx", "xxx",
+				"xxx", "xxx", "xxx", "xxx", "-", "1"};
+		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
 		
 		// take the start time of the program

@@ -25,7 +25,7 @@ public class A054MainClassHclustSpadeSt {
 		param.loadTopicInf();		
 		param.setTopicMatchWeight(0.5f);
 		param.createModelEvaluatorSeqMinSPADE();
-		param.runModelEvaluatorHclustMS(5, "ST_w_eS1");
+		param.runModelEvaluatorHclustSpadeST(5, "ST_w_eS1");
 				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

@@ -28,6 +28,7 @@ public class WebAccessSequences {
 	
 	/** The m_seqfilename. */
 	private static String m_seqfilename = "_sequences.javaData";
+	private static String m_seqIDfilename = "_sequencesIDs.javaData";
 	
 	
 	
@@ -215,7 +216,50 @@ public class WebAccessSequences {
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
+		
+		// save sequencesIDs
+		WebAccessSequences.saveSequencesIDs();
 	}
+	
+	private static void saveSequencesIDs(){
+		String wd = WebAccess.getWorkDirectory();
+		String outfile = wd + "/" + m_seqIDfilename;
+		
+		// Write to disk with FileOutputStream
+		FileOutputStream f_out = null;
+		try{
+			f_out = new FileOutputStream(outfile);
+		} catch (FileNotFoundException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.saveSequencesIDs] " +
+					"Problems at opening the file: " + outfile + " to write.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+			
+		// Write object with ObjectOutputStream
+		// Write object out to disk
+		ObjectOutputStream obj_out = null;
+		try{
+			obj_out = new ObjectOutputStream(f_out);
+			obj_out.writeObject( m_sequencesID );
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.saveSequencesIDs] " +
+					"Problems at writing the file: " + outfile);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+
+		// close
+		try{
+			obj_out.close();
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.saveSequencesIDs] " +
+					"Problems closing the file: " + outfile + " after writing.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+	}
+	
 	
 	/**
 	 * Load sequences.
@@ -233,6 +277,7 @@ public class WebAccessSequences {
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
+		
 		ObjectInputStream ois = null;
 		try{
 			ois = new ObjectInputStream(fis);
@@ -248,6 +293,50 @@ public class WebAccessSequences {
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
+		
+		try{
+			ois.close();
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
+					"Problems closing the file: " + outputfilename + " after reading.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// load sequencesIDs
+		WebAccessSequences.loadSequencesIDs();
+	}
+	
+	private static void loadSequencesIDs(){
+		String wd = WebAccess.getWorkDirectory();
+		String outputfilename = wd + "/" + m_seqIDfilename;
+		
+		FileInputStream fis = null;
+		try{
+			fis = new FileInputStream(outputfilename);
+		} catch (FileNotFoundException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
+					"Problems at opening the file: " + outputfilename + " to read.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		ObjectInputStream ois = null;
+		try{
+			ois = new ObjectInputStream(fis);
+			m_sequencesID = (ArrayList<String>)ois.readObject();
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
+					"Problems at reading the file: " + outputfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		} catch(ClassNotFoundException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
+					"Problems at casting to a specific object: " + outputfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
 		try{
 			ois.close();
 		} catch(IOException ex){

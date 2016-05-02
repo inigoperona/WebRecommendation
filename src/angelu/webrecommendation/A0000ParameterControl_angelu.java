@@ -618,7 +618,7 @@ public class A0000ParameterControl_angelu {
 	 * Run model evaluator m_pam.
 	 */
 	public void runModelEvaluatorM_pam(){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 
 		// Results' header
 		System.out.print("options," + m_modelevM.getEvaluationHeader());
@@ -694,7 +694,7 @@ public class A0000ParameterControl_angelu {
 	 * @param recommender the recommender
 	 */
 	public void runModelEvaluatorMC(String recommender){
-		BufferedWriter evalWriter = this.openFile(m_validationWD + m_evalFile);
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
 		
 		// Results' header
 		System.out.print("options," + m_modelevMC.getEvaluationHeader());
