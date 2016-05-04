@@ -6,6 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectOutput;
+import java.io.ByteArrayOutputStream;
+
 
 // TODO: Auto-generated Javadoc
 /**
@@ -53,6 +56,32 @@ public class SaveLoadObjects {
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
+	}
+	
+	public int getSize(Object obj){
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput obj_out = null;
+		byte[] objBytesA = null;
+		try{
+			obj_out = new ObjectOutputStream(bos);
+			obj_out.writeObject( obj );
+			objBytesA = bos.toByteArray();
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.utils.getSize] writing.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+
+		// close
+		try{
+			obj_out.close();
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.utils.getSize] closing.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		return objBytesA.length;
 	}
 	
 	/**

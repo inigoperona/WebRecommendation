@@ -12,6 +12,7 @@ import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.page.PageGipuzkoa_eus;
 import ehupatras.webrecommendation.structures.request.Request;
 import ehupatras.webrecommendation.structures.request.RequestGipuzkoa_eus;
+import ehupatras.webrecommendation.utils.SaveLoadObjects;
 
 public class LogReaderGipuzkoa_eus extends LogReader {
 
@@ -29,6 +30,7 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 	 */
 	public void readLogFile(String[] logfilenamesA){
 		int ipID = 0;
+		int indSize = 0;
 		
 		m_logfilenamesA = logfilenamesA;
 		for(int h=0; h<m_logfilenamesA.length; h++){
@@ -144,6 +146,30 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 					Website.storeURL(page);
 					// save the valid requests
 					WebAccess.addRequest(req);
+					
+					// print the size of the structures
+					if(indSize%100000==0){
+						int mb = 1024*1024;
+						// total memory
+						Runtime runtime = Runtime.getRuntime();
+						long tm = runtime.totalMemory();
+						long fm = runtime.freeMemory();
+						int um = (int)((tm-fm)/(long)mb);
+						// big structures
+						//int sizeWA = WebAccess.getSize();
+						int sizeWS = Website.getSize();
+						// size of IP to ID
+						SaveLoadObjects slo = new SaveLoadObjects(); 
+						int sizeInBytes1 = slo.getSize(m_ip2idHT);
+						int sizeInMegabytes1 = sizeInBytes1 / mb; 
+						// print
+						//int sum = sizeWA + sizeWS + sizeInMegabytes1;
+						System.out.println(
+								"    UsedMemory(MB): " + um +
+								  "; Website(MB): " + sizeWS + 
+								  "; IP2ID(MB): " + sizeInMegabytes1);
+					}
+					indSize++;
 				}
 			}
 		} catch(IOException ex){

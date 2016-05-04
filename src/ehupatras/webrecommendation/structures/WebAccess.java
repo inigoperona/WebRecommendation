@@ -1,6 +1,8 @@
 package ehupatras.webrecommendation.structures;
 
 import ehupatras.webrecommendation.structures.request.Request;
+import ehupatras.webrecommendation.utils.SaveLoadObjects;
+
 import java.io.*;
 import java.util.*;
 import java.math.BigInteger;
@@ -591,6 +593,20 @@ public class WebAccess {
 			int ind = (int)obj[0];
 			Request req = WebAccess.getRequest(ind, m_basenamejavadata);
 			WebAccess.addRequest2(req, m_basenamejavadata2);
+			if(i%100000==0){
+				int mb = 1024*1024;
+				// total memory
+				Runtime runtime = Runtime.getRuntime();
+				long tm = runtime.totalMemory();
+				long fm = runtime.freeMemory();
+				int um = (int)((tm-fm)/(long)mb);
+				// big structures
+				int sizeWA = WebAccess.getSize();
+				// print
+				System.out.println(
+						"    UsedMemory(MB): " + um +
+						  "; WebAccess(MB): " + sizeWA);
+			}
 		}
 		WebAccess.saveStructure2();
 		m_basenamejavadata = m_basenamejavadata2;
@@ -652,4 +668,18 @@ public class WebAccess {
 	public static String getWorkDirectory(){
 		return m_workdirectory;
 	}
+	
+	public static int getSize(){
+		SaveLoadObjects slo = new SaveLoadObjects(); 
+		int obj1s = slo.getSize(m_filterlog);
+		int obj2s = slo.getSize(m_filterlog2);
+		int obj3s = slo.getSize(m_filterlogS);
+		int obj4s = slo.getSize(m_actualloadedmodulusS);
+		int obj5s = slo.getSize(m_orderedRequests);
+		int sizeInBytes = obj1s + obj2s + obj3s + obj4s + obj5s;
+		int mb = 1024*1024;
+		int sizeInMegabytes = sizeInBytes / mb; 
+		return sizeInMegabytes; 
+	}
+	
 }

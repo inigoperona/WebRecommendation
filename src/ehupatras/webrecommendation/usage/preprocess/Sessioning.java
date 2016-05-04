@@ -5,6 +5,8 @@ import ehupatras.webrecommendation.structures.WebAccessSequences;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.request.Request;
+import ehupatras.webrecommendation.utils.SaveLoadObjects;
+
 import java.util.*;
 
 // TODO: Auto-generated Javadoc
@@ -41,6 +43,27 @@ public class Sessioning {
 			if(i%100000==0){
 				System.out.println("  " + i + "/" + WebAccess.filteredlogsize() +
 						" analyzed [createSessions]");
+				// memory
+				int mb = 1024*1024;
+				// total memory
+				Runtime runtime = Runtime.getRuntime();
+				long tm = runtime.totalMemory();
+				long fm = runtime.freeMemory();
+				int um = (int)((tm-fm)/(long)mb);
+				// big structures
+				int sizeWA = WebAccess.getSize();
+				// oldrequests and usersIDsAL
+				SaveLoadObjects slo = new SaveLoadObjects(); 
+				int sizeInBytes1 = slo.getSize(oldrequests);
+				int sizeInBytes2 = slo.getSize(usersIDsAL);
+				int sizeInMegabytes1 = sizeInBytes1 / mb;
+				int sizeInMegabytes2 = sizeInBytes2 / mb;
+				int sumThis = sizeInMegabytes1 + sizeInMegabytes2;
+				// print
+				System.out.println(
+						"    UsedMemory(MB): " + um +
+						  "; Website(MB): " + sizeWA + 
+						  "; createSessions(MB): " + sumThis);
 			}
 			
 			// get the request features
@@ -238,6 +261,24 @@ public class Sessioning {
 			if(i%100000==0){
 				System.out.println("  " + i + "/" + WebAccess.filteredlogsize() +
 						" analyzed [joinConsecutiveSameUrls]");
+				// memory
+				int mb = 1024*1024;
+				// total memory
+				Runtime runtime = Runtime.getRuntime();
+				long tm = runtime.totalMemory();
+				long fm = runtime.freeMemory();
+				int um = (int)((tm-fm)/(long)mb);
+				// big structures
+				int sizeWA = WebAccess.getSize();
+				// oldrequests and usersIDsAL
+				SaveLoadObjects slo = new SaveLoadObjects(); 
+				int sizeInBytes1 = slo.getSize(oldrequests);
+				int sizeInMegabytes1 = sizeInBytes1 / mb;
+				// print
+				System.out.println(
+						"    UsedMemory(MB): " + um +
+						  "; Website(MB): " + sizeWA + 
+						  "; joinConsecutiveSameUrls(MB): " + sizeInMegabytes1);
 			}
 			
 			// get the request features

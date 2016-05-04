@@ -20,11 +20,11 @@ public class Website {
 	private static String m_workdirectory = ".";
 	
 	// HashTable to compute urlID from formatedURLs
-	/** The m_url2id ht. */
 	private static Hashtable<String,Page> m_url2idHT = new Hashtable<String,Page>();
-	
-	/** The m_ i d2urlname. */
 	private static Hashtable<Integer,String> m_ID2urlname = new Hashtable<Integer,String>();
+	//private static ArrayList<String> m_urls = new ArrayList<String>();
+	//private static ArrayList<Page> m_pages = new ArrayList<Page>();
+	//private static ArrayList<Integer> m_ids = new ArrayList<Integer>();	
 	
 	/** The m_url id. */
 	private static int m_urlID = 0;
@@ -33,11 +33,14 @@ public class Website {
 	private static int m_maxUrlID = 0;
 	
 	// File to save the Website structure
-	/** The m_save file name. */
 	private static String m_saveFileName = "/_Website.javaData";
 	
-	
-	
+	// dump to disk attributes
+	private static int m_maxloadpages = 10000;
+	private static int m_actualloadedpage = 0;
+	private static int m_lastloadedpage = 0;
+	private static int m_writedmodulus = 0;
+	private static String m_basenamejavadata = "website.javaData";
 	
 	
 	// FUNCTIONS TO MANAGE THE WEBSITE'S PAGE
@@ -59,7 +62,38 @@ public class Website {
 	 * @param page the page
 	 */
 	public static void putURL(String urlname, Page page){
-		m_url2idHT.put(urlname, page);
+		// old function
+		//m_url2idHT.put(urlname, page);
+		
+		// the new function
+		/*
+		int ind = 
+		
+		int imodulus = i / m_maxloadpages;
+		int iindex = i % m_maxloadpages;
+		
+		// if we have in memory aplly there
+		int iMem = m_actualloadedmodulusS.indexOf(new Integer(imodulus));
+		if(iMem!=-1){
+			m_filterlogS.get(iMem).remove(iindex);
+			m_filterlogS.get(iMem).add(iindex, req);
+		} else {
+			// the main modulus
+			if(m_actualloadedmodulus!=imodulus){
+				long starttime = System.currentTimeMillis();
+				int oldmod = m_actualloadedmodulus;
+				savemodulus(m_actualloadedmodulus, m_filterlog, basenamejavadata);
+				loadmodulus(imodulus, basenamejavadata, false, false);
+				long endtime = System.currentTimeMillis();
+				System.out.println("  [" + endtime + "] End swaping modulus. " + 
+					oldmod + " <-> " + m_actualloadedmodulus + ". " +
+					(endtime-starttime)/1000 + " seconds. [replaceRequest]");
+			}
+			m_filterlog.remove(iindex);
+			m_filterlog.add(iindex, req);
+		}
+		*/
+		
 	}
 	
 	/**
@@ -283,6 +317,16 @@ public class Website {
 			indexes[i] = indexesAL.get(i);
 		}
 		return indexes;
+	}
+
+	public static int getSize(){
+		SaveLoadObjects slo = new SaveLoadObjects(); 
+		int obj1s = slo.getSize(m_url2idHT);
+		int obj2s = slo.getSize(m_ID2urlname);
+		int sizeInBytes = obj1s + obj2s;
+		int mb = 1024*1024;
+		int sizeInMegabytes = sizeInBytes / mb; 
+		return sizeInMegabytes; 
 	}
 	
 }
