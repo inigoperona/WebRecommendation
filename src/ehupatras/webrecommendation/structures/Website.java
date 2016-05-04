@@ -3,6 +3,13 @@ package ehupatras.webrecommendation.structures;
 import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.request.Request;
 import ehupatras.webrecommendation.utils.*;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ArrayList;
@@ -24,7 +31,7 @@ public class Website {
 	//private static Hashtable<Integer,String> m_ID2urlname = new Hashtable<Integer,String>();
 	private static ArrayList<String> m_urls = new ArrayList<String>();
 	private static ArrayList<Page> m_pages = new ArrayList<Page>();
-	private static ArrayList<Integer> m_ids = new ArrayList<Integer>();	
+	//private static ArrayList<Integer> m_ids = new ArrayList<Integer>();	
 	
 	/** The m_url id. */
 	private static int m_urlID = 0;
@@ -36,10 +43,11 @@ public class Website {
 	private static String m_saveFileName = "/_Website.javaData";
 	
 	// dump to disk attributes
+	private static int m_actualloadedmodulus = -1;
 	private static int m_maxloadpages = 10000;
-	private static int m_actualloadedpage = 0;
-	private static int m_lastloadedpage = 0;
-	private static int m_writedmodulus = 0;
+	private static int m_actualloadedpage = -1;
+	private static int m_lastloadedpage = -1;
+	private static int m_writedmodulus = -1;
 	private static String m_basenamejavadata = "website.javaData";
 	
 	
@@ -54,7 +62,6 @@ public class Website {
 	public static boolean containsURL(String urlname){
 		return m_urls.contains(urlname);
 	}
-	
 	
 	public static void storeURL(Page page){
 		String url = page.getFormatedUrlName();
@@ -71,56 +78,215 @@ public class Website {
 	}
 	
 	public static void putURL(String urlname, Page page){
-		// old function
 		int ind = m_urls.indexOf(urlname);
 		if(ind==-1){ // old page
 			m_urls.add(urlname);
 			m_pages.add(page);
-			int urlid = page.getUrlIDusage(); 
-			m_ids.add(urlid);
 		} else { // new page
 			m_pages.set(ind, page);
 		}
-		
-		// the new function
-		/*
-		int ind = 
-		
-		int imodulus = i / m_maxloadpages;
-		int iindex = i % m_maxloadpages;
-		
-		// if we have in memory aplly there
-		int iMem = m_actualloadedmodulusS.indexOf(new Integer(imodulus));
-		if(iMem!=-1){
-			m_filterlogS.get(iMem).remove(iindex);
-			m_filterlogS.get(iMem).add(iindex, req);
-		} else {
-			// the main modulus
-			if(m_actualloadedmodulus!=imodulus){
-				long starttime = System.currentTimeMillis();
-				int oldmod = m_actualloadedmodulus;
-				savemodulus(m_actualloadedmodulus, m_filterlog, basenamejavadata);
-				loadmodulus(imodulus, basenamejavadata, false, false);
-				long endtime = System.currentTimeMillis();
-				System.out.println("  [" + endtime + "] End swaping modulus. " + 
-					oldmod + " <-> " + m_actualloadedmodulus + ". " +
-					(endtime-starttime)/1000 + " seconds. [replaceRequest]");
-			}
-			m_filterlog.remove(iindex);
-			m_filterlog.add(iindex, req);
-		}
-		*/
-		
 	}
 	
+	/*
+	public static void storeURL(Page page){
+		String url = page.getFormatedUrlName();
+		if(!Website.containsURL(url)){ // new page
+			page.incrementFrequency();
+		} else { // old page
+			page = Website.getPage(url);
+			page.incrementFrequency();
+		}
+		Website.putURL2(url, page);
+	}
+	
+	private static void putURL(String urlname, Page page, int indmod){
+		if(indmod==-1){ // new page
+			m_urls.add(urlname);
+			// URL ID
+			int urlid = Website.m_urlID;
+			page.setUrlIDusage(urlid);
+			m_pages.add(page);			
+			Website.m_maxUrlID = urlid;
+			Website.m_urlID++;
+		} else { // old page
+			m_pages.set(indmod, page);
+		}
+	}
+		
+	public static void putURL2(String urlname, Page page){
+		// compute the modulus and index
+		int ind = m_urls.indexOf(urlname);
+		
+		if(Website.m_urlID == 10128){
+			System.out.println("ind: " + ind);
+		}
+		
+		if(ind == 10129){
+			System.out.println("ind: " + ind);
+		}
+		
+		if(ind!=-1){ // it exits
+			int imodulus = ind / m_maxloadpages;
+			int iindex = ind % m_maxloadpages;
+			
+			// load the new modulus
+			if(imodulus!=m_actualloadedmodulus){
+				long starttime = System.currentTimeMillis();
+				int oldmod = m_actualloadedmodulus;
+				
+				// save
+				if(m_actualloadedmodulus==-1){
+					m_actualloadedmodulus = 0;
+				} else {
+					savemodulus(m_actualloadedmodulus);
+				}
+				
+				// load
+				if(m_writedmodulus<imodulus){
+					m_pages = new ArrayList<Page>();
+					m_actualloadedpage = 0;
+					m_writedmodulus++;
+				} else {
+					loadmodulus(imodulus);
+				}
+				
+				System.gc();
+				
+				long endtime = System.currentTimeMillis();
+				System.out.println("  [" + endtime + "] End swaping modulus. " + 
+						oldmod + " <-> " + m_actualloadedmodulus + ". " +
+						(endtime-starttime)/1000 + " seconds. [Website.putURL]");
+			}
+			
+			// write
+			m_pages.set(iindex, page);
+			
+		} else { // add
+			int imodulus;
+			int iindex;
+			if(m_writedmodulus==-1){
+				m_pages = new ArrayList<Page>();
+				m_actualloadedpage = 0;
+				m_writedmodulus = 1;
+				m_actualloadedmodulus = 0;
+				imodulus = 0;
+				iindex = -1;
+			} else {
+				if((m_writedmodulus-1)!=m_actualloadedmodulus){
+					savemodulus(m_actualloadedmodulus);
+					loadmodulus(m_writedmodulus);
+				} else {
+					if(m_pages.size()>=m_maxloadpages){
+						savemodulus(m_actualloadedmodulus);
+						m_pages = new ArrayList<Page>();
+						m_actualloadedpage = 0;
+						m_writedmodulus++;
+						m_actualloadedmodulus = m_writedmodulus - 1; 
+					}
+				}
+
+				iindex = -1;
+			}
+			
+			// write
+			Website.putURL(urlname, page, iindex);
+			m_actualloadedpage++;
+			m_lastloadedpage = m_actualloadedpage - 1;
+		}
+		
+		
+	}
+	 */
+
+	private static void savemodulus(int mod){
+		String outputfilename = "_" + mod + "_" + m_basenamejavadata;
+		
+		// open
+		FileOutputStream fos = null;
+		try{
+			fos = new FileOutputStream(m_workdirectory + "/" + outputfilename);
+		} catch (FileNotFoundException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccess.savemodulus] " +
+				"Problems at opening the file: " + outputfilename + " to write.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// write
+		ObjectOutputStream oos = null;
+		try{
+			oos = new ObjectOutputStream(fos);
+			oos.writeObject(m_pages);
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccess.savemodulus] " +
+				"Problems at writing in the file: " + outputfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// close
+		try{
+			oos.close();
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccess.savemodulus] " +
+				"Problems at closing the file: " + outputfilename + " after writing.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+	}
+	
+	private static void loadmodulus(int mod){		
+		// open
+		String outputfilename = "_" + mod + "_" + m_basenamejavadata;
+		FileInputStream fis = null;
+		try{
+			fis = new FileInputStream(m_workdirectory + "/" + outputfilename);
+		} catch (FileNotFoundException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.loadmodulus] " +
+					"Problems at opening the file: " + outputfilename + " to read.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// read
+		ObjectInputStream ois = null;
+		try{
+			ois = new ObjectInputStream(fis);
+			m_pages = (ArrayList<Page>)ois.readObject();
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.loadmodulus] " +
+					"Problems at reading the file: " + outputfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		} catch(ClassNotFoundException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.loadmodulus] " +
+					"Problems at casting to a specific object: " + outputfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// close
+		try{
+			ois.close();
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.loadmodulus] " +
+					"Problems closing the file: " + outputfilename + " after reading.");
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// update the indexes
+		m_actualloadedmodulus = mod;
+	}
+
+
 	public static int getURLID(String urlname){
 		int ind = m_urls.indexOf(urlname);
-		return m_ids.get(ind);
+		return ind;
 	}
 	
 	public static String getURL(int urlID){
-		int ind = m_ids.indexOf(urlID);
-		return m_urls.get(ind);
+		return m_urls.get(urlID);
 	}
 	
 	public static Page getPage(String urlname){
@@ -129,8 +295,7 @@ public class Website {
 	}
 	
 	public static Page getPage(int urlID){
-		int ind = m_ids.indexOf(urlID);
-		return m_pages.get(ind);
+		return m_pages.get(urlID);
 	}
 	
 	/**
@@ -203,10 +368,9 @@ public class Website {
 	 */
 	public static void save(){
 		SaveLoadObjects slo = new SaveLoadObjects();
-		Object[] objA = new Object[3];
+		Object[] objA = new Object[2];
 		objA[0] = m_urls;
-		objA[1] = m_ids;
-		objA[2] = m_pages;
+		objA[1] = m_pages;
 		slo.save(objA, m_workdirectory + m_saveFileName);
 	}
 	
@@ -217,17 +381,10 @@ public class Website {
 		SaveLoadObjects slo = new SaveLoadObjects();
 		Object[] objA = (Object[])slo.load(m_workdirectory + m_saveFileName);
 		m_urls = (ArrayList<String>)objA[0];
-		m_ids = (ArrayList<Integer>)objA[1];
-		m_pages = (ArrayList<Page>)objA[2];
+		m_pages = (ArrayList<Page>)objA[1];
 		
 		// update the maximum index
-		int maxindex = Integer.MIN_VALUE;
-		for(int i=0; i<m_ids.size(); i++){
-			Integer urlid = m_ids.get(i);
-			if(maxindex<urlid){
-				maxindex = urlid;
-			}
-		}
+		int maxindex = m_urls.size()-1;
 		m_maxUrlID = maxindex;
 		m_urlID = maxindex;
 	}
@@ -285,9 +442,8 @@ public class Website {
 	public static int getSize(){
 		SaveLoadObjects slo = new SaveLoadObjects(); 
 		int obj1s = slo.getSize(m_urls);
-		int obj2s = slo.getSize(m_ids);
-		int obj3s = slo.getSize(m_pages);
-		int sizeInBytes = obj1s + obj2s + obj3s;
+		int obj2s = slo.getSize(m_pages);
+		int sizeInBytes = obj1s + obj2s;
 		int mb = 1024*1024;
 		int sizeInMegabytes = sizeInBytes / mb; 
 		return sizeInMegabytes;
