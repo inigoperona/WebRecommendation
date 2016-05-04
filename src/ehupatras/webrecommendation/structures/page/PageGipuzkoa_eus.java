@@ -35,15 +35,40 @@ public class PageGipuzkoa_eus
 		// Those URLs with the extension: root (/), php, pdf, asp
 		String urlname2 = m_urlname.toLowerCase();
 		if(	!urlname2.equals("/") &&
+		    !urlname2.equals("www.ehu.eus/es/") &&
+		    !urlname2.equals("www.ehu.eus/en/en-home") &&
+		    !urlname2.equals("www.ehu.eus/en/") &&
+		    !urlname2.equals("www.ehu.eus/eu/") &&
+		    !urlname2.equals("www.ehu.eus/es") &&
+		    !urlname2.equals("www.ehu.eus/es/home") &&
+		    !urlname2.equals("www.ehu.eus/eu/home") &&
+		    !urlname2.equals("www.ehu.eus/eu") &&
+		    !urlname2.equals("www.ehu.eus/en") &&
+		    !urlname2.equals("www.ehu.es/es/") &&
+		    !urlname2.equals("www.ehu.es/eu/") &&
+		    !urlname2.equals("www.ehu.es/es/home") &&
+		    !urlname2.equals("www.ehu.es/eu/home") &&
+		    !urlname2.equals("www.ehu.es/en/") &&
+		    !urlname2.equals("www.ehu.es/en/en-home") &&
 			!urlname2.contains(".aspx") &&
 			!urlname2.contains(".pdf") && 
 			!urlname2.contains(".htm") &&
 			!urlname2.contains(".html") &&
 			!urlname2.contains(".doc") &&
 			!urlname2.contains(".xml") &&
-			!urlname2.contains(".do")){
+			!urlname2.contains(".do") &&
+			!urlname2.contains("/web/") &&
+			!urlname2.contains("/ehusfera/")&&
+			!urlname2.contains("/login/") &&
+			!urlname2.contains("/bilatu/")&&
+			urlname2.contains("/correow/")&&
+			urlname2.contains("/wposta/")&&
+			urlname2.contains("/piwik/"))
+			{
 			m_isvalid = false;
 		}
+		
+		
 		
 		// administration related clicks are not valid
 		if(	urlname2.contains("admin") ){
@@ -65,6 +90,8 @@ public class PageGipuzkoa_eus
 	 * @see Gipuzkoa_eus.webrecommendation.structures.page.PageAbstractG#ishtml()
 	 */
 	protected void ishtml(){
+		m_ishtml = m_isvalid;
+		/*
 		// default
 		m_ishtml = false;
 		
@@ -81,6 +108,7 @@ public class PageGipuzkoa_eus
 			){
 			m_ishtml = true;
 		}
+		*/
 	}
 	
 	/* (non-Javadoc)
@@ -145,32 +173,32 @@ public class PageGipuzkoa_eus
 			
 			////** Ehu.eus
 			    if(urlname2.contains("ehu.eus")){
-			       m_labelByHand = ".eus"; break;
+			       m_labelByHand = m_labelByHand + "_.eus"; break;
 				}	
 			
 			////** Ehu.es
 				if(urlname2.contains("ehu.es")){
-			    	m_labelByHand = ".es"; break;
+			    	m_labelByHand = m_labelByHand + "_.es"; break;
 				}
 			////** Castellano
 				if(urlname2.contains("/es/")){
-		        	m_labelByHand = "castellano"; break;
+		        	m_labelByHand = m_labelByHand + "_castellano"; break;
 				}	
 				
 			////** Euskara
 				if(urlname2.contains("/eu/")){
-			    	m_labelByHand = "euskara"; break;
+			    	m_labelByHand = m_labelByHand + "_euskara"; break;
 				}
+			////** Euskara
+							if(urlname2.contains("/en/")){
+						    	m_labelByHand = m_labelByHand + "_english"; break;
+							}
 				
 			////**Sarrera-acceso (matrikulazioa)
 				if(urlname2.contains("/sarrera-acceso")){
-			    	m_labelByHand = "sarrera-acceso"; break;
+			    	m_labelByHand = m_labelByHand + "_sarrera-acceso"; break;
 				}
 				
-			////**Wposta-correow (matrikulazioa)
-				if(urlname2.contains("/wposta") || urlname2.contains("/correow")){
-					m_labelByHand = "wposta-correow"; break;
-				}
 		break;
 		}
 		
