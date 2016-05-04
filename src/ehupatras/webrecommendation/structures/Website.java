@@ -20,11 +20,11 @@ public class Website {
 	private static String m_workdirectory = ".";
 	
 	// HashTable to compute urlID from formatedURLs
-	private static Hashtable<String,Page> m_url2idHT = new Hashtable<String,Page>();
-	private static Hashtable<Integer,String> m_ID2urlname = new Hashtable<Integer,String>();
-	//private static ArrayList<String> m_urls = new ArrayList<String>();
-	//private static ArrayList<Page> m_pages = new ArrayList<Page>();
-	//private static ArrayList<Integer> m_ids = new ArrayList<Integer>();	
+	//private static Hashtable<String,Page> m_url2idHT = new Hashtable<String,Page>();
+	//private static Hashtable<Integer,String> m_ID2urlname = new Hashtable<Integer,String>();
+	private static ArrayList<String> m_urls = new ArrayList<String>();
+	private static ArrayList<Page> m_pages = new ArrayList<Page>();
+	private static ArrayList<Integer> m_ids = new ArrayList<Integer>();	
 	
 	/** The m_url id. */
 	private static int m_urlID = 0;
@@ -52,18 +52,35 @@ public class Website {
 	 * @return true, if successful
 	 */
 	public static boolean containsURL(String urlname){
-		return m_url2idHT.containsKey(urlname);
+		return m_urls.contains(urlname);
 	}
 	
-	/**
-	 * Put url.
-	 *
-	 * @param urlname the urlname
-	 * @param page the page
-	 */
+	
+	public static void storeURL(Page page){
+		String url = page.getFormatedUrlName();
+		if(!Website.containsURL(url)){ // new page
+			page.setUrlIDusage(m_urlID);
+			Website.m_urlID++;
+			m_maxUrlID = m_urlID; // as a maximum ID number the last one
+			page.incrementFrequency();
+		} else { // old page
+			page = Website.getPage(url);
+			page.incrementFrequency();
+		}
+		Website.putURL(url, page);
+	}
+	
 	public static void putURL(String urlname, Page page){
 		// old function
-		//m_url2idHT.put(urlname, page);
+		int ind = m_urls.indexOf(urlname);
+		if(ind==-1){ // old page
+			m_urls.add(urlname);
+			m_pages.add(page);
+			int urlid = page.getUrlIDusage(); 
+			m_ids.add(urlid);
+		} else { // new page
+			m_pages.set(ind, page);
+		}
 		
 		// the new function
 		/*
@@ -96,46 +113,24 @@ public class Website {
 		
 	}
 	
-	/**
-	 * Gets the urlid.
-	 *
-	 * @param urlname the urlname
-	 * @return the urlid
-	 */
 	public static int getURLID(String urlname){
-		return m_url2idHT.get(urlname).getUrlIDusage();
+		int ind = m_urls.indexOf(urlname);
+		return m_ids.get(ind);
 	}
 	
-	/**
-	 * Gets the page.
-	 *
-	 * @param urlname the urlname
-	 * @return the page
-	 */
+	public static String getURL(int urlID){
+		int ind = m_ids.indexOf(urlID);
+		return m_urls.get(ind);
+	}
+	
 	public static Page getPage(String urlname){
-		return m_url2idHT.get(urlname);
+		int ind = m_urls.indexOf(urlname);
+		return m_pages.get(ind);
 	}
 	
-	/**
-	 * Gets the page.
-	 *
-	 * @param urlID the url id
-	 * @return the page
-	 */
 	public static Page getPage(int urlID){
-		String urlname = m_ID2urlname.get(urlID);
-		Page pag = m_url2idHT.get(urlname);
-		return pag;
-	}
-	
-	/**
-	 * Sets the page.
-	 *
-	 * @param urlname the urlname
-	 * @param pag the pag
-	 */
-	public static void setPage(String urlname, Page pag){
-		m_url2idHT.put(urlname, pag);
+		int ind = m_ids.indexOf(urlID);
+		return m_pages.get(ind);
 	}
 	
 	/**
@@ -144,17 +139,16 @@ public class Website {
 	 * @return the int
 	 */
 	public static int size(){
-		return m_url2idHT.size();
+		return m_urls.size();
 	}
 	
 	/**
 	 * Compute page rank.
 	 */
 	public static void computePageRank(){
-		Enumeration<String> formatedURLsKeys = m_url2idHT.keys();
-		while(formatedURLsKeys.hasMoreElements()){
-			String key = formatedURLsKeys.nextElement();
-			Page page = m_url2idHT.get(key);
+		for(int i=0; i<m_urls.size(); i++){
+			String url = m_urls.get(i);
+			Page page = m_pages.get(i);
 			if(page.getIsSuitableToLinkPrediction()){
 				String urlname = page.getUrlName();
 				System.out.println(urlname);
@@ -165,29 +159,6 @@ public class Website {
 			//page.setPageRank(pagerankvalue);
 			
 			//System.out.println(pagerankvalue);
-		}
-	}
-	
-	/**
-	 * Store url.
-	 *
-	 * @param page the page
-	 */
-	public static void storeURL(Page page){
-		String formatedurlname = page.getFormatedUrlName();
-		if(!Website.containsURL(formatedurlname)){
-			Website.m_urlID++;
-			page.setUrlIDusage(m_urlID);
-			page.incrementFrequency();
-			// keep URL_ID to formatedString Hashtable
-			m_ID2urlname.put(m_urlID, formatedurlname);
-			// as a maximum ID number the last one
-			m_maxUrlID = m_urlID;
-			Website.putURL(formatedurlname, page);
-		} else {
-			Page oldpag = Website.getPage(formatedurlname);
-			oldpag.incrementFrequency();
-			Website.putURL(formatedurlname, oldpag);
 		}
 	}
 	
@@ -205,15 +176,8 @@ public class Website {
 	 *
 	 * @return the all formated url names
 	 */
-	public static String[] getAllFormatedUrlNames(){
-		Enumeration<String> keys = m_url2idHT.keys();
-		String[] keysA = new String[m_url2idHT.size()];
-		int i = 0;
-		while(keys.hasMoreElements()){
-			keysA[i] = keys.nextElement();
-			i++;
-		}
-		return keysA;
+	public static ArrayList<String> getAllFormatedUrlNames(){
+		return m_urls;
 	}
 	
 	
@@ -226,10 +190,8 @@ public class Website {
 	 * Write website.
 	 */
 	public static void writeWebsite(){
-		Enumeration<String> keys = m_url2idHT.keys();
-		while(keys.hasMoreElements()){
-			String key = keys.nextElement();
-			Page pag = m_url2idHT.get(key);
+		for(int i=0; i<m_urls.size(); i++){
+			Page pag = m_pages.get(i);
 			int urlid = pag.getUrlIDusage();
 			String urlname = pag.getUrlName();
 			System.out.println(urlid + " " + urlname);
@@ -241,9 +203,10 @@ public class Website {
 	 */
 	public static void save(){
 		SaveLoadObjects slo = new SaveLoadObjects();
-		Object[] objA = new Object[2];
-		objA[0] = m_url2idHT;
-		objA[1] = m_ID2urlname;
+		Object[] objA = new Object[3];
+		objA[0] = m_urls;
+		objA[1] = m_ids;
+		objA[2] = m_pages;
 		slo.save(objA, m_workdirectory + m_saveFileName);
 	}
 	
@@ -253,16 +216,16 @@ public class Website {
 	public static void load(){
 		SaveLoadObjects slo = new SaveLoadObjects();
 		Object[] objA = (Object[])slo.load(m_workdirectory + m_saveFileName);
-		m_url2idHT = (Hashtable<String,Page>)objA[0];
-		m_ID2urlname = (Hashtable<Integer,String>)objA[1];
+		m_urls = (ArrayList<String>)objA[0];
+		m_ids = (ArrayList<Integer>)objA[1];
+		m_pages = (ArrayList<Page>)objA[2];
 		
 		// update the maximum index
 		int maxindex = Integer.MIN_VALUE;
-		Enumeration<Integer> keys = m_ID2urlname.keys();
-		while(keys.hasMoreElements()){
-			Integer key = keys.nextElement();
-			if(maxindex<key){
-				maxindex = key;
+		for(int i=0; i<m_ids.size(); i++){
+			Integer urlid = m_ids.get(i);
+			if(maxindex<urlid){
+				maxindex = urlid;
 			}
 		}
 		m_maxUrlID = maxindex;
@@ -302,9 +265,9 @@ public class Website {
 		ArrayList<Integer> indexesAL = new ArrayList<Integer>();
 		
 		// for each page in the website
-		String[] keys = Website.getAllFormatedUrlNames();
-		for(int i=0; i<keys.length; i++){
-			Page pag = Website.getPage(keys[i]);
+		for(int i=0; i<m_urls.size(); i++){
+			String url = m_urls.get(i);
+			Page pag = Website.getPage(url);
 			if(pag.getIsIndex()){
 				int usageID = pag.getUrlIDusage();
 				indexesAL.add(usageID);
@@ -321,12 +284,13 @@ public class Website {
 
 	public static int getSize(){
 		SaveLoadObjects slo = new SaveLoadObjects(); 
-		int obj1s = slo.getSize(m_url2idHT);
-		int obj2s = slo.getSize(m_ID2urlname);
-		int sizeInBytes = obj1s + obj2s;
+		int obj1s = slo.getSize(m_urls);
+		int obj2s = slo.getSize(m_ids);
+		int obj3s = slo.getSize(m_pages);
+		int sizeInBytes = obj1s + obj2s + obj3s;
 		int mb = 1024*1024;
 		int sizeInMegabytes = sizeInBytes / mb; 
-		return sizeInMegabytes; 
+		return sizeInMegabytes;
 	}
 	
 }

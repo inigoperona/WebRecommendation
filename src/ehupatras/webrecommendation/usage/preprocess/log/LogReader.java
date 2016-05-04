@@ -1,5 +1,6 @@
 package ehupatras.webrecommendation.usage.preprocess.log;
 
+import java.util.ArrayList;
 import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.structures.page.Page;
@@ -28,9 +29,10 @@ public abstract class LogReader {
 	public void identifyFrequentURLs(int minimunFrequency){
 		// Identify frequent URLs
 		int nFrequent = 0;
-		String[] keys = Website.getAllFormatedUrlNames();
-		for(int i=0; i<keys.length; i++){
-			Page pag = Website.getPage(keys[i]);
+		ArrayList<String> keys = Website.getAllFormatedUrlNames();
+		for(int i=0; i<keys.size(); i++){
+			String url = keys.get(i);
+			Page pag = Website.getPage(url);
 			String urlname = pag.getFormatedUrlName();
 			pag.setIsFrequent(minimunFrequency);
 			Website.putURL(urlname, pag);
@@ -111,9 +113,10 @@ public abstract class LogReader {
 		// so, the nature of the URL would be static
 		int nstatics = 0;
 		int minimumperiods = Math.round((float)nperiods*minimunPeriodFrequencyProportion);
-		String[] keys = Website.getAllFormatedUrlNames();
-		for(int i=0; i<keys.length; i++){
-			Page pag = Website.getPage(keys[i]);
+		ArrayList<String> keys = Website.getAllFormatedUrlNames();
+		for(int i=0; i<keys.size(); i++){
+			String url = keys.get(i);
+			Page pag = Website.getPage(url);
 			String urlname = pag.getFormatedUrlName();
 			pag.setIsStatic(minimumperiods);
 			Website.putURL(urlname, pag);

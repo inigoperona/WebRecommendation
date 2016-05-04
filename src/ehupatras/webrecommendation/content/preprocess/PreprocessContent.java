@@ -50,9 +50,9 @@ public class PreprocessContent {
 	 * Pickup ur ls to download.
 	 */
 	public void pickupURLsToDownload(){
-		String[] urlnames = Website.getAllFormatedUrlNames();
-		for(int i=0; i<urlnames.length; i++){
-			String formurl = urlnames[i];
+		ArrayList<String> urlnames = Website.getAllFormatedUrlNames();
+		for(int i=0; i<urlnames.size(); i++){
+			String formurl = urlnames.get(i);
 			Page pag = Website.getPage(formurl);
 			String url = pag.getUrlName();
 			int urlID = pag.getUrlIDusage();
@@ -182,7 +182,7 @@ public class PreprocessContent {
 			float[] topdist = m_url2topicDist.get(i);
 			Page pag = Website.getPage(formurl);
 			pag.setTopicDistribution(topdist);
-			Website.setPage(formurl, pag);
+			Website.putURL(formurl, pag);
 		}
 		Website.save();
 	}
