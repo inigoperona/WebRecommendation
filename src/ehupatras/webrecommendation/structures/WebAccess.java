@@ -603,9 +603,7 @@ public class WebAccess {
 				// big structures
 				int sizeWA = WebAccess.getSize();
 				// print
-				System.out.println(
-						"    UsedMemory(MB): " + um +
-						  "; WebAccess(MB): " + sizeWA);
+				System.out.println("    UsedMemory(MB): " + um);
 			}
 		}
 		WebAccess.saveStructure2();

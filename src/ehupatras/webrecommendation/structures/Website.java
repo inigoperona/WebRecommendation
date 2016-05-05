@@ -37,7 +37,7 @@ public class Website {
 	//private static ArrayList<Integer> m_ids = new ArrayList<Integer>();	
 	
 	// store in the memory limited recommendations
-	private static int m_maxloadpages = 10000;
+	private static int m_maxloadpages = 200000;
 	private static ArrayList<Integer> m_indexesAL = new ArrayList<Integer>(m_maxloadpages);
 	private static ArrayList<Page> m_pages = new ArrayList<Page>();
 	private static ArrayList<Page> m_pagesAL2 = new ArrayList<Page>(m_maxloadpages);
