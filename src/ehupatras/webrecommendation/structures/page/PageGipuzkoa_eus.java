@@ -34,6 +34,13 @@ public class PageGipuzkoa_eus
 		// Select the URLs related with the user click.
 		// Those URLs with the extension: root (/), php, pdf, asp
 		String urlname2 = m_urlname.toLowerCase();
+		int iquest = urlname2.indexOf('?');
+		String urlname3;
+		if(iquest!=-1){
+			urlname3 = urlname2.substring(0,iquest);
+		} else {
+			urlname3 = urlname2;
+		}
 		if(	!urlname2.equals("/") &&
 		    !urlname2.equals("www.ehu.eus/es/") &&
 		    !urlname2.equals("www.ehu.eus/en/en-home") &&
@@ -50,25 +57,29 @@ public class PageGipuzkoa_eus
 		    !urlname2.equals("www.ehu.es/eu/home") &&
 		    !urlname2.equals("www.ehu.es/en/") &&
 		    !urlname2.equals("www.ehu.es/en/en-home") &&
-			!urlname2.contains(".aspx") &&
-			!urlname2.contains(".pdf") && 
-			!urlname2.contains(".htm") &&
-			!urlname2.contains(".html") &&
-			!urlname2.contains(".doc") &&
-			!urlname2.contains(".xml") &&
-			!urlname2.contains(".do") &&
-			!urlname2.contains("/web/") &&
-			!urlname2.contains("/ehusfera/")&&
-			!urlname2.contains("/login/") &&
-			!urlname2.contains("/bilatu/")&&
-			urlname2.contains("/correow/")&&
-			urlname2.contains("/wposta/")&&
-			urlname2.contains("/piwik/"))
-			{
+			!urlname3.contains(".aspx") &&
+			!urlname3.contains(".pdf") && 
+			!urlname3.contains(".htm") &&
+			!urlname3.contains(".html") &&
+			!urlname3.contains(".doc") &&
+			!urlname3.contains(".xml") &&
+			!urlname3.contains(".do") ||
+			(urlname2.contains("/correow/") ||
+		    urlname2.contains("/wposta/") ||
+		    urlname2.contains("/piwik/"))){
 			m_isvalid = false;
 		}
 		
-		
+		int len = urlname3.length();
+		String ext = urlname3.substring(len-5);
+		if(!ext.contains(".")){
+			if(urlname2.contains("/web/") ||
+			   urlname2.contains("/ehusfera/") ||
+		       urlname2.contains("/login/") ||
+		       urlname2.contains("/bilatu/")){
+				m_isvalid = true;
+			}
+		}
 		
 		// administration related clicks are not valid
 		if(	urlname2.contains("admin") ){
