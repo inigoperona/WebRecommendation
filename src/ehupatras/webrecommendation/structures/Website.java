@@ -90,8 +90,13 @@ public class Website {
 			m_frequenciesAL.set(ind2, freq);
 		}
 		
+		// save pages
+		Website.dumpToDisk(false);
+	}
+	
+	private static void dumpToDisk(boolean forceToDump){
 		// when the maximum number of Pages has been store, dump it.
-		if(m_indexesAL.size()>=m_maxloadpages){
+		if(forceToDump || m_indexesAL.size()>=m_maxloadpages){
 			// order the indexes
 			ArrayList<Integer> orderedIndexesAL = new ArrayList<Integer>();
 			for(int i=0; i<m_indexesAL.size(); i++){
@@ -142,7 +147,9 @@ public class Website {
 				//System.out.println("id: " + urlidi + "; url: " + m_urls.get(urlidi));
 				
 				// when the modulus is full
-				if(m_nomodulus==m_actualloadedmodulus && m_pages.size()>=m_maxloadpages){
+				if(		m_nomodulus==m_actualloadedmodulus && 
+						(m_pages.size()>=m_maxloadpages ||
+						forceToDump)){
 					long starttime = System.currentTimeMillis();
 					Website.savemodulus(m_actualloadedmodulus);
 					long endtime = System.currentTimeMillis();
@@ -372,6 +379,10 @@ public class Website {
 	 * Save.
 	 */
 	public static void save(){
+		// save last pages
+		Website.dumpToDisk(true);
+		
+		// save all modules
 		for(int i=0; i<=m_nomodulus; i++){
 			if(m_actualloadedmodulus!=i){
 				savemodulus(m_actualloadedmodulus);
@@ -400,6 +411,13 @@ public class Website {
 			loadmodulus(i);
 			m_actualloadedmodulus = i;
 			m_nomodulus = i;
+			
+			// load the m_urls array
+			for(int j=0; j<m_pages.size(); j++){
+				Page pa = m_pages.get(j);
+				String url = pa.getFormatedUrlName();
+				m_urls.add(url);
+			}
 			
 			// update the next javaData file
 			i++;

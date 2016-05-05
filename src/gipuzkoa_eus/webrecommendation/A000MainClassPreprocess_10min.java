@@ -42,6 +42,7 @@ public class A000MainClassPreprocess_10min {
 		WebAccess.changeToOrderedRequests();
 		//WebAccess.writeFilteredLog(basedirectory + "/filteredLog2.log");
 		
+		
 		// ensure a minimum amount of apparitions of URLs.
 		/*
 			starttime = System.currentTimeMillis();
@@ -50,12 +51,13 @@ public class A000MainClassPreprocess_10min {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
-		*/
 		
 		//Website.save();
-		//WebAccessSequences.writeFilteredLog(basedirectory + "/filteredLog2.log");
+		//WebAccess.writeFilteredLog(basedirectory + "/filteredLog2.log");
+		*/
+		
 		//Website.load();
-		//WebAccessSequences.loadStructure();
+		//WebAccess.loadStructure();
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
@@ -241,7 +243,7 @@ public class A000MainClassPreprocess_10min {
 		//String basedirectory = "/home/ainhoa/workspace_WebRecommendation";
 		//String basedirectory = "/home/disk/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
 		String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
-		String logfilesIndex = "/loglist.txt";
+		String logfilesIndex = "/loglist3.txt";
 		
 		basedirectory = args[0];
 		logfilesIndex = args[1];

@@ -601,7 +601,7 @@ public class WebAccess {
 				long fm = runtime.freeMemory();
 				int um = (int)((tm-fm)/(long)mb);
 				// big structures
-				int sizeWA = WebAccess.getSize();
+				//int sizeWA = WebAccess.getSize();
 				// print
 				System.out.println("    UsedMemory(MB): " + um);
 			}
