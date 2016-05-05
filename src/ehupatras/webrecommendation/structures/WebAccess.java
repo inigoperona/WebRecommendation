@@ -634,9 +634,10 @@ public class WebAccess {
 			obj[1] = time;
 			
 			// fast approach to the position we need
-			int k=1000;
-			for(; k<m_orderedRequests.size(); k=k+1000){
-				long[] obj2 = m_orderedRequests.get(k);
+			int jump = 1000;
+			int j = jump;
+			for(; j<m_orderedRequests.size(); j=j+jump){
+				long[] obj2 = m_orderedRequests.get(j);
 				long time2 = obj2[1];
 				if(time<time2){
 					break;
@@ -644,7 +645,7 @@ public class WebAccess {
 			}
 			
 			// it has to be in the position
-			int j=k-1000;
+			j = j-1000;
 			for(; j<m_orderedRequests.size(); j++){
 				long[] obj2 = m_orderedRequests.get(j);
 				long time2 = obj2[1];

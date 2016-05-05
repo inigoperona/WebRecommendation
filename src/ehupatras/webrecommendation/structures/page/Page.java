@@ -45,6 +45,7 @@ public interface Page {
 	 * Increment frequency.
 	 */
 	public void incrementFrequency();
+	public void incrementFrequency(int val);
 	
 	/**
 	 * Gets the frequency.

@@ -4,6 +4,7 @@ import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.request.Request;
 import ehupatras.webrecommendation.utils.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,25 +30,25 @@ public class Website {
 	// HashTable to compute urlID from formatedURLs
 	//private static Hashtable<String,Page> m_url2idHT = new Hashtable<String,Page>();
 	//private static Hashtable<Integer,String> m_ID2urlname = new Hashtable<Integer,String>();
+	
+	// indexing elements
 	private static ArrayList<String> m_urls = new ArrayList<String>();
-	private static ArrayList<Page> m_pages = new ArrayList<Page>();
+	private static int m_n0 = 0;
 	//private static ArrayList<Integer> m_ids = new ArrayList<Integer>();	
 	
-	/** The m_url id. */
-	private static int m_urlID = 0;
-	
-	/** The m_max url id. */
-	private static int m_maxUrlID = 0;
+	// store in the memory limited recommendations
+	private static int m_maxloadpages = 10000;
+	private static ArrayList<Integer> m_indexesAL = new ArrayList<Integer>(m_maxloadpages);
+	private static ArrayList<Page> m_pages = new ArrayList<Page>();
+	private static ArrayList<Page> m_pagesAL2 = new ArrayList<Page>(m_maxloadpages);
+	private static ArrayList<Integer> m_frequenciesAL = new ArrayList<Integer>(m_maxloadpages);
 	
 	// File to save the Website structure
 	private static String m_saveFileName = "/_Website.javaData";
 	
 	// dump to disk attributes
-	private static int m_actualloadedmodulus = -1;
-	private static int m_maxloadpages = 10000;
-	private static int m_actualloadedpage = -1;
-	private static int m_lastloadedpage = -1;
-	private static int m_writedmodulus = -1;
+	private static int m_actualloadedmodulus = 0;
+	private static int m_nomodulus = 0;
 	private static String m_basenamejavadata = "website.javaData";
 	
 	
@@ -65,138 +66,102 @@ public class Website {
 	
 	public static void storeURL(Page page){
 		String url = page.getFormatedUrlName();
-		if(!Website.containsURL(url)){ // new page
-			page.setUrlIDusage(m_urlID);
-			Website.m_urlID++;
-			m_maxUrlID = m_urlID; // as a maximum ID number the last one
-			page.incrementFrequency();
-		} else { // old page
-			page = Website.getPage(url);
-			page.incrementFrequency();
-		}
 		Website.putURL(url, page);
 	}
 	
-	public static void putURL(String urlname, Page page){
-		int ind = m_urls.indexOf(urlname);
-		if(ind==-1){ // old page
+	public static void putURL(String urlname, Page page){	
+		// get the URL-ID
+		int urlid = m_urls.indexOf(urlname);
+		int ind2 = -1;
+		if(urlid==-1){
 			m_urls.add(urlname);
-			m_pages.add(page);
-		} else { // new page
-			m_pages.set(ind, page);
-		}
-	}
-	
-	/*
-	public static void storeURL(Page page){
-		String url = page.getFormatedUrlName();
-		if(!Website.containsURL(url)){ // new page
-			page.incrementFrequency();
-		} else { // old page
-			page = Website.getPage(url);
-			page.incrementFrequency();
-		}
-		Website.putURL2(url, page);
-	}
-	
-	private static void putURL(String urlname, Page page, int indmod){
-		if(indmod==-1){ // new page
-			m_urls.add(urlname);
-			// URL ID
-			int urlid = Website.m_urlID;
-			page.setUrlIDusage(urlid);
-			m_pages.add(page);			
-			Website.m_maxUrlID = urlid;
-			Website.m_urlID++;
-		} else { // old page
-			m_pages.set(indmod, page);
-		}
-	}
-		
-	public static void putURL2(String urlname, Page page){
-		// compute the modulus and index
-		int ind = m_urls.indexOf(urlname);
-		
-		if(Website.m_urlID == 10128){
-			System.out.println("ind: " + ind);
+			urlid = m_urls.size()-1;
+		} else {
+			ind2 = m_indexesAL.indexOf(urlid);
 		}
 		
-		if(ind == 10129){
-			System.out.println("ind: " + ind);
+		// update the structure in the memory
+		if(ind2==-1){
+			m_indexesAL.add(urlid);
+			m_pagesAL2.add(page);
+			m_frequenciesAL.add(1);
+		} else {
+			int freq = m_frequenciesAL.get(ind2) + 1;
+			m_frequenciesAL.set(ind2, freq);
 		}
 		
-		if(ind!=-1){ // it exits
-			int imodulus = ind / m_maxloadpages;
-			int iindex = ind % m_maxloadpages;
-			
-			// load the new modulus
-			if(imodulus!=m_actualloadedmodulus){
-				long starttime = System.currentTimeMillis();
-				int oldmod = m_actualloadedmodulus;
+		// when the maximum number of Pages has been store, dump it.
+		if(m_indexesAL.size()>=m_maxloadpages){
+			// order the indexes
+			ArrayList<Integer> orderedIndexesAL = new ArrayList<Integer>();
+			for(int i=0; i<m_indexesAL.size(); i++){
+				int urlidi = m_indexesAL.get(i);
 				
-				// save
-				if(m_actualloadedmodulus==-1){
-					m_actualloadedmodulus = 0;
-				} else {
-					savemodulus(m_actualloadedmodulus);
-				}
-				
-				// load
-				if(m_writedmodulus<imodulus){
-					m_pages = new ArrayList<Page>();
-					m_actualloadedpage = 0;
-					m_writedmodulus++;
-				} else {
-					loadmodulus(imodulus);
-				}
-				
-				System.gc();
-				
-				long endtime = System.currentTimeMillis();
-				System.out.println("  [" + endtime + "] End swaping modulus. " + 
-						oldmod + " <-> " + m_actualloadedmodulus + ". " +
-						(endtime-starttime)/1000 + " seconds. [Website.putURL]");
-			}
-			
-			// write
-			m_pages.set(iindex, page);
-			
-		} else { // add
-			int imodulus;
-			int iindex;
-			if(m_writedmodulus==-1){
-				m_pages = new ArrayList<Page>();
-				m_actualloadedpage = 0;
-				m_writedmodulus = 1;
-				m_actualloadedmodulus = 0;
-				imodulus = 0;
-				iindex = -1;
-			} else {
-				if((m_writedmodulus-1)!=m_actualloadedmodulus){
-					savemodulus(m_actualloadedmodulus);
-					loadmodulus(m_writedmodulus);
-				} else {
-					if(m_pages.size()>=m_maxloadpages){
-						savemodulus(m_actualloadedmodulus);
-						m_pages = new ArrayList<Page>();
-						m_actualloadedpage = 0;
-						m_writedmodulus++;
-						m_actualloadedmodulus = m_writedmodulus - 1; 
+				// fast approach
+				int jump = 1000;
+				int j = jump;
+				for(; j<orderedIndexesAL.size(); j=j+jump){
+					int indj = orderedIndexesAL.get(j);
+					int urlidj = m_indexesAL.get(indj);
+					if(urlidi<urlidj){
+						break;
 					}
 				}
-
-				iindex = -1;
+				j = j - jump;
+				
+				// one by one
+				for(; j<orderedIndexesAL.size(); j++){
+					int indj = orderedIndexesAL.get(j);
+					int urlidj = m_indexesAL.get(indj);
+					if(urlidi<urlidj){
+						break;
+					}
+				}
+				orderedIndexesAL.add(j,i);
 			}
 			
-			// write
-			Website.putURL(urlname, page, iindex);
-			m_actualloadedpage++;
-			m_lastloadedpage = m_actualloadedpage - 1;
+			// save all the pages
+			for(int i=0; i<orderedIndexesAL.size(); i++){
+				// get the data to update
+				int indi = orderedIndexesAL.get(i);
+				Page pag = m_pagesAL2.get(indi);
+				int urlidi = m_indexesAL.get(indi);
+				int freq = m_frequenciesAL.get(indi);
+				
+				// get the stored page
+				if(urlidi<m_n0){
+					pag = Website.getPage(urlidi);
+				}
+				
+				// update the page info
+				pag.setUrlIDusage(urlidi);
+				pag.incrementFrequency(freq);
+				
+				// set the page
+				Website.setPage(urlidi, pag);
+				//System.out.println("id: " + urlidi + "; url: " + m_urls.get(urlidi));
+				
+				// when the modulus is full
+				if(m_nomodulus==m_actualloadedmodulus && m_pages.size()>=m_maxloadpages){
+					long starttime = System.currentTimeMillis();
+					Website.savemodulus(m_actualloadedmodulus);
+					long endtime = System.currentTimeMillis();
+					System.out.println("  [" + endtime + "] Save modulus: " +
+							m_actualloadedmodulus + ". " +
+							(endtime-starttime)/1000 + " seconds. [Website.putURL]");
+					m_pages = new ArrayList<Page>();
+					m_actualloadedmodulus++;
+					m_nomodulus = m_actualloadedmodulus; 
+				}
+			}
+			
+			// initialize the temporary website
+			m_n0 = m_urls.size();
+			m_indexesAL = new ArrayList<Integer>(m_maxloadpages);
+			m_pagesAL2 = new ArrayList<Page>(m_maxloadpages);
+			m_frequenciesAL = new ArrayList<Integer>(m_maxloadpages);
 		}
-		
-		
 	}
-	 */
 
 	private static void savemodulus(int mod){
 		String outputfilename = "_" + mod + "_" + m_basenamejavadata;
@@ -291,11 +256,51 @@ public class Website {
 	
 	public static Page getPage(String urlname){
 		int ind = m_urls.indexOf(urlname);
-		return m_pages.get(ind);
+		return Website.getPage(ind);
 	}
 	
 	public static Page getPage(int urlID){
-		return m_pages.get(urlID);
+		int imodulus = urlID / m_maxloadpages;
+		int iindex = urlID % m_maxloadpages;
+		
+		if(m_actualloadedmodulus!=imodulus){
+			long starttime = System.currentTimeMillis();
+			int oldmod = m_actualloadedmodulus;
+			savemodulus(m_actualloadedmodulus);
+			loadmodulus(imodulus);
+			long endtime = System.currentTimeMillis();
+			String inmem = "(" + m_actualloadedmodulus + ")";
+			System.out.println("  [" + endtime + "] End swaping modulus. " +
+					oldmod + " <-> " + m_actualloadedmodulus + ". " +
+					inmem + ". " +
+					(endtime-starttime)/1000 + " seconds. [Website.getPage]");
+		}
+		
+		return m_pages.get(iindex);
+	}
+	
+	public static void setPage(int urlID, Page pag){
+		int imodulus = urlID / m_maxloadpages;
+		int iindex = urlID % m_maxloadpages;
+		
+		if(m_actualloadedmodulus!=imodulus){
+			long starttime = System.currentTimeMillis();
+			int oldmod = m_actualloadedmodulus;
+			savemodulus(m_actualloadedmodulus);
+			loadmodulus(imodulus);
+			long endtime = System.currentTimeMillis();
+			System.out.println("  [" + endtime + "] End swaping modulus. " + 
+				oldmod + " <-> " + m_actualloadedmodulus + ". " +
+				(endtime-starttime)/1000 + " seconds. [Website.setPage]");
+		}
+		
+		if(m_pages.size()<=iindex){
+			for(int i=m_pages.size(); i<=iindex; i++){
+				m_pages.add(null);
+			}
+		}
+		
+		m_pages.set(iindex, pag);
 	}
 	
 	/**
@@ -313,7 +318,7 @@ public class Website {
 	public static void computePageRank(){
 		for(int i=0; i<m_urls.size(); i++){
 			String url = m_urls.get(i);
-			Page page = m_pages.get(i);
+			Page page = Website.getPage(i);
 			if(page.getIsSuitableToLinkPrediction()){
 				String urlname = page.getUrlName();
 				System.out.println(urlname);
@@ -333,7 +338,7 @@ public class Website {
 	 * @return the maximum url id
 	 */
 	public static int getMaximumUrlID(){
-		return m_maxUrlID;
+		return m_urls.size()-1;
 	}
 	
 	/**
@@ -356,7 +361,7 @@ public class Website {
 	 */
 	public static void writeWebsite(){
 		for(int i=0; i<m_urls.size(); i++){
-			Page pag = m_pages.get(i);
+			Page pag = Website.getPage(i);
 			int urlid = pag.getUrlIDusage();
 			String urlname = pag.getUrlName();
 			System.out.println(urlid + " " + urlname);
@@ -367,26 +372,38 @@ public class Website {
 	 * Save.
 	 */
 	public static void save(){
-		SaveLoadObjects slo = new SaveLoadObjects();
-		Object[] objA = new Object[2];
-		objA[0] = m_urls;
-		objA[1] = m_pages;
-		slo.save(objA, m_workdirectory + m_saveFileName);
+		for(int i=0; i<=m_nomodulus; i++){
+			if(m_actualloadedmodulus!=i){
+				savemodulus(m_actualloadedmodulus);
+				loadmodulus(i);
+				m_actualloadedmodulus = i;
+			}
+			savemodulus(i);
+		}
 	}
 	
 	/**
 	 * Load.
 	 */
 	public static void load(){
-		SaveLoadObjects slo = new SaveLoadObjects();
-		Object[] objA = (Object[])slo.load(m_workdirectory + m_saveFileName);
-		m_urls = (ArrayList<String>)objA[0];
-		m_pages = (ArrayList<Page>)objA[1];
-		
-		// update the maximum index
-		int maxindex = m_urls.size()-1;
-		m_maxUrlID = maxindex;
-		m_urlID = maxindex;
+		int i=0;
+		m_nomodulus = 0;
+		while(true){
+			// check the file
+			String filename = m_workdirectory + "/" + 
+					"_" + i + "_" + m_basenamejavadata;
+			File ffile= new File(filename);
+			if(!ffile.exists()){break;}
+			
+			// load the data
+			System.out.println("Loading: " + ffile.getName());
+			loadmodulus(i);
+			m_actualloadedmodulus = i;
+			m_nomodulus = i;
+			
+			// update the next javaData file
+			i++;
+		}
 	}
 	
 	/**
@@ -442,10 +459,8 @@ public class Website {
 	public static int getSize(){
 		SaveLoadObjects slo = new SaveLoadObjects(); 
 		int obj1s = slo.getSize(m_urls);
-		int obj2s = slo.getSize(m_pages);
-		int sizeInBytes = obj1s + obj2s;
 		int mb = 1024*1024;
-		int sizeInMegabytes = sizeInBytes / mb; 
+		int sizeInMegabytes = obj1s / mb; 
 		return sizeInMegabytes;
 	}
 	

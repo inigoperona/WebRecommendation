@@ -40,7 +40,7 @@ public class Sessioning {
 		// for each request
 		for(int i=0; i<WebAccess.filteredlogsize(); i++){
 			// print the situation every X number of processed requests
-			if(i%100000==0){
+			if(i%1000000==0){
 				System.out.println("  " + i + "/" + WebAccess.filteredlogsize() +
 						" analyzed [createSessions]");
 				// memory
@@ -49,9 +49,7 @@ public class Sessioning {
 				Runtime runtime = Runtime.getRuntime();
 				long tm = runtime.totalMemory();
 				long fm = runtime.freeMemory();
-				int um = (int)((tm-fm)/(long)mb);
-				// big structures
-				int sizeWA = WebAccess.getSize();
+				int um = (int)((tm-fm)/(long)mb);				
 				// oldrequests and usersIDsAL
 				SaveLoadObjects slo = new SaveLoadObjects(); 
 				int sizeInBytes1 = slo.getSize(oldrequests);
@@ -62,7 +60,6 @@ public class Sessioning {
 				// print
 				System.out.println(
 						"    UsedMemory(MB): " + um +
-						  "; Website(MB): " + sizeWA + 
 						  "; createSessions(MB): " + sumThis);
 			}
 			
@@ -258,7 +255,7 @@ public class Sessioning {
 		// for each request
 		for(int i=0; i<WebAccess.filteredlogsize(); i++){
 			// print the situation every X number of processed requests
-			if(i%100000==0){
+			if(i%1000000==0){
 				System.out.println("  " + i + "/" + WebAccess.filteredlogsize() +
 						" analyzed [joinConsecutiveSameUrls]");
 				// memory
@@ -268,8 +265,6 @@ public class Sessioning {
 				long tm = runtime.totalMemory();
 				long fm = runtime.freeMemory();
 				int um = (int)((tm-fm)/(long)mb);
-				// big structures
-				int sizeWA = WebAccess.getSize();
 				// oldrequests and usersIDsAL
 				SaveLoadObjects slo = new SaveLoadObjects(); 
 				int sizeInBytes1 = slo.getSize(oldrequests);
@@ -277,7 +272,6 @@ public class Sessioning {
 				// print
 				System.out.println(
 						"    UsedMemory(MB): " + um +
-						  "; Website(MB): " + sizeWA + 
 						  "; joinConsecutiveSameUrls(MB): " + sizeInMegabytes1);
 			}
 			

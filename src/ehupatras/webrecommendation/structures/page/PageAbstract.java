@@ -167,6 +167,9 @@ public abstract class PageAbstract
 	public void incrementFrequency(){
 		m_frequency++;
 	}
+	public void incrementFrequency(int val){
+		m_frequency = m_frequency + val;
+	}
 		
 	/* (non-Javadoc)
 	 * @see ehupatras.webrecommendation.structures.page.Page#getFrequency()
