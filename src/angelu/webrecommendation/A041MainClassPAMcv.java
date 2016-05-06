@@ -13,10 +13,10 @@ public class A041MainClassPAMcv {
 	 */
 	public static void main(String[] args) {
 		
-		String[] args2 = {"20160502_experiments_BT/00_preprocess", "xxx", "/empty.txt", 
+		String[] args2 = {"20160505_experiments_BT/00_preprocess", "xxx", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
-				"20160502_experiments_BT/01_databases", "/DM_ED",
-				"20160502_experiments_BT/03_validation", "/03_pam_DM_ED", "xxx", "/eval.txt", "-", "1"};
+				"20160505_experiments_BT/01_databases", "/DM_ED",
+				"20160505_experiments_BT/02_validation", "/pam_DM_ED", "xxx", "/eval.txt", "-", "1"};
 		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
 		

@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.math.BigInteger;
 
 // TODO: Auto-generated Javadoc
@@ -24,6 +25,7 @@ public abstract class Matrix {
 	protected ArrayList<String> m_names = null;
 	
 	/** The m_savefilename. */
+	private String m_wd = ".";
 	private String m_savefilename = "/_matrix.javaData";
 	
 	// split distance matrix data
@@ -78,11 +80,29 @@ public abstract class Matrix {
 	 * @return the matrix
 	 */
 	public MatrixStructure getMatrix(boolean isSplit){
+		// get the matrix
+		MatrixStructure ms;
 		if(!isSplit){
-			return m_matrix;
+			ms = m_matrix;
 		} else {
-			return m_matrixSplit;
+			ms = m_matrixSplit;
 		}
+		return ms;
+	}
+	
+	public MatrixStructure getMatrix(int[] indexesA, boolean isSplit){
+		// get the matrix
+		MatrixStructure ms;
+		if(!isSplit){
+			ms = m_matrix;
+		} else {
+			ms = m_matrixSplit;
+		}
+		
+		// MatrixStructure in memory
+		ms.setLoadInMemory(indexesA, m_wd);
+		
+		return ms;
 	}
 	
 	/*
@@ -283,6 +303,7 @@ public abstract class Matrix {
 			m_matrixSplit = (MatrixStructure)objA[2];
 			m_namesSplit = (ArrayList<String>)objA[3];
 		}
+		m_wd = wordirectory;
 	}
     
     
