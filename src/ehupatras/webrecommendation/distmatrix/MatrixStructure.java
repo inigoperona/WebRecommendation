@@ -7,14 +7,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.Serializable;
 
 public class MatrixStructure implements Serializable {
 	private static final long serialVersionUID = 1L;	
 	
 	// distance matrix data
-	protected ArrayList<float[]> m_maAL = null; 
+	protected ArrayList<float[]> m_maAL = null;
 	protected int m_length = -1;
+	
+	// distance matrix in memory
+	private float[][] m_maA2 = null;
+	private ArrayList<Integer> m_indexesA2 = null;
+	private boolean m_inMemory = false;
 	
 	// swapping attributes
 	private int m_maxLoadedSequences = 1000; //1000
@@ -22,12 +28,12 @@ public class MatrixStructure implements Serializable {
 	private int m_writtenModulus = 0;
 	private int m_actualModulusInMemory = -1;
 	private String m_basenamejavadata = "dm.javaData";
-	private String m_workdir = "/home/burdinadar";
+	private String m_workdir = ".";
 	// swapping memory
-	private static int m_nMemory = 6; //10
+	private static int m_nMemory = 10; //10
 	private static ArrayList<ArrayList<float[]>> m_matrixS = null;
 	private static ArrayList<Integer> m_actualloadedmodulusS = null;
-		
+
 	
 	public MatrixStructure(int size, String workdirectory){
 		m_length = size;
@@ -36,8 +42,9 @@ public class MatrixStructure implements Serializable {
 		this.initmodulus();
 	}
 	
-	public MatrixStructure(float[][] fmatrix){
+	public MatrixStructure(float[][] fmatrix, String workdirectory){
 		m_maxLoadedSequences = 1000000;
+		m_workdir = workdirectory;
 		m_length = fmatrix.length;
 		m_maAL = new ArrayList<float[]>();
 		for(int i=0; i<m_length; i++){
@@ -45,6 +52,37 @@ public class MatrixStructure implements Serializable {
 				this.addCell(i, j, fmatrix[i][j]);
 			}
 		}
+	}
+
+	public void setLoadInMemory(int[] indexesA, String workdirectory){
+		m_workdir = workdirectory;
+		
+		// create float[][] matrix
+		int n = indexesA.length;
+		float[][] mA2 = new float[n][n];
+		for(int i=0; i<n; i++){
+			int ind1 = indexesA[i]; // get row
+			for(int j=0; j<n; j++){
+				int ind2 = indexesA[j]; // get col
+				float val = this.getCell(ind1, ind2);
+				mA2[i][j] = val;
+			}
+		}
+		
+		// save indexes
+		m_indexesA2 = new ArrayList<Integer>();
+		for(int i=0; i<indexesA.length; i++){
+			int rowi = indexesA[i];
+			m_indexesA2.add(rowi);
+		}
+		m_length = m_indexesA2.size();
+		
+		// matrixes
+		m_maA2 = mA2;
+		m_maAL = null;
+		
+		// boolean to control if we are loading in the memory
+		m_inMemory = true;
 	}
 	
 	private void initmodulus(){
@@ -91,41 +129,51 @@ public class MatrixStructure implements Serializable {
 	}
 	
 	public float getCell(int i, int j){
-		// compute modulus indexes
-		int imodulus = i / m_maxLoadedSequences;
-		int iindex = i % m_maxLoadedSequences;
-		
-		// if we have in memory return it
-		if(m_matrixS==null){
-			this.initmodulus();
+		if(m_inMemory){
+			int irow = m_indexesA2.indexOf(i); 
+			return m_maA2[irow][j];
+		} else {
+			// compute modulus indexes
+			int imodulus = i / m_maxLoadedSequences;
+			int iindex = i % m_maxLoadedSequences;
+			
+			// if we have in memory return it
+			if(m_matrixS==null){
+				this.initmodulus();
+			}
+			int iMem = m_actualloadedmodulusS.indexOf(new Integer(imodulus));
+			if(iMem!=-1){
+				return m_matrixS.get(iMem).get(iindex)[j];
+			}
+			
+			// if we want data from the last modul take from the write-structure
+			if(imodulus!=m_actualModulusInMemory){
+				this.loadModulus(imodulus);
+			}
+			
+			// return structure
+			return m_maAL.get(iindex)[j];
 		}
-		int iMem = m_actualloadedmodulusS.indexOf(new Integer(imodulus));
-		if(iMem!=-1){
-			return m_matrixS.get(iMem).get(iindex)[j];
-		}
-		
-		// if we want data from the last modul take from the write-structure
-		if(imodulus!=m_actualModulusInMemory){
-			this.loadModulus(imodulus);
-		}
-		
-		// return structure
-		return m_maAL.get(iindex)[j];
-	}
-	
-	public float getCelldump(int i, int j){
-		return 0f;
 	}
 	
 	public void setCell(int i, int j, double d){
-		int imodulus = i / m_maxLoadedSequences;
-		int iindex = i % m_maxLoadedSequences;
-		
-		// if we have in memory return it
-		int iMem = m_actualloadedmodulusS.indexOf(new Integer(imodulus));
-		if(iMem!=-1){
-			//m_vectorsS.get(iMem).remove(iindex);
-			//m_vectorsS.get(iMem).add(iindex, (float)d);
+		if(m_inMemory){
+			int irow = m_indexesA2.indexOf(i); 
+			m_maA2[irow][j] = (float)d;
+		} else {
+			int imodulus = i / m_maxLoadedSequences;
+			int iindex = i % m_maxLoadedSequences;
+			
+			// if we have in memory return it
+			int iMem = m_actualloadedmodulusS.indexOf(new Integer(imodulus));
+			if(iMem!=-1){
+				ArrayList<float[]> rows = m_matrixS.get(iMem);
+				float[] row = rows.get(iindex);
+				row[j] = (float)d;
+				rows.set(iindex, row);
+			} else {
+				// do the set part
+			}
 		}
 	}
 	

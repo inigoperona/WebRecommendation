@@ -179,7 +179,7 @@ public class CVI {
 								{.4f,.8f, 0f,.2f,.6f},
 								{.5f,.1f,.2f, 0f,.2f},
 								{.2f,.2f,.6f,.2f, 0f}};
-		MatrixStructure ms = new MatrixStructure(dm);
+		MatrixStructure ms = new MatrixStructure(dm, "01_distancematrix/DM_ED");
 		
 		CVI cvindex = new CVI(dataInds,clusters);
 		cvindex.computeMedoids(ms);

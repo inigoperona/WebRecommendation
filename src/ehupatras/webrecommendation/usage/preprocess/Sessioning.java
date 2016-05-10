@@ -280,8 +280,7 @@ public class Sessioning {
 			String actualsessionid = actualreq.getSessionID();
 			String urlname = actualreq.getFormatedUrlName();
 			boolean isTheEndOfTheSession = actualreq.getIsTheEndOfTheSession();
-			Page pag = Website.getPage(urlname);
-			int actualUrl = pag.getUrlIDusage();
+			int actualUrlID = Website.getURLID(urlname);
 			float actualelapsedtime = actualreq.getElapsedTime();
 			
 			// whether the session already has appeared or not
@@ -289,11 +288,11 @@ public class Sessioning {
 				// get the previous request's features
 				Object[] objA = oldrequests.get(actualsessionid);
 				int oldindex = ((Integer)objA[0]).intValue();
-				int oldUrl = ((Integer)objA[1]).intValue();
+				int oldUrlID = ((Integer)objA[1]).intValue();
 				float sum = ((Float)objA[2]).floatValue();
 				
 				// whether the consecutive URLs are equal or not
-				if(actualUrl==oldUrl){
+				if(actualUrlID==oldUrlID){
 					// there are consecutive same URLs. Join them.
 					// update the first URL's data in the consecutive same URL sequence
 					sum = sum + actualelapsedtime; // sum the time lasted in the URL
@@ -312,7 +311,7 @@ public class Sessioning {
 					
 					// The URLs are different, so update the last URL
 					objA[0] = i;
-					objA[1] = actualUrl;
+					objA[1] = actualUrlID;
 					objA[2] = actualelapsedtime;
 					oldrequests.put(actualsessionid, objA);
 				}
@@ -321,7 +320,7 @@ public class Sessioning {
 				// enter a new object in the hashTable
 				Object[] objA = new Object[3];
 				objA[0] = i;
-				objA[1] = actualUrl;
+				objA[1] = actualUrlID;
 				objA[2] = actualelapsedtime;
 				oldrequests.put(actualsessionid, objA);
 			}
@@ -449,6 +448,25 @@ public class Sessioning {
 		int sequencecounter = 0;
 		// for each request
 		for(int i=0; i<WebAccess.filteredlogsize(); i++){
+			// print the situation every X number of processed requests
+			if(i%1000000==0){
+				System.out.println("  " + i + "/" + WebAccess.filteredlogsize() +
+						" analyzed [joinConsecutiveSameUrls]");
+				// memory
+				int mb = 1024*1024;
+				// total memory
+				Runtime runtime = Runtime.getRuntime();
+				long tm = runtime.totalMemory();
+				long fm = runtime.freeMemory();
+				int um = (int)((tm-fm)/(long)mb);
+				// oldrequests and usersIDsAL
+				int was = WebAccessSequences.getSize();
+				// print
+				System.out.println(
+						"    UsedMemory(MB): " + um +
+						  "; createSequences(MB): " + was);
+			}
+			
 			// get the request's information
 			Request req = WebAccess.getRequest(i);
 			String sessionID = req.getSessionID();

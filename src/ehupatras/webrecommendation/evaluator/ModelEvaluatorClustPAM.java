@@ -84,7 +84,18 @@ public class ModelEvaluatorClustPAM
 	private int[] clusteringPAM(int indexFold){
 		ArrayList<String> trainnames = m_trainAL.get(indexFold);
 		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
-		MatrixStructure distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
+		MatrixStructure distmatrix = m_distancematrix.getMatrix(trainDMindexes, m_datasetSplit!=null);
+		
+		////////////
+		/*
+		System.out.println("f" + indexFold);
+		for(int i=0; i<trainDMindexes.length; i++){
+			System.out.println(trainDMindexes[i]);
+		}
+		System.out.println("---");
+		return trainDMindexes;
+		*/
+		////////////
 		
 		ClusteringPAM pam = new ClusteringPAM(m_k, distmatrix, trainDMindexes);
 		pam.getMedoidAssignment();

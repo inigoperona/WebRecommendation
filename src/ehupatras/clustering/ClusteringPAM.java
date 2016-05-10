@@ -47,9 +47,10 @@ public class ClusteringPAM {
 		}
 		
 		m_dm = dm;
-		for(int i=0;i<m_dm.getLength();i++){
-			for(int j=0;j<m_dm.getLength();j++){
-				float value = m_dm.getCell(i, j);
+		m_realInds = realIndexes;
+		for(int i=0;i<m_realInds.length;i++){
+			for(int j=0;j<m_realInds.length;j++){
+				float value = getDM(i, j);
 				if(value<m_minDM){
 					m_minDM = value;
 				}
@@ -58,7 +59,6 @@ public class ClusteringPAM {
 				}
 			}
 		}
-		m_realInds = realIndexes;
 		
 		// create the medoids array
 		m_medoids = new ArrayList<Integer>();
@@ -490,7 +490,7 @@ public class ClusteringPAM {
 				{1,2,3,0,1},
 				{1,2,3,4,0}
 		};
-		MatrixStructure ms = new MatrixStructure(dm0);
+		MatrixStructure ms = new MatrixStructure(dm0, "01_distancematrix/DM_ED");
 		
 		// medoids
 		ArrayList<Integer> meds = new ArrayList<Integer>();

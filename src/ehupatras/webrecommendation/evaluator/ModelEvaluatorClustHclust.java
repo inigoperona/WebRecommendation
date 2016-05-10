@@ -129,10 +129,11 @@ public class ModelEvaluatorClustHclust
 	 */
 	private ClusteringHierarchical doDendrogram(int indexFold){
 		ArrayList<String> trainnames = m_trainAL.get(indexFold);
+		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
+		MatrixStructure distmatrix = m_distancematrix.getMatrix(trainDMindexes, m_datasetSplit!=null);
+		
 		// hierarchical clustering: http://sape.inf.usi.ch/hac
 		ClusteringHierarchical clustering = new ClusteringHierarchical();
-		int[] trainDMindexes = m_distancematrix.getSessionIDsIndexes(trainnames, m_datasetSplit!=null);
-		MatrixStructure distmatrix = m_distancematrix.getMatrix(m_datasetSplit!=null);
 		clustering.computeHierarchicalClustering(distmatrix,trainDMindexes,m_AgglomerativeMethodClassName);
 		return clustering;
 	}

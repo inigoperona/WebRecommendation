@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import ehupatras.webrecommendation.utils.SaveLoadObjects;
+
 public class WebAccessSequences {
 
 	// The sequences we are going to use to link prediction
@@ -424,5 +426,22 @@ public class WebAccessSequences {
 	
 	public static ArrayList<String[]> getSequencesInstanciated(ArrayList<String> sessionIDs){
 		return WebAccessSequencesUHC.getSequencesInstanciated(sessionIDs, false);
+	}
+	
+	public static int getSize(){
+		int mb = 1024*1024;
+		SaveLoadObjects slo = new SaveLoadObjects();
+		
+		int sizeInBytes1 = slo.getSize(m_sequences);
+		int sizeInMegabytes1 = sizeInBytes1 / mb;
+		
+		int sizeInBytes2 = slo.getSize(m_sequencesID);
+		int sizeInMegabytes2 = sizeInBytes2 / mb;
+		
+		int sizeInBytes3 = slo.getSize(m_validnessOfSequences);
+		int sizeInMegabytes3 = sizeInBytes3 / mb;
+		
+		int sum = sizeInMegabytes1 + sizeInMegabytes2 + sizeInMegabytes3;
+		return sum;
 	}
 }
