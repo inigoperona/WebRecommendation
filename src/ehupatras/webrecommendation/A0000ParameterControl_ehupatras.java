@@ -134,9 +134,10 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		if(args.length==0){
 			this.exampleParameters();
 		} else {
-			super.readParameters(args);
+			this.printParameters(args);
+			this.readParameters(args);
 		}
-		super.initializeStructures();
+		this.initializeStructures();
 	}
 	
 	

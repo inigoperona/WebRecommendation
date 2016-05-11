@@ -134,7 +134,7 @@ public class ModelEvaluatorClustHclust
 		
 		// hierarchical clustering: http://sape.inf.usi.ch/hac
 		ClusteringHierarchical clustering = new ClusteringHierarchical();
-		clustering.computeHierarchicalClustering(distmatrix,trainDMindexes,m_AgglomerativeMethodClassName);
+		clustering.computeHierarchicalClustering(distmatrix,m_AgglomerativeMethodClassName);
 		return clustering;
 	}
 	

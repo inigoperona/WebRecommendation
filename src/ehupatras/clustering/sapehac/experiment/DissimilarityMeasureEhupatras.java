@@ -11,17 +11,13 @@ public class DissimilarityMeasureEhupatras implements DissimilarityMeasure {
 	/** The m_diastancematrix. */
 	private MatrixStructure m_diastancematrix;
 	
-	/** The m_dmindexes. */
-	private int[] m_dmindexes;
-	
 	/**
 	 * Instantiates a new dissimilarity measure ehupatras.
 	 *
 	 * @param distancematrix the distancematrix
 	 * @param dmindexes the dmindexes
 	 */
-	public DissimilarityMeasureEhupatras(MatrixStructure distancematrix, int[] dmindexes){
-		m_dmindexes = dmindexes;
+	public DissimilarityMeasureEhupatras(MatrixStructure distancematrix){
 		m_diastancematrix = distancematrix;
 	}
 	
@@ -29,8 +25,10 @@ public class DissimilarityMeasureEhupatras implements DissimilarityMeasure {
 	 * @see ehupatras.clustering.sapehac.experiment.DissimilarityMeasure#computeDissimilarity(ehupatras.clustering.sapehac.experiment.Experiment, int, int)
 	 */
 	public double computeDissimilarity(Experiment experiment, int observation1, int observation2){
-		int rowi = m_dmindexes[observation1];
-		int coli = m_dmindexes[observation2];
-		return (double)m_diastancematrix.getCell(rowi, coli);
+		if(observation1<=observation2){
+			return (double)m_diastancematrix.getCell(observation1, observation2);
+		} else {
+			return (double)m_diastancematrix.getCell(observation2, observation1);
+		}
 	}
 }

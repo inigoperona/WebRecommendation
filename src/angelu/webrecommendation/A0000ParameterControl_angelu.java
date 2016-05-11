@@ -201,11 +201,7 @@ public class A0000ParameterControl_angelu {
 			this.exampleParameters2();
 		} else {
 			// print parameters
-			System.out.println("Class: " + this.getClass().getCanonicalName());
-			System.out.println("Parameters given from command-line: ");
-			for(int i=0; i<args.length; i++){
-				System.out.println(args[i]);
-			}
+			this.printParameters(args);
 			// load parameters
 			this.readParameters(args);
 		}
@@ -265,6 +261,14 @@ public class A0000ParameterControl_angelu {
 		
 		// how to treat the prohibited URLs
 		m_modePrRe = Integer.valueOf(modePrReStr);
+	}
+	
+	protected void printParameters(String[] args){
+		System.out.println("Class: " + this.getClass().getCanonicalName());
+		System.out.println("Parameters given from command-line: ");
+		for(int i=0; i<args.length; i++){
+			System.out.println(args[i]);
+		}
 	}
 	
 	/**
