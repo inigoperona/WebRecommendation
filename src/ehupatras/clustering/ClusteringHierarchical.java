@@ -38,13 +38,12 @@ public class ClusteringHierarchical {
 	 * @param selectedcases the selectedcases
 	 * @param agglomerationMethodClassName the agglomeration method class name
 	 */
-	public void computeHierarchicalClustering(MatrixStructure matrix, int[] selectedcases,
-			String agglomerationMethodClassName) {
-		m_ncases = selectedcases.length;
+	public void computeHierarchicalClustering(MatrixStructure matrix, String agglomerationMethodClassName) {
+		m_ncases = matrix.getLength();
 		Experiment experiment = new ExperimentEhuPatras(m_ncases);
 		
 		// Define the dissimilarity matrix
-		DissimilarityMeasure dissimilarityMeasure = new DissimilarityMeasureEhupatras(matrix, selectedcases);
+		DissimilarityMeasure dissimilarityMeasure = new DissimilarityMeasureEhupatras(matrix);
 
 		// Define agglomeration-linkage method
 		// AgglomerationMethod agglomerationMethod = new WardLinkage();

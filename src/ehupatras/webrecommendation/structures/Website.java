@@ -51,6 +51,8 @@ public class Website {
 	private static int m_nomodulus = 0;
 	private static String m_basenamejavadata = "website.javaData";
 	
+	// other attributes
+	private static boolean[] m_isSuitableToLinkPrediction = null;
 	
 	// FUNCTIONS TO MANAGE THE WEBSITE'S PAGE
 	
@@ -480,6 +482,32 @@ public class Website {
 		int mb = 1024*1024;
 		int sizeInMegabytes = obj1s / mb; 
 		return sizeInMegabytes;
+	}
+
+	// FUNCTIONS TO ACCESS FASTLY TO SOME ATTRIBUTE OF WEBSITE
+	
+	public static void loadIsSuitableToLinkPrediction(){
+		int n = m_urls.size();
+		m_isSuitableToLinkPrediction = new boolean[n];
+		for(int i=0; i<n; i++){
+			Page pag = Website.getPage(i);
+			boolean suit = pag.getIsSuitableToLinkPrediction();
+			m_isSuitableToLinkPrediction[i] = suit;
+		}
+	}
+	
+	public static int getIsSuitableToLinkPrediction(int urlID){
+		if(m_isSuitableToLinkPrediction!=null){
+			int val = m_isSuitableToLinkPrediction[urlID]==true ? 1 : 0; 
+			return val;
+		} else {
+			return -1;
+		}
+	}
+	
+	public static void unloadIsSuitableToLinkPrediction(){
+		m_isSuitableToLinkPrediction = null;
+		System.gc();
 	}
 	
 }

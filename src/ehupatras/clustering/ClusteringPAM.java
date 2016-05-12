@@ -22,15 +22,14 @@ public class ClusteringPAM {
 	/** The m_max dm. */
 	private float m_maxDM = Float.MAX_VALUE;
 	
-	/** The m_real inds. */
-	private int[] m_realInds;
-	
 	/** The m_medoids. */
 	private ArrayList<Integer> m_medoids;
 	private ArrayList<Integer> m_clustersizes;
 	
 	/** The m_cost. */
 	private double m_cost;
+	
+	private int[] m_medAssign = null;
 	
 	/**
 	 * Instantiates a new clustering pam.
@@ -39,17 +38,18 @@ public class ClusteringPAM {
 	 * @param dm the dm
 	 * @param realIndexes the real indexes
 	 */
-	public ClusteringPAM(int k, MatrixStructure dm, int[] realIndexes){
-		if(k>realIndexes.length){
-			m_k = realIndexes.length;
+	public ClusteringPAM(int k, MatrixStructure dm){
+		m_dm = dm;
+		
+		int len = m_dm.getLength();
+		if(k>len){
+			m_k = len;
 		} else {
 			m_k = k;
 		}
 		
-		m_dm = dm;
-		m_realInds = realIndexes;
-		for(int i=0;i<m_realInds.length;i++){
-			for(int j=0;j<m_realInds.length;j++){
+		for(int i=0;i<len;i++){
+			for(int j=0;j<len;j++){
 				float value = getDM(i, j);
 				if(value<m_minDM){
 					m_minDM = value;
@@ -109,6 +109,8 @@ public class ClusteringPAM {
 		System.out.println("BUILD phase");
 		
 		// find the center-medoid of the database
+		long timestamp = System.currentTimeMillis();
+		System.out.println("  [" + timestamp + "] add the 0 medoid.");
 		m_medoids.add(this.databaseMedoid());
 		
 		// Select the other medoids: from medoids[1] to medoids[clusterK-1]
@@ -141,6 +143,8 @@ public class ClusteringPAM {
 		    	}
 		    }
 			if(representant!=-1){
+				timestamp = System.currentTimeMillis();
+				System.out.println("  [" + timestamp + "] add the " + i + " medoid.");
 		    	m_medoids.add(representant);
 			}
 		}
@@ -278,6 +282,7 @@ public class ClusteringPAM {
 		
 		// print the assignment of medoids
 		System.out.println(" the assignment of medoids are: ");
+		this.computeMedoidAssignment();
 		this.printMedoidAssignment();
 	}
 	
@@ -351,21 +356,15 @@ public class ClusteringPAM {
 	 * @return the dm
 	 */
 	private float getDM(int i, int j){
-		if(i<m_realInds.length && j<m_realInds.length){
-			int i2 = m_realInds[i];
-			int j2 = m_realInds[j];
-			int nrow = m_dm.getLength();
-			if(i2<nrow && j2<nrow){
-				if(i2<=j2){
-					return m_dm.getCell(i2, j2);
-				} else {
-					return m_dm.getCell(j2, i2);
-				}
+		int len = m_dm.getLength();
+		if(i<len && j<len){
+			if(i<=j){
+				return m_dm.getCell(i, j);
 			} else {
-				return m_maxDM;
+				return m_dm.getCell(j, i);
 			}
-		} else{
-			return m_maxDM;
+		} else {
+				return m_maxDM;
 		}
 	}
 	
@@ -398,12 +397,19 @@ public class ClusteringPAM {
 	 * @return the medoid assignment
 	 */
 	public int[] getMedoidAssignment(){
-		int[] medAssign = this.findNearestsMedoid();
-		int[] clusters = new int[medAssign.length];
+		return m_medAssign;
+	}
+	
+	private void computeMedoidAssignment(){
+		m_medAssign = this.findNearestsMedoid();
+	}
+	
+	public int[] getClusterAssignment(){
+		int[] clusters = new int[m_medAssign.length];
 		Hashtable<Integer,Integer> medToCl = new Hashtable<Integer,Integer>();
 		int kont = 0;
-		for(int i=0; i<medAssign.length; i++){
-			int med = medAssign[i];
+		for(int i=0; i<m_medAssign.length; i++){
+			int med = m_medAssign[i];
 			int cl;
 			if(medToCl.containsKey(med)){
 				cl = medToCl.get(med);
@@ -459,7 +465,7 @@ public class ClusteringPAM {
 	 * @return the int
 	 */
 	private int numberOfCases(){
-		return m_realInds.length;
+		return m_dm.getLength();
 	}
 	
 	/**
@@ -501,7 +507,7 @@ public class ClusteringPAM {
 		int[] inds = new int[]{0,1,3,4};
 		
 		// create the object
-		ClusteringPAM pam = new ClusteringPAM(2, ms, inds);
+		ClusteringPAM pam = new ClusteringPAM(2, ms);
 		
 		// the center of the database
 		pam.runPAM();
