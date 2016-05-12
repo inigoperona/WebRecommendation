@@ -37,6 +37,7 @@ public class A000MainClassPreprocess_10min2 {
 		 */
 
 		// join consecutive same URLs
+		/*
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start joining consecutive same URLs.");
 		ses.joinConsecutiveSameUrls();
@@ -44,7 +45,7 @@ public class A000MainClassPreprocess_10min2 {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		//WebAccess.writeFilteredLog(basedirectory + "/filteredLog4.log");
-
+		*/
 		
 		// create sequences
 			starttime = System.currentTimeMillis();

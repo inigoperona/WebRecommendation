@@ -251,12 +251,23 @@ public abstract class RequestAbstract
 	public boolean getIsSuitableToLinkPrediction(){
 		// !m_labelByHand.equals("index") we want index URLs in the sequences
 		// because its alignment give us information.
-		Page page = Website.getPage(m_formatedURLname);
-		m_isvalidLP = m_isvalid &&
+		int urlID = Website.getURLID(m_formatedURLname);
+		int suit = Website.getIsSuitableToLinkPrediction(urlID);
+		
+		if(suit==-1){
+			Page page = Website.getPage(m_formatedURLname);
+			m_isvalidLP = m_isvalid &&
 					  !m_isbot &&
 					  m_elapsedtime>=0 &&
 					  page.getIsSuitableToLinkPrediction();
-		return m_isvalidLP;
+			return m_isvalidLP;
+		} else {
+			if(suit==0){
+				return false;
+			} else {
+				return true;
+			}
+		}
 	}
 	
 	

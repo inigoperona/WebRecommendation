@@ -442,6 +442,9 @@ public class Sessioning {
 	public void createSequences(){
 		System.out.println("  [" + System.currentTimeMillis() + "] Start creating sequences.");
 		
+		// load get is suitable for link prediction
+		Website.loadIsSuitableToLinkPrediction();
+		
 		// to measure the proportion of valid URLs in a session
 		Hashtable<String,Integer[]> validnessOfSequences = new Hashtable<String,Integer[]>();
 		
@@ -451,7 +454,7 @@ public class Sessioning {
 			// print the situation every X number of processed requests
 			if(i%1000000==0){
 				System.out.println("  " + i + "/" + WebAccess.filteredlogsize() +
-						" analyzed [joinConsecutiveSameUrls]");
+						" analyzed [createSequences]");
 				// memory
 				int mb = 1024*1024;
 				// total memory
@@ -513,6 +516,9 @@ public class Sessioning {
 			float prob = (float)nvalid/(float)len;
 			WebAccessSequences.putValidness(sessionID, prob);
 		}
+		
+		// unload the is suitable for link prediction
+		Website.unloadIsSuitableToLinkPrediction();
 	}
 	
 
