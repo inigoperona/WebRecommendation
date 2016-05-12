@@ -350,13 +350,8 @@ public class Website {
 		return m_urls.size()-1;
 	}
 	
-	/**
-	 * Gets the all formated url names.
-	 *
-	 * @return the all formated url names
-	 */
-	public static ArrayList<String> getAllFormatedUrlNames(){
-		return m_urls;
+	public static int getNURLs(){
+		return m_urls.size();
 	}
 	
 	

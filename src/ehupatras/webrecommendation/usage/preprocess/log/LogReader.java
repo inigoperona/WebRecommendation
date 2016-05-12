@@ -29,10 +29,9 @@ public abstract class LogReader {
 	public void identifyFrequentURLs(int minimunFrequency){
 		// Identify frequent URLs
 		int nFrequent = 0;
-		ArrayList<String> keys = Website.getAllFormatedUrlNames();
-		for(int i=0; i<keys.size(); i++){
-			String url = keys.get(i);
-			Page pag = Website.getPage(url);
+		int n = Website.getNURLs();
+		for(int i=0; i<n; i++){
+			Page pag = Website.getPage(i);
 			String urlname = pag.getFormatedUrlName();
 			pag.setIsFrequent(minimunFrequency);
 			Website.putURL(urlname, pag);
@@ -113,10 +112,9 @@ public abstract class LogReader {
 		// so, the nature of the URL would be static
 		int nstatics = 0;
 		int minimumperiods = Math.round((float)nperiods*minimunPeriodFrequencyProportion);
-		ArrayList<String> keys = Website.getAllFormatedUrlNames();
-		for(int i=0; i<keys.size(); i++){
-			String url = keys.get(i);
-			Page pag = Website.getPage(url);
+		int n = Website.getNURLs();
+		for(int i=0; i<n; i++){
+			Page pag = Website.getPage(i);
 			String urlname = pag.getFormatedUrlName();
 			pag.setIsStatic(minimumperiods);
 			Website.putURL(urlname, pag);

@@ -50,10 +50,10 @@ public class PreprocessContent {
 	 * Pickup ur ls to download.
 	 */
 	public void pickupURLsToDownload(){
-		ArrayList<String> urlnames = Website.getAllFormatedUrlNames();
-		for(int i=0; i<urlnames.size(); i++){
-			String formurl = urlnames.get(i);
-			Page pag = Website.getPage(formurl);
+		int n = Website.getNURLs();
+		for(int i=0; i<n; i++){
+			Page pag = Website.getPage(i);
+			String formurl = pag.getFormatedUrlName();
 			String url = pag.getUrlName();
 			int urlID = pag.getUrlIDusage();
 			if(pag.getIsSuitableToLinkPrediction()){
