@@ -157,7 +157,7 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 						int um = (int)((tm-fm)/(long)mb);
 						// big structures
 						//int sizeWA = WebAccess.getSize();
-						int sizeWS = Website.getSize();
+						int sizeWS = Website.getSizeMB();
 						// size of IP to ID
 						SaveLoadObjects slo = new SaveLoadObjects(); 
 						int sizeInBytes1 = slo.getSize(m_ip2idHT);

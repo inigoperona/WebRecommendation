@@ -362,7 +362,7 @@ public abstract class RequestAbstract
 	 * @see ehupatras.webrecommendation.structures.request.Request#toStringLongHeader()
 	 */
 	public String toStringLongHeader(){
-		Page page = Website.getPage(m_formatedURLname);
+		//Page page = Website.getPage(m_formatedURLname);
 		return 	"ip " +
 				"userID " +
 				"time " +
@@ -380,16 +380,19 @@ public abstract class RequestAbstract
 				"pageRoleUHC " +
 				"isbot " +
 				"isvalidLinkPrediction " +
-				"isTheEndOfTheSession" +
-				"logfilenumber " +
-				page.toStringLongHeader();
+				"isTheEndOfTheSession " +
+				"logfilenumber " + 
+				"formatedURLname " +
+				"urlID";
+				//page.toStringLongHeader();
 	}
 	
 	/* (non-Javadoc)
 	 * @see ehupatras.webrecommendation.structures.request.Request#toStringLong()
 	 */
 	public String toStringLong(){
-		Page page = Website.getPage(m_formatedURLname);
+		//Page page = Website.getPage(m_formatedURLname);
+		int urlid = Website.getURLID(m_formatedURLname);
 		return 	m_ip + " " +
 				m_userID + " " +
 				m_time.getTimeInMillis() + " " +
@@ -409,7 +412,9 @@ public abstract class RequestAbstract
 				m_isvalidLP + " " +
 				m_isTheEndOfTheSession + " " +
 				m_logFileNumber + " " +
-				page.toStringLong();
+				m_formatedURLname + " " +
+				urlid;
+				//page.toStringLong();
 	}
 	
 }

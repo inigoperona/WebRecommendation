@@ -4,10 +4,12 @@ import ehupatras.webrecommendation.structures.page.Page;
 import ehupatras.webrecommendation.structures.request.Request;
 import ehupatras.webrecommendation.utils.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,7 +34,8 @@ public class Website {
 	//private static Hashtable<Integer,String> m_ID2urlname = new Hashtable<Integer,String>();
 	
 	// indexing elements
-	private static ArrayList<String> m_urls = new ArrayList<String>();
+	//private static ArrayList<String> m_urls = new ArrayList<String>();
+	private static Hashtable<String,Integer> m_urlsHT = new Hashtable<String,Integer>();  
 	private static int m_n0 = 0;
 	//private static ArrayList<Integer> m_ids = new ArrayList<Integer>();	
 	
@@ -63,7 +66,7 @@ public class Website {
 	 * @return true, if successful
 	 */
 	public static boolean containsURL(String urlname){
-		return m_urls.contains(urlname);
+		return m_urlsHT.containsKey(urlname);
 	}
 	
 	public static void storeURL(Page page){
@@ -73,11 +76,15 @@ public class Website {
 	
 	public static void putURL(String urlname, Page page){	
 		// get the URL-ID
-		int urlid = m_urls.indexOf(urlname);
+		Integer urlidobj = m_urlsHT.get(urlname);
+		int urlid = -1;
+		if(urlidobj!=null){
+			urlid = urlidobj.intValue(); 
+		}
 		int ind2 = -1;
 		if(urlid==-1){
-			m_urls.add(urlname);
-			urlid = m_urls.size()-1;
+			urlid = m_urlsHT.size();
+			m_urlsHT.put(urlname, urlid);
 		} else {
 			ind2 = m_indexesAL.indexOf(urlid);
 		}
@@ -165,7 +172,7 @@ public class Website {
 			}
 			
 			// initialize the temporary website
-			m_n0 = m_urls.size();
+			m_n0 = m_urlsHT.size();
 			m_indexesAL = new ArrayList<Integer>(m_maxloadpages);
 			m_pagesAL2 = new ArrayList<Page>(m_maxloadpages);
 			m_frequenciesAL = new ArrayList<Integer>(m_maxloadpages);
@@ -255,16 +262,18 @@ public class Website {
 
 
 	public static int getURLID(String urlname){
-		int ind = m_urls.indexOf(urlname);
+		int ind = m_urlsHT.get(urlname);
 		return ind;
 	}
 	
+	/*
 	public static String getURL(int urlID){
 		return m_urls.get(urlID);
 	}
+	*/
 	
 	public static Page getPage(String urlname){
-		int ind = m_urls.indexOf(urlname);
+		int ind = m_urlsHT.get(urlname);
 		return Website.getPage(ind);
 	}
 	
@@ -318,27 +327,30 @@ public class Website {
 	 * @return the int
 	 */
 	public static int size(){
-		return m_urls.size();
+		return m_urlsHT.size();
 	}
 	
 	/**
 	 * Compute page rank.
 	 */
+	
 	public static void computePageRank(){
-		for(int i=0; i<m_urls.size(); i++){
+		/*
+		for(int i=0; i<m_urlsHT.size(); i++){
 			String url = m_urls.get(i);
 			Page page = Website.getPage(i);
 			if(page.getIsSuitableToLinkPrediction()){
 				String urlname = page.getUrlName();
 				System.out.println(urlname);
 			}
-			
+
 			//GooglePageRank obj = new GooglePageRank();
 			//int pagerankvalue = obj.getPR(urlname);
 			//page.setPageRank(pagerankvalue);
 			
 			//System.out.println(pagerankvalue);
 		}
+		*/
 	}
 	
 	/**
@@ -347,11 +359,7 @@ public class Website {
 	 * @return the maximum url id
 	 */
 	public static int getMaximumUrlID(){
-		return m_urls.size()-1;
-	}
-	
-	public static int getNURLs(){
-		return m_urls.size();
+		return m_urlsHT.size()-1;
 	}
 	
 	
@@ -364,7 +372,7 @@ public class Website {
 	 * Write website.
 	 */
 	public static void writeWebsite(){
-		for(int i=0; i<m_urls.size(); i++){
+		for(int i=0; i<m_urlsHT.size(); i++){
 			Page pag = Website.getPage(i);
 			int urlid = pag.getUrlIDusage();
 			String urlname = pag.getUrlName();
@@ -413,7 +421,7 @@ public class Website {
 			for(int j=0; j<m_pages.size(); j++){
 				Page pa = m_pages.get(j);
 				String url = pa.getFormatedUrlName();
-				m_urls.add(url);
+				m_urlsHT.put(url,j);
 			}
 			
 			// update the next javaData file
@@ -454,9 +462,8 @@ public class Website {
 		ArrayList<Integer> indexesAL = new ArrayList<Integer>();
 		
 		// for each page in the website
-		for(int i=0; i<m_urls.size(); i++){
-			String url = m_urls.get(i);
-			Page pag = Website.getPage(url);
+		for(int i=0; i<m_urlsHT.size(); i++){
+			Page pag = Website.getPage(i);
 			if(pag.getIsIndex()){
 				int usageID = pag.getUrlIDusage();
 				indexesAL.add(usageID);
@@ -471,9 +478,9 @@ public class Website {
 		return indexes;
 	}
 
-	public static int getSize(){
+	public static int getSizeMB(){
 		SaveLoadObjects slo = new SaveLoadObjects(); 
-		int obj1s = slo.getSize(m_urls);
+		int obj1s = slo.getSize(m_urlsHT);
 		int mb = 1024*1024;
 		int sizeInMegabytes = obj1s / mb; 
 		return sizeInMegabytes;
@@ -482,7 +489,7 @@ public class Website {
 	// FUNCTIONS TO ACCESS FASTLY TO SOME ATTRIBUTE OF WEBSITE
 	
 	public static void loadIsSuitableToLinkPrediction(){
-		int n = m_urls.size();
+		int n = m_urlsHT.size();
 		m_isSuitableToLinkPrediction = new boolean[n];
 		for(int i=0; i<n; i++){
 			Page pag = Website.getPage(i);
@@ -503,6 +510,48 @@ public class Website {
 	public static void unloadIsSuitableToLinkPrediction(){
 		m_isSuitableToLinkPrediction = null;
 		System.gc();
+	}
+	
+	// WRITE THE WEBSITE
+	
+	public static void writeWebsite(String outfilename){
+		System.out.println("  [" + System.currentTimeMillis() + "] Start writing txt website. ");
+		
+		// Open the given file
+		BufferedWriter writer = null;
+		try{
+			writer = new BufferedWriter(new FileWriter(outfilename));
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.writeWebsite] " +
+					"Not possible to open the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// Write in a file line by line
+		try{
+			for(int i=0; i<Website.size(); i++){
+				Page pag = Website.getPage(i);	
+				if(i==0){ writer.write(pag.toStringLongHeader() + "\n"); }
+				writer.write(pag.toStringLong() + "\n");
+			}
+			System.out.println("  " + Website.size() + " lines have been written.");
+		} catch(IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.writeWebsite] " +
+					"Problems writing to the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
+		
+		// close the file
+		try{
+			writer.close();
+		} catch (IOException ex){
+			System.err.println("[ehupatras.webrecommendation.structures.Website.writeWebsite] " +
+					"Problems at closing the file: " + outfilename);
+			System.err.println(ex.getMessage());
+			System.exit(1);
+		}
 	}
 	
 }

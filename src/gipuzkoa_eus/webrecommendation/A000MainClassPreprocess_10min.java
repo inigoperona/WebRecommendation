@@ -146,27 +146,11 @@ public class A000MainClassPreprocess_10min {
 			
 		// write preprocessed logs
 		WebAccess.writeFilteredLog(basedirectory + "/filteredLog.log");
+		Website.writeWebsite(basedirectory + "/website.txt");
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
 		WebAccessSequences.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
 	}
-	
-	/**
-	 * Load preprocess.
-	 */
-	public void loadPreprocess(){
-		long starttime;
-		long endtime;
-		
-			starttime = System.currentTimeMillis();
-			System.out.println("[" + starttime + "] Start loading preprocessed data.");
-		Website.load();
-		WebAccess.loadStructure();
-		WebAccessSequences.loadSequences();
-			endtime = System.currentTimeMillis();
-			System.out.println("[" + endtime + "] End. Elapsed time: "
-				+ (endtime-starttime)/1000 + " seconds.");
-	}
-	
+
 	
 	/**
 	 * Gets the log files.
@@ -175,7 +159,7 @@ public class A000MainClassPreprocess_10min {
 	 * @param logFilesIndex the log files index
 	 * @return the log files
 	 */
-	public String[] getLogFiles(String basedirectory, String logFilesIndex){
+	private String[] getLogFiles(String basedirectory, String logFilesIndex){
 		ArrayList<String> logFilesAL = new ArrayList<String>();
 		
 		// read the logFilesIndex file
@@ -243,7 +227,7 @@ public class A000MainClassPreprocess_10min {
 		//String basedirectory = "/home/ainhoa/workspace_WebRecommendation";
 		//String basedirectory = "/home/disk/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
 		String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
-		String logfilesIndex = "/loglist.txt";
+		String logfilesIndex = "/loglist3.txt";
 		
 		basedirectory = args[0];
 		logfilesIndex = args[1];
