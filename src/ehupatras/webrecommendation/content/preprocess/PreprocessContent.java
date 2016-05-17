@@ -50,7 +50,7 @@ public class PreprocessContent {
 	 * Pickup ur ls to download.
 	 */
 	public void pickupURLsToDownload(){
-		int n = Website.getNURLs();
+		int n = Website.size();
 		for(int i=0; i<n; i++){
 			Page pag = Website.getPage(i);
 			String formurl = pag.getFormatedUrlName();
