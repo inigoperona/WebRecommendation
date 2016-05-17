@@ -148,7 +148,7 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 					WebAccess.addRequest(req);
 					
 					// print the size of the structures
-					if(indSize%1000000==0){
+					if(indSize%50000000==0){
 						int mb = 1024*1024;
 						// total memory
 						Runtime runtime = Runtime.getRuntime();
