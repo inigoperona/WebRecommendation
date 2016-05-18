@@ -500,7 +500,7 @@ public class Website {
 	
 	public static int getIsSuitableToLinkPrediction(int urlID){
 		if(m_isSuitableToLinkPrediction!=null){
-			int val = m_isSuitableToLinkPrediction[urlID]==true ? 1 : 0; 
+			int val = m_isSuitableToLinkPrediction[urlID] ? 1 : 0; 
 			return val;
 		} else {
 			return -1;
