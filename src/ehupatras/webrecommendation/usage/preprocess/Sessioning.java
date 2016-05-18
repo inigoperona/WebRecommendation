@@ -446,7 +446,8 @@ public class Sessioning {
 		Website.loadIsSuitableToLinkPrediction();
 		
 		// to measure the proportion of valid URLs in a session
-		Hashtable<String,Integer[]> validnessOfSequences = new Hashtable<String,Integer[]>();
+		// [0]: No. valid clicks; [1]: Original length of the sequence;
+		Hashtable<String,Integer[]> validnessOfSequences = new Hashtable<String,Integer[]>(); 
 		
 		int sequencecounter = 0;
 		// for each request
@@ -483,7 +484,7 @@ public class Sessioning {
 				if( WebAccessSequences.containsSession(sessionID) ){
 					ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
 					sequence.add(i);
-					WebAccessSequences.putSession(sessionID,sequence);
+					WebAccessSequences.setSession(sessionID,sequence);
 					
 					// validness
 					Integer[] objA = validnessOfSequences.get(sessionID);
@@ -492,7 +493,7 @@ public class Sessioning {
 				} else{
 					ArrayList<Integer> sequence = new ArrayList<Integer>();
 					sequence.add(i);
-					WebAccessSequences.putSession(sessionID,sequence);
+					WebAccessSequences.addSession(sessionID,sequence);
 					sequencecounter++;
 				}
 				len++;
@@ -643,7 +644,7 @@ public class Sessioning {
 					}
 				}
 			}
-			WebAccessSequences.putSession(sessionID, sequence2);	
+			WebAccessSequences.setSession(sessionID, sequence2);	
 		}
 		System.out.println("  " + removecounter + " requests were removed.");
 	}
@@ -700,7 +701,7 @@ public class Sessioning {
 					removecounter++;
 				}
 			}
-			WebAccessSequences.putSession(sessionID, sequence2);
+			WebAccessSequences.setSession(sessionID, sequence2);
 		}
 		System.out.println("  " + removecounter + " requests were removed.");
 		

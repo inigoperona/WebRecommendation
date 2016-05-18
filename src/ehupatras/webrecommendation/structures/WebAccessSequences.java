@@ -48,9 +48,18 @@ public class WebAccessSequences {
 		return m_sequences.get(sessionIDstr);
 	}
 	
+	public static void addSession(String sessionIDstr, ArrayList<Integer> sequence){
+		m_sequences.put(sessionIDstr, sequence);
+		m_sequencesID.add(sessionIDstr);
+	}
+	
+	public static void setSession(String sessionIDstr, ArrayList<Integer> sequence){
+		m_sequences.put(sessionIDstr, sequence);
+	}
+	
 	public static void putSession(String sessionIDstr, ArrayList<Integer> sequence){
 		m_sequences.put(sessionIDstr, sequence);
-		if(!m_sequencesID.contains(sessionIDstr)){
+		if(!m_sequences.contains(sessionIDstr)){
 			m_sequencesID.add(sessionIDstr);
 		}
 	}

@@ -271,7 +271,6 @@ public abstract class RequestAbstract
 	}
 	
 	
-	
 	// Getting/Setting the information of the request
 	
 	/* (non-Javadoc)
