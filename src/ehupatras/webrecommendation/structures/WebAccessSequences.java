@@ -38,10 +38,11 @@ public class WebAccessSequences {
 	// FUNCTIONS
 	
 	public static boolean containsSession(String sessionIDstr){
-		if(m_sequencesID.contains(sessionIDstr)){
+		if(m_sequences.containsKey(sessionIDstr)){
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 	
 	public static ArrayList<Integer> getSession(String sessionIDstr){
@@ -59,7 +60,7 @@ public class WebAccessSequences {
 	
 	public static void putSession(String sessionIDstr, ArrayList<Integer> sequence){
 		m_sequences.put(sessionIDstr, sequence);
-		if(!m_sequences.contains(sessionIDstr)){
+		if(!m_sequences.containsKey(sessionIDstr)){
 			m_sequencesID.add(sessionIDstr);
 		}
 	}

@@ -63,8 +63,7 @@ public class WebAccessSequencesUHC
 					}
 					Request req = WebAccess.getRequest(reqind);
 					String urlname = req.getFormatedUrlName();
-					Page pag = Website.getPage(urlname);
-					int urlid = pag.getUrlIDusage();
+					int urlid = Website.getURLID(urlname);
 					String seqelem = String.format("%06d", urlid);
 					if(writeRoles){
 						String pagrole = req.getPageRoleUHC();
