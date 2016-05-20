@@ -588,6 +588,8 @@ public class WebAccess {
 	public static void orderRequests(){
 		WebAccess.saveStructure();
 		WebAccess.orderRequestsInd();
+		
+		// write the ordered sequences
 		for(int i=0; i<m_orderedRequests.size(); i++){
 			long[] obj = m_orderedRequests.get(i);
 			int ind = (int)obj[0];

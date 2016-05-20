@@ -481,7 +481,8 @@ public class Sessioning {
 			// if the request is valid then take for the sequence
 			if(	isSuitableForLinkPrediction ){
 				// whether the session is already recorded
-				if( WebAccessSequences.containsSession(sessionID) ){
+				boolean isRecordedTheSession = WebAccessSequences.containsSession(sessionID);
+				if( isRecordedTheSession ){
 					ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
 					sequence.add(i);
 					WebAccessSequences.setSession(sessionID,sequence);
@@ -490,7 +491,7 @@ public class Sessioning {
 					Integer[] objA = validnessOfSequences.get(sessionID);
 					nvalid = objA[0] + 1;
 					len = objA[1];
-				} else{
+				} else {
 					ArrayList<Integer> sequence = new ArrayList<Integer>();
 					sequence.add(i);
 					WebAccessSequences.addSession(sessionID,sequence);
@@ -666,9 +667,11 @@ public class Sessioning {
 		}
 		
 		// when time zero is found take the first one
-		ArrayList<Integer> reqIndDB = new ArrayList<Integer>();
+		//ArrayList<Integer> reqIndDB = new ArrayList<Integer>();
 		ArrayList<Float> elapTimeDB = new ArrayList<Float>();
+		Hashtable<Integer,Integer> reqIndDBht = new Hashtable<Integer,Integer>(); // <reqIndex, vectorIndex> 
 		int removecounter = 0;
+		int addcounter = 0;
 		for(int l=0; l<keys.size(); l++){
 			String sessionID = keys.get(l);
 			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
@@ -693,8 +696,10 @@ public class Sessioning {
 				// add to the sequence
 				if(lastET!=-1 || i==sequence.size()-1){
 					sequence2.add(firstreq);
-					reqIndDB.add(firstreq);
+					//reqIndDB.add(firstreq);
 					elapTimeDB.add(lastET);
+					reqIndDBht.put(firstreq, addcounter);
+					addcounter++;
 					firstreq = -1;
 					lastET = -1;
 				} else {
@@ -706,9 +711,13 @@ public class Sessioning {
 		System.out.println("  " + removecounter + " requests were removed.");
 		
 		// update the database
+		long time1 = System.currentTimeMillis();
+		System.out.println("  [" + time1 + "] start updating elapsed times.");
 		for(int i=0; i<reqindexesA.length; i++){
 			int reqInd = reqindexesA[i];
-			int ind = reqIndDB.indexOf(reqInd);
+			//int ind = reqIndDB.indexOf(reqInd);
+			Integer indObj = reqIndDBht.get(reqInd);
+			int ind = indObj==null ? -1 : indObj;
 			float elapt = -3;
 			if(ind!=-1){
 				elapt = elapTimeDB.get(ind);
@@ -717,6 +726,8 @@ public class Sessioning {
 			req.setElapsedTime(elapt);
 			WebAccess.replaceRequest(reqInd, req);
 		}
+		long time2 = System.currentTimeMillis();
+		System.out.println("  [" + time2 + "] end updating elapsed times.");
 	}
 	
 	/**

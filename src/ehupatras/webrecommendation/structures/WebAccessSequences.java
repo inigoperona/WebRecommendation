@@ -22,10 +22,12 @@ public class WebAccessSequences {
 	// sessionID1: req1, req2, req3
 	/** The m_sequences. */
 	private static Hashtable<String,ArrayList<Integer>> m_sequences = new Hashtable<String,ArrayList<Integer>>();
+	//private static Hashtable<String,Integer> m_sequencesIND = new Hashtable<String,Integer>();
+	//private static ArrayList<ArrayList<Integer>> m_sequences = new ArrayList<ArrayList<Integer>>();
+	
 	
 	private static ArrayList<String> m_sequencesID = new ArrayList<String>();
 	
-	/** The m_validness of sequences. */
 	private static Hashtable<String,Float> m_validnessOfSequences = new Hashtable<String,Float>();
 	
 	/** The m_seqfilename. */
