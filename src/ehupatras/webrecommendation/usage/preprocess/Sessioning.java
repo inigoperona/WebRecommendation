@@ -728,16 +728,22 @@ public class Sessioning {
 			for(int i=0; i<sequence.size(); i++){
 				int reqi = sequence.get(i);
 				float elaptime = req2et.get(reqi);
-				if(elaptime<=0f){
-					if(firstreq==-1){
-						firstreq = reqi;
-						lastET = -1;
+				if(elaptime>=0){
+					if(elaptime<=0f){
+						if(firstreq==-1){
+							firstreq = reqi;
+							lastET = -1;
+						}
+					} else {
+						lastET = elaptime;
+						if(firstreq==-1){
+							firstreq = reqi;
+						}
 					}
 				} else {
-					lastET = elaptime;
-					if(firstreq==-1){
-						firstreq = reqi;
-					}
+					firstreq = -1;
+					lastET = -1;
+					continue;
 				}
 				
 				// add to the sequence
