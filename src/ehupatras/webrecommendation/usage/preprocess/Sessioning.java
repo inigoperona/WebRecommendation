@@ -443,11 +443,14 @@ public class Sessioning {
 		System.out.println("  [" + System.currentTimeMillis() + "] Start creating sequences.");
 		
 		// load get is suitable for link prediction
+		System.out.println("    [" + System.currentTimeMillis() + "] Load all Website url-valid information.");
 		Website.loadIsSuitableToLinkPrediction();
 		
+		// temporal for storing sequences and valideness
 		// to measure the proportion of valid URLs in a session
 		// [0]: No. valid clicks; [1]: Original length of the sequence;
-		Hashtable<String,Integer[]> validnessOfSequences = new Hashtable<String,Integer[]>(); 
+		HashMap<String,Object[]> sequencesDATA = new HashMap<String,Object[]>();
+		ArrayList<String> sequencesID = new ArrayList<String>();
 		
 		int sequencecounter = 0;
 		// for each request
@@ -474,49 +477,94 @@ public class Sessioning {
 			// get the request's information
 			Request req = WebAccess.getRequest(i);
 			String sessionID = req.getSessionID();
+			boolean isSuitableForLinkPrediction = req.getIsSuitableToLinkPrediction();
+			boolean isTheEndOfTheSession = req.getIsTheEndOfTheSession();
 			int nvalid = 0;
 			int len = 0;
-			boolean isSuitableForLinkPrediction = req.getIsSuitableToLinkPrediction();
+			ArrayList<Integer> sequence = null;
 			
-			// if the request is valid then take for the sequence
-			if(	isSuitableForLinkPrediction ){
-				// whether the session is already recorded
-				if( WebAccessSequences.containsSession(sessionID) ){
-					ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
-					sequence.add(i);
-					WebAccessSequences.setSession(sessionID,sequence);
+			// whether the session is already recorded
+			if( sequencesDATA.containsKey(sessionID) ){
+				// if the request is valid then take for the sequence
+				if(	isSuitableForLinkPrediction ){
+					Object[] sequenceObjA = sequencesDATA.get(sessionID);
+					sequence = (ArrayList<Integer>)sequenceObjA[0];
+					nvalid = (int)sequenceObjA[1];
+					len = (int)sequenceObjA[2];
 					
-					// validness
-					Integer[] objA = validnessOfSequences.get(sessionID);
-					nvalid = objA[0] + 1;
-					len = objA[1];
-				} else{
-					ArrayList<Integer> sequence = new ArrayList<Integer>();
-					sequence.add(i);
-					WebAccessSequences.addSession(sessionID,sequence);
-					sequencecounter++;
+					if(sequence!=null){
+						sequence.add(i);
+					} else {
+						sequence = new ArrayList<Integer>();
+						sequence.add(i);
+						sequencecounter++;
+					}
+					nvalid++;
 				}
-				len++;
-				Integer[] newObjA = new Integer[2];
-				newObjA[0] = nvalid;
-				newObjA[1] = len;
-				validnessOfSequences.put(sessionID, newObjA);
+			} else {
+				//sequencesID.add(sessionID);
+				if(	isSuitableForLinkPrediction ){
+					sequence = new ArrayList<Integer>();
+					sequence.add(i);
+					sequencecounter++;
+					nvalid++;
+				} 
 			}
+			len++;
+			Object[] newObjA = new Object[4];
+			newObjA[0] = sequence;
+			newObjA[1] = nvalid;
+			newObjA[2] = len;
+			newObjA[3] = isTheEndOfTheSession;
+			sequencesDATA.put(sessionID, newObjA);
+			
+			if(isTheEndOfTheSession){
+				WebAccessSequences.addSession(sessionID, sequence);
+				float prob = (float)nvalid/(float)len;
+				WebAccessSequences.putValidness(sessionID, prob);
+				sequencesDATA.remove(sessionID);
+			}
+			
+			// the sessions that are generated, store in the database
+			/*
+			if(i%1000==0){
+				int n = sequencesID.size();
+				for(int j=0; j<n;){
+					String sesID = sequencesID.get(j);
+					Object[] objA = sequencesDATA.get(sesID);
+					Object obj0 = objA[0];
+					ArrayList<Integer> sequence2 = null;
+					if(obj0!=null){
+						sequence2 = (ArrayList<Integer>)objA[0];
+					}
+					int nvalid2 = (int)objA[1];
+					int len2 = (int)objA[2];
+					boolean isTheEndOfTheSession2 = (boolean)objA[3];
+					
+					if(sequence2==null){
+						sequencesDATA.remove(sesID);
+						sequencesID.remove(j);
+						n--;
+						continue;
+					} else {
+						if(isTheEndOfTheSession2){
+							WebAccessSequences.addSession(sesID, sequence2);
+							float prob = (float)nvalid2/(float)len2;
+							WebAccessSequences.putValidness(sesID, prob);
+							sequencesDATA.remove(sesID);
+							sequencesID.remove(j);
+							n--;
+							continue;
+						} else {
+							j++;
+							break;
+						}
+					}
+				}
+			}
+			*/
 		}
 		System.out.println("  [" + System.currentTimeMillis() + "] " + sequencecounter + " sequences created.");
-		
-		// update validness
-		System.out.println("  [" + System.currentTimeMillis() + "] Start updating the validness.");
-		ArrayList<String> keys = WebAccessSequences.getSessionsIDs();
-		// for each valid sequence
-		for(int l=0; l<keys.size(); l++){
-			String sessionID = keys.get(l);
-			Integer[] freqData = validnessOfSequences.get(sessionID);
-			int nvalid = freqData[0];
-			int len = freqData[1];
-			float prob = (float)nvalid/(float)len;
-			WebAccessSequences.putValidness(sessionID, prob);
-		}
 		
 		// unload the is suitable for link prediction
 		Website.unloadIsSuitableToLinkPrediction();
@@ -666,9 +714,11 @@ public class Sessioning {
 		}
 		
 		// when time zero is found take the first one
-		ArrayList<Integer> reqIndDB = new ArrayList<Integer>();
+		//ArrayList<Integer> reqIndDB = new ArrayList<Integer>();
 		ArrayList<Float> elapTimeDB = new ArrayList<Float>();
+		Hashtable<Integer,Integer> reqIndDBht = new Hashtable<Integer,Integer>(); // <reqIndex, vectorIndex> 
 		int removecounter = 0;
+		int addcounter = 0;
 		for(int l=0; l<keys.size(); l++){
 			String sessionID = keys.get(l);
 			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
@@ -693,8 +743,10 @@ public class Sessioning {
 				// add to the sequence
 				if(lastET!=-1 || i==sequence.size()-1){
 					sequence2.add(firstreq);
-					reqIndDB.add(firstreq);
+					//reqIndDB.add(firstreq);
 					elapTimeDB.add(lastET);
+					reqIndDBht.put(firstreq, addcounter);
+					addcounter++;
 					firstreq = -1;
 					lastET = -1;
 				} else {
@@ -706,9 +758,13 @@ public class Sessioning {
 		System.out.println("  " + removecounter + " requests were removed.");
 		
 		// update the database
+		long time1 = System.currentTimeMillis();
+		System.out.println("  [" + time1 + "] start updating elapsed times.");
 		for(int i=0; i<reqindexesA.length; i++){
 			int reqInd = reqindexesA[i];
-			int ind = reqIndDB.indexOf(reqInd);
+			//int ind = reqIndDB.indexOf(reqInd);
+			Integer indObj = reqIndDBht.get(reqInd);
+			int ind = indObj==null ? -1 : indObj;
 			float elapt = -3;
 			if(ind!=-1){
 				elapt = elapTimeDB.get(ind);
@@ -717,6 +773,8 @@ public class Sessioning {
 			req.setElapsedTime(elapt);
 			WebAccess.replaceRequest(reqInd, req);
 		}
+		long time2 = System.currentTimeMillis();
+		System.out.println("  [" + time2 + "] end updating elapsed times.");
 	}
 	
 	/**
@@ -760,6 +818,13 @@ public class Sessioning {
 			String sessionID = keys.get(l);
 			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
 			int seqlength = sequence.size();
+			int pos = Collections.binarySearch(lengthsInOrder, seqlength);
+			if(pos<0){
+				pos = Math.abs(pos+1);
+			} else {
+				pos++;
+			}
+			/*
 			int i;
 			for(i=0; i<lengthsInOrder.size(); i++){
 				int iseqlength = lengthsInOrder.get(i);
@@ -767,7 +832,8 @@ public class Sessioning {
 					break;
 				}
 			}
-			lengthsInOrder.add(i, seqlength);
+			*/
+			lengthsInOrder.add(pos, seqlength);
 		}
 		
 		// compute the given percentile's position
