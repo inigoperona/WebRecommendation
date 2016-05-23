@@ -140,8 +140,11 @@ public class A000MainClassPreprocess_10min {
 					+ (endtime-starttime)/1000 + " seconds.");
 
 		// save the sessions structure we have created
+		System.out.println("[" + System.currentTimeMillis() + "] Start saving structure.");
 		WebAccess.saveStructure();
+		System.out.println("[" + System.currentTimeMillis() + "] Start saving sequences.");
 		WebAccessSequences.saveSequences();
+		System.out.println("[" + System.currentTimeMillis() + "] Start saving website.");
 		Website.save();
 			
 		// write preprocessed logs
@@ -231,9 +234,8 @@ public class A000MainClassPreprocess_10min {
 		//String basedirectory = "/home/disk/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
 		//String logfilesIndex = "/loglist.txt";
 
-		
-		//basedirectory = args[0];
-		//logfilesIndex = args[1];
+		basedirectory = args[0];
+		logfilesIndex = args[1];
 		
 		// initialize the data structure
 		WebAccess.setWorkDirectory(basedirectory);

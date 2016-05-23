@@ -71,9 +71,8 @@ public class WebAccess {
 	private static String m_basenamejavadata2 = "orderedrequests.javaData";
 	
 	// order of requests; long[0]: requests_index; long[1]: requests timestamp
-	/** The m_ordered requests. */
-	private static ArrayList<long[]> m_orderedRequests = new ArrayList<long[]>(); 
-	
+	//private static ArrayList<long[]> m_orderedRequests = new ArrayList<long[]>();
+	private static ArrayList<Integer> m_orderedRequests = new ArrayList<Integer>();
 	
 	// protected constructor
 	static {
@@ -591,8 +590,7 @@ public class WebAccess {
 		
 		// write the ordered sequences
 		for(int i=0; i<m_orderedRequests.size(); i++){
-			long[] obj = m_orderedRequests.get(i);
-			int ind = (int)obj[0];
+			int ind = m_orderedRequests.get(i);
 			Request req = WebAccess.getRequest(ind, m_basenamejavadata);
 			WebAccess.addRequest2(req, m_basenamejavadata2);
 			if(i%100000==0){
@@ -623,38 +621,26 @@ public class WebAccess {
 	 * Order requests ind.
 	 */
 	private static void orderRequestsInd(){
-		m_orderedRequests = new ArrayList<long[]>();
+		ArrayList<Long> timesAL = new ArrayList<Long>();
+		m_orderedRequests = new ArrayList<Integer>();
 		for(int i=0; i<WebAccess.filteredlogsize(); i++){
 			// actual request
 			Request req = WebAccess.getRequest(i, m_basenamejavadata);
-			long ind = (long)i;
 			long time = req.getTimeInMillis();
-			long[] obj = new long[2];
-			obj[0] = ind;
-			obj[1] = time;
 			
-			// fast approach to the position we need
-			int jump = 1000;
-			int j = jump;
-			for(; j<m_orderedRequests.size(); j=j+jump){
-				long[] obj2 = m_orderedRequests.get(j);
-				long time2 = obj2[1];
-				if(time<time2){
-					break;
-				}
+			// find the position to add
+			int pos = Collections.binarySearch(timesAL, time);
+			if(pos<0){
+				pos = Math.abs(pos+1);
+			} else {
+				pos++;
 			}
 			
-			// it has to be in the position
-			j = j-1000;
-			for(; j<m_orderedRequests.size(); j++){
-				long[] obj2 = m_orderedRequests.get(j);
-				long time2 = obj2[1];
-				if(time<time2){
-					break;
-				}
-			}
-			m_orderedRequests.add(j, obj);
+			// add element
+			timesAL.add(pos, time);
+			m_orderedRequests.add(pos, i);
 		}
+		System.out.println("  [" + System.currentTimeMillis() + "] finished ordering.");
 	}
 	
 	public static void setnMemory(int nmem){

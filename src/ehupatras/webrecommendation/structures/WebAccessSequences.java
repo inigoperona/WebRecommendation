@@ -8,11 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
 
@@ -21,14 +19,11 @@ public class WebAccessSequences {
 	// The sequences we are going to use to link prediction
 	// sessionID1: req1, req2, req3
 	/** The m_sequences. */
-	private static Hashtable<String,ArrayList<Integer>> m_sequences = new Hashtable<String,ArrayList<Integer>>();
-	//private static Hashtable<String,Integer> m_sequencesIND = new Hashtable<String,Integer>();
-	//private static ArrayList<ArrayList<Integer>> m_sequences = new ArrayList<ArrayList<Integer>>();
-	
-	
+	private static HashMap<String,ArrayList<Integer>> m_sequencesDATA = new HashMap<String,ArrayList<Integer>>();
 	private static ArrayList<String> m_sequencesID = new ArrayList<String>();
 	
-	private static Hashtable<String,Float> m_validnessOfSequences = new Hashtable<String,Float>();
+	// valideness
+	private static HashMap<String,Float> m_validnessOfSequences = new HashMap<String,Float>();
 	
 	/** The m_seqfilename. */
 	private static String m_seqfilename = "_sequences.javaData";
@@ -40,7 +35,7 @@ public class WebAccessSequences {
 	// FUNCTIONS
 	
 	public static boolean containsSession(String sessionIDstr){
-		if(m_sequences.containsKey(sessionIDstr)){
+		if(m_sequencesDATA.containsKey(sessionIDstr)){
 			return true;
 		} else {
 			return false;
@@ -48,22 +43,23 @@ public class WebAccessSequences {
 	}
 	
 	public static ArrayList<Integer> getSession(String sessionIDstr){
-		return m_sequences.get(sessionIDstr);
+		return m_sequencesDATA.get(sessionIDstr);
 	}
 	
 	public static void addSession(String sessionIDstr, ArrayList<Integer> sequence){
-		m_sequences.put(sessionIDstr, sequence);
+		m_sequencesDATA.put(sessionIDstr,sequence);
 		m_sequencesID.add(sessionIDstr);
 	}
 	
 	public static void setSession(String sessionIDstr, ArrayList<Integer> sequence){
-		m_sequences.put(sessionIDstr, sequence);
+		m_sequencesDATA.put(sessionIDstr, sequence);
 	}
 	
 	public static void putSession(String sessionIDstr, ArrayList<Integer> sequence){
-		m_sequences.put(sessionIDstr, sequence);
-		if(!m_sequences.containsKey(sessionIDstr)){
-			m_sequencesID.add(sessionIDstr);
+		if(m_sequencesDATA.containsKey(sessionIDstr)){
+			m_sequencesDATA.put(sessionIDstr, sequence);
+		} else {
+			WebAccessSequences.addSession(sessionIDstr,sequence);
 		}
 	}
 	
@@ -72,12 +68,12 @@ public class WebAccessSequences {
 	}
 	
 	public static void removeSession(String sessionIDstr){
-		m_sequences.remove(sessionIDstr);
+		m_sequencesDATA.remove(sessionIDstr);
 		m_sequencesID.remove(sessionIDstr);
 	}
 	
 	public static int getNumberOfSessions(){
-		return m_sequencesID.size();
+		return m_sequencesDATA.size();
 	}
 	
 	public static void putValidness(String sessionIDstr, float p){
@@ -114,7 +110,7 @@ public class WebAccessSequences {
 		try{
 			for(int i=0; i<keysOrd.size(); i++){
 				String sessionID = keysOrd.get(i);
-				ArrayList<Integer> sequence = WebAccessSequences.m_sequences.get(sessionID);
+				ArrayList<Integer> sequence = WebAccessSequences.m_sequencesDATA.get(sessionID);
 				writer.write(String.valueOf(sessionID)); // write the session identification
 				for(int j=0; j<sequence.size(); j++){
 					int urlindex = sequence.get(j);
@@ -213,7 +209,7 @@ public class WebAccessSequences {
 		ObjectOutputStream obj_out = null;
 		try{
 			obj_out = new ObjectOutputStream(f_out);
-			obj_out.writeObject( m_sequences );
+			obj_out.writeObject( m_sequencesDATA );
 		} catch (IOException ex){
 			System.err.println("[ehupatras.webrecommendation.structures.WebAccessSequences.saveSequences] " +
 					"Problems at writing the file: " + outfile);
@@ -295,7 +291,7 @@ public class WebAccessSequences {
 		ObjectInputStream ois = null;
 		try{
 			ois = new ObjectInputStream(fis);
-			m_sequences = (Hashtable<String,ArrayList<Integer>>)ois.readObject();
+			m_sequencesDATA = (HashMap<String,ArrayList<Integer>>)ois.readObject();
 		} catch(IOException ex){
 			System.err.println("[ehupatras.webrecommendation.structures.Website.loadObject] " +
 					"Problems at reading the file: " + outputfilename);
@@ -444,7 +440,7 @@ public class WebAccessSequences {
 		int mb = 1024*1024;
 		SaveLoadObjects slo = new SaveLoadObjects();
 		
-		int sizeInBytes1 = slo.getSize(m_sequences);
+		int sizeInBytes1 = slo.getSize(m_sequencesDATA);
 		int sizeInMegabytes1 = sizeInBytes1 / mb;
 		
 		int sizeInBytes2 = slo.getSize(m_sequencesID);
