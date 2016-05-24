@@ -24,7 +24,6 @@ public class A000MainClassPreprocess_10min2 {
 		Sessioning ses = new Sessioning();
 	
 		// create sessions
-		/*
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
 			// maximum period of inactivity 10 minutes
@@ -33,11 +32,9 @@ public class A000MainClassPreprocess_10min2 {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-		//WebAccess.writeFilteredLog(basedirectory + "/filteredLog3.log");
-		 */
+		WebAccess.writeFilteredLog(basedirectory + "/filteredLog3.log");
 
 		// join consecutive same URLs
-		/*
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start joining consecutive same URLs.");
 		ses.joinConsecutiveSameUrls();
@@ -45,7 +42,6 @@ public class A000MainClassPreprocess_10min2 {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 		//WebAccess.writeFilteredLog(basedirectory + "/filteredLog4.log");
-		*/
 		
 		// takeFirstUrlOfTimeZero
 			starttime = System.currentTimeMillis();
