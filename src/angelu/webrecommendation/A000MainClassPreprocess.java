@@ -18,7 +18,8 @@ public class A000MainClassPreprocess {
 	 */
 	public static void main(String[] args) {
 		
-		String[] args2 = {"20160502_experiments_BT/00_preprocess", "/logBT150000.txt", "/empty.txt", 
+		String wd = "20160525_experiments_BT";
+		String[] args2 = {wd+"/00_preprocess", "/logBT150000.txt", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				"xxx", "xxx",
 				"xxx", "xxx", "xxx", "xxx", "-", "1"};
@@ -54,7 +55,7 @@ public class A000MainClassPreprocess {
 		// start preprocessing
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] PREPROCESSING.");
-		
+		WebAccess.setnMemory(10); // 60MBytes * 20moduls = 1200Mbytes
 		
 		
 		// FILTER LOGS //
@@ -70,6 +71,9 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 
+		Website.save();
+		WebAccess.changeToOrderedRequests();
+			
 		// ensure a minimum amount of apparitions of URLs.
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start identifying frequent URLs.");
@@ -85,9 +89,6 @@ public class A000MainClassPreprocess {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
-
-		Website.save();
-		WebAccess.changeToOrderedRequests();
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
@@ -172,6 +173,7 @@ public class A000MainClassPreprocess {
 			
 		// write preprocessed logs
 		WebAccess.writeFilteredLog(basedirectory + "/filteredLog.log");
+		Website.writeWebsite(basedirectory + "/website.txt");
 		WebAccessSequences.writeSequencesIndex(basedirectory + "/sequences_requestIndexes.txt");
 		WebAccessSequencesUHC.writeSequencesInstanciated(basedirectory + "/sequences_urlIDurlRole.txt");
 	}

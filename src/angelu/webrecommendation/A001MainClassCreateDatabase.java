@@ -24,9 +24,10 @@ public class A001MainClassCreateDatabase {
 	 */
 	public static void main(String[] args) {
 		
-		String[] args2 = {"20160502_experiments_BT/00_preprocess", "xxx", "/empty.txt", 
+		String wd = "20160525_experiments_BT";
+		String[] args2 = {wd+"/00_preprocess", "xxx", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
-				"20160502_experiments_BT/01_databases", "xxx",
+				wd+"/01_databases", "xxx",
 				"xxx", "xxx", "xxx", "xxx", "-", "1"};
 		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
