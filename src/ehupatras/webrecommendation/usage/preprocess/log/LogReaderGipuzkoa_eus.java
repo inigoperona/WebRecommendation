@@ -134,8 +134,10 @@ public class LogReaderGipuzkoa_eus extends LogReader {
 				}
 				
 				// Create a request object
-				int ipid = m_ip2idHT.get(ip)*1000 + h;
-				Request req = new RequestGipuzkoa_eus(ip, ipid, 
+				String ipIDstr = String.valueOf(m_ip2idHT.get(ip));
+				String logIDstr = String.format("%04d", h); 
+				String userIDstr = ipIDstr + logIDstr;  
+				Request req = new RequestGipuzkoa_eus(ip, userIDstr, 
 						time, method, page, protocol, status, 
 						reqsize, reference, useragent,
 						h);

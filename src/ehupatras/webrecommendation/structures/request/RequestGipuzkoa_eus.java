@@ -31,11 +31,11 @@ public class RequestGipuzkoa_eus
 	 * @param reference the reference
 	 * @param useragent the useragent
 	 */
-	public RequestGipuzkoa_eus(String ip, int ipID, String time, 
+	public RequestGipuzkoa_eus(String ip, String ipIDstr, String time, 
 			String method, Page page, String protocol,
 			int status, String reqsize, String reference, String useragent,
 			int logfilenumber){
-		super(ip, ipID, time, method, page, protocol, status, reqsize, reference, useragent, logfilenumber);
+		super(ip, ipIDstr, time, method, page, protocol, status, reqsize, reference, useragent, logfilenumber);
 	}
 	
 	

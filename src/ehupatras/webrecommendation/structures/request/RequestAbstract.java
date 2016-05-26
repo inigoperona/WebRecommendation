@@ -23,7 +23,7 @@ public abstract class RequestAbstract
 	private String m_ip = "-";
 	
 	/** The m_user id. */
-	private int m_userID = -1;
+	private String m_userID = null;
 	// other log information
 	/** The m_time. */
 	protected Calendar m_time = null;
@@ -96,14 +96,14 @@ public abstract class RequestAbstract
 	 * @param reference the reference
 	 * @param useragent the useragent
 	 */
-	public RequestAbstract(String ip, int ipID, String time, 
+	public RequestAbstract(String ip, String ipIDstr, String time, 
 			String method, Page page, String protocol,
 			int status, String reqsize, String reference, String useragent,
 			int logfilenumber){
 		
 		// IP address
 		m_ip = ip;
-		m_userID = ipID;
+		m_userID = ipIDstr;
 		
 		// time: convert the time to Calendar object and save
 		m_time = this.getTime(time);
@@ -290,7 +290,7 @@ public abstract class RequestAbstract
 	/* (non-Javadoc)
 	 * @see ehupatras.webrecommendation.structures.request.Request#getUserID()
 	 */
-	public int getUserID(){
+	public String getUserID(){
 		return m_userID;
 	}
 	

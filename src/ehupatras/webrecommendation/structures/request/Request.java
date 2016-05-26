@@ -11,7 +11,7 @@ public interface Request {
 	 *
 	 * @return the user id
 	 */
-	public int getUserID();
+	public String getUserID();
 	
 	/**
 	 * Gets the session id.
