@@ -49,9 +49,9 @@ public class DistanceMatrixNcdBzip2 extends Matrix {
 		
 		// initialize the matrix
 		if(!isplit){
-			m_matrix = new MatrixStructure(data.size(), workdirectory);
+			m_matrix = new MatrixStructure(false, data.size(), workdirectory);
 		} else {
-			m_matrixSplit = new MatrixStructure(data.size(), workdirectory);
+			m_matrixSplit = new MatrixStructure(false, data.size(), workdirectory);
 		}
 		
 		// fill the distance matrix
@@ -111,6 +111,13 @@ public class DistanceMatrixNcdBzip2 extends Matrix {
 			intAre[i] = m_dict.get(intA[i]);
 		}
 		return intAre;
+	}
+	
+	public void computeMatrix2(ArrayList<String[]> data,
+			float[][] roleWeights,
+			boolean isplit,
+			String workdirectory){
+		
 	}
 	
 }

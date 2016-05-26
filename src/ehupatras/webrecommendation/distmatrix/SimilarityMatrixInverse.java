@@ -29,9 +29,9 @@ public class SimilarityMatrixInverse
 						boolean isplit,
 						String workdirectory){
 		if(!isplit){
-			m_matrix = new MatrixStructure(data.size(), workdirectory);
+			m_matrix = new MatrixStructure(false, data.size(), workdirectory);
 		} else {
-			m_matrixSplit = new MatrixStructure(data.size(), workdirectory);
+			m_matrixSplit = new MatrixStructure(false, data.size(), workdirectory);
 		}
 		
 		float[][] simmatrix = new float[data.size()][data.size()];
@@ -74,4 +74,11 @@ public class SimilarityMatrixInverse
 		}
 	}
 	
+	
+	public void computeMatrix2(ArrayList<String[]> data,
+			float[][] roleWeights,
+			boolean isplit,
+			String workdirectory){
+		
+	}
 }

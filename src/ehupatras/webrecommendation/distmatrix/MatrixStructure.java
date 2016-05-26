@@ -16,6 +16,9 @@ public class MatrixStructure implements Serializable {
 	protected ArrayList<float[]> m_maAL = null;
 	protected int m_length = -1;
 	
+	// distance matrix in verctor
+	protected float[] m_maArray = null;
+	
 	// distance matrix in memory
 	private float[][] m_maA2 = null;
 	private ArrayList<Integer> m_indexesA2 = null;
@@ -34,11 +37,21 @@ public class MatrixStructure implements Serializable {
 	private static ArrayList<Integer> m_actualloadedmodulusS = null;
 
 	
-	public MatrixStructure(int size, String workdirectory){
-		m_length = size;
-		m_maAL = new ArrayList<float[]>();
-		m_workdir = workdirectory;
-		this.initmodulus();
+	public MatrixStructure(boolean createVectorMatrix, int size, String workdirectory){
+		if(!createVectorMatrix){
+			m_length = size;
+			m_maAL = new ArrayList<float[]>();
+			m_workdir = workdirectory;
+			this.initmodulus();
+		} else {
+			m_length = size;
+			m_workdir = workdirectory;
+			
+			// initialize the vector matrix
+			float vectorLen = (float)(size+1)*((float)size/2f);
+			int vectorLenInt = Math.round(vectorLen);
+			m_maArray = new float[vectorLenInt];
+		}
 	}
 	
 	public MatrixStructure(float[][] fmatrix, String workdirectory){
