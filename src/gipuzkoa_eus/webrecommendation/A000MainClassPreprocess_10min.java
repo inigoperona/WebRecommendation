@@ -234,8 +234,8 @@ public class A000MainClassPreprocess_10min {
 		//String basedirectory = "/home/disk/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
 		//String logfilesIndex = "/loglist.txt";
 
-		//basedirectory = args[0];
-		//logfilesIndex = args[1];
+		basedirectory = args[0];
+		logfilesIndex = args[1];
 		
 		// initialize the data structure
 		WebAccess.setWorkDirectory(basedirectory);
