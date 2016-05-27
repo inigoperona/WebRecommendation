@@ -496,7 +496,7 @@ public class ClusteringPAM {
 				{1,2,3,0,1},
 				{1,2,3,4,0}
 		};
-		MatrixStructure ms = new MatrixStructure(dm0, "01_distancematrix/DM_ED");
+		MatrixStructure ms = new MatrixStructure(false, dm0, "01_distancematrix/DM_ED");
 		
 		// medoids
 		ArrayList<Integer> meds = new ArrayList<Integer>();

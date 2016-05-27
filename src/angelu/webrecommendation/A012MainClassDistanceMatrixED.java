@@ -61,7 +61,7 @@ public class A012MainClassDistanceMatrixED {
 			float[][] roleWeights){
 		m_matrix = new DistanceMatrixEdit(sampleSessionIDs);
 		m_matrix.computeMatrix(sequencesUHC, roleWeights, false, databaseWD);
-		m_matrix.computeMatrix2(sequencesUHC, roleWeights, false, databaseWD);
+		//m_matrix.computeMatrix2(sequencesUHC, roleWeights, false, databaseWD);
 		m_matrix.writeMatrix(m_matrix.getMatrix(false),
 				databaseWD + "/distance_matrix.txt");
 		m_matrix.save(databaseWD);
