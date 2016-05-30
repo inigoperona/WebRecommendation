@@ -28,7 +28,7 @@ public class A012MainClassDistanceMatrixED {
 				wd+"/01_databases", "/DM_ED",
 				"xxx", "xxx", "xxx", "xxx", "-", "1"};
 		
-		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args2);
+		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();

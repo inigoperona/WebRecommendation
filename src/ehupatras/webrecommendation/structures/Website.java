@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.ArrayList;
@@ -131,6 +132,7 @@ public class Website {
 						break;
 					}
 				}
+				
 				orderedIndexesAL.add(j,i);
 			}
 			

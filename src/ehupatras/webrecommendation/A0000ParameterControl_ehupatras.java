@@ -239,7 +239,9 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	 */
 	public void createDM(String strategyNormalize, float[][] rolesW, 
 			String dmWD, int[] sessionBreakers){
-		this.loadDatabase();
+		if(m_sequencesUHC==null){
+			this.loadDatabase();
+		}
 		dmWD = dmWD.equals("-") ? m_dmWD : dmWD;
 		if(strategyNormalize.equals("SimilarityMatrixAsDataMatrix")){
 			A010MainClassDistanceMatrixLGEuclidean dm = new A010MainClassDistanceMatrixLGEuclidean();

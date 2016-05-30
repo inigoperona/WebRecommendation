@@ -72,10 +72,10 @@ public class A0000ParameterControl_angelu {
 	protected String m_dmWD;
 	
 	/** The m_sample session i ds. */
-	protected ArrayList<String> m_sampleSessionIDs;
+	protected ArrayList<String> m_sampleSessionIDs = null;
 	
 	/** The m_sequences uhc. */
-	protected ArrayList<String[]> m_sequencesUHC;
+	protected ArrayList<String[]> m_sequencesUHC = null;
 	
 	/** The m_matrix. */
 	protected Matrix m_matrix;
@@ -411,9 +411,13 @@ public class A0000ParameterControl_angelu {
 				// sequence
 				String[] seqA = new String[seqlen]; 
 				for(int i=1; i<sequenceA.length; i++){
-					int urlInt = Integer.valueOf(sequenceA[i]).intValue();
-					String urlstr = urlInt + "C";
-					seqA[i-1] = urlstr;
+					String urlIDstr = sequenceA[i];
+					int urlInt = -1;
+					try {
+						urlInt = Integer.valueOf(urlIDstr).intValue();
+						urlIDstr = urlInt + "C";
+					} catch(NumberFormatException ex){}
+					seqA[i-1] = urlIDstr;
 				}
 				
 				// add the sequence
