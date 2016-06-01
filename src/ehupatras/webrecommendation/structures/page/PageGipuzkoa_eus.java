@@ -64,9 +64,11 @@ public class PageGipuzkoa_eus
 			!urlname3.contains(".doc") &&
 			!urlname3.contains(".xml") &&
 			!urlname3.contains(".do") ||
-			(urlname2.contains("/correow/") ||
+			
+			urlname3.contains(".gif") ||
+			urlname2.contains("/correow/") ||
 		    urlname2.contains("/wposta/") ||
-		    urlname2.contains("/piwik/"))){
+		    urlname2.contains("/piwik/")){
 			m_isvalid = false;
 		}
 		

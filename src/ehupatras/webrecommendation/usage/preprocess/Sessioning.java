@@ -722,43 +722,65 @@ public class Sessioning {
 		for(int l=0; l<keys.size(); l++){
 			String sessionID = keys.get(l);
 			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
+			if(sequence==null){ continue; }
 			ArrayList<Integer> sequence2 = new ArrayList<Integer>();
-			int firstreq = -1;
-			float lastET = -1;
+			int firstreq = -3;
+			float lastET = -3;
+			
+			//System.out.print("seq1");
 			for(int i=0; i<sequence.size(); i++){
 				int reqi = sequence.get(i);
 				float elaptime = req2et.get(reqi);
-				if(elaptime>=0){
-					if(elaptime<=0f){
-						if(firstreq==-1){
+				//System.out.print("," + reqi + "(" + elaptime + ")");
+				
+				if(elaptime>=-1){
+					if(elaptime==0f){
+						lastET = -3;
+						if(firstreq==-3){
 							firstreq = reqi;
-							lastET = -1;
 						}
 					} else {
 						lastET = elaptime;
-						if(firstreq==-1){
+						if(firstreq==-3){
 							firstreq = reqi;
 						}
 					}
-				} else {
-					firstreq = -1;
-					lastET = -1;
-					continue;
 				}
 				
 				// add to the sequence
-				if(lastET!=-1 || i==sequence.size()-1){
+				if(		lastET>=-1 || 
+						i==sequence.size()-1 || 
+						elaptime<=-2){
+					if(firstreq==-3){ // nothing to store
+						firstreq = -3;
+						lastET = -3;
+						continue;
+					}
 					sequence2.add(firstreq);
 					//reqIndDB.add(firstreq);
+					if(lastET==-3){
+						lastET=0;
+					}
 					elapTimeDB.add(lastET);
 					reqIndDBht.put(firstreq, addcounter);
 					addcounter++;
-					firstreq = -1;
-					lastET = -1;
+					firstreq = -3;
+					lastET = -3;
 				} else {
 					removecounter++;
 				}
 			}
+			/*
+			System.out.println();
+			System.out.print("seq2");
+			for(int kk=0; kk<sequence2.size(); kk++){
+				int reqi = sequence2.get(kk);
+				int ind = reqIndDBht.get(reqi);
+				float elaptime = elapTimeDB.get(ind);
+				System.out.print("," + reqi + "(" + elaptime + ")");
+			}
+			System.out.println();
+			*/
 			WebAccessSequences.setSession(sessionID, sequence2);
 		}
 		System.out.println("  " + removecounter + " requests were removed.");
@@ -775,9 +797,14 @@ public class Sessioning {
 			if(ind!=-1){
 				elapt = elapTimeDB.get(ind);
 			}
+			
+			// update elapsed time
 			Request req = WebAccess.getRequest(reqInd);
-			req.setElapsedTime(elapt);
-			WebAccess.replaceRequest(reqInd, req);
+			float elapt0 = req.getElapsedTime();
+			if(elapt0!=-2){
+				req.setElapsedTime(elapt);
+				WebAccess.replaceRequest(reqInd, req);
+			}
 		}
 		long time2 = System.currentTimeMillis();
 		System.out.println("  [" + time2 + "] end updating elapsed times.");

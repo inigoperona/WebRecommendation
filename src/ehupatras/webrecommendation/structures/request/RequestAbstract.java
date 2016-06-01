@@ -258,16 +258,16 @@ public abstract class RequestAbstract
 			Page page = Website.getPage(m_formatedURLname);
 			m_isvalidLP = m_isvalid &&
 					  !m_isbot &&
-					  m_elapsedtime>=0 &&
+					  m_elapsedtime>=-1 &&
 					  page.getIsSuitableToLinkPrediction();
-			return m_isvalidLP;
 		} else {
-			if(suit==0){
-				return false;
-			} else {
-				return true;
-			}
+			boolean isValidURL = suit==1 ? true : false;
+			m_isvalidLP = m_isvalid &&
+					  !m_isbot &&
+					  m_elapsedtime>=-1 &&
+					  isValidURL;
 		}
+		return m_isvalidLP;
 	}
 	
 	
