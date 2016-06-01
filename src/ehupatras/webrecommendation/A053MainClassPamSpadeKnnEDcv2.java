@@ -1,14 +1,14 @@
 package ehupatras.webrecommendation;
 
-public class A054MainClassHclustSpadeStcv {
+public class A053MainClassPamSpadeKnnEDcv2 {
 
 	public static void main(String[] args) {
 		
-		String wd = "20160525_experiments_BT";
-		String[] args2 = {wd+"/00_preprocess", "xxx", "/empty.txt", 
+		String wd = "20160530_experiments_BT_sekuentzietatik";
+		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole2.txt", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
-				wd+"/01_databases", "/DM_LG",
-				wd+"/02_validation", "/hclust_DM_LG", "/hclust_DM_LG/spade", "/hclust_spade_st_eval.txt", "-", "1"};
+				wd+"/01_databases", "/DM_ED",
+				wd+"/02_validation", "/pam_DM_ED", "/pam_DM_ED/spade1", "/pam_spade1_knnED_eval.txt", "-", "1"};
 		
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
 		
@@ -16,11 +16,11 @@ public class A054MainClassHclustSpadeStcv {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase();
+		param.loadDatabase2();
 		param.loadDM();
 		param.loadCrossValidation();
-		param.createModelEvaluatorSeqMinSPADE();
-		param.runModelEvaluatorHclustSpadeST(5, "ST_w_eS1");
+		param.createModelEvaluatorMedoids();
+		param.runModelEvaluatorM_pam();
 				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

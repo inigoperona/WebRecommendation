@@ -38,9 +38,9 @@ public class DistanceMatrixEditTopics
 							boolean isplit,
 							String workdirectory){
 		if(!isplit){
-			m_matrix = new MatrixStructure(data.size(), workdirectory);
+			m_matrix = new MatrixStructure(false, data.size(), workdirectory);
 		} else {
-			m_matrixSplit = new MatrixStructure(data.size(), workdirectory);
+			m_matrixSplit = new MatrixStructure(false, data.size(), workdirectory);
 		}
 		// create the similarity matrix
 		for(int i=0; i<data.size(); i++){

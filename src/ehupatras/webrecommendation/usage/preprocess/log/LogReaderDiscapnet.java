@@ -103,7 +103,10 @@ public class LogReaderDiscapnet extends LogReader {
 				
 			
 				// Create a request object
-				Request req = new RequestDiscapnet(ip, m_ip2idHT.get(ip), time, 
+				String ipIDstr = String.valueOf(m_ip2idHT.get(ip));
+				String logIDstr = String.format("%04d", h); 
+				String userIDstr = ipIDstr + logIDstr;
+				Request req = new RequestDiscapnet(ip, userIDstr, time, 
 						method, page, "-", statuscode, 
 						reqsize, reference, useragent,
 						h);

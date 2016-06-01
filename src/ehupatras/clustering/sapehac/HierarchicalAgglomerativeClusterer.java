@@ -252,7 +252,7 @@ public final class HierarchicalAgglomerativeClusterer {
     private MatrixStructure computeDissimilarityMatrix2() {
     	String foldername = "hclust_tmp_folder";
     	this.createFolder(foldername);
-        final MatrixStructure dissimilarityMatrix = new MatrixStructure(experiment.getNumberOfObservations(),foldername);
+        final MatrixStructure dissimilarityMatrix = new MatrixStructure(false, experiment.getNumberOfObservations(),foldername);
         // fill rest (only compute half, then mirror accross diagonal, assuming
         // a symmetric dissimilarity measure)
         for (int o1 = 0; o1<dissimilarityMatrix.getLength(); o1++) {

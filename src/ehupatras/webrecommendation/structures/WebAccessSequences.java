@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import ehupatras.webrecommendation.utils.SaveLoadObjects;
@@ -20,7 +20,7 @@ public class WebAccessSequences {
 	// sessionID1: req1, req2, req3
 	/** The m_sequences. */
 	private static HashMap<String,ArrayList<Integer>> m_sequencesDATA = new HashMap<String,ArrayList<Integer>>();
-	private static ArrayList<String> m_sequencesID = new ArrayList<String>();
+	protected static ArrayList<String> m_sequencesID = new ArrayList<String>();
 	
 	// valideness
 	private static HashMap<String,Float> m_validnessOfSequences = new HashMap<String,Float>();
@@ -409,25 +409,33 @@ public class WebAccessSequences {
 	
 	
 	public static int[] sesIDs2reqIndexList(ArrayList<String> sesIDs){
-		System.out.println("  [" + System.currentTimeMillis() + "] Take all valid request indexes.");
+		System.out.println("  [" + System.currentTimeMillis() + "] Take all valid request indexes and sort.");
 		ArrayList<Integer> reqindexes = new ArrayList<Integer>();
 
 		for(int i=0; i<sesIDs.size(); i++){
 			String sessionID = sesIDs.get(i);
+
 			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
 			if(sequence!=null){
 				for(int j=0; j<sequence.size(); j++){
-					reqindexes.add(sequence.get(j));
+					int reqID = sequence.get(j);
+				
+					int pos = Collections.binarySearch(reqindexes, reqID);
+					if(pos<0){
+						pos = Math.abs(pos+1);
+					} else {
+						pos++;
+					}
+			
+					reqindexes.add(pos, reqID);
 				}
 			}
 		}
-		System.out.println("  [" + System.currentTimeMillis() + "]   and sort these indexes.");
+		
 		int[] reqindexesA = new int[reqindexes.size()];
 		for(int i=0; i<reqindexes.size(); i++){
 			reqindexesA[i] = reqindexes.get(i);
 		}
-		Arrays.sort(reqindexesA);
-		
 		return reqindexesA;
 	}
 

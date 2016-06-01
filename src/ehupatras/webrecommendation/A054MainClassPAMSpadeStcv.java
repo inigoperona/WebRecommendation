@@ -4,10 +4,11 @@ public class A054MainClassPAMSpadeStcv {
 
 	public static void main(String[] args) {
 		
-		String[] args2 = {"20160502_experiments_BT/00_preprocess", "xxx", "/empty.txt", 
+		String wd = "20160525_experiments_BT";
+		String[] args2 = {wd+"/00_preprocess", "xxx", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
-				"20160502_experiments_BT/01_databases", "/DM_ED",
-				"20160502_experiments_BT/03_validation", "/03_pam_DM_ED", "/03_pam_DM_ED/spade", "pam_spade_st_eval.txt", "-", "1"};
+				wd+"/01_databases", "/DM_ED",
+				wd+"/02_validation", "/pam_DM_ED", "/pam_DM_ED/spade", "/pam_spade_st_eval.txt", "-", "1"};
 		
 		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
 		

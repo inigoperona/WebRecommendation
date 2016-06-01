@@ -18,8 +18,6 @@ public class Sessioning {
 	/** The m_max lenght of the sequence. */
 	private int m_maxLenghtOfTheSequence = 200;
 	
-	
-	
 	// expireSessionsInMin: We suppose after this time that a new session starts.
 	// expireSessionsInMin: We split up sequences in two sessions when we see this jump of time between clicks.
 	/**
@@ -33,8 +31,8 @@ public class Sessioning {
 		
 		long expiredTimeInSeconds = expireSessionsInMin*60;
 		//Map<Integer, Object[]> oldrequests = Collections.synchronizedMap(new LinkedHashMap<Integer, Object[]>());
-		Hashtable<Integer,Object[]> oldrequests = new Hashtable<Integer,Object[]>();
-		ArrayList<Integer> usersIDsAL = new ArrayList<Integer>();
+		Hashtable<String,Object[]> oldrequests = new Hashtable<String,Object[]>();
+		ArrayList<String> usersIDsAL = new ArrayList<String>();
 		
 		
 		// for each request
@@ -65,14 +63,14 @@ public class Sessioning {
 			
 			// get the request features
 			Request actualreq = WebAccess.getRequest(i);
-			int actualuser = actualreq.getUserID(); // IP identifier
+			String actualuserStr = actualreq.getUserID(); // IP identifier
 			long actualtime = actualreq.getTimeInMillis();
 			int actualLogFileNumb = actualreq.getLogFileNumber(); // log number
 			
 			// whether the user already has appeared or not 
-			if(oldrequests.containsKey(actualuser)){
+			if(oldrequests.containsKey(actualuserStr)){
 				// get the previous request's features
-				Object[] objA = oldrequests.get(actualuser);
+				Object[] objA = oldrequests.get(actualuserStr);
 				int oldsessioni = ((Integer)objA[0]).intValue();
 				long oldtime = ((Long)objA[1]).longValue();
 				int oldindex = ((Integer)objA[2]).intValue();
@@ -93,31 +91,31 @@ public class Sessioning {
 					nreq++;
 					
 					// we now know the elapsed time, so, update the old request
-					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni, false);
+					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuserStr, oldsessioni, false);
 					
 					// update the user with the actual request information
 					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, sum, nreq, oldLogFileNumb, true);
-					oldrequests.put(actualuser, objAr);
+					oldrequests.put(actualuserStr, objAr);
 				} else {
 					// this requests is first of the next session
 					// update the last request of the previous session
 					float oldelapssedtime = nreq==1 ? -1f : sum/(float)(nreq-1);
-					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuser, oldsessioni, true);
+					this.updateTheOldRequest(oldindex, oldelapssedtime, actualuserStr, oldsessioni, true);
 					
 					// now start a new session to the user
 					oldsessioni++;
 					Object[] objAr = this.createOldRequestsObj(oldsessioni, actualtime, i, 0.0f, 1, actualLogFileNumb, true);
-					oldrequests.put(actualuser, objAr);
+					oldrequests.put(actualuserStr, objAr);
 				}
 			} else { // the first occurrence of the user
 				// start the first session
 				Object[] objAr = this.createOldRequestsObj(1, actualtime, i, 0.0f, 1, actualLogFileNumb, true);
-				oldrequests.put(actualuser, objAr);
+				oldrequests.put(actualuserStr, objAr);
 			}
 			
 			// keep isOpened users
-			if(!usersIDsAL.contains(actualuser)){
-				usersIDsAL.add(actualuser);
+			if(!usersIDsAL.contains(actualuserStr)){
+				usersIDsAL.add(actualuserStr);
 			}
 			
 			// check all oldrequests if the sessions are closed
@@ -130,8 +128,8 @@ public class Sessioning {
 				// close the sessions
 				for(int j=0; j<usersIDsAL.size(); j++){
 					// get the user and its last request's features
-					int userid = usersIDsAL.get(j);
-					Object[] objA = oldrequests.get(userid);
+					String useridstr = usersIDsAL.get(j);
+					Object[] objA = oldrequests.get(useridstr);
 					int oldsessioni = ((Integer)objA[0]).intValue();
 					long oldtime = ((Long)objA[1]).longValue();
 					int oldindex = ((Integer)objA[2]).intValue();
@@ -146,12 +144,12 @@ public class Sessioning {
 						if( diffInSeconds>expiredTimeInSeconds ){
 							// close the session in the DB
 							float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
-							this.updateTheOldRequest(oldindex, oldelapssedtime, userid, oldsessioni, true);
+							this.updateTheOldRequest(oldindex, oldelapssedtime, useridstr, oldsessioni, true);
 							
 							// close the session in oldrequests
 							Object[] objAr = this.createOldRequestsObj(oldsessioni, oldtime, oldindex, sum, nreq, oldLogFileNumb, false);
-							oldrequests.put(userid, objAr);
-							int rmind = usersIDsAL.indexOf(userid);
+							oldrequests.put(useridstr, objAr);
+							int rmind = usersIDsAL.indexOf(useridstr);
 							usersIDsAL.remove(rmind);
 						}
 					}
@@ -175,8 +173,8 @@ public class Sessioning {
 			}
 			
 			// get the user and its last request's features
-			int userid = usersIDsAL.get(i);
-			Object[] objA = oldrequests.get(userid);
+			String useridstr = usersIDsAL.get(i);
+			Object[] objA = oldrequests.get(useridstr);
 			int oldsessioni = ((Integer)objA[0]).intValue();
 			long oldtime = ((Long)objA[1]).longValue();
 			int oldindex = ((Integer)objA[2]).intValue();
@@ -188,7 +186,7 @@ public class Sessioning {
 			if(oldIsOpened){
 				// update the request registry
 				float oldelapssedtime = nreq==1 ? -1 : sum/(float)(nreq-1);
-				this.updateTheOldRequest(oldindex, oldelapssedtime, userid, oldsessioni, true);
+				this.updateTheOldRequest(oldindex, oldelapssedtime, useridstr, oldsessioni, true);
 			}
 		}
 	}
@@ -203,12 +201,11 @@ public class Sessioning {
 	 */
 	private void updateTheOldRequest(
 			int oldindex, float oldelapssedtime, 
-			int actualuser, int oldsessioni,
+			String actualuserStr, int oldsessioni,
 			boolean isTheEndOfTheSession){
 		Request oldreq = WebAccess.getRequest(oldindex);
 		oldreq.setElapsedTime(oldelapssedtime);
 		// compute the sessionID and update
-		String actualuserStr = String.valueOf(actualuser);
 		String oldsessioniStr = String.format("%04d", oldsessioni);
 		String oldsessionIDStr = actualuserStr + oldsessioniStr;
 		//long oldsessionint = (long)actualuser*10000l+(long)oldsessioni; // create the sessions ID

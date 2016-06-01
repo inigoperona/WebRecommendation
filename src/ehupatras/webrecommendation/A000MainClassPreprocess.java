@@ -48,7 +48,7 @@ public class A000MainClassPreprocess {
 		// start preprocessing
 		starttime = System.currentTimeMillis();
 		System.out.println("[" + starttime + "] PREPROCESSING.");
-		
+		WebAccess.setnMemory(10); // 60MBytes * 20moduls = 1200Mbytes
 		
 		
 		// FILTER LOGS //
@@ -64,6 +64,9 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 
+		Website.save();
+		WebAccess.changeToOrderedRequests();
+			
 		// ensure a minimum amount of apparitions of URLs.
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start identifying frequent URLs.");
@@ -80,8 +83,6 @@ public class A000MainClassPreprocess {
 			System.out.println("[" + endtime + "] End. Elapsed time: " 
 				+ (endtime-starttime)/1000 + " seconds.");
 		
-		Website.save();
-		WebAccess.changeToOrderedRequests();
 
 		
 		// SESSIONING //
