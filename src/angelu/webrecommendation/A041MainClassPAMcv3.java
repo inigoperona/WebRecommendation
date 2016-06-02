@@ -1,16 +1,16 @@
-package ehupatras.webrecommendation;
+package angelu.webrecommendation;
 
-public class A030MainClassMarkovChaincv3 {
+public class A041MainClassPAMcv3 {
 
 	public static void main(String[] args) {
 		
-		String wd = "20160531_experiments_fromOldDB";
-		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole.txt", "/empty.txt", 
+		String wd = "20160530_experiments_BT_sekuentzietatik";
+		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole2.txt", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				wd+"/01_databases", "/DM_ED",
-				wd+"/02_validation", "/00_mc", "xxx", "/eval.txt", "-", "1"};
+				wd+"/02_validation", "/pam_DM_ED", "xxx", "/eval.txt", "-", "1"};
 		
-		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
+		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -19,8 +19,8 @@ public class A030MainClassMarkovChaincv3 {
 		param.loadDatabase2(false);
 		param.loadDM(true);
 		param.loadCrossValidation();
-		param.createModelEvaluatorMarkovChain();
-		param.runModelEvaluatorMC();
+		param.createModelEvaluatorClustPAM();
+		param.runModelEvaluatorP();
 		
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

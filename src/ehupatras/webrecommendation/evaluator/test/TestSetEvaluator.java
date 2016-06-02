@@ -464,7 +464,6 @@ public abstract class TestSetEvaluator {
 		for(int i=0; i<m_sequences.size(); i++){
 			String[] seq = m_sequences.get(i);
 			
-			
 			// select the model
 			SequenceEvaluator seqEv = this.getSequenceEvaluator(seq);
 			
