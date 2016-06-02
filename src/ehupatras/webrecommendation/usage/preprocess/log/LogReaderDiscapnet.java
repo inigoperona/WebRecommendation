@@ -112,7 +112,7 @@ public class LogReaderDiscapnet extends LogReader {
 						h);
 				
 				// if it is valid request, store it
-				if(req.getIsValid()){
+				if(req.getIsValid() && page.getIsValid()){
 					// Store the page
 					Website.storeURL(page);
 					// save the valid requests

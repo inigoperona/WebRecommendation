@@ -447,7 +447,6 @@ public class Sessioning {
 		// to measure the proportion of valid URLs in a session
 		// [0]: No. valid clicks; [1]: Original length of the sequence;
 		HashMap<String,Object[]> sequencesDATA = new HashMap<String,Object[]>();
-		ArrayList<String> sequencesID = new ArrayList<String>();
 		
 		int sequencecounter = 0;
 		// for each request
@@ -480,86 +479,37 @@ public class Sessioning {
 			int len = 0;
 			ArrayList<Integer> sequence = null;
 			
-			// whether the session is already recorded
-			if( sequencesDATA.containsKey(sessionID) ){
-				// if the request is valid then take for the sequence
-				if(	isSuitableForLinkPrediction ){
+			// if the request is valid then take for the sequence
+			if(	isSuitableForLinkPrediction ){
+				// whether the session is already recorded
+				if( sequencesDATA.containsKey(sessionID) ){
 					Object[] sequenceObjA = sequencesDATA.get(sessionID);
 					sequence = (ArrayList<Integer>)sequenceObjA[0];
 					nvalid = (int)sequenceObjA[1];
 					len = (int)sequenceObjA[2];
-					
-					if(sequence!=null){
-						sequence.add(i);
-					} else {
-						sequence = new ArrayList<Integer>();
-						sequence.add(i);
-						sequencecounter++;
-					}
+					sequence.add(i);
 					nvalid++;
-				}
-			} else {
-				//sequencesID.add(sessionID);
-				if(	isSuitableForLinkPrediction ){
+				} else {
 					sequence = new ArrayList<Integer>();
 					sequence.add(i);
 					sequencecounter++;
 					nvalid++;
 				} 
-			}
-			len++;
-			Object[] newObjA = new Object[4];
-			newObjA[0] = sequence;
-			newObjA[1] = nvalid;
-			newObjA[2] = len;
-			newObjA[3] = isTheEndOfTheSession;
-			sequencesDATA.put(sessionID, newObjA);
+				len++;
+				Object[] newObjA = new Object[4];
+				newObjA[0] = sequence;
+				newObjA[1] = nvalid;
+				newObjA[2] = len;
+				newObjA[3] = isTheEndOfTheSession;
+				sequencesDATA.put(sessionID, newObjA);
 			
-			if(isTheEndOfTheSession){
-				WebAccessSequences.addSession(sessionID, sequence);
-				float prob = (float)nvalid/(float)len;
-				WebAccessSequences.putValidness(sessionID, prob);
-				sequencesDATA.remove(sessionID);
-			}
-			
-			// the sessions that are generated, store in the database
-			/*
-			if(i%1000==0){
-				int n = sequencesID.size();
-				for(int j=0; j<n;){
-					String sesID = sequencesID.get(j);
-					Object[] objA = sequencesDATA.get(sesID);
-					Object obj0 = objA[0];
-					ArrayList<Integer> sequence2 = null;
-					if(obj0!=null){
-						sequence2 = (ArrayList<Integer>)objA[0];
-					}
-					int nvalid2 = (int)objA[1];
-					int len2 = (int)objA[2];
-					boolean isTheEndOfTheSession2 = (boolean)objA[3];
-					
-					if(sequence2==null){
-						sequencesDATA.remove(sesID);
-						sequencesID.remove(j);
-						n--;
-						continue;
-					} else {
-						if(isTheEndOfTheSession2){
-							WebAccessSequences.addSession(sesID, sequence2);
-							float prob = (float)nvalid2/(float)len2;
-							WebAccessSequences.putValidness(sesID, prob);
-							sequencesDATA.remove(sesID);
-							sequencesID.remove(j);
-							n--;
-							continue;
-						} else {
-							j++;
-							break;
-						}
-					}
+				if(isTheEndOfTheSession){
+					WebAccessSequences.addSession(sessionID, sequence);
+					float prob = (float)nvalid/(float)len;
+					WebAccessSequences.putValidness(sessionID, prob);
+					sequencesDATA.remove(sessionID);
 				}
 			}
-			*/
 		}
 		System.out.println("  [" + System.currentTimeMillis() + "] " + sequencecounter + " sequences created.");
 		
@@ -719,7 +669,9 @@ public class Sessioning {
 		for(int l=0; l<keys.size(); l++){
 			String sessionID = keys.get(l);
 			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
-			if(sequence==null){ continue; }
+			if(sequence==null){ 
+				System.out.println("kk"); 
+			}
 			ArrayList<Integer> sequence2 = new ArrayList<Integer>();
 			int firstreq = -3;
 			float lastET = -3;

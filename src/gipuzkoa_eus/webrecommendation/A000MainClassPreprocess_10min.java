@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
-import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 import ehupatras.webrecommendation.usage.preprocess.Sessioning;
 import ehupatras.webrecommendation.usage.preprocess.log.LogReader;
@@ -223,29 +222,12 @@ public class A000MainClassPreprocess_10min {
 	 */
 	public static void main(String[] args) {
 		// Parameter control
-		//String basedirectory = "/home/burdinadar/eclipse_workdirectory/DATA/all_esperimentation";
-		//String basedirectory = "experiments_gieus/00_preprocess";
-		//String logfilesIndex = "/loglist2.txt";
-
-		String basedirectory = "/home/ainhoa/workspace_WebRecommendation";
-
-	      //String basedirectory = "/media/aldapa/datos/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
-		//String basedirectory = "/media/aldapa/datos/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
-
-		//String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
-		//String logfilesIndex = "/loglist3.txt";
-		//String basedirectory = "/home/disk/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
-
-		//String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
-		//String logfilesIndex = "/loglist3.txt";
-		//String basedirectory = "/home/disk/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
-	//	String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
+		//String basedirectory = "/home/ainhoa/workspace_WebRecommendation";
+		String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
 		String logfilesIndex = "/loglist.txt";
-       // String basedirectory = "/home/disk/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
-		//String logfilesIndex = "/loglist.txt";
 
-		//basedirectory = args[0];
-		//logfilesIndex = args[1];
+		basedirectory = args[0];
+		logfilesIndex = args[1];
 		
 		// initialize the data structure
 		WebAccess.setWorkDirectory(basedirectory);
