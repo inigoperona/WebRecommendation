@@ -19,7 +19,7 @@ public class A053MainClassPamSpadeKnnEDcv {
 
 			// RUN
 			param.loadDatabase();
-			param.loadDM();
+			param.loadDM(false);
 			param.loadCrossValidation();
 			param.createModelEvaluatorMedoids();
 			param.runModelEvaluatorM_pam();

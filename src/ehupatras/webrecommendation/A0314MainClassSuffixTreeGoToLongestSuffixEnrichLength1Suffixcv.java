@@ -17,7 +17,7 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffixcv {
 
 			// RUN
 			param.loadDatabase();
-			param.loadDM();
+			param.loadDM(false);
 			param.loadCrossValidation();
 			param.createModelEvaluatorSuffixTreeGlobal();
 			param.runModelEvaluatorSTG(1,1,"ST_w_eS1");

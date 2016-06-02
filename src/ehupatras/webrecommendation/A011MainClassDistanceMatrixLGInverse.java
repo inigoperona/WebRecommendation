@@ -90,7 +90,7 @@ public class A011MainClassDistanceMatrixLGInverse {
 	 */
 	public void loadDistanceMatrix(String databaseWD){
 		m_matrix = new SimilarityMatrixInverse(null);
-		m_matrix.load(databaseWD);
+		m_matrix.load(databaseWD,false);
 	}
 	
 	/**

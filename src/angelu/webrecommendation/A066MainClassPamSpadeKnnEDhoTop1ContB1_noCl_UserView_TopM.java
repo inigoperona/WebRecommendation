@@ -20,7 +20,7 @@ public class A066MainClassPamSpadeKnnEDhoTop1ContB1_noCl_UserView_TopM {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadHoldOut_cv();
 		param.loadTopicInf();
 		param.createModelEvaluatorMedoidsContent();

@@ -19,7 +19,7 @@ public class A052MainClassHclustSpadeKnnED {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadHoldOut_cv();
 		param.createModelEvaluatorMedoids();
 		param.runModelEvaluatorM_hclust(5);

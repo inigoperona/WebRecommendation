@@ -26,7 +26,7 @@ public class A041MainClassPAMcv {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorClustPAM();
 		param.runModelEvaluatorP();

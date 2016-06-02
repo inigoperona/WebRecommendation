@@ -17,7 +17,7 @@ public class A040MainClassHclustcv {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorClustHclust();
 		param.runModelEvaluatorH(5);

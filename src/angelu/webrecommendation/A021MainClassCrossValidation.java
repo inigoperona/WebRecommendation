@@ -26,7 +26,7 @@ public class A021MainClassCrossValidation {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.createCrossValidation();
 
 		// ending the program

@@ -19,7 +19,7 @@ public class A040MainClassHclustHoldout {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadHoldOut_cv();
 		param.createModelEvaluatorClustHclust();
 		param.runModelEvaluatorH(5);

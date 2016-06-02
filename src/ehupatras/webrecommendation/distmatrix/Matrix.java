@@ -27,6 +27,7 @@ public abstract class Matrix {
 	/** The m_savefilename. */
 	private String m_wd = ".";
 	private String m_savefilename = "/_matrix.javaData";
+	private String m_savefilenameTXT = "/distance_matrix.txt";
 	
 	// split distance matrix data
 	/** The m_starters. */
@@ -137,7 +138,7 @@ public abstract class Matrix {
 			indexes = new int[sessionIDs.size()];
 			for(int i=0; i<sessionIDs.size(); i++){
 				String sesID = sessionIDs.get(i);
-				BigInteger sesIDBI = new BigInteger(sesID); 
+				BigInteger sesIDBI = new BigInteger(sesID);
 				int j;
 				for(j=0; j<m_names.size(); j++){
 					String sesID2 = m_names.get(j);
@@ -146,7 +147,13 @@ public abstract class Matrix {
 						break;
 					}
 				}
-				indexes[i] = j;
+				if(j!=m_names.size()){
+					indexes[i] = j;
+				} else {
+					System.err.println("Matrix.getSessionIDsIndexes: " + 
+							"the sessionID " + sesID + " not found.");
+					System.exit(1);
+				}
 			}
 		} else {
 			// compute the positions of session-IDs in the split distance matrix
@@ -298,18 +305,59 @@ public abstract class Matrix {
 	 *
 	 * @param wordirectory the wordirectory
 	 */
-	public void load(String wordirectory){
-		SaveLoadObjects slo = new SaveLoadObjects();
-		Object[] objA = (Object[])slo.load(wordirectory + m_savefilename);
-		m_matrix = (MatrixStructure)objA[0];
-		m_names = (ArrayList<String>)objA[1];
-		if(objA.length>2){
-			m_matrixSplit = (MatrixStructure)objA[2];
-			m_namesSplit = (ArrayList<String>)objA[3];
-		}
+	public void load(String wordirectory, boolean isTXT){
 		m_wd = wordirectory;
+		
+		if(!isTXT){
+			SaveLoadObjects slo = new SaveLoadObjects();
+			Object[] objA = (Object[])slo.load(wordirectory + m_savefilename);
+			m_matrix = (MatrixStructure)objA[0];
+			m_names = (ArrayList<String>)objA[1];
+			if(objA.length>2){
+				m_matrixSplit = (MatrixStructure)objA[2];
+				m_namesSplit = (ArrayList<String>)objA[3];
+			}
+		} else {
+			ArrayList<float[]> mat = this.loadTXT(wordirectory + m_savefilenameTXT);
+			m_matrix = new MatrixStructure(false, mat.size(), m_wd);
+			m_names = new ArrayList<String>();
+			for(int i=0; i<mat.size(); i++){
+				String iStr = String.valueOf(i);
+				m_names.add(iStr);
+				float[] line = mat.get(i);
+				for(int j=0; j<line.length; j++){
+					float value = line[j];
+					m_matrix.addCell(i, j, value);
+				}
+			}
+		}
 	}
     
+	public ArrayList<float[]> loadTXT(String inputFilename){
+    	ArrayList<float[]> mat = new ArrayList<float[]>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(inputFilename));
+			String sCurrentLine;
+			while ((sCurrentLine = br.readLine()) != null) {
+				String[] line = sCurrentLine.split(" ");
+				float[] rowF = new float[line.length];
+				for(int i=0; i<line.length; i++){
+					float value = Float.valueOf(line[i]);
+					rowF[i] = value; 
+				}
+				mat.add(rowF);
+			}
+			br.close();
+		} catch (IOException ex){
+			System.err.println("Exception at reading URLs' distance matrix. " + 
+					"[ehupatras.webrecommendation.distmatrix.Matrix.readSeqs]");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+		
+		// return value
+		return mat;
+    }
     
     
     // SPLIT THE SEQUENCES

@@ -20,7 +20,7 @@ public class A052MainClassHclustSpadeKnnEDSplit {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadDM_split("/sequences_split.txt");
 		param.loadHoldOut();
 		param.loadTopicInf();		

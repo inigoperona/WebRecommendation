@@ -17,7 +17,7 @@ public class A054MainClassPAMSpadeStcv {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorSeqMinSPADE();
 		param.runModelEvaluatorPamSpadeST("ST_w_eS1");

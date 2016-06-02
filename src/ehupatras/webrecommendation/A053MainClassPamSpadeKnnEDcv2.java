@@ -16,8 +16,8 @@ public class A053MainClassPamSpadeKnnEDcv2 {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase2();
-		param.loadDM();
+		param.loadDatabase2(false);
+		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorMedoids();
 		param.runModelEvaluatorM_pam();

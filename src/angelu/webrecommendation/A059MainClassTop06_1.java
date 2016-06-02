@@ -20,7 +20,7 @@ public class A059MainClassTop06_1 {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadHoldOut_cv();
 		param.loadTopicInf();
 		param.createModelEvaluatorMedoidsContent();

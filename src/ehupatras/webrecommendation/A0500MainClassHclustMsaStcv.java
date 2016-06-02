@@ -17,7 +17,7 @@ public class A0500MainClassHclustMsaStcv {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorSeqMinMSAWseq();
 		param.runModelEvaluatorHclustMS(5, "ST_w_eS1");

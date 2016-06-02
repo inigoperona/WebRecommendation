@@ -16,8 +16,8 @@ public class A054MainClassHclustSpadeStcv2 {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase2();
-		param.loadDM();
+		param.loadDatabase2(false);
+		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorSeqMinSPADE();
 		param.runModelEvaluatorHclustSpadeST(5, "ST_w_eS1");

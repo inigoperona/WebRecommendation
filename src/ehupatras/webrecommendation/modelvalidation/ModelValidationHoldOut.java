@@ -122,9 +122,35 @@ public class ModelValidationHoldOut extends ModelValidation {
 	public void load(String workdirectory){
 		m_workdirectory = workdirectory;
 		SaveLoadObjects slo = new SaveLoadObjects();
-		m_trainList =      (ArrayList<String>)slo.load(m_workdirectory + "/_holdoutTrain.javaData");
-		m_validationList = (ArrayList<String>)slo.load(m_workdirectory + "/_holdoutValidation.javaData");
-		m_testList =       (ArrayList<String>)slo.load(m_workdirectory + "/_holdoutTest.javaData");
+		
+		// determine the type
+		ArrayList<String> strAL = (ArrayList<String>)slo.load(m_workdirectory + "/_holdoutTrain.javaData");
+		boolean isStringAL = true; 
+		try{
+			String str0 = strAL.get(0);
+		} catch (ClassCastException ex){
+			isStringAL = false;
+		}
+		
+		// load the splits
+		if(isStringAL){
+			m_trainList =      (ArrayList<String>)slo.load(m_workdirectory + "/_holdoutTrain.javaData");
+			m_validationList = (ArrayList<String>)slo.load(m_workdirectory + "/_holdoutValidation.javaData");
+			m_testList =       (ArrayList<String>)slo.load(m_workdirectory + "/_holdoutTest.javaData");
+		} else {
+			ArrayList<Integer> intAL = (ArrayList<Integer>)slo.load(m_workdirectory + "/_holdoutTrain.javaData");
+			strAL = new ArrayList<String>(intAL.size());
+			for(int i=0; i<intAL.size(); i++){ strAL.add(String.valueOf(intAL.get(i))); }
+			m_trainList = strAL;
+			intAL = (ArrayList<Integer>)slo.load(m_workdirectory + "/_holdoutValidation.javaData");
+			strAL = new ArrayList<String>(intAL.size());
+			for(int i=0; i<intAL.size(); i++){ strAL.add(String.valueOf(intAL.get(i))); }
+			m_validationList = strAL;
+			intAL = (ArrayList<Integer>)slo.load(m_workdirectory + "/_holdoutTest.javaData");
+			strAL = new ArrayList<String>(intAL.size());
+			for(int i=0; i<intAL.size(); i++){ strAL.add(String.valueOf(intAL.get(i))); }
+			m_testList = strAL;
+		}
 	}
 	
 	/**
@@ -132,13 +158,16 @@ public class ModelValidationHoldOut extends ModelValidation {
 	 */
 	public void printHoldOut(){
 		for(int i=0; i<m_trainList.size(); i++){
-			System.out.println("train:" + m_trainList.get(i));
+			String sesIDstr = (String)m_trainList.get(i);
+			System.out.println("train:" + sesIDstr);
 		}
 		for(int i=0; i<m_validationList.size(); i++){
-			System.out.println("validation:" + m_validationList.get(i));
+			String sesIDstr = (String)m_validationList.get(i);
+			System.out.println("validation:" + sesIDstr);
 		}
 		for(int i=0; i<m_testList.size(); i++){
-			System.out.println("test:" + m_testList.get(i));
+			String sesIDstr = (String)m_testList.get(i);
+			System.out.println("test:" + sesIDstr);
 		}
 	}
 	

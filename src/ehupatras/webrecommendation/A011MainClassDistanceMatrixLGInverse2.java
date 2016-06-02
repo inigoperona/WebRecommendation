@@ -16,7 +16,7 @@ public class A011MainClassDistanceMatrixLGInverse2 {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase2();
+		param.loadDatabase2(false);
 		
 		// No role: equal_UHC
  		float[][] rolesW = 

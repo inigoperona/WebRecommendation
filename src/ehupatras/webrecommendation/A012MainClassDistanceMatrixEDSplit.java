@@ -89,7 +89,7 @@ public class A012MainClassDistanceMatrixEDSplit {
 	 */
 	public void loadDistanceMatrix(String databaseWD){
 		m_matrix = new SimilarityMatrixEuclidean(null);
-		m_matrix.load(databaseWD);
+		m_matrix.load(databaseWD,false);
 	}
 	
 	/**

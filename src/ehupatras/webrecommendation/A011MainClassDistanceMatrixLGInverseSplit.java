@@ -95,7 +95,7 @@ public class A011MainClassDistanceMatrixLGInverseSplit {
 	 */
 	public void loadDistanceMatrix(String databaseWD){
 		m_matrix = new SimilarityMatrixInverse(null);
-		m_matrix.load(databaseWD);
+		m_matrix.load(databaseWD,false);
 	}
 	
 	/**

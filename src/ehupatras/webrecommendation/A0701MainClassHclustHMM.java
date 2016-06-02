@@ -20,7 +20,7 @@ public class A0701MainClassHclustHMM {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadHoldOut();
 		param.loadTopicInf();		
 		param.setTopicMatchWeight(0.5f);

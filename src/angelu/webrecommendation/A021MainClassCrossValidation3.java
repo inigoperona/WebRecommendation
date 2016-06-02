@@ -1,17 +1,14 @@
 package angelu.webrecommendation;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class A061MainClassPamSpadeKnnEDhoTop1ContA1_noCl.
- */
-public class A061MainClassPamSpadeKnnEDhoTop1ContA1_noCl {
+public class A021MainClassCrossValidation3 {
 
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
 	public static void main(String[] args) {
+		
+		String wd = "20160531_experiments_fromOldDB";
+		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole.txt", "/empty.txt", 
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+				wd+"/01_databases", "/DM_ED",
+				wd+"/02_validation", "xxx", "xxx", "xxx", "-", "1"};
 		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
 		
@@ -19,17 +16,13 @@ public class A061MainClassPamSpadeKnnEDhoTop1ContA1_noCl {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase();
-		param.loadDM(false);
-		param.loadHoldOut_cv();
-		param.loadTopicInf();
-		param.createModelEvaluatorMedoidsContent();
-		param.runModelEvaluatorMC("ContentsA1_noCl");
-				
+		param.loadDatabase2(false);
+		param.loadDM(true);
+		param.createCrossValidation();
+
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();
 		System.out.println("The program has needed " + (endtimeprogram-starttimeprogram)/1000 + " seconds.");
-		
 	}
 	
 }

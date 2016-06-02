@@ -83,8 +83,15 @@ public class A001MainClassCreateDatabase {
 	public void loadDatabase(String databaseWD){
 		// Sampling
 		SaveLoadObjects sosess = new SaveLoadObjects();
-		m_sessionsIDs = (ArrayList<String>)sosess.load(databaseWD + "/_sessionIDs.javaData");
-		
+		m_sessionsIDs = (ArrayList<String>)sosess.load(databaseWD + "/_sessionIDs.javaData"); 
+		try{
+			String str0 = m_sessionsIDs.get(0);
+		} catch (ClassCastException ex){
+			ArrayList<Integer> intAL = (ArrayList<Integer>)sosess.load(databaseWD + "/_sessionIDs.javaData"); 
+			m_sessionsIDs = new ArrayList<String>(intAL.size());
+			for(int i=0; i<intAL.size(); i++){ m_sessionsIDs.add(String.valueOf(intAL.get(i))); }
+		}
+
 		// INSTANCIATED SEQUENCES
 		SaveLoadObjects soseqs = new SaveLoadObjects();
 		m_sequences = (ArrayList<String[]>)soseqs.load(databaseWD + "/_sequencesUHC.javaData");

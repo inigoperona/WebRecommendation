@@ -16,7 +16,7 @@ public class A012MainClassDistanceMatrixED2 {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase2();
+		param.loadDatabase2(false);
 		param.createDM();
 		
 		// ending the program

@@ -11,8 +11,8 @@ public class A00041MainClassPAMcv_load {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase2();
-		param.loadDM();
+		param.loadDatabase2(false);
+		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorClustPAM();
 		param.runModelEvaluatorP();

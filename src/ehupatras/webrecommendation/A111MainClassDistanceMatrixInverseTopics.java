@@ -85,7 +85,7 @@ public class A111MainClassDistanceMatrixInverseTopics {
 	 */
 	public void loadDistanceMatrix(String databaseWD){
 		m_matrix = new SimilarityMatrixInverseTopics(null, null, 0.6f);
-		m_matrix.load(databaseWD);
+		m_matrix.load(databaseWD,false);
 	}
 	
 	/**

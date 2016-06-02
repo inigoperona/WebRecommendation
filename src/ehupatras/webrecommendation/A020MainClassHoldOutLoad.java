@@ -20,7 +20,7 @@ public class A020MainClassHoldOutLoad {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadHoldOut();
 					
 		// ending the program

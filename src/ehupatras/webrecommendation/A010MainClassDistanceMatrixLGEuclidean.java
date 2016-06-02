@@ -106,7 +106,7 @@ public class A010MainClassDistanceMatrixLGEuclidean {
 	 */
 	public void loadDistanceMatrix(String databaseWD){
 		m_matrix = new SimilarityMatrixEuclidean(null);
-		m_matrix.load(databaseWD);
+		m_matrix.load(databaseWD,false);
 	}
 	
 	/**

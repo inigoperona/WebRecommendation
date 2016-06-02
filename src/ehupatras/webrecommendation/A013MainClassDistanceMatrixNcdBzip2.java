@@ -70,7 +70,7 @@ public class A013MainClassDistanceMatrixNcdBzip2 {
 	 */
 	public void loadDistanceMatrix(String databaseWD){
 		m_matrix = new DistanceMatrixNcdBzip2(null);
-		m_matrix.load(databaseWD);
+		m_matrix.load(databaseWD,false);
 	}
 	
 	/**

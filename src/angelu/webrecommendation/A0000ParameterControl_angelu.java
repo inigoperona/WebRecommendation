@@ -389,9 +389,17 @@ public class A0000ParameterControl_angelu {
 		database.loadDatabase(m_databaseWD);
 		m_sampleSessionIDs = database.getSessionsIDs();
 		m_sequencesUHC = database.getInstantiatedSequences();
+		
+		for(int i=0; i<m_sequencesUHC.size(); i++){
+			String[] seqA = m_sequencesUHC.get(i);
+			for(int j=0; j<seqA.length; j++){
+				System.out.print(seqA[j] + " ");
+			}
+			System.out.println();
+		}
 	}
 	
-	public void loadDatabase2(){
+	public void loadDatabase2(boolean loadSessionIDs){
 		ArrayList<String[]> seqsDB = new ArrayList<String[]>();
 		ArrayList<String> sesIdDB = new ArrayList<String>();
 		
@@ -425,7 +433,11 @@ public class A0000ParameterControl_angelu {
 				
 				// session ID
 				String indStr = String.valueOf(ind);
-				sesIdDB.add(indStr);
+				if(!loadSessionIDs){
+					sesIdDB.add(indStr);
+				} else {
+					sesIdDB.add(sesIDstr);
+				}
 				ind++;
 			}
 		} catch (IOException e) {
@@ -460,9 +472,9 @@ public class A0000ParameterControl_angelu {
 	/**
 	 * Load dm.
 	 */
-	public void loadDM(){
+	public void loadDM(boolean isTXT){
 		A012MainClassDistanceMatrixED dm = new A012MainClassDistanceMatrixED();
-		dm.loadDistanceMatrix(m_databaseWD + m_dmWD);
+		dm.loadDistanceMatrix(m_databaseWD + m_dmWD, isTXT);
 		m_matrix = dm.getMatrix();
 	}
 

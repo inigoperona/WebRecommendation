@@ -78,7 +78,7 @@ public class A114MainClassDistanceMatrixEDTopics2 {
 	 */
 	public void loadDistanceMatrix(String databaseWD){
 		m_matrix = new DistanceMatrixEditTopics2(null, null, 0.5f);
-		m_matrix.load(databaseWD);
+		m_matrix.load(databaseWD,false);
 	}
 	
 	/**

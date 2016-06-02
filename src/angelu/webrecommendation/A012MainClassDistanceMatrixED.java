@@ -72,9 +72,9 @@ public class A012MainClassDistanceMatrixED {
 	 *
 	 * @param databaseWD the database wd
 	 */
-	public void loadDistanceMatrix(String databaseWD){
+	public void loadDistanceMatrix(String databaseWD, boolean isTXT){
 		m_matrix = new SimilarityMatrixEuclidean(null);
-		m_matrix.load(databaseWD);
+		m_matrix.load(databaseWD, isTXT);
 	}
 	
 	/**

@@ -20,7 +20,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop05 {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadHoldOut_cv();
 		param.loadTopicInf();
 		param.setTopicMatchWeight(0.5f);

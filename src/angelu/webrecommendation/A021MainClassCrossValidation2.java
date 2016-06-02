@@ -4,8 +4,8 @@ public class A021MainClassCrossValidation2 {
 	
 	public static void main(String[] args) {
 		
-		String wd = "20160530_experiments_BT_sekuentzietatik";
-		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole2.txt", "/empty.txt", 
+		String wd = "20160531_experiments_fromOldDB";
+		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole.txt", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				wd+"/01_databases", "/DM_ED",
 				wd+"/02_validation", "xxx", "xxx", "xxx", "-", "1"};
@@ -16,8 +16,8 @@ public class A021MainClassCrossValidation2 {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase2();
-		param.loadDM();
+		param.loadDatabase2(false);
+		param.loadDM(false);
 		param.createCrossValidation();
 
 		// ending the program

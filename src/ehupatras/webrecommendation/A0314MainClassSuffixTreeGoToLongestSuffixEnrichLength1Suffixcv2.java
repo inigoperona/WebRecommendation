@@ -16,8 +16,8 @@ public class A0314MainClassSuffixTreeGoToLongestSuffixEnrichLength1Suffixcv2 {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase2();
-		param.loadDM();
+		param.loadDatabase2(false);
+		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorSuffixTreeGlobal();
 		param.runModelEvaluatorSTG(1,1,"ST_w_eS1");

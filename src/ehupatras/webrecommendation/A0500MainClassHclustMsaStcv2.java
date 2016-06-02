@@ -16,8 +16,8 @@ public class A0500MainClassHclustMsaStcv2 {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase2();
-		param.loadDM();
+		param.loadDatabase2(false);
+		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorSeqMinMSAWseq();
 		param.runModelEvaluatorHclustMS(5, "ST_w_eS1");

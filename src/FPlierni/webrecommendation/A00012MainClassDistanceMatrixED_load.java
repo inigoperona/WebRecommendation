@@ -25,7 +25,7 @@ public class A00012MainClassDistanceMatrixED_load {
 		long starttimeprogram = System.currentTimeMillis();
 
 		// RUN
-		param.loadDatabase2();
+		param.loadDatabase2(false);
 		param.createDM();
 		
 		// ending the program
@@ -65,7 +65,7 @@ public class A00012MainClassDistanceMatrixED_load {
 	 */
 	public void loadDistanceMatrix(String databaseWD){
 		m_matrix = new SimilarityMatrixEuclidean(null);
-		m_matrix.load(databaseWD);
+		m_matrix.load(databaseWD,false);
 	}
 	
 	/**

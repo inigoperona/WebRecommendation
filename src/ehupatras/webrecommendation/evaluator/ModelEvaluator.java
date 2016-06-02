@@ -461,7 +461,8 @@ public abstract class ModelEvaluator {
 			int[] inds = m_distancematrix.getSessionIDsIndexes(sessionIDs, false);
 			ArrayList<String[]> testseqs = new ArrayList<String[]>();
 			for(int j=0; j<inds.length; j++){
-				String[] seq = this.getDataSet(false).get(inds[j]);
+				ArrayList<String[]> db = this.getDataSet(false);
+				String[] seq = db.get(inds[j]);
 				testseqs.add(seq);
 				//lierni
 				/*batura = batura + seq.length;
@@ -512,7 +513,8 @@ public abstract class ModelEvaluator {
 			int[] trinds = m_distancematrix.getSessionIDsIndexes(trsessionIDs, m_datasetSplit!=null);
 			ArrayList<String[]> trainseqs = new ArrayList<String[]>();
 			for(int j=0; j<trinds.length; j++){
-				String[] seq = this.getDataSet(m_datasetSplit!=null).get(trinds[j]);
+				ArrayList<String[]> db = this.getDataSet(m_datasetSplit!=null);
+				String[] seq = db.get(trinds[j]);
 				trainseqs.add(seq);
 			}
 			for(int j=0; j<trainseqs.size(); j++){ trnURLs = trnURLs + trainseqs.get(j).length; }

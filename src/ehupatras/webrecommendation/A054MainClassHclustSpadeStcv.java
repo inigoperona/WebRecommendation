@@ -17,7 +17,7 @@ public class A054MainClassHclustSpadeStcv {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorSeqMinSPADE();
 		param.runModelEvaluatorHclustSpadeST(5, "ST_w_eS1");

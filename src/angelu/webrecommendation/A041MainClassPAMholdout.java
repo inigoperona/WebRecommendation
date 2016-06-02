@@ -26,7 +26,7 @@ public class A041MainClassPAMholdout {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadHoldOut_cv();
 		param.createModelEvaluatorClustPAM();
 		param.runModelEvaluatorP();

@@ -2990,7 +2990,8 @@ public abstract class SequenceEvaluator {
 		float index = len * point;
 		float maxindex =  (float)m_precision.length - (float)1;
 		float index2 = index>maxindex ? maxindex : index;
-		return (int)Math.round(index2);
+		int index3 = (int)Math.round(index2);
+		return index3;
 	}
 	
 	/**

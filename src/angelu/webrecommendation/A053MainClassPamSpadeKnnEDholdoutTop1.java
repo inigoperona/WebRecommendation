@@ -26,7 +26,7 @@ public class A053MainClassPamSpadeKnnEDholdoutTop1 {
 
 		// RUN
 		param.loadDatabase();
-		param.loadDM();
+		param.loadDM(false);
 		param.loadHoldOut_cv();
 		param.loadTopicInf();
 		param.createModelEvaluatorMedoids();
