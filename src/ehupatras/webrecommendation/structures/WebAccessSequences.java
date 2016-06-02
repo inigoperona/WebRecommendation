@@ -111,12 +111,14 @@ public class WebAccessSequences {
 			for(int i=0; i<keysOrd.size(); i++){
 				String sessionID = keysOrd.get(i);
 				ArrayList<Integer> sequence = WebAccessSequences.m_sequencesDATA.get(sessionID);
-				writer.write(String.valueOf(sessionID)); // write the session identification
-				for(int j=0; j<sequence.size(); j++){
-					int urlindex = sequence.get(j);
-					writer.write("," + urlindex);
+				if(sequence!=null){
+					writer.write(String.valueOf(sessionID)); // write the session identification
+					for(int j=0; j<sequence.size(); j++){
+						int urlindex = sequence.get(j);
+						writer.write("," + urlindex);
+					}
+					writer.write("\n");
 				}
-				writer.write("\n");
 			}
 			System.out.println("  " + keysOrd.size() + " lines have been written.");
 		} catch(IOException ex){
@@ -412,18 +414,21 @@ public class WebAccessSequences {
 
 		for(int i=0; i<sesIDs.size(); i++){
 			String sessionID = sesIDs.get(i);
-			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);			
-			for(int j=0; j<sequence.size(); j++){
-				int reqID = sequence.get(j);
+
+			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
+			if(sequence!=null){
+				for(int j=0; j<sequence.size(); j++){
+					int reqID = sequence.get(j);
 				
-				int pos = Collections.binarySearch(reqindexes, reqID);
-				if(pos<0){
-					pos = Math.abs(pos+1);
-				} else {
-					pos++;
+					int pos = Collections.binarySearch(reqindexes, reqID);
+					if(pos<0){
+						pos = Math.abs(pos+1);
+					} else {
+						pos++;
+					}
+			
+					reqindexes.add(pos, reqID);
 				}
-				
-				reqindexes.add(pos, reqID);
 			}
 		}
 		

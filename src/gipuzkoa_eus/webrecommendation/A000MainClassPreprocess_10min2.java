@@ -105,8 +105,14 @@ public class A000MainClassPreprocess_10min2 {
 		//String logfilesIndex = "/loglist2.txt";
 
 		//String basedirectory = "/home/ainhoa/workspace_WebRecommendation";
+
+		//String basedirectory = "/home/disk/AINHOA/EHU_LOGAK_13_04_2016/experiment1";
+		String basedirectory = "/media/aldapa/datos/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
+		//String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
+
 		//String basedirectory = "/home/disk/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
-		String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
+		//String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
+
 		String logfilesIndex = "/loglist.txt";
 		
 		basedirectory = args[0];

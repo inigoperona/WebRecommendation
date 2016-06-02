@@ -719,6 +719,7 @@ public class Sessioning {
 		for(int l=0; l<keys.size(); l++){
 			String sessionID = keys.get(l);
 			ArrayList<Integer> sequence = WebAccessSequences.getSession(sessionID);
+			if(sequence==null){ continue; }
 			ArrayList<Integer> sequence2 = new ArrayList<Integer>();
 			int firstreq = -3;
 			float lastET = -3;
