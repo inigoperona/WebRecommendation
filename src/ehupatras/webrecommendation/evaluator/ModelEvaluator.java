@@ -462,7 +462,8 @@ public abstract class ModelEvaluator {
 			ArrayList<String[]> testseqs = new ArrayList<String[]>();
 			for(int j=0; j<inds.length; j++){
 				ArrayList<String[]> db = this.getDataSet(false);
-				String[] seq = db.get(inds[j]);
+				int indDB = inds[j];
+				String[] seq = db.get(indDB);
 				testseqs.add(seq);
 				//lierni
 				/*batura = batura + seq.length;
