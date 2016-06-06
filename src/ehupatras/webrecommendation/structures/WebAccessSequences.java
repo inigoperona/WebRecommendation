@@ -138,6 +138,11 @@ public class WebAccessSequences {
 		
 	}
 	
+	public static void readSequencesIndex(String outfilename){
+		
+	}
+	
+	
 	/**
 	 * Order hashtable keys.
 	 *

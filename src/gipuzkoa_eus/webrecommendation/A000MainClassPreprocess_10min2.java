@@ -22,7 +22,7 @@ public class A000MainClassPreprocess_10min2 {
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
-	
+	/*
 		// create sessions
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
@@ -52,7 +52,12 @@ public class A000MainClassPreprocess_10min2 {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
+		*/
 		
+		WebAccessSequences.loadSequences();
+		WebAccessSequences.readSequencesIndex(basedirectory + "/sequences_requestIndexes_all2.txt");
+		
+		/*
 		// create sequences
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Take first URL of time zero.");
@@ -62,6 +67,8 @@ public class A000MainClassPreprocess_10min2 {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 			
+		*/
+		
 		// ensure a minimum activity in each sequence
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start ensuring a minimun activity in each sequence.");
@@ -101,7 +108,8 @@ public class A000MainClassPreprocess_10min2 {
 	public static void main(String[] args) {
 		// Parameter control
 		//String basedirectory = "/home/ainhoa/workspace_WebRecommendation";
-		String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
+		//String basedirectory = "20160400_experiments_EHU_LOG_LAGINA2/00_preprocess";
+		String basedirectory = "/home/disk/AINHOA/EHU_LOGAK_13_04_2016/experiment1/00_preprocess";
 		String logfilesIndex = "/loglist.txt";
 		
 		basedirectory = args[0];
