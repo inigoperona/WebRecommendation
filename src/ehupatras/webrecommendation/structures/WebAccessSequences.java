@@ -1,9 +1,11 @@
 package ehupatras.webrecommendation.structures;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -138,8 +140,44 @@ public class WebAccessSequences {
 		
 	}
 	
-	public static void readSequencesIndex(String outfilename){
+	public static void readSequencesIndex(String infilename){
+		m_sequencesDATA = new HashMap<String,ArrayList<Integer>>();
+		m_sequencesID = new ArrayList<String>();
 		
+		BufferedReader br = null;
+		try{
+			String sCurrentLine;
+			br = new BufferedReader(new FileReader(infilename));
+			while ((sCurrentLine = br.readLine()) != null) {
+				String[] sequenceA = sCurrentLine.split(",");
+				int seqlen = sequenceA.length - 1;
+				
+				// sessions IDs
+				String sesIDstr = sequenceA[0];
+				m_sequencesID.add(sesIDstr);
+				
+				// sequence
+				ArrayList<Integer> seqAL = new ArrayList<Integer>(seqlen); 
+				for(int i=1; i<sequenceA.length; i++){
+					String reqIDstr = sequenceA[i];
+					int urlInt = Integer.valueOf(reqIDstr).intValue();
+					seqAL.add(urlInt);
+				}
+				
+				// add the sequence
+				m_sequencesDATA.put(sesIDstr,seqAL);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(br != null){
+					br.close();
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 	
 	

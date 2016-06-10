@@ -22,7 +22,7 @@ public class A000MainClassPreprocess_10min2 {
 		
 		// SESSIONING //
 		Sessioning ses = new Sessioning();
-	/*
+	
 		// create sessions
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Start spliting up into sessions.");
@@ -52,13 +52,15 @@ public class A000MainClassPreprocess_10min2 {
 			endtime = System.currentTimeMillis();
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
-		*/
+	
 		
-		WebAccessSequences.loadSequences();
-		WebAccessSequences.readSequencesIndex(basedirectory + "/sequences_requestIndexes_all2.txt");
 		
-		/*
-		// create sequences
+		 //WebAccessSequences.loadSequences();
+		 
+		//WebAccessSequences.readSequencesIndex(basedirectory + "/sequences_requestIndexes_all2.txt");
+		
+		
+	// create sequences
 			starttime = System.currentTimeMillis();
 			System.out.println("[" + starttime + "] Take first URL of time zero.");
 		ses.takeFirstUrlOfTimeZero();
@@ -67,7 +69,7 @@ public class A000MainClassPreprocess_10min2 {
 			System.out.println("[" + endtime + "] End. Elapsed time: "
 				+ (endtime-starttime)/1000 + " seconds.");
 			
-		*/
+		
 		
 		// ensure a minimum activity in each sequence
 			starttime = System.currentTimeMillis();
