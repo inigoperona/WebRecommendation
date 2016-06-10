@@ -303,6 +303,12 @@ public class Sessioning {
 					// the next one is a different URL
 					// write the last URLs information
 					Request oldreq = WebAccess.getRequest(oldindex);
+					
+					// Adapt the ET of consecutive URLs to the ET median of EHU's logs= 14s
+					if(sum>14000){
+						sum=14000;
+					}
+					
 					oldreq.setElapsedTime(sum);
 					WebAccess.replaceRequest(oldindex, oldreq);
 					
