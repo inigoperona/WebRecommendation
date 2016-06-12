@@ -526,6 +526,10 @@ public class A0000ParameterControl_angelu {
 		m_nFold = nFold;
 		this.createCrossValidation();
 	}
+	public void saveCrossValidation(){
+		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
+		honestmodelval.save(m_validationWD);
+	}
 	
 	/**
 	 * Load hold out_cv.
