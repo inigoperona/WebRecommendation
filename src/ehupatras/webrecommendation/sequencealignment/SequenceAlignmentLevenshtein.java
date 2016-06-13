@@ -81,14 +81,17 @@ public class SequenceAlignmentLevenshtein
     protected float weight2(String strA, String strB) {
     	int len = strA.length();
     	String urlA = strA.substring(0,len-1);
+    	int urlAi = Integer.valueOf(urlA);
     	String rolA = strA.substring(len-1,len);
     	int rolAi = this.role2int(rolA);
+    	
     	len = strB.length();
     	String urlB = strB.substring(0,len-1);
+    	int urlBi = Integer.valueOf(urlB);
     	String rolB = strB.substring(len-1,len);
     	int rolBi = this.role2int(rolB);
     	
-        if (urlA.equals(urlB)){
+        if(urlAi==urlBi){
         	return m_roleW[rolAi][rolBi];
         } else {
         	return 1f;
@@ -122,6 +125,7 @@ public class SequenceAlignmentLevenshtein
     	String rolA = strA.substring(len-1,len);
     	int urlAi = m_UrlIDs.indexOf(Integer.valueOf(urlA));
     	int rolAi = this.role2int(rolA);
+    	
     	len = strB.length();
     	String urlB = strB.substring(0,len-1);
     	String rolB = strB.substring(len-1,len);
@@ -163,6 +167,7 @@ public class SequenceAlignmentLevenshtein
     	String rolA = strA.substring(len-1,len);
     	int urlAi = m_UrlIDs.indexOf(Integer.valueOf(urlA));
     	int rolAi = this.role2int(rolA);
+    	
     	len = strB.length();
     	String urlB = strB.substring(0,len-1);
     	String rolB = strB.substring(len-1,len);

@@ -35,6 +35,7 @@ public abstract class SequenceAlignmentBacktrack
     
     /** The m_gap. */
     protected String m_gap = "-";
+    protected int m_gapLen = 5; 
     
     // weights of roles
     /** The m_role w. */
@@ -95,8 +96,8 @@ public abstract class SequenceAlignmentBacktrack
     	mAlignmentSeqB = "";
     	m_gap = "-";
     	// create the gap String
-    	int gaplen = seqA[0].length();
-    	for(int i=1; i<gaplen; i++){ m_gap = m_gap + "-"; }
+    	m_gapLen = seqA[0].length();
+    	for(int i=1; i<m_gapLen; i++){ m_gap = m_gap + "-"; }
     	
     	// compute the score
         init(seqA, seqB);
@@ -305,15 +306,31 @@ public abstract class SequenceAlignmentBacktrack
     	if(strA.equals(m_gap) || strB.equals(m_gap)){ return -1; }
     	
     	// compare the two elements
-    	int len = m_gap.length();
-    	String urlA = strA.substring(0,len-1);
-    	String rolA = strA.substring(len-1,len);
+    	//int len = m_gap.length();
+    	int len1 = strA.length();
+    	int urlAid = -1;
+    	try{
+    		urlAid = Integer.valueOf(strA);
+    	} catch(NumberFormatException ex){
+    		String urlA = strA.substring(0,len1-1);
+    		urlAid = Integer.valueOf(urlA);
+    	}
+    	String rolA = strA.substring(len1-1,len1);
     	int rolAi = this.role2int(rolA);
-    	String urlB = strB.substring(0,len-1);
-    	String rolB = strB.substring(len-1,len);
+    	
+    	int len2 = strB.length();
+    	int urlBid = -1;
+    	try{
+    		urlBid = Integer.valueOf(strB);
+    	} catch(NumberFormatException ex){
+    		String urlB = strB.substring(0,len2-1);
+    		urlBid = Integer.valueOf(urlB);
+    	}
+    	String rolB = strB.substring(len2-1,len2);
     	int rolBi = this.role2int(rolB);
     	
-        if (urlA.equals(urlB)){
+        //if(urlA.equals(urlB)){
+    	if(urlAid==urlBid){
         	return m_roleW[rolAi][rolBi];
         } else {
         	return -1f;

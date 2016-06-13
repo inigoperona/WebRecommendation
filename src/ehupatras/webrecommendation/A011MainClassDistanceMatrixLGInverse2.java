@@ -4,8 +4,8 @@ public class A011MainClassDistanceMatrixLGInverse2 {
 
 	public static void main(String[] args){
 		
-		String wd = "20160530_experiments_BT_sekuentzietatik";
-		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole2.txt", "/empty.txt", 
+		String wd = "20160613_experiments_BT";
+		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole3_9325_txikia.txt", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				wd+"/01_databases", "/DM_LG",
 				"xxx", "xxx", "xxx", "xxx", "-", "1"};

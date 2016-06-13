@@ -4,10 +4,10 @@ public class A021MainClassCrossValidation2 {
 	
 	public static void main(String[] args) {
 		
-		String wd = "20160531_experiments_fromOldDB";
-		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole.txt", "/empty.txt", 
+		String wd = "20160613_experiments_BT";
+		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole2_9325_txikia.txt", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
-				wd+"/01_databases", "/DM_ED",
+				wd+"/01_databases", "/DM_LG",
 				wd+"/02_validation", "xxx", "xxx", "xxx", "-", "1"};
 		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);

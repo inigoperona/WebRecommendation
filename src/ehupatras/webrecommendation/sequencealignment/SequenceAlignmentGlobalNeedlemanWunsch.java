@@ -63,17 +63,17 @@ public class SequenceAlignmentGlobalNeedlemanWunsch
             while (i > 0 || j > 0) {
                     if (j > 0 && mD[i][j] == mD[i][j-1] - 1f) {
                     	mAlignmentSeqA += m_gap;
-                        mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
+                        mAlignmentSeqB += this.reversing(mSeqB[j-1]);
                         j--;
                         continue;
                     } else if (i > 0 && mD[i][j] == mD[i-1][j] - 1f){
-                        mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
+                        mAlignmentSeqA += this.reversing(mSeqA[i-1]);
                         mAlignmentSeqB += m_gap;
                         i--;
                         continue;
                     } else if (i > 0 && j > 0 && mD[i][j] == mD[i-1][j-1] + weight2(i, j)) {
-                        mAlignmentSeqA += (new StringBuffer(mSeqA[i-1])).reverse().toString();
-                        mAlignmentSeqB += (new StringBuffer(mSeqB[j-1])).reverse().toString();
+                        mAlignmentSeqA += this.reversing(mSeqA[i-1]);
+                        mAlignmentSeqB += this.reversing(mSeqB[j-1]);
                         i--;
                         j--;                            
                         continue;
@@ -81,6 +81,17 @@ public class SequenceAlignmentGlobalNeedlemanWunsch
             }
             mAlignmentSeqA = new StringBuffer(mAlignmentSeqA).reverse().toString();
             mAlignmentSeqB = new StringBuffer(mAlignmentSeqB).reverse().toString();
+    }
+    
+    private String reversing(String str){
+    	int gaplen = m_gap.length();
+    	int diff = gaplen - str.length();
+    	String str2 = str;
+    	for(int i=0; i<diff; i++){
+    		str2 = "0" + str2; 
+    	}
+    	StringBuffer str3 = new StringBuffer(str2);
+    	return str3.reverse().toString();
     }
     
     /* (non-Javadoc)

@@ -34,10 +34,11 @@ public class SequenceAlignmentCombineGlobalLocalDimopoulos2010Topics2
 	/* (non-Javadoc)
 	 * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentCombineGlobalLocalDimopoulos2010#getScore(java.lang.String[], java.lang.String[])
 	 */
-	public float getScore(String[] seqA, String[] seqB){
+	public float getScore(String[] seqA, String[] seqB, int gaplen){
 		SequenceAlignmentBacktrack nw = new SequenceAlignmentGlobalDimopoulos2010Topics2(m_UrlIDs, m_url2topic, m_topicmatch);
 		nw.setRoleWeights(m_roleW);
 		float scoreNW = nw.getScore(seqA, seqB);
+		
 		SequenceAlignmentBacktrack sw = new SequenceAlignmentLocalDimopoulos2010Topics2(m_UrlIDs, m_url2topic, m_topicmatch);
 		sw.setRoleWeights(m_roleW);
 		float scoreSW = sw.getScore(seqA, seqB);

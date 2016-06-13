@@ -13,7 +13,7 @@ public class SequenceAlignmentLocalDimopoulos2010
     /* (non-Javadoc)
      * @see ehupatras.webrecommendation.sequencealignment.SequenceAlignmentLocalSmithWaterman#getScore(java.lang.String[], java.lang.String[])
      */
-    public float getScore(String[] seqA, String[] seqB){
+    public float getScore(String[] seqA, String[] seqB, int gaplen){
     	// constants
     	float wm  = 1f;
     	float wms = 1f;

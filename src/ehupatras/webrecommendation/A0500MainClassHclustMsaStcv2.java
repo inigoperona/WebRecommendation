@@ -4,8 +4,8 @@ public class A0500MainClassHclustMsaStcv2 {
 
 	public static void main(String[] args) {
 
-		String wd = "20160530_experiments_BT_sekuentzietatik";
-		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole2.txt", "/empty.txt", 
+		String wd = "20160613_experiments_BT";
+		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole3_9325_txikia.txt", "/empty.txt", 
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				wd+"/01_databases", "/DM_LG",
 				wd+"/02_validation", "/hclust_DM_LG", "/hclust_DM_LG/msa", "/hclust_msa_wseq_st_eval.txt", "-", "1"};
