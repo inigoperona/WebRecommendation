@@ -306,12 +306,12 @@ public abstract class SequenceAlignmentBacktrack
     	if(strA.equals(m_gap) || strB.equals(m_gap)){ return -1; }
     	
     	// compare the two elements
-    	//int len = m_gap.length();
     	int len1 = strA.length();
+    	char lastC1 = strA.charAt(len1-1);
     	int urlAid = -1;
-    	try{
+    	if(Character.isDigit(lastC1)){
     		urlAid = Integer.valueOf(strA);
-    	} catch(NumberFormatException ex){
+    	} else {
     		String urlA = strA.substring(0,len1-1);
     		urlAid = Integer.valueOf(urlA);
     	}
@@ -319,10 +319,11 @@ public abstract class SequenceAlignmentBacktrack
     	int rolAi = this.role2int(rolA);
     	
     	int len2 = strB.length();
+    	char lastC2 = strA.charAt(len2-1);
     	int urlBid = -1;
-    	try{
+    	if(Character.isDigit(lastC2)){
     		urlBid = Integer.valueOf(strB);
-    	} catch(NumberFormatException ex){
+    	} else{
     		String urlB = strB.substring(0,len2-1);
     		urlBid = Integer.valueOf(urlB);
     	}
