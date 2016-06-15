@@ -7,7 +7,7 @@ public class A030MainClassMarkovChaincv {
 	public static void main(String[] args) {
 		
 		String wd = "20160525_experiments_BT";
-		String[] args2 = {wd+"/00_preprocess", "xxx", "/empty.txt", 
+		String[] args2 = {wd+"/00_preprocess", "xxx", "/empty.txt", "5", "_s0.javaData",
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				wd+"/01_databases", "/DM_ED",
 				wd+"/02_validation", "/00_mc", "xxx", "/eval.txt", "-", "1"};

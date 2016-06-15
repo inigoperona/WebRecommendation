@@ -14,8 +14,8 @@ public class A021MainClassCrossValidation {
 	public static void main(String[] args) {
 		
 		String wd = "20160525_experiments_BT";
-		String[] args2 = {wd+"/00_preprocess", "xxx", "/empty.txt", 
-				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+		String[] args2 = {wd+"/00_preprocess", "xxx", "5", "_s0.javaData", 
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				wd+"/01_databases", "/DM_ED",
 				wd+"/03_validation", "xxx", "xxx", "xxx", "-", "1"};
 		

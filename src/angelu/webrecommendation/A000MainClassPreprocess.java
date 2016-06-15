@@ -19,8 +19,8 @@ public class A000MainClassPreprocess {
 	public static void main(String[] args) {
 		
 		String wd = "20160525_experiments_BT";
-		String[] args2 = {wd+"/00_preprocess", "/logBT150000.txt", "/empty.txt", 
-				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+		String[] args2 = {wd+"/00_preprocess", "/logBT150000.txt", "-1", "xxx",
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				"xxx", "xxx",
 				"xxx", "xxx", "xxx", "xxx", "-", "1"};
 		

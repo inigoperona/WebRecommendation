@@ -25,8 +25,8 @@ public class A001MainClassCreateDatabase {
 	public static void main(String[] args) {
 		
 		String wd = "20160525_experiments_BT";
-		String[] args2 = {wd+"/00_preprocess", "xxx", "/empty.txt", 
-				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+		String[] args2 = {wd+"/00_preprocess", "xxx", "-1", "xxx", 
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				wd+"/01_databases", "xxx",
 				"xxx", "xxx", "xxx", "xxx", "-", "1"};
 		
@@ -46,14 +46,12 @@ public class A001MainClassCreateDatabase {
 	}
 	
 	
-	
-	
-	
-	
 	public void createDatabase(String databaseWD, int sizeDB){
+		long seed = 0l;
+		
 		// Sampling
 		Sampling samp = new Sampling();
-		m_sessionsIDs = samp.getSample(sizeDB, (long)0, false);
+		m_sessionsIDs = samp.getSample(sizeDB, seed, false);
 		// Save
 		SaveLoadObjects sosess = new SaveLoadObjects();
 		sosess.save(m_sessionsIDs, databaseWD + "/_sessionIDs.javaData");
@@ -64,22 +62,8 @@ public class A001MainClassCreateDatabase {
 		SaveLoadObjects soseqs = new SaveLoadObjects();
 		soseqs.save(m_sequences, databaseWD + "/_sequencesUHC.javaData");
 	}
+
 	
-	/**
-	 * Creates the database.
-	 *
-	 * @param databaseWD the database wd
-	 */
-	public void createDatabase(String databaseWD){
-		int nseq = WebAccessSequences.getSequencesIDs().size();
-		this.createDatabase(databaseWD, nseq);
-	}
-	
-	/**
-	 * Load database.
-	 *
-	 * @param databaseWD the database wd
-	 */
 	public void loadDatabase(String databaseWD){
 		// Sampling
 		SaveLoadObjects sosess = new SaveLoadObjects();
@@ -97,26 +81,11 @@ public class A001MainClassCreateDatabase {
 		m_sequences = (ArrayList<String[]>)soseqs.load(databaseWD + "/_sequencesUHC.javaData");
 	}
 	
-	/**
-	 * Gets the sessions i ds.
-	 *
-	 * @return the sessions i ds
-	 */
 	public ArrayList<String> getSessionsIDs(){
-		ArrayList<String> ses = new ArrayList<String>();
-		for(int i=0; i<m_sessionsIDs.size(); i++){
-			ses.add(m_sessionsIDs.get(i));
-		}
-		return ses;
+		return m_sessionsIDs;
 	}
 	
-	/**
-	 * Gets the instantiated sequences.
-	 *
-	 * @return the instantiated sequences
-	 */
 	public ArrayList<String[]> getInstantiatedSequences(){
 		return m_sequences;
 	}
-
 }

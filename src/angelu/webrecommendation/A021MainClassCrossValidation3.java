@@ -5,8 +5,8 @@ public class A021MainClassCrossValidation3 {
 	public static void main(String[] args) {
 		
 		String wd = "20160607_experimentsBT_KAIS";
-		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole.txt", "/empty.txt", 
-				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole.txt", "5", "_s0.javaData", 
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				wd+"/01_databases", "/DM_ED",
 				wd+"/02_validation", "xxx", "xxx", "xxx", "-", "1"};
 		

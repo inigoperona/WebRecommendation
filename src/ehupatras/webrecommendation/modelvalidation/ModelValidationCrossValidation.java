@@ -149,18 +149,25 @@ public class ModelValidationCrossValidation extends ModelValidation {
 		slo.save(m_validationList, m_workdirectory + "/_crossvalValidation.javaData");
 		slo.save(m_testList,       m_workdirectory + "/_crossvalTest.javaData");
 	}
+	public void save(String workdirectory, long seed){
+		m_workdirectory = workdirectory;
+		SaveLoadObjects slo = new SaveLoadObjects();
+		slo.save(m_trainList,      m_workdirectory + "/_crossvalTrain_s" + seed + ".javaData");
+		slo.save(m_validationList, m_workdirectory + "/_crossvalValidation_s" + seed + ".javaData");
+		slo.save(m_testList,       m_workdirectory + "/_crossvalTest_s" + seed + ".javaData");
+	}
 	
 	/**
 	 * Load.
 	 *
 	 * @param workdirectory the workdirectory
 	 */
-	public void load(String workdirectory){
+	public void load(String workdirectory, String endingOfFile){
 		m_workdirectory = workdirectory;
 		SaveLoadObjects slo = new SaveLoadObjects();
-		m_trainList =      (ArrayList<ArrayList<String>>)slo.load(m_workdirectory + "/_crossvalTrain.javaData");
-		m_validationList = (ArrayList<ArrayList<String>>)slo.load(m_workdirectory + "/_crossvalValidation.javaData");
-		m_testList =       (ArrayList<ArrayList<String>>)slo.load(m_workdirectory + "/_crossvalTest.javaData");
+		m_trainList =      (ArrayList<ArrayList<String>>)slo.load(m_workdirectory + "/_crossvalTrain" + endingOfFile);
+		m_validationList = (ArrayList<ArrayList<String>>)slo.load(m_workdirectory + "/_crossvalValidation" + endingOfFile);
+		m_testList =       (ArrayList<ArrayList<String>>)slo.load(m_workdirectory + "/_crossvalTest" + endingOfFile);
 	}
 	
 	/**

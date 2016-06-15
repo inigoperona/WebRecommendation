@@ -13,7 +13,7 @@ public class A041MainClassPAMholdout {
 	 */
 	public static void main(String[] args) {
 		
-		String[] args2 = {"experiments_gieus/00_preprocess", "xxx",
+		String[] args2 = {"experiments_gieus/00_preprocess", "xxx", "5", "_s0.javaData",
 				  "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				  "experiments_gieus/01_database", "/DM_ed",
 				  "experiments_gieus/03_validation", "/pam_DM_ED", "xxx", "xxx",

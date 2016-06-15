@@ -6,6 +6,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 import angelu.webrecommendation.evaluator.ModelEvaluatorMedoidsContent;
 import angelu.webrecommendation.A000MainClassPreprocess;
 import ehupatras.webrecommendation.evaluator.ModelEvaluatorClustPAM;
@@ -16,7 +18,6 @@ import ehupatras.webrecommendation.modelvalidation.ModelValidationCrossValidatio
 import ehupatras.webrecommendation.modelvalidation.ModelValidationHoldOut;
 import ehupatras.webrecommendation.structures.WebAccess;
 import ehupatras.webrecommendation.structures.WebAccessSequences;
-import ehupatras.webrecommendation.structures.WebAccessSequencesUHC;
 import ehupatras.webrecommendation.structures.Website;
 
 // TODO: Auto-generated Javadoc
@@ -34,6 +35,10 @@ public class A0000ParameterControl_angelu {
 	
 	/** The m_logfile. */
 	protected String m_logfile;
+	
+	// cross validation
+	protected int m_nRuns = 1;
+	protected String m_endingOfTheFileCV = ".javaData";
 	
 	// content
 	// usageID
@@ -230,24 +235,26 @@ public class A0000ParameterControl_angelu {
 		
 		m_preprocessingWD = args[0];
 		m_logfile = args[1];
+		m_nRuns = Integer.valueOf(args[2]);
+		m_endingOfTheFileCV = args[3];
 		
-		m_url2topicFile = args[2];
-		m_url2url_DM = args[3];
+		m_url2topicFile = args[4];
+		m_url2url_DM = args[5];
 		
-		m_urlSimilarityMatrix = args[4];
-		m_urlRelationMatrix = args[5];
-		m_clusterPartitionFile = args[6];
-		m_usage2contentFile = args[7];
+		m_urlSimilarityMatrix = args[6];
+		m_urlRelationMatrix = args[7];
+		m_clusterPartitionFile = args[8];
+		m_usage2contentFile = args[9];
 		
-		m_databaseWD = args[8];
-		m_dmWD = args[9];
+		m_databaseWD = args[10];
+		m_dmWD = args[11];
 		
-		m_validationWD = args[10];
-		m_clustWD = args[11];
-		m_profiWD = args[12];
-		m_evalFile = args[13];
-		String noRecURLsStr = args[14];
-		String modePrReStr = args[15];
+		m_validationWD = args[12];
+		m_clustWD = args[13];
+		m_profiWD = args[14];
+		m_evalFile = args[15];
+		String noRecURLsStr = args[16];
+		String modePrReStr = args[17];
 
 		// the URLs we do not have to recommend
 		m_noProposeUrls = new ArrayList<Integer>();
@@ -513,6 +520,32 @@ public class A0000ParameterControl_angelu {
 	/**
 	 * Creates the cross validation.
 	 */
+	public void createCrossValidationRuns(){
+		for(int j=0; j<m_nRuns; j++){
+			// randomized the session IDs
+			long seed = (long)j;
+			Random rand = new Random(seed);
+			int n = m_sampleSessionIDs.size();
+			ArrayList<String> sessionIDs = new ArrayList<String>(n);
+			ArrayList<String> sessionIDsSort = new ArrayList<String>(n);
+			for(int i=0; i<n;){
+				int i2 = rand.nextInt(n);
+				String id = m_sampleSessionIDs.get(i2);
+				int pos = Collections.binarySearch(sessionIDsSort, id);
+				if(pos<0){
+					sessionIDs.add(id);
+					pos = Math.abs(pos+1);
+					sessionIDsSort.add(pos, id);				
+					i++;
+				}
+			}
+			
+			// create cross validation
+			ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
+			honestmodelval.prepareData(sessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
+			honestmodelval.save(m_validationWD, seed);
+		}
+	}
 	public void createCrossValidation(){
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
 		honestmodelval.prepareData(m_sampleSessionIDs, m_ptrain, m_pval, m_ptest, m_nFold);
@@ -538,7 +571,7 @@ public class A0000ParameterControl_angelu {
 	 */
 	public void loadHoldOut_cv(){
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
-		honestmodelval.load(m_validationWD);
+		honestmodelval.load(m_validationWD, m_endingOfTheFileCV);
 		
 		ArrayList<ArrayList<String>> trainALaux = honestmodelval.getTrain();
 		m_trainAL = new ArrayList<ArrayList<String>>();
@@ -558,7 +591,7 @@ public class A0000ParameterControl_angelu {
 	 */
 	public void loadCrossValidation(){
 		ModelValidationCrossValidation honestmodelval = new ModelValidationCrossValidation();
-		honestmodelval.load(m_validationWD);
+		honestmodelval.load(m_validationWD, m_endingOfTheFileCV);
 		m_trainAL = honestmodelval.getTrain();
 		m_valAL  = honestmodelval.getValidation();
 		m_testAL  = honestmodelval.getTest();

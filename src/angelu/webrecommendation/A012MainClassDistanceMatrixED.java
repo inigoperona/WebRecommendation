@@ -23,9 +23,9 @@ public class A012MainClassDistanceMatrixED {
 	public static void main(String[] args){
 		
 		String wd = "20160525_experiments_BT";
-		String[] args2 = {wd+"/00_preprocess", "xxx", "/empty.txt", 
-				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
-				wd+"/01_databases", "/DM_ED",
+		String[] args2 = {wd+"/00_preprocess", "xxx", "-1", "xxx", 
+				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
+				wd+"/01_databases", "/DM_LG",
 				"xxx", "xxx", "xxx", "xxx", "-", "1"};
 		
 		A0000ParameterControl_angelu param = new A0000ParameterControl_angelu(args);
