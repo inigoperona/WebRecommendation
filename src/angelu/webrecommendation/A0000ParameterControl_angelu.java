@@ -151,7 +151,8 @@ public class A0000ParameterControl_angelu {
 	// PAM: k
 	//int[] m_ks = {1000, 750, 500, 400, 300, 250, 200, 150, 100, 50};
 	/** The m_ks. */
-	protected int[] m_ks = {150};
+	protected int[] m_ks = {200, 250};
+	//protected int[] m_ks = {150, 200, 250};
 	
 	// SPADE: minimum support
 	//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};
