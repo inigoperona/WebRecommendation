@@ -61,7 +61,8 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		// PAM: k
 		//m_ks = new int[]{150, 200, 250, 300};
 		//m_ks = new int[]{150, 200, 250};
-		m_ks = new int[]{150};
+		//m_ks = new int[]{150};
+		m_ks = new int[]{200, 250};
 		
 		// SPADE: minimum support
 		//m_seqweights = new float[]{0.10f, 0.15f, 0.20f};
@@ -96,8 +97,8 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 	/** The m_cutth a. */
 	//protected float[] m_cutthA = {4f, 10f, 15f, 20f, 25f, 50f, 75f};
 	//protected float[] m_cutthA = {4f};
-	//protected float[] m_cutthA = {10f, 15f};
-	protected float[] m_cutthA = {15f};
+	protected float[] m_cutthA = {10f, 15f};
+	//protected float[] m_cutthA = {15f};
 	
 	/** The m_linkages. */
 	protected String[] m_linkages = 
