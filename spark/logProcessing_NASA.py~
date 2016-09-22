@@ -1,6 +1,6 @@
 
 # input files
-wd = "/home/burdinadar/workspace_ehupatras/WebRecommendation/20160922_spark_NASA/";
+wd = "/home/burdinadar/egitekoak/20160913_spark/ariketa_log_processing/";
 log1 = wd + "access_log_Aug95.txt";
 log2 = wd + "access_log_Jul95.txt";
 
