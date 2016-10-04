@@ -2,19 +2,21 @@
 
 # create SparkContext
 from pyspark import SparkContext
-sc = SparkContext(appName="logProcessingNASA")
+sc = SparkContext(appName="logProcessingDiscapnet")
 
 # input files
-wdURL="hdfs://u108019.ehu.es:9000/nasa/"
-log1 = wdURL + "access_log_Aug95.txt";
-log2 = wdURL + "access_log_Jul95.txt";
+wd = "/home/burdinadar/workspace_ehupatras/WebRecommendation/20160926_spark_discapnet/"
+log1 = wd + "02/anonymous1358781306284-u_ex120210.log";
+log2 = wd + "02/anonymous1358781313027-u_ex120211.log";
 
-lines1 = sc.textFile(log1)
+# read the input files
+lines1 = sc.textFile(log1);
 lines1 = lines1.map(lambda line: "0 " + line)
-lines2 = sc.textFile(log2)
+lines2 = sc.textFile(log2);
 lines2 = lines2.map(lambda line: "1 " + line)
 lines = lines1.union(lines2);
-
+lines1.unpersist()
+lines2.unpersist()
 
 #############
 # FILTERING #
@@ -22,14 +24,20 @@ lines = lines1.union(lines2);
 # cat access_log_*.txt | awk '{l=split($0,a,""); for(i=1;i<=l;i++){maiz[a[i]]++}}END{for(i in maiz){print maiz[i]" "i}}' | sort -n > chars.txt
 
 # check if the line is well formed
-import re;
+import re
 def filterLine(line):
   # has the line got enogh fields?
-  lineL = line.split(" ");
+  lineL = line.split(" ")
   if len(lineL)<10:
-    return False;
+    return False
   # is the line well-formed?
-  logF = lineL[0];
+  logF = lineL[0]
+  date = lineL[1]
+  hour = lineL[2]
+  localIP = lineL[3]
+  method = lineL[4]
+  param = lineL[5]
+
   remotehost = lineL[1];
   rfc931 = lineL[2];
   authuser = lineL[3];
@@ -86,6 +94,7 @@ def filterLine(line):
     return False;
 
 linesV2 = lines.filter(filterLine);
+lines.unpersist()
 linesV2 = linesV2.zipWithIndex();
 #linesV2.count();
 
@@ -129,6 +138,7 @@ def interpretLine(lineAndID):
   return vector;
 
 vectors = linesV2.map(interpretLine);
+linesV2.unpersist()
 #vectors.count();
 
 
@@ -145,6 +155,7 @@ spark = SparkSession\
 
 # create data frame
 dataDF = spark.createDataFrame(vectors, ['reqID', 'logF', 'remotehost', 'rfc931', 'authuser', 'method', 'url', 'http', 'status', 'bytes', 'timestamp', 'tz']);
+vectors.unpersist()
 
 # add timestamp in seconds
 def timeToSeconds(row):
@@ -155,7 +166,9 @@ def timeToSeconds(row):
 
 seconds = dataDF.rdd.map(timeToSeconds)
 secondsDF = spark.createDataFrame(seconds, ['reqID', 'tsSec'])
+seconds.unpersist()
 dataDF = dataDF.join(secondsDF, "reqID")
+secondsDF.unpersist()
 
 # order the requests for each IP
 ipDF = dataDF.rdd.map(lambda row: ((row.remotehost, row.logF), [(row.reqID, row.tsSec)]))
@@ -187,6 +200,7 @@ def orderRequests(vecA, vecB):
   return ema
 
 ipRB = ipDF.reduceByKey(orderRequests)
+ipDF.unpersist()
 
 # compute the elapsed time between session-consecutive-requests
 def computeElapsedTime(row):
@@ -219,13 +233,15 @@ def computeElapsedTime(row):
   return ema
 
 sessions = ipRB.flatMap(computeElapsedTime)
+ipRB.unpersist()
 
 # add session information to the main database
 sessionsDF = spark.createDataFrame(sessions, ['reqID', 'elapTime', 'sesID', 'reqID2'])
+sessions.unpersist()
 dataDF = dataDF.join(sessionsDF, "reqID")
+sessionsDF.unpersist()
 
 # save the dataframe
-wd = "../EMAITZAK/"
-dataDF.write.save(wd + "nasa2.parquet")
-dataDF.write.save(wd + "nasa2.json", format="json")
+dataDF.write.save(wd + "nasa.parquet")
+dataDF.write.save(wd + "nasa.json", format="json")
 

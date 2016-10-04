@@ -1,0 +1,202 @@
+############################################
+### Upgrade the computers of the cluster ###
+############################################
+
+sudo do-release-upgrade
+lsb_release -a 
+
+#############################
+### Spark Standalone Mode ###
+#############################
+
+### Extract the compiled spark version in all machines
+
+tar xzf spark-2.0.0-bin-hadoop2.7.tgz
+cd spark-2.0.0-bin-hadoop2.7
+./bin/pyspark
+
+### Start the master and the slaves
+
+MASTER
+
+cp conf/spark-env.sh.template conf/spark-env.sh
+pico conf/spark-env.sh
+SPARK_MASTER_HOST='10.10.10.10'
+
+master$ ./sbin/start-master.sh
+  http://master:8080/
+  spark://master:7077
+
+SLAVE
+
+slave1$ ./sbin/start-slave.sh spark://master:7077
+  http://slave1:8081
+slave2$ ./sbin/start-slave.sh spark://master:7077
+  http://slave2:8081
+
+### Start an interactive shell
+
+./bin/spark-shell --master spark://master:7077
+./bin/pyspark --master spark://master:7077
+
+### Stop the master ans the slaves
+
+master$ ./sbin/stop-master.sh
+slave1$ ./sbin/stop-slave.sh
+
+##############
+### HADOOP ###
+##############
+
+https://hadoop.apache.org/docs/r2.7.2/hadoop-project-dist/hadoop-common/SingleCluster.html
+http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html
+https://www.youtube.com/watch?v=DteSiloXesw
+
+### Extract the compiled version of hadoop
+
+tar xzf hadoop-2.7.3.tar.gz
+cd hadoop-2.7.3
+
+### check the hadoop help
+
+bin/hadoop
+bin/hadoop fs
+
+### MASTER
+
+# which java
+# indicate the root folder of java
+pico etc/hadoop/hadoop-env.sh
+  export JAVA_HOME="/usr"
+
+pico etc/hadoop/core-site.xml
+   <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://master:9000</value>
+    </property>
+
+pico etc/hadoop/hdfs-site.xml
+    <property>
+        <name>dfs.replication</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:$HOME/spark/HADOOP_STORAGE/namenode</value>
+    </property>
+
+pico etc/hadoop/masters
+  master
+
+pico etc/hadoop/slaves
+  slave1
+  slave2
+
+pico etc/hadoop/yarn-site.xml
+    <property>
+        <name>yarn.resourcemanager.resource-tracker.address</name>
+        <value>master:8025</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.scheduler.address</name>
+        <value>master:8030</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.address</name>
+        <value>master:8050</value>
+    </property>
+  
+### SLAVES
+
+pico etc/hadoop/hadoop-env.sh
+  export JAVA_HOME="/usr"
+
+pico etc/hadoop/core-site.xml
+   <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://master:9000</value>
+    </property>
+
+pico etc/hadoop/hdfs-site.xml
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:$HOME/spark/HADOOP_STORAGE/datanode</value>
+    </property>
+
+pico etc/hadoop/masters
+  master
+
+pico etc/hadoop/slaves
+  slave1
+  slave2
+
+pico etc/hadoop/yarn-site.xml
+    <property>
+        <name>yarn.resourcemanager.resource-tracker.address</name>
+        <value>master:8025</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.scheduler.address</name>
+        <value>master:8030</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.address</name>
+        <value>master:8050</value>
+    </property>
+
+### Trusted SSH connections
+
+# verigy if all hostnames are correct
+sudo pico /etc/hostname
+
+cd ~/.ssh
+ssh-keygen -t rsa # empty passphrase otherwise it asks after
+more id_rsa.pub
+pico ~/.ssh/authorized_keys
+# add all punlic keys each in one line
+# copy to all machines
+
+# test SSH
+ssh localhost
+ssh aldapa@u108019.ehu.es
+ssh aldapa@u107559.si.ehu.es
+ssh aldapa@u107558.si.ehu.es
+ssh aldapa@u008790.si.ehu.es
+ssh aldapa@u008789.si.ehu.es
+
+### Start hadoop
+cd $HOME/spark/hadoop-2.7.3
+master$ sbin/start-dfs.sh
+  http://master:8088
+
+master$ sbin/start-yarn.sh
+master$ jps
+slave1$ jps
+slave2$ jps
+
+
+### test hadoop
+
+master$ bin/hdfs namenode -format
+  
+### copy data to HDFS
+
+bin/hadoop fs -mkdir /nasa
+
+bin/hadoop fs -ls /
+
+bin/hadoop fs -copyFromLocal $HOME/spark/LOGAK_TXT/nasa/access_log_*.txt /nasa
+
+bin/hadoop fs -ls /nasa
+
+bin/hadoop fs -rm /nasa/*
+
+
+#########################
+### RUN SPARK PROGRAM ###
+#########################
+
+./bin/spark-submit \
+  --master spark://master:7077 \
+  $HOME/spark/SPARK_SCRIPTS/01_logProcessing_NASA.py
+
