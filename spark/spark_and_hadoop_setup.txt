@@ -158,11 +158,9 @@ pico ~/.ssh/authorized_keys
 
 # test SSH
 ssh localhost
-ssh aldapa@u108019.ehu.es
-ssh aldapa@u107559.si.ehu.es
-ssh aldapa@u107558.si.ehu.es
-ssh aldapa@u008790.si.ehu.es
-ssh aldapa@u008789.si.ehu.es
+ssh username@master
+ssh username@slave1
+ssh username@slave2
 
 ### Start hadoop
 cd $HOME/spark/hadoop-2.7.3
@@ -185,7 +183,7 @@ bin/hadoop fs -mkdir /nasa
 
 bin/hadoop fs -ls /
 
-bin/hadoop fs -copyFromLocal $HOME/spark/LOGAK_TXT/nasa/access_log_*.txt /nasa
+bin/hadoop fs -copyFromLocal $HOME/spark/LOGAK_TXT/nasa/access_log_*.txt.gz /nasa
 
 bin/hadoop fs -ls /nasa
 
@@ -199,4 +197,5 @@ bin/hadoop fs -rm /nasa/*
 ./bin/spark-submit \
   --master spark://master:7077 \
   $HOME/spark/SPARK_SCRIPTS/01_logProcessing_NASA.py
+
 

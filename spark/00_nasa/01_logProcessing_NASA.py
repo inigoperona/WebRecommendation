@@ -1,14 +1,15 @@
-# ./bin/spark-submit /home/burdinadar/workspace_ehupatras/WebRecommendation/spark/01_logProcessing_NASA.py
-# ./bin/spark-submit --master spark://158.227.112.217:7077 /home/aldapa/spark/SPARK_SCRIPTS/01_logProcessing_NASA.py
+# ./bin/spark-submit $HOME/workspace_ehupatras/WebRecommendation/spark/01_logProcessing_NASA.py
+# ./bin/spark-submit --master spark://master:7077 $HOME/spark/SPARK_SCRIPTS/01_logProcessing_NASA.py
 
 # create SparkContext
 from pyspark import SparkContext
 sc = SparkContext(appName="logProcessingNASA")
 
 # input files
-wdURL="hdfs://u108019.ehu.es:9000/nasa/"
-log1 = wdURL + "access_log_Aug95.txt";
-log2 = wdURL + "access_log_Jul95.txt";
+# wdURL = "../../workspace_ehupatras/WebRecommendation/20160922_spark_NASA/"
+wdURL = "hdfs://u108019.ehu.es:9000/nasa/"
+log1 = wdURL + "access_log_Aug95.txt.gz";
+log2 = wdURL + "access_log_Jul95.txt.gz";
 
 lines1 = sc.textFile(log1)
 lines1 = lines1.map(lambda line: "0 " + line)
@@ -227,6 +228,6 @@ dataDF = dataDF.join(sessionsDF, "reqID")
 
 # save the dataframe
 wd = "../EMAITZAK/"
-dataDF.write.save(wd + "nasa2.parquet")
-dataDF.write.save(wd + "nasa2.json", format="json")
+dataDF.write.save(wd + "nasa3.parquet")
+dataDF.write.save(wd + "nasa3.json", format="json")
 

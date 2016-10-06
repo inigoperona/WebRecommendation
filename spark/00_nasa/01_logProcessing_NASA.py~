@@ -1,17 +1,22 @@
+# ./bin/spark-submit /home/burdinadar/workspace_ehupatras/WebRecommendation/spark/01_logProcessing_NASA.py
+# ./bin/spark-submit --master spark://158.227.112.217:7077 /home/aldapa/spark/SPARK_SCRIPTS/01_logProcessing_NASA.py
 
 # create SparkContext
 from pyspark import SparkContext
 sc = SparkContext(appName="logProcessingNASA")
 
 # input files
-wd = "/home/burdinadar/workspace_ehupatras/WebRecommendation/20160922_spark_NASA/";
-log1 = wd + "access_log_Aug95.txt";
-log2 = wd + "access_log_Jul95.txt";
+# wdURL = "../../workspace_ehupatras/WebRecommendation/20160922_spark_NASA/"
+wdURL = "hdfs://u108019.ehu.es:9000/nasa/"
+log1 = wdURL + "access_log_Aug95.txt.gz";
+log2 = wdURL + "access_log_Jul95.txt.gz";
 
-# read the input files
-lines1 = sc.textFile(log1);
-lines2 = sc.textFile(log2);
+lines1 = sc.textFile(log1)
+lines1 = lines1.map(lambda line: "0 " + line)
+lines2 = sc.textFile(log2)
+lines2 = lines2.map(lambda line: "1 " + line)
 lines = lines1.union(lines2);
+
 
 #############
 # FILTERING #
@@ -26,34 +31,35 @@ def filterLine(line):
   if len(lineL)<10:
     return False;
   # is the line well-formed?
-  remotehost = lineL[0];
-  rfc931 = lineL[1];
-  authuser = lineL[2];
-  date = lineL[3];
+  logF = lineL[0];
+  remotehost = lineL[1];
+  rfc931 = lineL[2];
+  authuser = lineL[3];
+  date = lineL[4];
   bol = re.match('^\[', date);
   if not bol:
     return False;
-  tz = lineL[4];
+  tz = lineL[5];
   bol = re.match('^.+]$', tz);
   if not bol:
     return False;
-  method = lineL[5];
+  method = lineL[6];
   bol = re.match('^"(GET|POST)$', method);
   if not bol:
     return False;
-  url = lineL[6];
+  url = lineL[7];
   bol = re.match('^\/', url);
   if not bol:
     return False;
-  http = lineL[7];
+  http = lineL[8];
   bol = re.match('^HTTP', http);
   if not bol:
     return False;
-  status = lineL[8];
+  status = lineL[9];
   bol = status.isdigit();
   if not bol:
     return False;
-  bytes = lineL[9];
+  bytes = lineL[10];
   bol = bytes.isdigit();
   if not bol:
     return False;
@@ -96,20 +102,21 @@ def interpretLine(lineAndID):
   reqID = lineAndID[1];
   # line = 'in24.inetnebr.com - - [01/Aug/1995:00:00:01 -0400] "GET /shuttle/missions/sts-68/news/sts-68-mcc-05.txt HTTP/1.0" 200 1839';
   lineL = line.split(" ");
-  remotehost = lineL[0];
-  rfc931 = lineL[1];
-  authuser = lineL[2];
-  method = lineL[5];
+  logF = int(lineL[0]);
+  remotehost = lineL[1];
+  rfc931 = lineL[2];
+  authuser = lineL[3];
+  method = lineL[6];
   method2 = method[1:];
-  url = lineL[6];
-  http = lineL[7];
+  url = lineL[7];
+  http = lineL[8];
   http2 = http[:len(http)-1];
-  status = lineL[8];
-  bytes = int(lineL[9]);
+  status = lineL[9];
+  bytes = int(lineL[10]);
   # datetime
-  date = lineL[3];
+  date = lineL[4];
   date2 = date[1:];
-  tz = lineL[4];
+  tz = lineL[5];
   tz2 = tz[:len(tz)-1];
   timestamp = time.strptime(date2, "%d/%b/%Y:%H:%M:%S");
   #timestamp2 = time.mktime(timestamp);
@@ -120,7 +127,7 @@ def interpretLine(lineAndID):
   #   timestamp, tz, method2, url, http2, \
   #   status, bytes)
   # create a processed line
-  vector = (reqID, remotehost, rfc931, authuser, method2, url, http2, status, bytes, timestamp2, tz2);
+  vector = (reqID, logF, remotehost, rfc931, authuser, method2, url, http2, status, bytes, timestamp2, tz2);
   return vector;
 
 vectors = linesV2.map(interpretLine);
@@ -135,11 +142,11 @@ vectors = linesV2.map(interpretLine);
 from pyspark.sql import SparkSession
 spark = SparkSession\
         .builder\
-        .appName("PythonKMeans")\
+        .appName("PythonLogProcessing")\
         .getOrCreate()
 
 # create data frame
-dataDF = spark.createDataFrame(vectors, ['reqID', 'remotehost', 'rfc931', 'authuser', 'method', 'url', 'http', 'status', 'bytes', 'timestamp', 'tz']);
+dataDF = spark.createDataFrame(vectors, ['reqID', 'logF', 'remotehost', 'rfc931', 'authuser', 'method', 'url', 'http', 'status', 'bytes', 'timestamp', 'tz']);
 
 # add timestamp in seconds
 def timeToSeconds(row):
@@ -148,12 +155,12 @@ def timeToSeconds(row):
   ts = time.mktime(dt.timetuple())
   return (reqID, ts);
 
-seconds = dataDF.foreach(timeToSeconds)
+seconds = dataDF.rdd.map(timeToSeconds)
 secondsDF = spark.createDataFrame(seconds, ['reqID', 'tsSec'])
 dataDF = dataDF.join(secondsDF, "reqID")
 
 # order the requests for each IP
-ipDF = dataDF.map(lambda row: (row.remotehost, [(row.reqID, row.tsSec)]))
+ipDF = dataDF.rdd.map(lambda row: ((row.remotehost, row.logF), [(row.reqID, row.tsSec)]))
 
 def orderRequests(vecA, vecB):
   lenA = len(vecA)
@@ -219,19 +226,8 @@ sessions = ipRB.flatMap(computeElapsedTime)
 sessionsDF = spark.createDataFrame(sessions, ['reqID', 'elapTime', 'sesID', 'reqID2'])
 dataDF = dataDF.join(sessionsDF, "reqID")
 
-# assign an URL identifier to each URL
-urlsSeq = dataDF.select("url").distinct().map(lambda row: row.url)
-urlsSeq = urlsSeq.zipWithIndex()
-urlsDF = spark.createDataFrame(urlsSeq, ['url', 'urlID'])
-dataDF = dataDF.join(urlsDF, "url")
-
-# assign an IP identifier to each IP
-ipsSeq = dataDF.select("remotehost").distinct().map(lambda row: row.remotehost)
-ipsSeq = ipsSeq.zipWithIndex()
-ipsDF = spark.createDataFrame(ipsSeq, ['remotehost', 'ipID'])
-dataDF = dataDF.join(ipsDF, "remotehost")
-
 # save the dataframe
-dataDF.write.save(wd + "nasa.parquet")
-dataDF.write.save(wd + "nasa.json", format="json")
+wd = "../EMAITZAK/"
+dataDF.write.save(wd + "nasa3.parquet")
+dataDF.write.save(wd + "nasa3.json", format="json")
 
