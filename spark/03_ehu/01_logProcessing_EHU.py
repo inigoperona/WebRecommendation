@@ -1,21 +1,31 @@
-# ./bin/spark-submit $HOME/workspace_ehupatras/WebRecommendation/spark/01_logProcessing_NASA.py
+# ./bin/spark-submit $HOME/workspace_ehupatras/WebRecommendation/spark/03_ehu/01_logProcessing_EHU.py
 # ./bin/spark-submit --master spark://master:7077 $HOME/spark/SPARK_SCRIPTS/01_logProcessing_NASA.py
+
+wd = "../EMAITZAK/"
 
 # create SparkContext
 from pyspark import SparkContext
 sc = SparkContext(appName="logProcessingEHU")
 
 # input files
-logFiles = "hdfs://u108019.ehu.es:9000/ehu/*.txt.gz"
+logFiles = "hdfs://u108019.ehu.es:9000/ehu/access_log.anon.*.txt.gz"
+#logFiles = "hdfs://u108019.ehu.es:9000/ehu/access_log.anon.20160326.log.txt.gz"
+#logFiles = "hdfs://u108019.ehu.es:9000/ehu_proba/proba100000.txt.gz"
+#logFiles = "file:/home/burdinadar/workspace_ehupatras/WebRecommendation/20161005_ehu/proba/proba100000.txt.gz"
+#logFiles = "hdfs://u108019.ehu.es:9000/ehu_proba/proba1000000.txt.gz"
 
 ##########################
 ### read the log files ###
 ##########################
 lines = sc.textFile(logFiles)
 
-#############
-# FILTERING #
-#############
+##############
+# PREPROCESS #
+##############
+
+
+# FILTERING
+
 # cat access_log_*.txt | awk '{l=split($0,a,""); for(i=1;i<=l;i++){maiz[a[i]]++}}END{for(i in maiz){print maiz[i]" "i}}' | sort -n > chars.txt
 
 # check if the line is well formed
@@ -113,19 +123,15 @@ def filterLine(line):
   else:
     return False;
 
-linesV2 = lines.filter(filterLine);
-linesV2 = linesV2.zipWithIndex();
-#linesV2.count();
 
-#######
-# MAP #
-#######
+# MAP: extract fields
+
 # function that reads a line and converts to vector
 import time;
 import datetime;
-def interpretLine(lineAndID):
-  line = lineAndID[0];
-  reqID = lineAndID[1];
+def interpretLine(line):
+  #line = lineAndID[0];
+  #reqID = lineAndID[1];
   # line = 'in24.inetnebr.com - - [01/Aug/1995:00:00:01 -0400] "GET /shuttle/missions/sts-68/news/sts-68-mcc-05.txt HTTP/1.0" 200 1839';
   lineL = line.split(" ");
   remotehost = lineL[0];
@@ -159,34 +165,24 @@ def interpretLine(lineAndID):
   #   timestamp, tz, method2, url, http2, \
   #   status, bytes)
   # create a processed line
-  vector = (reqID, remotehost, rfc931, authuser, method2, url, http2, status, bytes, \
+  vector = (remotehost, rfc931, authuser, method2, url, http2, status, bytes, \
             timestamp2, tz2, \
             reference2, useragent2);
   return vector;
 
-vectors = linesV2.map(interpretLine);
-#vectors.count();
+
+# EXEC
+vectors = lines.filter(filterLine) \
+               .map(interpretLine) \
+               .zipWithUniqueId() \
+               .map(lambda (line, reqID): (reqID,) + line)
 
 
+# MAP: identifying day
 
-##################
-### SESSIONING ###
-##################
-# create a spark session
-from pyspark.sql import SparkSession
-spark = SparkSession\
-        .builder\
-        .appName("PythonLogProcessing")\
-        .getOrCreate()
-
-# create data frame
-dataDF = spark.createDataFrame(vectors, ['reqID', 'remotehost', 'rfc931', 'authuser', 'method', 'url', 'http', 'status', 'bytes', 'timestamp', 'tz', 'reference', 'useragent']);
-
-# identifying day
-#import timedelta
 def identifyDay(row):
-  reqID = row.reqID
-  dt = row.timestamp
+  reqID = row[0]
+  dt = row[9]
   #dtMod = dt + timedelta(hours=3)
   year = '{0:04d}'.format(dt.year)
   month = '{0:02d}'.format(dt.month)
@@ -195,61 +191,78 @@ def identifyDay(row):
   #minute = '{0:02d}'.format(dt.minute)
   #second = '{0:02d}'.format(dt.second)
   dayID = year + month + day;
-  return (reqID, dayID);
+  return row + (dayID,)
 
-dayIDs = dataDF.rdd.map(identifyDay)
-dayIDsDF = spark.createDataFrame(dayIDs, ['reqID', 'dayID'])
-dataDF = dataDF.join(dayIDsDF, "reqID")
+vectors = vectors.map(identifyDay)
 
-# add timestamp in seconds
+
+# MAP: timestamp in seconds
+
 def timeToSeconds(row):
-  reqID = row.reqID;
-  dt = row.timestamp;
+  reqID = row[0];
+  dt = row[9];
   ts = time.mktime(dt.timetuple())
-  return (reqID, ts);
+  return row + (ts,)
 
-seconds = dataDF.rdd.map(timeToSeconds)
-secondsDF = spark.createDataFrame(seconds, ['reqID', 'tsSec'])
-dataDF = dataDF.join(secondsDF, "reqID")
+vectors = vectors.map(timeToSeconds)
 
-# order the requests for each IP
-ipDF = dataDF.rdd.map(lambda row: ((row.remotehost, row.dayID), [(row.reqID, row.tsSec)]))
 
-def orderRequests(vecA, vecB):
-  lenA = len(vecA)
-  lenB = len(vecB)
-  iA = 0
-  iB = 0
+
+##################
+### SESSIONING ###
+##################
+
+# MAIN VECTOR
+# key: (remotehost)
+# vec: 0:reqID, 1:remotehost, 2:rfc931, 3:authuser, 4:method, 5:url, 6:http, 7:status, 8:bytes, 9:timestamp, 10:tz, 11:reference, 12:useragent, 13:dayID, 14:tsSec
+vectors2 = vectors.map(lambda vec: ((vec[1]), vec))
+
+# PARTITIONING
+partSize = 10000
+nElems = vectors2.count()
+nParts = nElems / partSize
+vectors3 = vectors2.partitionBy(nParts).persist()
+
+# SESIONNING
+def orderRequests(iterator):
+  hiz = {}
+  for elemCurrent in iterator:
+    keyCurrent = elemCurrent[0]
+    tupCurrent = elemCurrent[1]
+    vecNew = []
+    if keyCurrent in hiz:
+      timeCurrent = tupCurrent[1]
+      vecOld = hiz[keyCurrent]
+      lenVecOld = len(vecOld)
+      i = 0
+      while i<lenVecOld:
+        tupOldi = vecOld[i]
+        timeOldi = tupOldi[1]
+        if timeCurrent < timeOldi:
+          vecNew = vecNew + [tupCurrent] + vecOld[i:]
+          break
+        else:
+          vecNew = vecNew + [tupOldi]
+        i = i + 1
+      if i==lenVecOld:
+        vecNew = vecNew + [tupCurrent]
+    else:
+      vecNew = [tupCurrent]
+    hiz[keyCurrent] = vecNew
+  # convert dictionary to vector
   ema = []
-  while iA<lenA or iB<lenB:
-    if iA<lenA:
-      tupA = vecA[iA]
-      timeA = tupA[1]
-    else:
-      timeA = 9999999999
-    if iB<lenB:
-      tupB = vecB[iB]
-      timeB = tupB[1]
-    else:
-      timeB = 9999999999
-    # compare the rimes
-    if timeA<=timeB:
-      ema = ema + [tupA]
-      iA = iA+1
-    else:
-      ema = ema + [tupB]
-      iB = iB+1
+  for k in hiz.keys():
+    ema = ema + [(k, hiz[k])]
   return ema
 
-ipRB = ipDF.reduceByKey(orderRequests)
 
-# compute the elapsed time between session-consecutive-requests
 def computeElapsedTime(row):
   vec = row[1]
   isFirstReq = True
   i = 0
   iSes = 0
   iReq = 0
+  sesTime = 0
   ema = []
   while i<len(vec):
     tupCurrent = vec[i]
@@ -262,25 +275,36 @@ def computeElapsedTime(row):
       diffTime = timeCurrent - timeOld
       diffTime = int(diffTime)
       if diffTime<=600:
-        ema = ema + [(tupOld[0], diffTime, iSes, iReq)]
-        iReq = iReq+1
+        ema = ema + [(tupOld[0], diffTime, iSes, iReq, sesTime)]
+        iReq = iReq + 1
+        sesTime = sesTime + diffTime
       else:
-        ema = ema + [(tupOld[0], -1, iSes, iReq)]
+        ema = ema + [(tupOld[0], -1, iSes, iReq, 0)]
         iSes = iSes+1
         iReq = 0
+        sesTime = 0
       tupOld = tupCurrent
     i = i+1
-  ema = ema + [(tupCurrent[0], -1, iSes, iReq)]
+  ema = ema + [(tupCurrent[0], -1, iSes, iReq, sesTime)]
   return ema
 
-sessions = ipRB.flatMap(computeElapsedTime)
+ses = vectors3.map(lambda v: ((v[1][1]), (v[1][0], v[1][14]))) \
+               .mapPartitions(orderRequests) \
+               .flatMap(computeElapsedTime) \
+               .map(lambda (a,b,c,d,e): [a, (b,c,d,e)])
+#ses.saveAsTextFile(wd + "ehu_ses.txt")
+ses.saveAsPickleFile(wd + "ehu_ses.pickle")
 
-# add session information to the main database
-sessionsDF = spark.createDataFrame(sessions, ['reqID', 'elapTime', 'sesID', 'reqID2'])
-dataDF = dataDF.join(sessionsDF, "reqID")
+# join
+vector4 = vectors3.map(lambda (a, b): (b[0], b)) \
+                  .join(ses) \
+                  .map(lambda (a,b): b[0] + b[1])
+# vec: 0:reqID, 1:remotehost, 2:rfc931, 3:authuser, 
+#      4:method, 5:url, 6:http, 7:status, 8:bytes, 
+#      9:timestamp, 10:tz, 11:reference, 12:useragent, 13:dayID, 14:tsSec, 
+#      15:elapTime, 16:idSes2, 17:idReq2, 18:sesTime
 
-# save the dataframe
-wd = "../EMAITZAK/"
-dataDF.write.save(wd + "ehu.parquet")
-dataDF.write.save(wd + "ehu.json", format="json")
+# WRITE the database
+vector4.saveAsPickleFile(wd + "ehu_data.pickle")
+#vector4.saveAsTextFile(wd + "ehu_data.txt")
 
