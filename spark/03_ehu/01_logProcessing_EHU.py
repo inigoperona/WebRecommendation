@@ -9,10 +9,10 @@ from pyspark import SparkContext
 sc = SparkContext(appName="logProcessingEHU")
 
 # input files
-#logFiles = "hdfs://u108019.ehu.es:9000/ehu/access_log.anon.*.txt.gz"
+logFiles = "hdfs://u108019.ehu.es:9000/ehu/access_log.anon.*.txt.gz"
 #logFiles = "hdfs://u108019.ehu.es:9000/ehu/access_log.anon.20160326.log.txt.gz"
 #logFiles = "hdfs://u108019.ehu.es:9000/ehu_proba/proba100000.txt.gz"
-logFiles = "file:/home/burdinadar/workspace_ehupatras/WebRecommendation/20161005_ehu/proba/proba1000000.txt.gz"
+#logFiles = "file:/home/burdinadar/workspace_ehupatras/WebRecommendation/20161005_ehu/proba/proba1000000.txt.gz"
 #logFiles = "hdfs://u108019.ehu.es:9000/ehu_proba/proba1000000.txt.gz"
 
 ##########################
@@ -226,139 +226,59 @@ vectors3 = vectors2.partitionBy(nParts)
 # vectors3.saveAsTextFile(wd + "ehu_vectors3.txt")
 
 # SESIONNING
-def orderRequests(iterator):
-  hiz = {}
-  for elemCurrent in iterator:
-    keyCurrent = elemCurrent[0]
-    tupCurrent = elemCurrent[1]
-    vecNew = []
-    if keyCurrent in hiz:
-      timeCurrent = tupCurrent[1]
-      vecOld = hiz[keyCurrent]
-      lenVecOld = len(vecOld)
-      i = 0
-      while i<lenVecOld:
-        tupOldi = vecOld[i]
-        timeOldi = tupOldi[1]
-        if timeCurrent < timeOldi:
-          vecNew = vecNew + [tupCurrent] + vecOld[i:]
-          break
-        else:
-          vecNew = vecNew + [tupOldi]
-        i = i + 1
-      if i==lenVecOld:
-        vecNew = vecNew + [tupCurrent]
-    else:
-      vecNew = [tupCurrent]
-    hiz[keyCurrent] = vecNew
-  # convert dictionary to vector
+def computeElapsedTime2(iterator):
   ema = []
-  for k in hiz.keys():
-    ema = ema + [(k, hiz[k])]
+  sesID = -1
+  tupOld = (-1, -1, -1)
+  for vec in iterator: 
+    ip = vec[0][0]
+    ts = vec[0][1]
+    reqID = vec[0][2]
+    tupCurrent = (ip, ts, reqID)
+    ipOld = tupOld[0]
+    if ip != ipOld:
+      if ipOld != -1:
+        ema = ema + [(tupOld[2], (tupOld[0], -1, iSes, iReq, sesTime))]
+      tupOld = tupCurrent
+      i = 0
+      iSes = 0
+      iReq = 0
+      sesTime = 0
+    else:
+      timeOld = tupOld[1]
+      timeCurrent = tupCurrent[1]
+      diffTime = timeCurrent - timeOld
+      diffTime = int(diffTime)
+      if diffTime<=600:
+        ema = ema + [(tupOld[2], (tupOld[0], diffTime, iSes, iReq, sesTime))]
+        iReq = iReq + 1
+        sesTime = sesTime + diffTime
+      else:
+        ema = ema + [(tupOld[2], (tupOld[0], -1, iSes, iReq, 0))]
+        iSes = iSes+1
+        iReq = 0
+        sesTime = 0
+      tupOld = tupCurrent
+    i = i+1
+  ema = ema + [(tupCurrent[2], (tupCurrent[0], -1, iSes, iReq, sesTime))]
   return ema
 
+# vector: ((remotehost, timestamp, reqID), 0)
+ses = vectors3.map(lambda v: ((v[1][1], v[1][14], v[1][0]), 0)) \
+              .sortByKey() \
+              .mapPartitions(computeElapsedTime2)
+ses.saveAsTextFile(wd + "ehu_ses.txt")
+# ses: (reqID, (remotehost, diffTime, ises, ireq, sesTime))
 
-def computeElapsedTime(iterator):
-  ema2 = []
-  for ses in iterator:
-    sesID = ses[0]
-    vec = ses[1]
-    isFirstReq = True
-    i = 0
-    iSes = 0
-    iReq = 0
-    sesTime = 0
-    ema = []
-    while i<len(vec):
-      tupCurrent = vec[i]
-      if isFirstReq:  
-        tupOld = tupCurrent
-        isFirstReq = False
-      else:
-        timeOld = tupOld[1]
-        timeCurrent = tupCurrent[1]
-        diffTime = timeCurrent - timeOld
-        diffTime = int(diffTime)
-        if diffTime<=600:
-          ema = ema + [(tupOld[0], diffTime, iSes, iReq, sesTime)]
-          iReq = iReq + 1
-          sesTime = sesTime + diffTime
-        else:
-          ema = ema + [(tupOld[0], -1, iSes, iReq, 0)]
-          iSes = iSes+1
-          iReq = 0
-          sesTime = 0
-        tupOld = tupCurrent
-      i = i+1
-    ema = ema + [(tupCurrent[0], -1, iSes, iReq, sesTime)]
-    ema2 = ema2 + ema
-  return ema2
-
-#ses = vectors3.map(lambda v: ((v[1][1]), (v[1][0], v[1][14]))) \
-#              .mapPartitions(orderRequests) \
-#              .flatMap(computeElapsedTime) \
-#              .map(lambda (a,b,c,d,e): [a, (b,c,d,e)])
-
-
-vec1 = vectors3.map(lambda v: ((v[1][1]), (v[1][0], v[1][14])))
-ses1 = vec1.mapPartitions(orderRequests) 
-#ses1.getNumPartitions()
-#ses1.take(3) # quite fast
-# ses1.saveAsTextFile(wd + "ehu_ses1.txt")
-# ses1.saveAsSequenceFile(wd + "ehu_ses1.seq")
-
-#vectors4 = vectors2.partitionBy(500)
-#vec1 = vectors4.map(lambda v: ((v[1][1]), (v[1][0], v[1][14])))
-#ses1 = vec1.mapPartitions(orderRequests, preservesPartitioning=True) 
-
-
-# 1 node, 4 core, 4GB ram => 3 / 1 / 1
-# bin/pyspark --num-executors 3 --executor-cores 1 --executor-memory 1g
-
-#ses2 = ses1.coalesce(10)
-#ses2.getNumPartitions()
-
-#import pickle
-#def writeEachPartition(partID, iterator):
-#  iz = wd + "p" + str(partID) + "_ses_ehu.p"
-#  pickle.dump(iterator, open( iz, "wb" ))
-#  return [partID]
-
-#write = ses2.mapPartitionsWithIndex(writeEachPartition)
-#ses2.saveAsTextFile(wd + "ehu_ses.txt")
-#ses1.saveAsTextFile(wd + "ehu_ses.txt")
-
-#def countCasesInPartition(iterator):
-#  i = 0
-#  for ses in iterator:
-#    i = i + 1
-#  print i
-
-#partSizes = ses1.foreachPartition(countCasesInPartition)
-
-#ses1.foreachPartition(writeEachPartition)
-
-#ses4.mapPartitionsWithIndex(writeEachPartition)
-
-#ses4.foreachPartition(lambda iterator: iterator.saveAsTextFile(wd + "_ehu_ses.txt"))
-
-#ses.coalesce(nParts/5)
-# ses.getNumPartitions()
-
-#ses4.saveAsTextFile(wd + "ehu_ses.txt")
-#ses.saveAsPickleFile(wd + "ehu_ses.pickle", batchSize=50)
-#ses.saveAsSequenceFile(wd + "ses.seq")
 
 # join
-#vector4 = vectors3.map(lambda (a, b): (b[0], b)) \
-#                  .join(ses) \
-#                  .map(lambda (a,b): b[0] + b[1])
+vector4 = vectors3.map(lambda (a, b): (b[0], b)) \
+                  .join(ses) \
+                  .map(lambda (a,b): b[0] + b[1][1:])
+vector4.saveAsTextFile(wd + "ehu_data.txt")
+vector4.saveAsPickleFile(wd + "ehu_data.p")
 # vec: 0:reqID, 1:remotehost, 2:rfc931, 3:authuser, 
 #      4:method, 5:url, 6:http, 7:status, 8:bytes, 
 #      9:timestamp, 10:tz, 11:reference, 12:useragent, 13:dayID, 14:tsSec, 
 #      15:elapTime, 16:idSes2, 17:idReq2, 18:sesTime
-
-# WRITE the database
-#vector4.saveAsPickleFile(wd + "ehu_data.pickle")
-#vector4.saveAsTextFile(wd + "ehu_data.txt")
 
