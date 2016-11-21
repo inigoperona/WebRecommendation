@@ -4,8 +4,8 @@ public class A041MainClassPAMcv2 {
 
 	public static void main(String[] args) {
 		
-		String wd = "20160530_experiments_BT_sekuentzietatik";
-		String[] args2 = {wd+"/00_preprocess", "/sequences_urlIDurlRole2.txt", "5", "_s0.javaData",
+		String wd = "20161121_EHU_sessions";
+		String[] args2 = {wd+"/00_preprocess", "/small.txt", "5", ".javaData",
 				"/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt", "/empty.txt",
 				wd+"/01_databases", "/DM_ED",
 				wd+"/02_validation", "/pam_DM_ED", "xxx", "/eval.txt", "-", "1"};

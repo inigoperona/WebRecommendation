@@ -153,7 +153,7 @@ public class A0000ParameterControl_angelu {
 	/** The m_ks. */
 	//protected int[] m_ks = {200, 250};
 	//protected int[] m_ks = {150, 200, 250};
-	protected int[] m_ks = {200};
+	protected int[] m_ks = {100};
 	
 	// SPADE: minimum support
 	//float[] seqweights = {0.05f, 0.10f, 0.15f, 0.20f};

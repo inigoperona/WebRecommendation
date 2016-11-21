@@ -2,17 +2,17 @@
 # ./bin/spark-submit --master spark://master:7077 $HOME/spark/SPARK_SCRIPTS/01_logProcessing_NASA.py
 # ./bin/spark-submit --num-executors 1 --executor-cores 1 --executor-memory 1g $HOME/workspace_ehupatras/WebRecommendation/spark/03_ehu/01_logProcessing_EHU.py
 
-wd = "../EMAITZAK/"
+wd = "EMAITZAK/"
 
 # create SparkContext
 from pyspark import SparkContext
 sc = SparkContext(appName="logProcessingEHU")
 
 # input files
-#logFiles = "hdfs://u108019.ehu.es:9000/ehu/access_log.anon.*.txt.gz"
+logFiles = "hdfs://u108019.ehu.es:9000/ehu/access_log.anon.*.txt.gz"
 #logFiles = "hdfs://u108019.ehu.es:9000/ehu/access_log.anon.20160326.log.txt.gz"
 #logFiles = "hdfs://u108019.ehu.es:9000/ehu_proba/proba100000.txt.gz"
-logFiles = "file:/home/burdinadar/workspace_ehupatras/WebRecommendation/20161005_ehu/proba/proba1000000.txt.gz"
+#logFiles = "file:/home/burdinadar/workspace_ehupatras/WebRecommendation/20161005_ehu/proba/proba1000000.txt.gz"
 #logFiles = "hdfs://u108019.ehu.es:9000/ehu_proba/proba1000000.txt.gz"
 
 ##########################
@@ -215,17 +215,36 @@ vectors = vectors.map(timeToSeconds)
 # MAIN VECTOR
 # key: (remotehost)
 # vec: 0:reqID, 1:remotehost, 2:rfc931, 3:authuser, 4:method, 5:url, 6:http, 7:status, 8:bytes, 9:timestamp, 10:tz, 11:reference, 12:useragent, 13:dayID, 14:tsSec
-vectors2 = vectors.map(lambda vec: ((vec[1]), vec))
+vectors2 = vectors.map(lambda vec: ((vec[13], vec[1]), vec))
+print("partitionBy: " + str(vectors2.count()))
 
 # PARTITIONING
-partSize = 10000
+partSize = 50000
 nElems = vectors2.count()
 nParts = nElems / partSize
 vectors3 = vectors2.partitionBy(nParts)
+print("partitionBy: " + str(vectors3.count()))
 # vectors3.getNumPartitions()
 # vectors3.saveAsTextFile(wd + "ehu_vectors3.txt")
 
 # SESIONNING
+def mySort(iterator):
+  ema = []
+  for vec1 in iterator:
+    ts1 = vec1[1]
+    n = len(ema)
+    i = n - 1
+    while i >= 0:
+      vec0 = ema[i]
+      ts0 = vec0[1]
+      if ts1 >= ts0:
+        ema.insert(i+1,vec1)
+        break
+      i = i - 1
+    if i == -1:
+      ema.insert(0,vec1)
+  return ema
+
 def computeElapsedTime2(iterator):
   ema = []
   sesID = -1
@@ -264,19 +283,45 @@ def computeElapsedTime2(iterator):
   return ema
 
 # vector: ((remotehost, timestamp, reqID), 0)
-ses = vectors3.map(lambda v: ((v[1][1], v[1][14], v[1][0]), 0)) \
+kk = vectors3.mapPartitions(mySort)
+
+ses 
+
+
+
+map(lambda v: (v[1][1], v[1][14], v[1][0])) \
               .sortByKey() \
               .mapPartitions(computeElapsedTime2)
-ses.saveAsTextFile(wd + "ehu_ses.txt")
+print("Start saveAsTextFile: ehu_ses2.txt")
+ses.saveAsTextFile(wd + "ehu_ses2.txt",
+     compressionCodecClass="org.apache.hadoop.io.compress.GzipCodec")
 # ses: (reqID, (remotehost, diffTime, ises, ireq, sesTime))
 
 
 # join
+print("Start join")
 vector4 = vectors3.map(lambda (a, b): (b[0], b)) \
-                  .join(ses) \
-                  .map(lambda (a,b): b[0] + b[1][1:])
-vector4.saveAsTextFile(wd + "ehu_data.txt")
-vector4.saveAsPickleFile(wd + "ehu_data.p")
+                  .join(ses)
+print("Start saveAsTextFile: ehu_join2.txt")
+vector4.saveAsTextFile(wd + "ehu_join2.txt",
+          compressionCodecClass="org.apache.hadoop.io.compress.GzipCodec")
+# vector4.getNumPartitions()
+print("Start coalesce")
+#vector5 = vector4.coalesce(nParts) \
+vector5 = vector4.map(lambda (a,b): b[0] + b[1][1:])
+# vector5.getNumPartitions()
+print("Start saveAsTextFile: ehu_data2.txt")
+vector5.saveAsTextFile(wd + "ehu_data2.txt",
+          compressionCodecClass="org.apache.hadoop.io.compress.GzipCodec")
+#vector5.saveAsPickleFile(wd + "ehu_data.p")
+#vector5.map(lambda v: (v[0], v[:8]+v[10:])) \
+#       .saveAsSequenceFile(wd + "ehu_data2.s")
+#vector5.map(lambda v: (v[0], v[:8]+v[10:])) \
+#       .saveAsHadoopFile(wd + "ehu_data.h",
+#         "org.apache.hadoop.mapred.TextOutputFormat",
+#         compressionCodecClass="org.apache.hadoop.io.compress.GzipCodec")
+
+
 # vec: 0:reqID, 1:remotehost, 2:rfc931, 3:authuser, 
 #      4:method, 5:url, 6:http, 7:status, 8:bytes, 
 #      9:timestamp, 10:tz, 11:reference, 12:useragent, 13:dayID, 14:tsSec, 
