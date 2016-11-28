@@ -62,7 +62,8 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 		//m_ks = new int[]{150, 200, 250, 300};
 		//m_ks = new int[]{150, 200, 250};
 		//m_ks = new int[]{150};
-		m_ks = new int[]{200, 250};
+		//m_ks = new int[]{200, 250};
+		m_ks = new int[]{100};
 		
 		// SPADE: minimum support
 		//m_seqweights = new float[]{0.10f, 0.15f, 0.20f};
@@ -711,6 +712,29 @@ public class A0000ParameterControl_ehupatras extends A0000ParameterControl_angel
 			}
 		}
 		
+		this.closeFile(evalWriter);
+	}
+	
+	public void runModelEvaluatorPamSpade(){
+		BufferedWriter evalWriter = this.openFile(m_validationWD + m_clustWD + m_evalFile);
+
+		// Results' header
+		System.out.print("options," + m_modelevCSS.getEvaluationHeader());
+		// Start generating and evaluating the model
+		for(int j=0; j<m_ks.length; j++){
+			int kparam = m_ks[j];
+			String esperimentationStr = "pam" + kparam;
+			String clustFile = m_validationWD + m_clustWD + "/" + esperimentationStr + ".javaData";
+			m_modelevCSS.loadClusters(clustFile);
+			// SPADE
+			for(int k=0; k<m_seqweights.length; k++){
+				float minsup = m_seqweights[k];
+				String esperimentationStr2 = esperimentationStr + "_minsup" + minsup;
+				String spadeFileTxt = m_validationWD + m_profiWD + "/" + esperimentationStr2 + "_2.txt";
+				String spadeFileJav = m_validationWD + m_profiWD + "/" + esperimentationStr2 + "_2.javaData";
+				m_modelevCSS.spade2(minsup, m_validationWD + m_profiWD, spadeFileTxt, spadeFileJav);
+			}
+		}
 		this.closeFile(evalWriter);
 	}
 

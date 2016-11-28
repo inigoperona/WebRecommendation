@@ -1,6 +1,6 @@
 package ehupatras.webrecommendation;
 
-public class A054MainClassPAMSpadeStcv2 {
+public class A054MainClassPAMSpadecv2 {
 
 	public static void main(String[] args) {
 		
@@ -10,7 +10,7 @@ public class A054MainClassPAMSpadeStcv2 {
 				wd+"/01_databases", "/DM_ED",
 				wd+"/02_validation", "/pam_DM_ED", "/pam_DM_ED/spade", "/pam_spade_st_eval.txt", "-", "1"};
 		
-		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args2);
+		A0000ParameterControl_ehupatras param = new A0000ParameterControl_ehupatras(args);
 		
 		// take the start time of the program
 		long starttimeprogram = System.currentTimeMillis();
@@ -20,7 +20,7 @@ public class A054MainClassPAMSpadeStcv2 {
 		param.loadDM(false);
 		param.loadCrossValidation();
 		param.createModelEvaluatorSeqMinSPADE();
-		param.runModelEvaluatorPamSpadeST("ST_w_eS1");
+		param.runModelEvaluatorPamSpade();
 				
 		// ending the program
 		long endtimeprogram = System.currentTimeMillis();

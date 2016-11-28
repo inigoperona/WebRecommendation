@@ -105,7 +105,7 @@ public abstract class Matrix {
 		}
 		
 		// MatrixStructure in memory
-		//ms.setLoadInMemory(indexesA, m_wd);
+		ms.setLoadInMemory(indexesA, m_wd);
 		
 		return ms;
 	}
